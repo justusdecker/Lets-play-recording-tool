@@ -43,3 +43,7 @@ def color816(text: str, fg: int, bg: int= 40) -> str:
 def italic(text: str) -> str:
     """ set italic mode by using escape sequences """
     return f"\033[3m{text}\033[23m"
+
+def bold(text: str) -> str:
+    """ set bold mode by using escape sequences """
+    return f"\033[1m{text}\033[21m"
