@@ -6,4 +6,4 @@ def file_read(filepath : str) -> str:
 
 def json_read(filepath : str) -> dict | list:
     with open(filepath, 'r') as f:
-        return json.loads(f)
+        return json.load(f)

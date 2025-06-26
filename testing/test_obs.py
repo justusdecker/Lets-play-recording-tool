@@ -1,4 +1,9 @@
 import pytest
-import obsws_python as obsws
+from bin.obs import OBSObserver
+
 def test_connection():
-    obsws.ReqClient(host="localhost", port="8080", password="NOPE",timeout=1)
+    """
+    Make sure you have OBS open!
+    """
+    OBSO = OBSObserver()
+    assert OBSO.isconnected

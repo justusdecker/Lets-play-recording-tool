@@ -17,7 +17,8 @@ class App:
                 continue
             match int(self.user_input):
                 case 1:
-                    OBSObserver()
+                    OBSO = OBSObserver()
+                    print(OBSO.isconnected)
                 case 5:
                     self.isrunning = False
                 case _:
