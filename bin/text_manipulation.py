@@ -31,7 +31,6 @@ def color816(text: str, fg: int, bg: int= 40) -> str:
     |Bright Magenta|95|105|
     |Bright Cyan|96|106|
     |Bright White|97|107|
-    
     """
     
     if fg not in COLOR_TABLE816FG or bg not in COLOR_TABLE816BG:
