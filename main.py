@@ -1,5 +1,5 @@
 
-
+from bin.constants import MENU_MESSAGE
 class App:
     def __init__(self):
         self.user_input = ""
@@ -10,4 +10,5 @@ class App:
     
     def loop(self):
         while self.isrunning:
+            print(MENU_MESSAGE)
             self.user_input = input()
