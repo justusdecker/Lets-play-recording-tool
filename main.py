@@ -13,7 +13,7 @@ class App:
             case 1:
                 OBSO = OBSObserver()
                 print(OBSO.timecode)
-                while self.isrunning:
+                while OBSO.isconnected:
                     print(OBSO.timecode)
             case 2:
                 self.automation_sub_menu()
