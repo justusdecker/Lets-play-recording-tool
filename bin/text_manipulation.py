@@ -55,6 +55,7 @@ def underline(text: str) -> str:
 def inverse_color(text: str) -> str:
     """ set inverse color by using escape sequences """
     return f"\033[7m{text}\033[27m"
+
 def hidden(text: str) -> str:
     """ set hidden by using escape sequences """
     return f"\033[8m{text}\033[28m"
