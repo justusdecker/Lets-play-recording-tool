@@ -12,4 +12,15 @@ Select your option:
 (5) Exit
 """
 
+MENU_AUTOMATION_MESSAGE = f"""
+Automations - Submenu
+
+Select your option:
+(1) Thumbnail Generate
+(2) Fetch Audio
+(3) Fix Audio
+(4) Render
+(5) Back
+"""
+
 USER_INPUT_NUM_UNMATCHED = color816(bold('This option does not exist'),31)

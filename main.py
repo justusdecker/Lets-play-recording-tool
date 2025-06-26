@@ -4,11 +4,30 @@ from bin.obs import OBSObserver
 class App:
     def __init__(self):
         self.user_input = ""
+        self.args_input = ""
         self.isrunning = True
     @property
     def args(self) -> list[str]:
         return self.user_input.split(' ')
-    
+    def main_menu(self):
+        match int(self.user_input):
+            case 1:
+                OBSO = OBSObserver()
+                print(OBSO.timecode)
+                while self.isrunning:
+                    print(OBSO.timecode)
+            case 2:
+                self.automation_sub_menu()
+            case 5:
+                self.isrunning = False
+            case _:
+                print(USER_INPUT_NUM_UNMATCHED)
+    def automation_sub_menu(self):
+        while self.isrunning:
+            print(MENU_AUTOMATION_MESSAGE)
+            self.user_input = input()
+            if not self.user_input.isdecimal():
+                continue
     def loop(self):
         while self.isrunning:
             print(MENU_MESSAGE)
