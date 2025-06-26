@@ -1,8 +1,10 @@
 COLOR_TABLE816FG = [90 + i for i in range(8)]  + [30 + i for i in range(10)]
 COLOR_TABLE816BG = [40 + i for i in range(10)] + [100 + i for i in range(8)]
+
 def strikethrough(text: str) -> str:
     """ set strikethrough mode by using escape sequences """
     return f"\033[9m{text}\033[29m"
+
 def color816(text: str, fg: int, bg: int= 40) -> str:
     """ 
     set text color by using escape sequences.
@@ -37,3 +39,7 @@ def color816(text: str, fg: int, bg: int= 40) -> str:
         raise Exception('Unknown Color')
     
     return f"\033[{fg}m\033[{bg}m{text}\033[39m\033[49m"
+
+def italic(text: str) -> str:
+    """ set italic mode by using escape sequences """
+    return f"\033[3m{text}\033[23m"
