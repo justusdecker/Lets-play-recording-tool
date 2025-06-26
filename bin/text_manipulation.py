@@ -49,5 +49,9 @@ def bold(text: str) -> str:
     return f"\033[1m{text}\033[22m"
 
 def underline(text: str) -> str:
-    """ set dim/faint mode by using escape sequences """
+    """ set underline mode by using escape sequences """
     return f"\033[4m{text}\033[24m"
+
+def inverse_color(text: str) -> str:
+    """ set inverse color by using escape sequences """
+    return f"\033[7m{text}\033[27m"

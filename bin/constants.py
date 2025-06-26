@@ -2,7 +2,7 @@ from bin.text_manipulation import *
 
 MENU_MESSAGE = f"""
 {bold('LPRT')} - (c) Justus Decker 2024 - 2025
-{underline('TEXT')}
+{inverse_color('TEXT')}
 Select your option:
 (1) Record
 (2) Automation
