@@ -1,5 +1,5 @@
 
-from bin.constants import MENU_MESSAGE, USER_INPUT_NUM_UNMATCHED
+from bin.constants import MENU_MESSAGE, USER_INPUT_NUM_UNMATCHED, AUTOMATION_MESSAGE
 from bin.obs import OBSObserver
 class App:
     def __init__(self):
@@ -21,6 +21,8 @@ class App:
                     print(OBSO.timecode)
                     while self.isrunning:
                         print(OBSO.timecode)
+                case 2:
+                    print()
                 case 5:
                     self.isrunning = False
                 case _:
