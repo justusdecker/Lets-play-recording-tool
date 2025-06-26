@@ -1,7 +1,9 @@
+COLOR_TABLE816 = [30 + i for i in range(10)] + [40 + i for i in range(10)] + [90 + i for i in range(8)] + [100 + i for i in range(8)]
+print(COLOR_TABLE816)
 def strikethrough(text: str) -> str:
     """ set strikethrough mode by using escape sequences """
     return f"\033[9m{text}\033[9m"
-def color816(text: str, color: int) -> str:
+def color816(text: str, fg: int, bg: int) -> str:
     """ 
     set text color by using escape sequences.
     
@@ -31,4 +33,8 @@ def color816(text: str, color: int) -> str:
     |Bright White|97|107|
     
     """
-    return f"\033[9m{text}\033[9m"
+    
+    if fg not in COLOR_TABLE816:
+        raise Exception('Unknown Color')
+    
+    return f"\033[9m{text}\033[39m\033[49m"
