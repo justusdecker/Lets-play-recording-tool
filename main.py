@@ -3,7 +3,7 @@ from bin.constants import MENU_MESSAGE
 class App:
     def __init__(self):
         self.user_input = ""
-    
+        self.isrunning = True
     @property
     def args(self) -> list[str]:
         return self.user_input.split(' ')
