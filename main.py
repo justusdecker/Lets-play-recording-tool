@@ -17,6 +17,8 @@ class App:
             match int(self.user_input):
                 case 1:
                     pass
+                case 5:
+                    self.isrunning = False
                 case _:
                     print(USER_INPUT_NUM_UNMATCHED)
             
