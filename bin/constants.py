@@ -11,3 +11,5 @@ Select your option:
 (4) {color816(strikethrough('Distribute'),fg=31)}
 (5) Exit
 """
+
+USER_INPUT_NUM_UNMATCHED = color816(bold('This options does not exist'),31)
