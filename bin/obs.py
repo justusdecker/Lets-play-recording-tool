@@ -37,8 +37,6 @@ class OBSObserver:
     def isrecording(self) -> bool:
         return self.timecode != '00:00:00.000'
     
-    
-    
     @property
     def filepath(self) -> str:
         return str(self.obs.get_output_settings(OUTPUT_TYPE).output_settings['path'])
