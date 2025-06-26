@@ -1,5 +1,5 @@
 
-from bin.constants import MENU_MESSAGE
+from bin.constants import MENU_MESSAGE, USER_INPUT_NUM_UNMATCHED
 class App:
     def __init__(self):
         self.user_input = ""
@@ -18,7 +18,7 @@ class App:
                 case 1:
                     pass
                 case _:
-                    print()
+                    print(USER_INPUT_NUM_UNMATCHED)
             
 if __name__ == "__main__":
     APP = App()

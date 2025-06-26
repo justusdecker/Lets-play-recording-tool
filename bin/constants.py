@@ -12,4 +12,4 @@ Select your option:
 (5) Exit
 """
 
-USER_INPUT_NUM_UNMATCHED = color816(bold('This options does not exist'),31)
+USER_INPUT_NUM_UNMATCHED = color816(bold('This option does not exist'),31)
