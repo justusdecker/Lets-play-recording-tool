@@ -46,4 +46,4 @@ def italic(text: str) -> str:
 
 def bold(text: str) -> str:
     """ set bold mode by using escape sequences """
-    return f"\033[1m{text}\033[21m"
+    return f"\033[1m{text}\033[22m"
