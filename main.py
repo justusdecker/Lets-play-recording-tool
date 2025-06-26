@@ -1,5 +1,6 @@
 
 from bin.constants import MENU_MESSAGE, USER_INPUT_NUM_UNMATCHED
+from bin.obs import OBSObserver
 class App:
     def __init__(self):
         self.user_input = ""
@@ -16,7 +17,7 @@ class App:
                 continue
             match int(self.user_input):
                 case 1:
-                    pass
+                    OBSObserver()
                 case 5:
                     self.isrunning = False
                 case _:
