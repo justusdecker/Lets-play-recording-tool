@@ -19,6 +19,7 @@ class App:
                 case 1:
                     OBSO = OBSObserver()
                     print(OBSO.isconnected)
+                    print(OBSO.timecode)
                 case 5:
                     self.isrunning = False
                 case _:
