@@ -47,3 +47,7 @@ def italic(text: str) -> str:
 def bold(text: str) -> str:
     """ set bold mode by using escape sequences """
     return f"\033[1m{text}\033[22m"
+
+def underline(text: str) -> str:
+    """ set dim/faint mode by using escape sequences """
+    return f"\033[4m{text}\033[24m"
