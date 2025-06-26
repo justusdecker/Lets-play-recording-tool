@@ -7,5 +7,5 @@ Select your option:
 (1) Record
 (2) Automation
 (3) {color816(strikethrough('Deploy'),31)}
-(4) {strikethrough('Distribute')}
+(4) {color816(strikethrough('Distribute'),fg=31)}
 """
