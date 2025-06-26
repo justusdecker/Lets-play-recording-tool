@@ -4,6 +4,8 @@ from bin.data_access import file_read
 MENU_MESSAGE = f"""
 {bold('LPRT')} {italic(file_read('version.txt'))} - (c) Justus Decker 2024 - 2025
 
+{bold('Main >')}
+
 Select your option:
 (1) Record - {color816(bold('BETA'),35)}
 (2) Automation - {color816(bold('ALPHA'),35)}
@@ -13,7 +15,9 @@ Select your option:
 """
 
 MENU_AUTOMATION_MESSAGE = f"""
-Automations - Submenu
+
+
+{bold('Main > Automations >')}
 
 Select your option:
 (1) {color816(strikethrough('Thumbnail Generate'),31)}

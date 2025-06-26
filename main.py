@@ -6,7 +6,10 @@ class App:
         self.isrunning = True
         
     def main_menu(self):
-        match int(self.user_input):
+        user_input = input()
+        if not user_input.isdecimal():
+            return
+        match int(user_input):
             case 1:
                 OBSO = OBSObserver()
                 print(OBSO.timecode)
@@ -29,21 +32,7 @@ class App:
     def loop(self):
         while self.isrunning:
             print(MENU_MESSAGE)
-            user_input = input()
-            if not user_input.isdecimal():
-                continue
-            match int(user_input):
-                case 1:
-                    OBSO = OBSObserver()
-                    print(OBSO.timecode)
-                    while self.isrunning:
-                        print(OBSO.timecode)
-                case 2:
-                    print(MENU_AUTOMATION_MESSAGE)
-                case 5:
-                    self.isrunning = False
-                case _:
-                    print(USER_INPUT_NUM_UNMATCHED)
+            self.main_menu()
             
 if __name__ == "__main__":
     APP = App()
