@@ -28,4 +28,4 @@ class OBSObserver:
     @property
     def timecode(self) -> int:
         """Get The Current Time In String Form"""
-        return str(self.obs.get_output_status(OUTPUT_TYPE).output_timecode)
+        return str(self.client.get_output_status(OUTPUT_TYPE).output_timecode)
