@@ -18,8 +18,9 @@ class App:
             match int(self.user_input):
                 case 1:
                     OBSO = OBSObserver()
-                    print(OBSO.isconnected)
                     print(OBSO.timecode)
+                    while self.isrunning:
+                        print(OBSO.timecode)
                 case 5:
                     self.isrunning = False
                 case _:
