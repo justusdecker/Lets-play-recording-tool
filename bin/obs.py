@@ -7,6 +7,7 @@ class OBSObserver:
     def __init__(self):
         self.settings = json_read('settings.json')
         self.connect()
+        self.recording_flag = False #used for one_time operations like on_start
     @property
     def isconnected(self) -> bool:
         if hasattr(self,'client'):
@@ -26,6 +27,15 @@ class OBSObserver:
         except _exceptions.WebSocketTimeoutException as E:
             print('WebsocketTimeout')
     @property
-    def timecode(self) -> int:
+    def isrecording(self) -> bool:
+        return self.timecode != '00:00:00.000'
+    @property
+    def time_in_seconds(self) -> int:
+        hms, _ = self.timecode.split('.')
+        h,m,s = hms.split(':')
+        h, m = int(h) * 3600, int(m) * 60 
+        return h + m + int(s)
+    @property
+    def timecode(self) -> str:
         """Get The Current Time In String Form"""
-        return str(self.client.get_output_status(OUTPUT_TYPE).output_timecode)
+        return str(self.client.get_output_status(OUTPUT_TYPE).output_timecode) if self.isconnected else '00:00:00.000'
