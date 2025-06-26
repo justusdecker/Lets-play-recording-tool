@@ -1,8 +1,10 @@
 from bin.text_manipulation import *
 from bin.data_access import file_read
 
+COPYRIGHT = f"{bold('LPRT')} {italic(file_read('version.txt'))} - (c) Justus Decker 2024 - 2025"
+
 MENU_MESSAGE = f"""
-{bold('LPRT')} {italic(file_read('version.txt'))} - (c) Justus Decker 2024 - 2025
+{COPYRIGHT}
 
 {bold('Main >')}
 
@@ -15,7 +17,7 @@ Select your option:
 """
 
 MENU_AUTOMATION_MESSAGE = f"""
-
+{COPYRIGHT}
 
 {bold('Main > Automations >')}
 
