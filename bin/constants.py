@@ -5,8 +5,8 @@ MENU_MESSAGE = f"""
 {bold('LPRT')} {italic(file_read('version.txt'))} - (c) Justus Decker 2024 - 2025
 
 Select your option:
-(1) Record - {color816(bold('ALPHA'),35)}
-(2) {color816(strikethrough('Automation'),31)}
+(1) Record - {color816(bold('BETA'),35)}
+(2) Automation - {color816(bold('ALPHA'),35)}
 (3) {color816(strikethrough('Deploy'),31)}
 (4) {color816(strikethrough('Distribute'),fg=31)}
 (5) Exit
@@ -16,10 +16,10 @@ MENU_AUTOMATION_MESSAGE = f"""
 Automations - Submenu
 
 Select your option:
-(1) Thumbnail Generate
-(2) Fetch Audio
-(3) Fix Audio
-(4) Render
+(1) {color816(strikethrough('Thumbnail Generate'),31)}
+(2) {color816(strikethrough('Fetch Audio'),31)}
+(3) {color816(strikethrough('Fix Audio'),31)}
+(4) {color816(strikethrough('Render'),31)}
 (5) Back
 """
 
