@@ -12,3 +12,6 @@ class App:
         while self.isrunning:
             print(MENU_MESSAGE)
             self.user_input = input()
+if __name__ == "__main__":
+    APP = App()
+    APP.loop()
