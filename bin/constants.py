@@ -9,7 +9,7 @@ MENU_MESSAGE = f"""
 {bold('Main >')}
 
 Select your option:
-(1) Record - {color816(bold('BETA'),35)}
+(1) Record - {color816(bold('ALPHA'),35)}
 (2) Automation - {color816(bold('ALPHA'),35)}
 (3) {color816(strikethrough('Deploy'),31)}
 (4) {color816(strikethrough('Distribute'),fg=31)}

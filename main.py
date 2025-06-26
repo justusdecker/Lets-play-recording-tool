@@ -28,6 +28,14 @@ class App:
             user_input = input()
             if not user_input.isdecimal():
                 continue
+            match int(user_input):
+                case 1:
+                    pass
+                case 5:
+                    return
+                case _:
+                    print(USER_INPUT_NUM_UNMATCHED)
+                    
         
     def loop(self):
         while self.isrunning:
