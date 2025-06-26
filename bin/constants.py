@@ -9,4 +9,5 @@ Select your option:
 (2) {color816(strikethrough('Automation'),31)}
 (3) {color816(strikethrough('Deploy'),31)}
 (4) {color816(strikethrough('Distribute'),fg=31)}
+(5) Exit
 """
