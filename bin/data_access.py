@@ -20,3 +20,4 @@ def json_read(filepath : str) -> dict | list:
         return json.load(f)
     
 csv_write('test.csv',[[1,41,341,43],[1,41,341,43]])
+csv_read('test.csv')
