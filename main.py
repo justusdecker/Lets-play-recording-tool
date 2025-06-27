@@ -48,6 +48,28 @@ class App:
                     return
                 case _:
                     print(USER_INPUT_NUM_UNMATCHED)
+    def data_sub_delete_menu(self):
+        while self.isrunning:
+            print(MENU_DATA_DELETE_MESSAGE)
+            user_input = input()
+            if not user_input.isdecimal():
+                continue
+            match int(user_input):
+                case 0:
+                    return
+                case _:
+                    print(USER_INPUT_NUM_UNMATCHED)
+    def data_sub_update_menu(self):
+        while self.isrunning:
+            print(MENU_DATA_UPDATE_MESSAGE)
+            user_input = input()
+            if not user_input.isdecimal():
+                continue
+            match int(user_input):
+                case 0:
+                    return
+                case _:
+                    print(USER_INPUT_NUM_UNMATCHED)
     def data_sub_read_menu(self):
         while self.isrunning:
             print(MENU_DATA_READ_MESSAGE)

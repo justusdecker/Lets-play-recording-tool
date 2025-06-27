@@ -25,12 +25,12 @@ Markdown
     - [x] Lets Play
     - [x] Episode
     - [x] TAD
-  - [ ] Update
-    - [ ] Lets Play
-    - [ ] Episode
-    - [ ] TAD
-  - [ ] Delete
-    - [ ] Lets Play
-    - [ ] Episode
-    - [ ] TAD
+  - [x] Update
+    - [x] Lets Play
+    - [x] Episode
+    - [x] TAD
+  - [x] Delete
+    - [x] Lets Play
+    - [x] Episode
+    - [x] TAD
 
