@@ -13,18 +13,18 @@ Terminal Walktrough
   - [ ] Generate Episode
 Markdown
 - [ ] Data
-  - [ ] Create a new file
-    - [ ] Lets Play
-    - [ ] Episode
-    - [ ] TAD
-  - [ ] Create a new entry
-    - [ ] Lets Play
-    - [ ] Episode
-    - [ ] TAD
-  - [ ] Read
-    - [ ] Lets Play
-    - [ ] Episode
-    - [ ] TAD
+  - [x] Create a new file
+    - [x] Lets Play
+    - [x] Episode
+    - [x] TAD
+  - [x] Create a new entry
+    - [x] Lets Play
+    - [x] Episode
+    - [x] TAD
+  - [x] Read
+    - [x] Lets Play
+    - [x] Episode
+    - [x] TAD
   - [ ] Update
     - [ ] Lets Play
     - [ ] Episode

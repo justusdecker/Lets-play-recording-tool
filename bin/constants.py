@@ -67,5 +67,17 @@ Select your option:
 (0) Exit
 """
 
+MENU_DATA_UPDATE_MESSAGE = f"""
+{COPYRIGHT}
+
+{bold('Main > Data > Update')}
+
+Select your option:
+(1) {color816(strikethrough('Lets Play'),31)}
+(2) {color816(strikethrough('Episode'),31)}
+(3) {color816(strikethrough('Thumbnail Automation Data'),31)}
+(0) Exit
+"""
+
 USER_INPUT_NUM_UNMATCHED = color816(bold('This option does not exist'),31)
 
