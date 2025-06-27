@@ -8,7 +8,7 @@ def binpi(text : str) -> int:
     user_input = ''
     while not user_input.isdecimal():
         print(text)
-        user_input = input('\033[90m\033[3m')
+        user_input = input('\033[92m\033[3m')
         print('\033[23m\033[39m',end='')
     return int(user_input)
     
