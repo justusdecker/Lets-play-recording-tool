@@ -1,18 +1,19 @@
 
 from bin.constants import *
 from bin.obs import OBSObserver
-from bin.data_access import LetsPlay, file_read, isfile, LP_KEYS, EP_KEYS, file_write,csv_write
+from bin.data_access import LetsPlay, file_read, isfile, LP_KEYS, EP_KEYS, file_write,csv_write, Episode
 from tkinter.filedialog import asksaveasfilename as asafn
 from bin.others import binpi,binps
 LP_PATH = 'lets_plays.csv'
-EP_PATH = 'eps_{lp_title}.csv'
-def obs_connect():
+def obs_connect(ep: Episode):
     OBSO = OBSObserver()
     if not OBSO.isconnected:
         err('No connection to OBS!')
     while OBSO.isconnected:
         try:
             print(OBSO.timecode)
+            OBSO.update()
+                
         except KeyboardInterrupt:
             err('Keyboard interrupt!')
             break
@@ -29,7 +30,7 @@ def create_new_ep_file(filepath: str):
     print(color816(f'[!TIP] > If you have a typo somewhere: You can change the data later manually!(Do it or bugs will kill your fun :D)',32))
     
     if not isfile(filepath):
-        csv_write(EP_PATH,[[binps(f'{key}: ') for key in EP_KEYS]])
+        csv_write(filepath,[[binps(f'{key}: ') for key in EP_KEYS]])
     else:
         err('File already exist!')
     pass
@@ -49,7 +50,9 @@ class App:
             case 1:
                 # OBS - Recording
                 # Will save your recording data to the in lets_play.csv referrenced episode file
-                obs_connect()
+                ep = LetsPlay(LP_PATH).read(self.current_letsplay_id)[1]
+                
+                obs_connect(Episode(ep))
             case 2:
                 self.automation_sub_menu()
             case 4:
