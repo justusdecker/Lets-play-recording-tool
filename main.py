@@ -2,6 +2,7 @@
 from bin.constants import *
 from bin.obs import OBSObserver
 from bin.data_access import LetsPlay, file_read, isfile, LP_KEYS
+
 class App:
     def __init__(self):
         self.isrunning = True

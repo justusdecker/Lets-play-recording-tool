@@ -33,4 +33,7 @@ Markdown
     - [x] Lets Play
     - [x] Episode
     - [x] TAD
+- [ ] Options
+  - [ ] OBS Websocket
+  - [ ] 
 
