@@ -65,6 +65,7 @@ class CSVObj:
         self.__check_list(checklist, kwargs)
         self.__check_id(id)
         self.data[id] = kwargs
+        
     def delete(self,id: int):
         self.__check_id(id)
         self.data.pop(id)
