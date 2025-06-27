@@ -25,3 +25,5 @@ def test_csv_create():
 def test_csv_read():
     C = CSVObj('test.csv')
     C.read(1)
+    C.read(2)
+    C.read(3)
