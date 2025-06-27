@@ -9,9 +9,9 @@ Terminal Walktrough
   - [ ] Fix Audio
   - [ ] Render
 - [ ] Deploy
-- [ ] Distribute
   - [ ] Data copy to other Drive
-  - [ ] Generate Episode Markdown
+  - [ ] Generate Episode
+Markdown
 - [ ] Data
   - [ ] Create a new file
     - [ ] Lets Play
