@@ -70,7 +70,10 @@ class CSVObj:
     def delete(self,id: int):
         self.__check_id(id)
         self.data.pop(id)
-    
+
+class LetsPlay(CSVObj):
+    def __init__(self, filepath):
+        super().__init__(filepath)
 class LetsPlays:
     """
     
