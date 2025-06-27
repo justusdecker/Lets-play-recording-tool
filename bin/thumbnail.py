@@ -12,7 +12,8 @@ from bin.data_access import json_read
 from moviepy.video.io.VideoFileClip import VideoFileClip
 from pygame.image import save as img_save, load as img_load
 from bin.constants import DEFAULT_THUMBNAIL_SIZE
-
+from pygame.font import Font, init
+init()
 class ThumbnailGenerator:
     def __init__(self, 
                  filepath: str,
@@ -64,3 +65,46 @@ class ThumbnailGenerator:
             _returnImage: Surface = flip(_returnImage,True,False)
             
             return _returnImage
+    def __get_text(self,
+                 font_path: str,
+                 font_size: int,
+                 text: str,
+                 outline: dict,
+                 color=(255,255,255)
+                 ) -> Surface:
+        """
+        Returns the Text Image
+        """
+
+
+        font = Font(font_path,font_size)
+        
+        img: Surface = font.render(text,False,color)
+        
+        # 1 is the font image size
+        w1,h1 = img.get_size()
+        
+        # timg is used to outline text
+        
+        # create a new blank surface (RGBA) - USAGE OUTLINE
+        timg = Surface((w1 * 1.05,h1 * 1.05),SRCALPHA)
+        
+        w2,h2 = timg.get_size()
+        
+        x = (w2 / 2) - (w1 / 2)
+        
+        y = (h2 / 2) - (h1 / 2)
+        
+        timg.blit(img,(x,y))
+        
+        
+        
+        timg = outLining(
+            outline['xMinus'],
+            outline['xPlus'],
+            outline['yMinus'],
+            outline['yPlus'],
+            timg,outline['color']
+            )
+        
+        return timg
