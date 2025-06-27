@@ -3,6 +3,10 @@ from bin.data_access import *
 from os import remove
 from sys import _getframe as gf
 from bin.data_access import CSVObj
+from tests import Tests
+
+
+TESTS = Tests(__dict__)
 @pytest.fixture
 def csvi() -> CSVObj:
     return CSVObj('test.csv')
