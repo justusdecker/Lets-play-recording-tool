@@ -1,13 +1,13 @@
 
 # Lets-play-recording-tool
-## 0.1.165
+## 0.1.166
 
 An automation tool for lets players
 
 ## What is coming up?
 
-- [ ] Terminal Stuff(No practical usage! Only command inputs etc.)
-- [ ] Recording(Saving Data etc.)
+- [x] Terminal Stuff(No practical usage! Only command inputs etc.)
+- [x] Recording(Saving Data etc.)
 - [ ] Automation(Thumbnails)
 - [ ] Automation(Audio Fetch)
 - [ ] Automation(Audio Fix)
