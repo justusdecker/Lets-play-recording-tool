@@ -7,15 +7,25 @@ class App:
         self.isrunning = True
         self.current_letsplay_id = 0
     def main_menu(self):
+        """
+        Main Menu >
+        """
         user_input = input()
         if not user_input.isdecimal():
             return
         match int(user_input):
             case 1:
+                # OBS - Recording
+                # Will save your recording data to the in lets_play.csv referrenced episode file
                 OBSO = OBSObserver()
-                print(OBSO.timecode)
+                if not OBSO.isconnected:
+                    print('No connection to OBS!')
                 while OBSO.isconnected:
-                    print(OBSO.timecode)
+                    try:
+                        print(OBSO.timecode)
+                    except KeyboardInterrupt:
+                        break
+                print('No connection to OBS!')
                     
             case 2:
                 self.automation_sub_menu()
