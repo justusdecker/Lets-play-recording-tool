@@ -17,7 +17,7 @@ def obs_connect():
             break
 
 def create_new_lp_file():
-    print(f'[!TIP] > If you have a typo somewhere: You can change the data later manually!(Do it or funny bugs will kill your fun :D)')
+    print(f'[!TIP] > If you have a typo somewhere: You can change the data later manually!(Do it or bugs will kill your fun :D)')
     if not isfile(LP_PATH):
         csv_write(LP_PATH,[[binpi(f'{key}: ') for key in LP_KEYS]])
     else:
