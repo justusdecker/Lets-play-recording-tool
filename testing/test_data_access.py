@@ -9,7 +9,8 @@ def test_write_empty_csv():
     
 def test_csv():
     CSVObj('test.csv')
-def test_csv():
+    
+def test_csv_create():
     C = CSVObj('test.csv')
     S = {
         'version': "LOL",
@@ -19,4 +20,4 @@ def test_csv():
         'game_name': "meh",
         'episode_length': 123
     }
-    C.create(LP_KEYS,S)
+    C.create(checklist=LP_KEYS,**S)

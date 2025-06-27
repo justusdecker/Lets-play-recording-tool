@@ -55,14 +55,14 @@ class CSVObj:
             raise TypeError()
     
     def create(self,checklist: list[str], **kwargs) -> None:
-        self.__check_list(checklist, kwargs)
+        self.__check_list(cl=checklist, **kwargs)
         self.data.append([kwargs[arg] for arg in kwargs])
         
     def read(self,id: int):
         return self.data[id] if id < len(self.data) and id <= 0 and isinstance(id,int) else None
     
     def update(self,id: int,checklist: list[str],**kwargs):
-        self.__check_list(checklist, kwargs)
+        self.__check_list(cl=checklist, **kwargs)
         self.__check_id(id)
         self.data[id] = kwargs
         
