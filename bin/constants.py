@@ -37,7 +37,7 @@ MENU_DATA_MESSAGE = f"""
 
 Select your option:
 (1) {color816(strikethrough('Create a new file'),31)}
-(2) {color816(strikethrough('Create a new entry'),31)}
+(2) Create a new entry - {color816(bold('ALPHA'),35)}
 (3) {color816(strikethrough('Update'),31)}
 (4) {color816(strikethrough('Read'),31)}
 (5) {color816(strikethrough('Delete'),fg=31)}
