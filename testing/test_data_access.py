@@ -75,3 +75,18 @@ def test_csv_update(csvi):
     S['version'] = 'HELLO'
     
     C.update(0,checklist=LP_KEYS,**S)
+def test_csv_update_wrong_index(csvi):
+    if isfile('test.csv'): remove('test.csv')
+    C = csvi
+    
+    S = {
+        'version': "LOL",
+        'epsiode_path': "lalala",
+        'tad_path': "nope",
+        'name': "WhoAmI",
+        'game_name': "meh",
+        'episode_length': 123
+    }
+    C.create(checklist=LP_KEYS,**S)
+    with pytest.raises(IndexError):
+        C.update(1,checklist=LP_KEYS,**S)
