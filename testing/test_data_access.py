@@ -36,6 +36,19 @@ def test_csv_create_non_existent_key():
     }
     with pytest.raises(IndexError):
         C.create(checklist=LP_KEYS,**S)
+
+def test_csv_create_no_key():
+    C = CSVObj('test.csv')
+    S = {
+        'version': "LOL",
+        'epsiode_path': "lalala",
+        'tad_path': "nope",
+        'name': "WhoAmI",
+        'game_name': "meh",
+        'duh': 'hehe'
+    }
+    with pytest.raises(KeyError):
+        C.create(checklist=LP_KEYS,**S)
     
 def test_csv_read():
     remove('test.csv')
