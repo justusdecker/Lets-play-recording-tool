@@ -1,6 +1,13 @@
 import json
 import csv
-from bin.constants import LP_KEYS
+
+LP_KEYS = [
+    'version',
+    'epsiode_path',
+    'tad_path',
+    'name',
+    'game_name',
+    'episode_length'] 
 
 def csv_read(filepath : str) -> list[list[str]]:
     with open(filepath,newline='') as f:
