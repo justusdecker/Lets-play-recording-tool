@@ -28,6 +28,10 @@ def file_read(filepath : str) -> str:
 def file_write(filepath : str, data : str):
     with open(filepath, 'w') as f:
         f.write(data)
+        
+def file_append(filepath : str, data : str):
+    with open(filepath, 'a') as f:
+        f.write(data)
 
 def json_read(filepath : str) -> dict | list:
     with open(filepath, 'r') as f:
