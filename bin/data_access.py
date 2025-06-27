@@ -76,7 +76,7 @@ class CSVObj:
             raise TypeError()
     
     def save(self):
-        csv_write(self.filename, self.data)
+        csv_write(self.filepath, self.data)
     
     def create(self,checklist: list[str], **kwargs) -> None:
         self.__check_list(cl=checklist, **kwargs)
