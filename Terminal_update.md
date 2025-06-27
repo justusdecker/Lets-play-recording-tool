@@ -2,12 +2,12 @@
 
 Terminal Walktrough
 
-- [ ] Record
-- [ ] Automation
-  - [ ] Thumbnail Generate
-  - [ ] Fetch Audio
-  - [ ] Fix Audio
-  - [ ] Render
+- [x] Record
+- [x] Automation
+  - [x] Thumbnail Generate
+  - [x] Fetch Audio
+  - [x] Fix Audio
+  - [x] Render
 - [ ] Deploy
   - [ ] Data copy to other Drive
   - [ ] Generate Episode
