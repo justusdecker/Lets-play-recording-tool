@@ -4,6 +4,19 @@ from bin.obs import OBSObserver
 from bin.data_access import LetsPlay, file_read, isfile, LP_KEYS, file_write
 from tkinter.filedialog import asksaveasfilename as asafn
 from bin.others import binpi
+
+def obs_connect():
+    OBSO = OBSObserver()
+    if not OBSO.isconnected:
+        err('No connection to OBS!')
+    while OBSO.isconnected:
+        try:
+            print(OBSO.timecode)
+        except KeyboardInterrupt:
+            err('Keyboard interrupt!')
+            break
+    
+
 class App:
     def __init__(self):
         self.isrunning = True
@@ -16,15 +29,7 @@ class App:
             case 1:
                 # OBS - Recording
                 # Will save your recording data to the in lets_play.csv referrenced episode file
-                OBSO = OBSObserver()
-                if not OBSO.isconnected:
-                    print('No connection to OBS!')
-                while OBSO.isconnected:
-                    try:
-                        print(OBSO.timecode)
-                    except KeyboardInterrupt:
-                        break
-                print('No connection to OBS!')
+                obs_connect()
                     
             case 2:
                 self.automation_sub_menu()
@@ -33,7 +38,7 @@ class App:
             case 0:
                 self.isrunning = False
             case _:
-                print(USER_INPUT_NUM_UNMATCHED)
+                err(USER_INPUT_NUM_UNMATCHED)
    
     def data_sub_menu(self):
         """
@@ -66,7 +71,7 @@ class App:
                 case 0:
                     return
                 case _:
-                    print(USER_INPUT_NUM_UNMATCHED)
+                    err(USER_INPUT_NUM_UNMATCHED)
     def data_sub_update_menu(self):
         while self.isrunning:
             
@@ -74,7 +79,7 @@ class App:
                 case 0:
                     return
                 case _:
-                    print(USER_INPUT_NUM_UNMATCHED)
+                    err(USER_INPUT_NUM_UNMATCHED)
     def data_sub_read_menu(self):
         while self.isrunning:
             
@@ -82,7 +87,7 @@ class App:
                 case 0:
                     return
                 case _:
-                    print(USER_INPUT_NUM_UNMATCHED)
+                    err(USER_INPUT_NUM_UNMATCHED)
     def data_sub_create_file_menu(self):
         while self.isrunning:
 
@@ -96,7 +101,7 @@ class App:
                     else:
                         err('File already exist!')
                 case _:
-                    print(USER_INPUT_NUM_UNMATCHED)
+                    err(USER_INPUT_NUM_UNMATCHED)
     def data_sub_create_entry_menu(self):
         while self.isrunning:
             
@@ -104,7 +109,7 @@ class App:
                 case 0:
                     return
                 case _:
-                    print(USER_INPUT_NUM_UNMATCHED)
+                    err(USER_INPUT_NUM_UNMATCHED)
     def automation_sub_menu(self):
         while self.isrunning:
 
@@ -114,7 +119,7 @@ class App:
                 case 5:
                     return
                 case _:
-                    print(USER_INPUT_NUM_UNMATCHED)
+                    err(USER_INPUT_NUM_UNMATCHED)
                     
         
     def loop(self):
