@@ -1,7 +1,7 @@
 
 from bin.constants import MENU_MESSAGE, USER_INPUT_NUM_UNMATCHED, MENU_AUTOMATION_MESSAGE
 from bin.obs import OBSObserver
-from bin.data_access import Let
+from bin.data_access import LetsPlay, file_read
 class App:
     def __init__(self):
         self.isrunning = True
@@ -14,8 +14,8 @@ class App:
             case 1:
                 OBSO = OBSObserver()
                 print(OBSO.timecode)
-                if OBSO.isconnected:
-                    pass
+                
+                
                 while OBSO.isconnected:
                     print(OBSO.timecode)
                     
