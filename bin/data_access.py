@@ -1,5 +1,6 @@
 import json
 import csv
+from os.path import isfile
 
 LP_KEYS = [
     'version',
@@ -10,6 +11,7 @@ LP_KEYS = [
     'episode_length'] 
 
 def csv_read(filepath : str) -> list[list[str]]:
+    if not isfile(filepath): return []
     with open(filepath,newline='') as f:
         reader = csv.reader(f, delimiter='|')
         return [row for row in reader]
