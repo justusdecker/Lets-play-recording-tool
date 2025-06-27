@@ -38,14 +38,36 @@ class CSVObj:
         for row in self.data:
             if len(row) != len(LP_KEYS):
                 raise IndexError()
-    def create(self, **kwargs) -> None:
+    def __check_list(self,cl:list[str],**kwargs):
+        """
+        checks list with a check list :o
+        """
+        if len(cl) != len(kwargs):
+            raise IndexError(f'Length of a != b')
+        for e in cl:
+            if e not in kwargs:
+                raise KeyError(f'cannot find: {e} in {kwargs}')
+    
+    def __check_id(self,id: int):
+        if id >= len(self.data) or id > 0:
+            raise IndexError()
+        if not isinstance(id,int):
+            raise TypeError()
+    
+    def create(self,checklist: list[str], **kwargs) -> None:
+        self.__check_list(checklist, kwargs)
         self.data.append([kwargs[arg] for arg in kwargs])
+        
     def read(self,id: int):
         return self.data[id] if id < len(self.data) and id <= 0 and isinstance(id,int) else None
-    def update(self,id: int,**kwargs):
-        pass
+    
+    def update(self,id: int,checklist: list[str],**kwargs):
+        self.__check_list(checklist, kwargs)
+        self.__check_id(id)
+        self.data[id] = kwargs
     def delete(self,id: int):
-        pass
+        self.__check_id(id)
+        self.data.pop(id)
     
 class LetsPlays:
     """
