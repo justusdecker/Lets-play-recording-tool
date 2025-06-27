@@ -25,7 +25,7 @@ def test_csv_create(csvi):
     C = csvi
     S = {
         'version': "LOL",
-        'epsiode_path': "lalala",
+        'episode_path': "lalala",
         'tad_path': "nope",
         'name': "WhoAmI",
         'game_name': "meh",
@@ -75,7 +75,7 @@ def test_csv_update(csvi):
     
     S = {
         'version': "LOL",
-        'epsiode_path': "lalala",
+        'episode_path': "lalala",
         'tad_path': "nope",
         'name': "WhoAmI",
         'game_name': "meh",
@@ -93,7 +93,7 @@ def test_csv_update_wrong_index(csvi):
     
     S = {
         'version': "LOL",
-        'epsiode_path': "lalala",
+        'episode_path': "lalala",
         'tad_path': "nope",
         'name': "WhoAmI",
         'game_name': "meh",
@@ -109,7 +109,7 @@ def test_csv_non_existent_key(csvi):
     
     S = {
         'version': "LOL",
-        'epsiode_path': "lalala",
+        'episode_path': "lalala",
         'tad_path': "nope",
         'name': "WhoAmI",
         'game_name': "meh",
