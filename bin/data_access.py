@@ -24,13 +24,15 @@ class CSVObj:
     """
     The default csv object to inherit from.
     """
-    def __init__(self):
-        pass
+    def __init__(self, filepath: str):
+        self.data = csv_read(filepath)
+        for row in self.data:
+            if len(row) != len(LP_KEYS):
+                raise IndexError()
     def create(self, **kwargs) -> None:
-        [kwargs[arg] for arg in kwargs]
-        self.data.append()
+        self.data.append([kwargs[arg] for arg in kwargs])
     def read(self,id: int):
-        pass
+        return self.data[id] if id < len(self.data) and id <= 0 and isinstance(id,int) else None
     def update(self,id: int,**kwargs):
         pass
     def delete(self,id: int):
