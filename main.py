@@ -3,7 +3,7 @@ from bin.constants import *
 from bin.obs import OBSObserver
 from bin.data_access import LetsPlay, file_read, isfile, LP_KEYS, file_write,csv_write
 from tkinter.filedialog import asksaveasfilename as asafn
-from bin.others import binpi
+from bin.others import binpi,binps
 LP_PATH = 'lets_plays.csv'
 def obs_connect():
     OBSO = OBSObserver()
@@ -19,7 +19,7 @@ def obs_connect():
 def create_new_lp_file():
     print(color816(f'[!TIP] > If you have a typo somewhere: You can change the data later manually!(Do it or bugs will kill your fun :D)',32))
     if not isfile(LP_PATH):
-        csv_write(LP_PATH,[[binpi(f'{key}: ') if key != 'version' else file_read('version.txt') for key in LP_KEYS]])
+        csv_write(LP_PATH,[[binps(f'{key}: ') if key != 'version' else file_read('version.txt') for key in LP_KEYS]])
     else:
         err('File already exist!')
     pass
