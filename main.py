@@ -3,6 +3,7 @@ from bin.constants import *
 from bin.obs import OBSObserver
 from bin.data_access import LetsPlay, file_read, isfile, LP_KEYS, file_write
 from tkinter.filedialog import asksaveasfilename as asafn
+from bin.others import binpi
 class App:
     def __init__(self):
         self.isrunning = True
@@ -36,13 +37,16 @@ class App:
                 self.isrunning = False
             case _:
                 print(USER_INPUT_NUM_UNMATCHED)
+   
     def data_sub_menu(self):
+        """
+        Main > Data >
+        
+        This method redirects to other methods, returns if user wants to go back or print an error msg
+        """
         while self.isrunning:
-            print(MENU_DATA_MESSAGE)
-            user_input = input()
-            if not user_input.isdecimal():
-                continue
-            match int(user_input):
+            
+            match binpi(MENU_DATA_MESSAGE):
                 case 1:
                     self.data_sub_create_file_menu()
                 case 2:
@@ -56,7 +60,8 @@ class App:
                 case 0:
                     return
                 case _:
-                    print(USER_INPUT_NUM_UNMATCHED)
+                    err(USER_INPUT_NUM_UNMATCHED)
+    
     def data_sub_delete_menu(self):
         while self.isrunning:
             print(MENU_DATA_DELETE_MESSAGE)
@@ -105,7 +110,6 @@ class App:
                         file_write(filepath,'')
                     else:
                         err('File already exist!')
-                        
                 case _:
                     print(USER_INPUT_NUM_UNMATCHED)
     def data_sub_create_entry_menu(self):
