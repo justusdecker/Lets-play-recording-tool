@@ -10,6 +10,15 @@ LP_KEYS = [
     'game_name',
     'episode_length'] 
 
+EP_KEYS = [
+    'video_path',
+    'audio_mic_path',
+    'audio_desktop_path',
+    'thumbnail_path',
+    'thumbnail_frame',
+    'id'
+]
+
 def csv_rw(filepath: str, new_data):
     old_data = csv_read(filepath)
     csv_write(filepath, old_data + new_data)
@@ -102,3 +111,23 @@ class LetsPlay(CSVObj):
         return super().create(LP_KEYS, **kwargs)
     def update(self, id, **kwargs):
         return super().update(id, LP_KEYS, **kwargs)
+
+class Episode(CSVObj):
+    """
+    
+    |KEY|Type|
+    |---|----|
+    |Version|`str`|
+    |episode_path|`str`|
+    |tad_path|`str`|
+    |name|`str`|
+    |game_name|`str`|
+    |episode_length|`int`|
+    
+    """
+    def __init__(self, filepath):
+        super().__init__(filepath)
+    def create(self, **kwargs):
+        return super().create(EP_KEYS, **kwargs)
+    def update(self, id, **kwargs):
+        return super().update(id, EP_KEYS, **kwargs)
