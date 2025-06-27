@@ -1,10 +1,11 @@
 
 from bin.constants import MENU_MESSAGE, USER_INPUT_NUM_UNMATCHED, MENU_AUTOMATION_MESSAGE
 from bin.obs import OBSObserver
+from bin.data_access import Let
 class App:
     def __init__(self):
         self.isrunning = True
-        
+        self.current_letsplay_id = 0
     def main_menu(self):
         user_input = input()
         if not user_input.isdecimal():
@@ -13,8 +14,11 @@ class App:
             case 1:
                 OBSO = OBSObserver()
                 print(OBSO.timecode)
+                if OBSO.isconnected:
+                    pass
                 while OBSO.isconnected:
                     print(OBSO.timecode)
+                    
             case 2:
                 self.automation_sub_menu()
             case 5:
