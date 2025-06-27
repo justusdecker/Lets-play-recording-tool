@@ -17,9 +17,9 @@ def obs_connect():
             break
 
 def create_new_lp_file():
-    print(f'[!TIP] > If you have a typo somewhere: You can change the data later manually!(Do it or bugs will kill your fun :D)')
+    print(color816(f'[!TIP] > If you have a typo somewhere: You can change the data later manually!(Do it or bugs will kill your fun :D)',32))
     if not isfile(LP_PATH):
-        csv_write(LP_PATH,[[binpi(f'{key}: ') for key in LP_KEYS]])
+        csv_write(LP_PATH,[[binpi(f'{key}: ') if key != 'version' else file_read('version.txt') for key in LP_KEYS]])
     else:
         err('File already exist!')
 
@@ -28,7 +28,8 @@ class App:
         self.isrunning = True
         self.current_letsplay_id = 0
         if not isfile('lets_play.csv'):
-            war('lets_play.csv does not exist')
+            war('lets_play.csv does not exist & will be created!')
+            create_new_lp_file()
     def main_menu(self):
         """
         Main Menu >
