@@ -12,10 +12,7 @@ class App:
         """
         Main Menu >
         """
-        user_input = input()
-        if not user_input.isdecimal():
-            return
-        match int(user_input):
+        match binpi(MENU_MESSAGE):
             case 1:
                 # OBS - Recording
                 # Will save your recording data to the in lets_play.csv referrenced episode file
@@ -140,7 +137,6 @@ class App:
         
     def loop(self):
         while self.isrunning:
-            print(MENU_MESSAGE)
             self.main_menu()
             
 if __name__ == "__main__":
