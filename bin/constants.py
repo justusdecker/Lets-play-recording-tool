@@ -30,3 +30,11 @@ Select your option:
 """
 
 USER_INPUT_NUM_UNMATCHED = color816(bold('This option does not exist'),31)
+
+LP_KEYS = [
+    'version',
+    'epsiode_path',
+    'tad_path',
+    'name',
+    'game_name',
+    'episode_length'] 
