@@ -10,4 +10,5 @@ def binpi(text : str) -> int:
         print(text)
         user_input = input('\033[90m\033[3m')
         print('\033[23m\033[39m',end='')
+    return int(user_input)
     
