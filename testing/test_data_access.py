@@ -1,8 +1,10 @@
 import pytest
 from bin.data_access import *
 from os import remove
+
+from bin.data_access import CSVObj
 @pytest.fixture
-def csvi():
+def csvi() -> CSVObj:
     return CSVObj('test.csv')
 
 def test_read_empty_csv():
@@ -90,3 +92,21 @@ def test_csv_update_wrong_index(csvi):
     C.create(checklist=LP_KEYS,**S)
     with pytest.raises(IndexError):
         C.update(1,checklist=LP_KEYS,**S)
+def test_csv_non_existent_key(csvi):
+    if isfile('test.csv'): remove('test.csv')
+    C = csvi
+    
+    S = {
+        'version': "LOL",
+        'epsiode_path': "lalala",
+        'tad_path': "nope",
+        'name': "WhoAmI",
+        'game_name': "meh",
+        'episode_length': 123
+    }
+    C.create(checklist=LP_KEYS,**S)
+    
+    S['test'] = 'HELLO'
+    
+    with pytest.raises(IndexError):
+        C.update(0,checklist=LP_KEYS,**S)
