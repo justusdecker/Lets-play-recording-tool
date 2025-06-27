@@ -4,7 +4,7 @@ from bin.obs import OBSObserver
 from bin.data_access import LetsPlay, file_read, isfile, LP_KEYS, file_write
 from tkinter.filedialog import asksaveasfilename as asafn
 from bin.others import binpi
-
+LP_PATH = 'lets_plays.csv'
 def obs_connect():
     OBSO = OBSObserver()
     if not OBSO.isconnected:
@@ -15,7 +15,13 @@ def obs_connect():
         except KeyboardInterrupt:
             err('Keyboard interrupt!')
             break
-    
+
+def create_new_lp_file():
+    filepath = LP_PATH
+    if not isfile(filepath):
+        file_write(filepath,'')
+    else:
+        err('File already exist!')
 
 class App:
     def __init__(self):
@@ -92,6 +98,7 @@ class App:
                     return
                 case _:
                     err(USER_INPUT_NUM_UNMATCHED)
+    
     def data_sub_create_file_menu(self):
         while self.isrunning:
 
@@ -99,7 +106,7 @@ class App:
                 case 0:
                     return
                 case 1: # Create Lets Play.csv
-                    filepath = asafn(filetypes=[['CSV','*.csv']])
+                    filepath = LP_PATH
                     if not isfile(filepath):
                         file_write(filepath,'')
                     else:
