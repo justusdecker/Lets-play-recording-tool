@@ -1,8 +1,8 @@
 
 from bin.constants import *
 from bin.obs import OBSObserver
-from bin.data_access import LetsPlay, file_read, isfile, LP_KEYS
-
+from bin.data_access import LetsPlay, file_read, isfile, LP_KEYS, file_write
+from tkinter.filedialog import asksaveasfilename as asafn
 class App:
     def __init__(self):
         self.isrunning = True
@@ -99,6 +99,12 @@ class App:
             match int(user_input):
                 case 0:
                     return
+                case 1: # Create Lets Play.csv
+                    filepath = asafn(filetypes=[['CSV','*.csv']])
+                    if not isfile(filepath):
+                        file_write(filepath,'')
+                    else:
+                        pass
                 case _:
                     print(USER_INPUT_NUM_UNMATCHED)
     def data_sub_create_entry_menu(self):
