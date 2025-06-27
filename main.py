@@ -20,7 +20,7 @@ class App:
             case 2:
                 self.automation_sub_menu()
             case 5:
-                pass
+                self.data_sub_menu()
             case 0:
                 self.isrunning = False
             case _:
@@ -32,8 +32,8 @@ class App:
             if not user_input.isdecimal():
                 continue
             match int(user_input):
-                case 1:
-                    pass
+                case 2:
+                    self.data_sub_create_menu()
                 case 0:
                     return
                 case _:
