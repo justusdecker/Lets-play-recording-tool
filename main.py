@@ -21,6 +21,8 @@ class App:
     def __init__(self):
         self.isrunning = True
         self.current_letsplay_id = 0
+        if not isfile('lets_play.csv'):
+            war('lets_play.csv does not exist')
     def main_menu(self):
         """
         Main Menu >
@@ -33,8 +35,10 @@ class App:
                     
             case 2:
                 self.automation_sub_menu()
-            case 5:
+            case 4:
                 self.data_sub_menu()
+            case 5:
+                binpi('Set the lets play id') #! 
             case 0:
                 self.isrunning = False
             case _:

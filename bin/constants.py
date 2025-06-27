@@ -12,7 +12,8 @@ Select your option:
 (1) Record - {color816(bold('ALPHA'),35)}
 (2) Automation - {color816(bold('ALPHA'),35)}
 (3) {color816(strikethrough('Deploy'),31)}
-(5) Data
+(4) Data
+(5) Options
 (0) Exit
 """
 

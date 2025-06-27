@@ -2,6 +2,9 @@ COLOR_TABLE816FG = [90 + i for i in range(8)]  + [30 + i for i in range(10)]
 COLOR_TABLE816BG = [40 + i for i in range(10)] + [100 + i for i in range(8)]
 
 def err(text: str) -> None:
+    print(color816(bold(text),33))
+
+def err(text: str) -> None:
     print(color816(bold(text),31))
 
 def strikethrough(text: str) -> str:
