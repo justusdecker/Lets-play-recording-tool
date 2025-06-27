@@ -37,31 +37,27 @@ class App:
             case _:
                 print(USER_INPUT_NUM_UNMATCHED)
     def data_sub_menu(self):
-        while self.isrunning:
-            print(MENU_DATA_MESSAGE)
-            user_input = input()
-            if not user_input.isdecimal():
-                continue
-            match int(user_input):
-                case 1:
-                    self.data_sub_create_file_menu()
-                    return
-                case 2:
-                    self.data_sub_create_entry_menu()
-                    return
-                case 3:
-                    self.data_sub_read_menu()
-                    return
-                case 4:
-                    self.data_sub_update_menu()
-                    return
-                case 5:
-                    self.data_sub_delete_menu()
-                    return
-                case 0:
-                    return
-                case _:
-                    print(USER_INPUT_NUM_UNMATCHED)
+        
+        print(MENU_DATA_MESSAGE)
+        user_input = input()
+        if not user_input.isdecimal():
+            err('Input must be an integer')
+            return
+        match int(user_input):
+            case 1:
+                self.data_sub_create_file_menu()
+            case 2:
+                self.data_sub_create_entry_menu()
+            case 3:
+                self.data_sub_read_menu()
+            case 4:
+                self.data_sub_update_menu()
+            case 5:
+                self.data_sub_delete_menu()
+            case 0:
+                return
+            case _:
+                err(USER_INPUT_NUM_UNMATCHED)
     def data_sub_delete_menu(self):
         while self.isrunning:
             print(MENU_DATA_DELETE_MESSAGE)
@@ -96,23 +92,24 @@ class App:
                 case _:
                     print(USER_INPUT_NUM_UNMATCHED)
     def data_sub_create_file_menu(self):
-        while self.isrunning:
-            print(MENU_DATA_CREATE_FILE_MESSAGE)
-            user_input = input()
-            if not user_input.isdecimal():
-                continue
-            match int(user_input):
-                case 0:
-                    return
-                case 1: # Create Lets Play.csv
-                    filepath = asafn(filetypes=[['CSV','*.csv']])
-                    if not isfile(filepath):
-                        file_write(filepath,'')
-                    else:
-                        err('File already exist!')
-                    return
-                case _:
-                    print(USER_INPUT_NUM_UNMATCHED)
+        
+        print(MENU_DATA_CREATE_FILE_MESSAGE)
+        user_input = input()
+        if not user_input.isdecimal():
+            err('Input must be an integer')
+            return
+        match int(user_input):
+            case 0:
+                return
+            case 1: # Create Lets Play.csv
+                filepath = asafn(filetypes=[['CSV','*.csv']])
+                if not isfile(filepath):
+                    file_write(filepath,'')
+                else:
+                    err('File already exist!')
+                return
+            case _:
+                print(USER_INPUT_NUM_UNMATCHED)
     def data_sub_create_entry_menu(self):
         while self.isrunning:
             print(MENU_DATA_CREATE_ENTRY_MESSAGE)
