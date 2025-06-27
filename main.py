@@ -45,14 +45,19 @@ class App:
             match int(user_input):
                 case 1:
                     self.data_sub_create_file_menu()
+                    return
                 case 2:
                     self.data_sub_create_entry_menu()
+                    return
                 case 3:
                     self.data_sub_read_menu()
+                    return
                 case 4:
                     self.data_sub_update_menu()
+                    return
                 case 5:
                     self.data_sub_delete_menu()
+                    return
                 case 0:
                     return
                 case _:
@@ -105,6 +110,7 @@ class App:
                         file_write(filepath,'')
                     else:
                         err('File already exist!')
+                    return
                 case _:
                     print(USER_INPUT_NUM_UNMATCHED)
     def data_sub_create_entry_menu(self):
