@@ -15,8 +15,7 @@ EP_KEYS = [
     'audio_mic_path',
     'audio_desktop_path',
     'thumbnail_path',
-    'thumbnail_frame',
-    'id'
+    'thumbnail_frame'
 ]
 
 def csv_rw(filepath: str, new_data):
