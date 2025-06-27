@@ -10,6 +10,10 @@ LP_KEYS = [
     'game_name',
     'episode_length'] 
 
+def csv_rw(filepath: str, new_data):
+    old_data = csv_read(filepath)
+    csv_write(filepath, old_data + new_data)
+
 def csv_read(filepath : str) -> list[list[str]]:
     if not isfile(filepath): return []
     with open(filepath,newline='') as f:
