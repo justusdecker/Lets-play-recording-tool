@@ -18,3 +18,24 @@ def file_read(filepath : str) -> str:
 def json_read(filepath : str) -> dict | list:
     with open(filepath, 'r') as f:
         return json.load(f)
+    
+class LetsPlays:
+    """
+    |KEY|Type|
+    |---|----|
+    |Version|`str`|
+    |episode_path|`str`|
+    |tad_path|`str`|
+    |name|`str`|
+    |game_name|`str`|
+    |episode_length|`int`|
+    
+    """
+    def __init__(self, filepath: str='letsplay.csv'):
+        self.data = csv_read(filepath)
+    def create(self, **kwargs) -> None:
+
+        
+        [kwargs[arg] for arg in kwargs]
+        
+        self.data.append()
