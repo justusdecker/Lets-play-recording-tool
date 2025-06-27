@@ -10,6 +10,8 @@ Terminal Walktrough
   - [ ] Render
 - [ ] Deploy
 - [ ] Distribute
+  - [ ] Data copy to other Drive
+  - [ ] Generate Episode Markdown
 - [ ] Data
   - [ ] Create a new file
     - [ ] Lets Play
