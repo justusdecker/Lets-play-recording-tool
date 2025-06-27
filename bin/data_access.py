@@ -80,9 +80,6 @@ class CSVObj:
         self.data.pop(id)
 
 class LetsPlay(CSVObj):
-    def __init__(self, filepath):
-        super().__init__(filepath)
-class LetsPlays:
     """
     
     |KEY|Type|
@@ -95,14 +92,9 @@ class LetsPlays:
     |episode_length|`int`|
     
     """
-    def __init__(self, filepath: str='letsplay.csv'):
-        self.data = csv_read(filepath)
-        for row in self.data:
-            if len(row) != len(LP_KEYS):
-                raise IndexError()
-    def create(self, **kwargs) -> None:
-
-        
-        [kwargs[arg] for arg in kwargs]
-        
-        self.data.append()
+    def __init__(self, filepath):
+        super().__init__(filepath)
+    def create(self, **kwargs):
+        return super().create(LP_KEYS, **kwargs)
+    def update(self, id, **kwargs):
+        return super().update(id, LP_KEYS, **kwargs)
