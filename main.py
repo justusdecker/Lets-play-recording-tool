@@ -49,12 +49,12 @@ class App:
                     """
                     User create a new lets play entry:
                     """
-                    if isfile('lets_play.csv'):
-                        print('Set Settings: ')
-                        for entry in LP_KEYS:
-                            if entry == 'version':
-                                continue
-                            input(f'{entry}: ')
+                    
+                    print('Set Settings: ')
+                    for entry in LP_KEYS:
+                        if entry == 'version':
+                            continue
+                        input(f'{entry}: ')
                 case 0:
                     return
                 case _:
