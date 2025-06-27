@@ -13,7 +13,10 @@ from moviepy.video.io.VideoFileClip import VideoFileClip
 from pygame.image import save as img_save, load as img_load
 
 class ThumbnailGenerator:
-    def __init__(self, filepath: str):
+    def __init__(self, 
+                 filepath: str,
+                 videopath: str):
+        self.videopath = videopath
         self.data = json_read(filepath)
     def __get_src_image(self, 
                       file: str, 
@@ -44,7 +47,7 @@ class ThumbnailGenerator:
         
         if isfile(file):
             
-            if self.video_path != file: 
+            if self.videopath != file: 
                 # Create a new Video Source to get images from
                 self.video_src = VideoFileClip(file,audio=False)
 
