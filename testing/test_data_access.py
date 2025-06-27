@@ -1,16 +1,15 @@
 import pytest
 from bin.data_access import *
 from os import remove
-import sys
-
+from sys import _getframe as gf
 from bin.data_access import CSVObj
 @pytest.fixture
 def csvi() -> CSVObj:
     return CSVObj('test.csv')
 
 def test_read_empty_csv():
-    assert sys._getframe().f_code.co_name == "test_read_empty_csv"
     csv_read('test.csv')
+    file_write('testing.md',f'> ✅Test Success\n> {gf().f_code.co_name}')
     
     
 def test_write_empty_csv():
