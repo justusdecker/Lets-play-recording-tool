@@ -15,7 +15,7 @@ from bin.constants import DEFAULT_THUMBNAIL_SIZE
 from pygame.font import Font, init
 init()
 
-def outline(image: Surface,color: tuple[int]=(0,0,0,255)) -> Surface:
+def outlining(image: Surface,color: tuple[int]=(0,0,0,255)) -> Surface:
     shade = mask.from_surface(image).to_surface()
     shade.set_colorkey((0,0,0))
 
@@ -116,12 +116,6 @@ class ThumbnailGenerator:
         
         
         
-        timg = outLining(
-            outline['xMinus'],
-            outline['xPlus'],
-            outline['yMinus'],
-            outline['yPlus'],
-            timg,outline['color']
-            )
+        timg = outlining()
         
         return timg
