@@ -25,6 +25,10 @@ def file_read(filepath : str) -> str:
     with open(filepath, 'r') as f:
         return f.read()
 
+def file_write(filepath : str, data : str):
+    with open(filepath, 'w') as f:
+        f.write(data)
+
 def json_read(filepath : str) -> dict | list:
     with open(filepath, 'r') as f:
         return json.load(f)
