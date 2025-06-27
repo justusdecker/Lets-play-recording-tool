@@ -1,10 +1,8 @@
 import pytest
 from bin.data_access import *
-
 from os import remove
 from sys import _getframe as gf
 from bin.data_access import CSVObj
-from tests import Tests
 
 @pytest.fixture
 def csvi() -> CSVObj:
@@ -117,9 +115,9 @@ def test_csv_non_existent_key(csvi):
         'game_name': "meh",
         'episode_length': 123
     }
-    
+    C.create(checklist=LP_KEYS,**S)
     
     S['test'] = 'HELLO'
-    C.create(checklist=LP_KEYS,**S)
+    
     with pytest.raises(IndexError):
         C.update(0,checklist=LP_KEYS,**S)
