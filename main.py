@@ -67,7 +67,7 @@ class App:
     def data_sub_delete_menu(self):
         while self.isrunning:
 
-            match binpi(MENU_DATA_DELETE_MESSAGE):
+            match binpi(data_sub_menu('Delete')):
                 case 0:
                     return
                 case _:
@@ -75,7 +75,7 @@ class App:
     def data_sub_update_menu(self):
         while self.isrunning:
             
-            match binpi(MENU_DATA_UPDATE_MESSAGE):
+            match binpi(data_sub_menu('Update')):
                 case 0:
                     return
                 case _:
@@ -83,7 +83,7 @@ class App:
     def data_sub_read_menu(self):
         while self.isrunning:
             
-            match binpi(MENU_DATA_READ_MESSAGE):
+            match binpi(data_sub_menu('Read')):
                 case 0:
                     return
                 case _:
@@ -91,7 +91,7 @@ class App:
     def data_sub_create_file_menu(self):
         while self.isrunning:
 
-            match binpi(MENU_DATA_CREATE_FILE_MESSAGE):
+            match binpi(data_sub_menu('Create file')):
                 case 0:
                     return
                 case 1: # Create Lets Play.csv
@@ -105,7 +105,7 @@ class App:
     def data_sub_create_entry_menu(self):
         while self.isrunning:
             
-            match binpi(MENU_DATA_CREATE_ENTRY_MESSAGE):
+            match binpi(data_sub_menu('Create entry')):
                 case 0:
                     return
                 case _:
