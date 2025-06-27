@@ -49,9 +49,9 @@ def data_sub_menu(sub: str) -> str:
 {bold(f'Main > Data > {sub}')}
 
 Select your option:
-(1) {color816(strikethrough('Lets Play'),31)}
-(2) {color816(strikethrough('Episode'),31)}
-(3) {color816(strikethrough('Thumbnail Automation Data'),31)}
+(1) Lets Play
+(2) Episode
+(3) Thumbnail Automation Data
 (0) Exit
 """
 
