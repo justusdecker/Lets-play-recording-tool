@@ -7,13 +7,14 @@ from tests import Tests
 
 
 TESTS = Tests(__name__)
+print(TESTS.all_tests)
 @pytest.fixture
 def csvi() -> CSVObj:
     return CSVObj('test.csv')
 
 def test_read_empty_csv():
     csv_read('test.csv')
-    file_write('testing.md',f'> ✅Test Success\n> {gf().f_code.co_name}')
+    file_write('testing.md',f'> Test Success\n> {gf().f_code.co_name}')
     
     
 def test_write_empty_csv():
