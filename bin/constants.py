@@ -44,16 +44,15 @@ Select your option:
 (0) Exit
 """
 
-MENU_DATA_CREATE_MESSAGE = f"""
+MENU_DATA_CREATE_ENTRY_MESSAGE = f"""
 {COPYRIGHT}
 
 {bold('Main > Data > Create a new entry')}
 
 Select your option:
-(1) {color816(strikethrough('Create'),31)}
-(2) {color816(strikethrough('Update'),31)}
-(3) {color816(strikethrough('Read'),31)}
-(4) {color816(strikethrough('Delete'),fg=31)}
+(1) {color816(strikethrough('Lets Play'),31)}
+(2) {color816(strikethrough('Episode'),31)}
+(3) {color816(strikethrough('Thumbnail Automation Data'),31)}s
 (0) Exit
 """
 
