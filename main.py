@@ -22,6 +22,7 @@ def create_new_lp_file():
         csv_write(LP_PATH,[[binpi(f'{key}: ') if key != 'version' else file_read('version.txt') for key in LP_KEYS]])
     else:
         err('File already exist!')
+    pass
 
 class App:
     def __init__(self):
