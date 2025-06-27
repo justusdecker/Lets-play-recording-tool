@@ -17,8 +17,7 @@ def obs_connect():
             break
 
 def create_new_lp_file():
-    
-        
+    print(f'[!TIP] > If you have a typo somewhere: You can change the data later manually!(Do it or funny bugs will kill your fun :D)')
     if not isfile(LP_PATH):
         csv_write(LP_PATH,[[binpi(f'{key}: ') for key in LP_KEYS]])
     else:
@@ -107,11 +106,7 @@ class App:
                 case 0:
                     return
                 case 1: # Create Lets Play.csv
-                    filepath = LP_PATH
-                    if not isfile(filepath):
-                        file_write(filepath,'')
-                    else:
-                        err('File already exist!')
+                    create_new_lp_file()
                 case _:
                     err(USER_INPUT_NUM_UNMATCHED)
     def data_sub_create_entry_menu(self):
