@@ -104,7 +104,7 @@ class App:
                     if not isfile(filepath):
                         file_write(filepath,'')
                     else:
-                        pass
+                        err('File already exist!')
                 case _:
                     print(USER_INPUT_NUM_UNMATCHED)
     def data_sub_create_entry_menu(self):
