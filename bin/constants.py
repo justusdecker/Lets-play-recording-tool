@@ -56,7 +56,7 @@ Select your option:
 (0) Exit
 """
 
-MENU_DATA_CREATE_ENTRY_MESSAGE = f"""
+MENU_DATA_READ_MESSAGE = f"""
 {COPYRIGHT}
 
 {bold('Main > Data > Read')}
