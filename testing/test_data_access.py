@@ -1,6 +1,7 @@
 import pytest
 from bin.data_access import *
 from os import remove
+import sys
 
 from bin.data_access import CSVObj
 @pytest.fixture
@@ -8,7 +9,9 @@ def csvi() -> CSVObj:
     return CSVObj('test.csv')
 
 def test_read_empty_csv():
+    assert sys._getframe().f_code.co_name == "test_read_empty_csv"
     csv_read('test.csv')
+    
     
 def test_write_empty_csv():
     csv_write('test.csv',[])
