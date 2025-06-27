@@ -6,3 +6,17 @@ def test_read_empty_csv():
     
 def test_write_empty_csv():
     csv_write('test.csv',[])
+    
+def test_csv():
+    CSVObj('test.csv')
+def test_csv():
+    C = CSVObj('test.csv')
+    S = {
+        'version': "LOL",
+        'epsiode_path': "lalala",
+        'tad_path': "nope",
+        'name': "WhoAmI",
+        'game_name': "meh",
+        'episode_length': 123
+    }
+    C.create(LP_KEYS,S)
