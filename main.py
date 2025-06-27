@@ -1,7 +1,7 @@
 
 from bin.constants import *
 from bin.obs import OBSObserver
-from bin.data_access import LetsPlay, file_read
+from bin.data_access import LetsPlay, file_read, isfile, LP_KEYS
 class App:
     def __init__(self):
         self.isrunning = True
@@ -46,7 +46,15 @@ class App:
                 continue
             match int(user_input):
                 case 1:
-                    pass
+                    """
+                    User create a new lets play entry:
+                    """
+                    if isfile('lets_play.csv'):
+                        print('Set Settings: ')
+                        for entry in LP_KEYS:
+                            if entry == 'version':
+                                continue
+                            input(f'{entry}: ')
                 case 0:
                     return
                 case _:

@@ -52,7 +52,7 @@ MENU_DATA_CREATE_ENTRY_MESSAGE = f"""
 Select your option:
 (1) {color816(strikethrough('Lets Play'),31)}
 (2) {color816(strikethrough('Episode'),31)}
-(3) {color816(strikethrough('Thumbnail Automation Data'),31)}s
+(3) {color816(strikethrough('Thumbnail Automation Data'),31)}
 (0) Exit
 """
 
