@@ -1,6 +1,6 @@
 from pygame.surfarray import make_surface
 from pygame.transform import scale, flip, rotate, scale_by
-from pygame import Surface,SRCALPHA,Color
+from pygame import Surface,SRCALPHA,Color,mask
 
 from numpy import rot90
 
@@ -14,6 +14,23 @@ from pygame.image import save as img_save, load as img_load
 from bin.constants import DEFAULT_THUMBNAIL_SIZE
 from pygame.font import Font, init
 init()
+
+def outline(image: Surface,color: tuple[int]=(0,0,0,255)) -> Surface:
+    shade = mask.from_surface(image).to_surface()
+    shade.set_colorkey((0,0,0))
+
+
+    normal = Surface(image.get_size(),SRCALPHA)
+
+    for x in range(shade.get_width()):
+        for y in range(shade.get_height()):
+            if shade.get_at((x,y)) != Color(0,0,0,255):
+                normal.set_at((x,y),color[i])
+
+    surface = Surface(image.get_size(),SRCALPHA) 
+    for pos in [(-2,0),(2,0),(0,-2),(0,2)]: #outline offset
+        surface.blit(normal,pos)
+    surface.blit(image,(0,0))
 class ThumbnailGenerator:
     def __init__(self, 
                  filepath: str,
