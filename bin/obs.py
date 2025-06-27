@@ -9,10 +9,11 @@ class OBSObserver:
         self.connect()
         self.recording_flag = False #used for one_time operations like on_start
     
-    def update(self):
+    def update(self,ep):
         self.connect() # Reconnect
         if self.isrecording and not self.recording_flag: # Recording started
             self.recording_flag = True
+            ep.create(video_path=self.filepath,audio_mic_path='',audio_desktop_path='',thumbnail_path='',thumbnail_frame=0)
         elif not self.isrecording and self.recording_flag: # Recording stopped
             self.recording_flag = False
     def connect(self):
