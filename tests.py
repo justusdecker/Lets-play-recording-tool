@@ -1,4 +1,5 @@
 from bin.data_access import file_write, file_append
+import bin.data_access
 class Tests:
     
     def __init__(self,meat):
@@ -15,3 +16,5 @@ class Tests:
                 file_append('testing.md',f'> SUCCESS\n> {test}')
             else:
                 file_append('testing.md',f'> [!CAUTION]\n> {test}')
+import pytest
+pytest.main(['-rA','--junitxml=test.xml'])
