@@ -4,7 +4,7 @@ from os.path import isfile
 
 LP_KEYS = [
     'version',
-    'epsiode_path',
+    'episode_path',
     'tad_path',
     'name',
     'game_name',
