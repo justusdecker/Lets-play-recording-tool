@@ -21,3 +21,7 @@ def test_csv_create():
         'episode_length': 123
     }
     C.create(checklist=LP_KEYS,**S)
+    
+def test_csv_read():
+    C = CSVObj('test.csv')
+    C.read(1)
