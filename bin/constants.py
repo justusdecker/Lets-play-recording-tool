@@ -30,5 +30,32 @@ Select your option:
 (5) Back
 """
 
+MENU_DATA_MESSAGE = f"""
+{COPYRIGHT}
+
+{bold('Main > Data')}
+
+Select your option:
+(1) {color816(strikethrough('Create a new file'),31)}
+(2) {color816(strikethrough('Create a new entry'),31)}
+(3) {color816(strikethrough('Update'),31)}
+(4) {color816(strikethrough('Read'),31)}
+(5) {color816(strikethrough('Delete'),fg=31)}
+(0) Exit
+"""
+
+MENU_DATA_CREATE_MESSAGE = f"""
+{COPYRIGHT}
+
+{bold('Main > Data > Create a new entry')}
+
+Select your option:
+(1) {color816(strikethrough('Create'),31)}
+(2) {color816(strikethrough('Update'),31)}
+(3) {color816(strikethrough('Read'),31)}
+(4) {color816(strikethrough('Delete'),fg=31)}
+(0) Exit
+"""
+
 USER_INPUT_NUM_UNMATCHED = color816(bold('This option does not exist'),31)
 
