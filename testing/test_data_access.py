@@ -1,6 +1,9 @@
 import pytest
 from bin.data_access import *
 from os import remove
+@pytest.fixture
+def csvi():
+    return CSVObj('test.csv')
 
 def test_read_empty_csv():
     csv_read('test.csv')
@@ -8,11 +11,11 @@ def test_read_empty_csv():
 def test_write_empty_csv():
     csv_write('test.csv',[])
     
-def test_csv():
-    CSVObj('test.csv')
+def test_csv(csvi):
+    csvi
     
-def test_csv_create():
-    C = CSVObj('test.csv')
+def test_csv_create(csvi):
+    C = csvi
     S = {
         'version': "LOL",
         'epsiode_path': "lalala",
@@ -23,8 +26,8 @@ def test_csv_create():
     }
     C.create(checklist=LP_KEYS,**S)
     
-def test_csv_create_non_existent_key():
-    C = CSVObj('test.csv')
+def test_csv_create_non_existent_key(csvi):
+    C = csvi
     S = {
         'version': "LOL",
         'epsiode_path': "lalala",
@@ -37,8 +40,8 @@ def test_csv_create_non_existent_key():
     with pytest.raises(IndexError):
         C.create(checklist=LP_KEYS,**S)
 
-def test_csv_create_no_key():
-    C = CSVObj('test.csv')
+def test_csv_create_no_key(csvi):
+    C = csvi
     S = {
         'version': "LOL",
         'epsiode_path': "lalala",
@@ -50,8 +53,25 @@ def test_csv_create_no_key():
     with pytest.raises(KeyError):
         C.create(checklist=LP_KEYS,**S)
     
-def test_csv_read():
+def test_csv_read(csvi):
     remove('test.csv')
-    C = CSVObj('test.csv')
+    C = csvi
     with pytest.raises(IndexError):
         C.read(1)
+def test_csv_update(csvi):
+    if isfile('test.csv'): remove('test.csv')
+    C = csvi
+    
+    S = {
+        'version': "LOL",
+        'epsiode_path': "lalala",
+        'tad_path': "nope",
+        'name': "WhoAmI",
+        'game_name': "meh",
+        'episode_length': 123
+    }
+    C.create(checklist=LP_KEYS,**S)
+    
+    S['version'] = 'HELLO'
+    
+    C.update(0,checklist=LP_KEYS,**S)
