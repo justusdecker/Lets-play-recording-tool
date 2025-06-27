@@ -58,3 +58,4 @@ Select your option:
 
 USER_INPUT_NUM_UNMATCHED = color816(bold('This option does not exist'),31)
 
+DEFAULT_THUMBNAIL_SIZE = (1280,720)
