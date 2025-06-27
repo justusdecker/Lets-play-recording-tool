@@ -6,7 +6,7 @@ from bin.data_access import CSVObj
 from tests import Tests
 
 
-TESTS = Tests(__dict__)
+TESTS = Tests(__name__)
 @pytest.fixture
 def csvi() -> CSVObj:
     return CSVObj('test.csv')
