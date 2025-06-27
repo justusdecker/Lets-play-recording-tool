@@ -41,7 +41,7 @@ class OBSObserver:
     
     @property
     def filepath(self) -> str:
-        return str(self.obs.get_output_settings(OUTPUT_TYPE).output_settings['path'])
+        return str(self.client.get_output_settings(OUTPUT_TYPE).output_settings['path'])
     
     @property
     def time_in_seconds(self) -> int:
