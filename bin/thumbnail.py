@@ -12,7 +12,7 @@ from bin.data_access import json_read
 from moviepy.video.io.VideoFileClip import VideoFileClip
 from pygame.image import save as img_save, load as img_load
 from bin.constants import DEFAULT_THUMBNAIL_SIZE
-from pygame.font import Font, init
+from pygame.font import Font, init, get_default_font
 init()
 
 def outlining(image: Surface,color: tuple[int]=(0,0,0,255)) -> Surface:
@@ -20,7 +20,7 @@ def outlining(image: Surface,color: tuple[int]=(0,0,0,255)) -> Surface:
     shade.set_colorkey((0,0,0))
 
 
-    normal = Surface(image.get_size(),SRCALPHA)
+    normal = Surface((image.get_width()*1.05,image.get_height()*1.05),SRCALPHA)
 
     for x in range(shade.get_width()):
         for y in range(shade.get_height()):
@@ -84,38 +84,21 @@ class ThumbnailGenerator:
             return _returnImage
     def __get_text(self,
                  font_path: str,
-                 font_size: int,
-                 text: str,
-                 outline: dict,
-                 color=(255,255,255)
+                 font_size: int = 20,
+                 text: str= '',
+                 color=(0,0,0,255)
                  ) -> Surface:
         """
         Returns the Text Image
         """
 
-
-        font = Font(font_path,font_size)
+        if not isfile(font_path):
+            font = Font(get_default_font(),font_size)
+        else:
+            font = Font(font_path,font_size)
         
         img: Surface = font.render(text,False,color)
         
-        # 1 is the font image size
-        w1,h1 = img.get_size()
-        
-        # timg is used to outline text
-        
-        # create a new blank surface (RGBA) - USAGE OUTLINE
-        timg = Surface((w1 * 1.05,h1 * 1.05),SRCALPHA)
-        
-        w2,h2 = timg.get_size()
-        
-        x = (w2 / 2) - (w1 / 2)
-        
-        y = (h2 / 2) - (h1 / 2)
-        
-        timg.blit(img,(x,y))
-        
-        
-        
-        timg = outlining()
+        timg = outlining(img,color)
         
         return timg
