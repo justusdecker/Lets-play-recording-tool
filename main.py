@@ -61,44 +61,32 @@ class App:
     
     def data_sub_delete_menu(self):
         while self.isrunning:
-            print(MENU_DATA_DELETE_MESSAGE)
-            user_input = input()
-            if not user_input.isdecimal():
-                continue
-            match int(user_input):
+
+            match binpi(MENU_DATA_DELETE_MESSAGE):
                 case 0:
                     return
                 case _:
                     print(USER_INPUT_NUM_UNMATCHED)
     def data_sub_update_menu(self):
         while self.isrunning:
-            print(MENU_DATA_UPDATE_MESSAGE)
-            user_input = input()
-            if not user_input.isdecimal():
-                continue
-            match int(user_input):
+            
+            match binpi(MENU_DATA_UPDATE_MESSAGE):
                 case 0:
                     return
                 case _:
                     print(USER_INPUT_NUM_UNMATCHED)
     def data_sub_read_menu(self):
         while self.isrunning:
-            print(MENU_DATA_READ_MESSAGE)
-            user_input = input()
-            if not user_input.isdecimal():
-                continue
-            match int(user_input):
+            
+            match binpi(MENU_DATA_READ_MESSAGE):
                 case 0:
                     return
                 case _:
                     print(USER_INPUT_NUM_UNMATCHED)
     def data_sub_create_file_menu(self):
         while self.isrunning:
-            print(MENU_DATA_CREATE_FILE_MESSAGE)
-            user_input = input()
-            if not user_input.isdecimal():
-                continue
-            match int(user_input):
+
+            match binpi(MENU_DATA_CREATE_FILE_MESSAGE):
                 case 0:
                     return
                 case 1: # Create Lets Play.csv
@@ -111,22 +99,16 @@ class App:
                     print(USER_INPUT_NUM_UNMATCHED)
     def data_sub_create_entry_menu(self):
         while self.isrunning:
-            print(MENU_DATA_CREATE_ENTRY_MESSAGE)
-            user_input = input()
-            if not user_input.isdecimal():
-                continue
-            match int(user_input):
+            
+            match binpi(MENU_DATA_CREATE_ENTRY_MESSAGE):
                 case 0:
                     return
                 case _:
                     print(USER_INPUT_NUM_UNMATCHED)
     def automation_sub_menu(self):
         while self.isrunning:
-            print(MENU_AUTOMATION_MESSAGE)
-            user_input = input()
-            if not user_input.isdecimal():
-                continue
-            match int(user_input):
+
+            match binpi(MENU_AUTOMATION_MESSAGE):
                 case 1:
                     pass
                 case 5:
