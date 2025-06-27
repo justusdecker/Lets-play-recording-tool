@@ -1,13 +1,14 @@
 import pytest
 from bin.data_access import *
+import bin.data_access
 from os import remove
 from sys import _getframe as gf
 from bin.data_access import CSVObj
 from tests import Tests
 
 
-TESTS = Tests(__name__)
-print(TESTS.all_tests)
+TESTS = Tests(bin.data_access)
+
 @pytest.fixture
 def csvi() -> CSVObj:
     return CSVObj('test.csv')
