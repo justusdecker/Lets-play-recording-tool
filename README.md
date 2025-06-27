@@ -1,6 +1,6 @@
 
 # Lets-play-recording-tool
-## 0.1.127
+## 0.1.128
 
 An automation tool for lets players
 
