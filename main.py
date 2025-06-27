@@ -12,7 +12,7 @@ def obs_connect(ep: Episode):
     while OBSO.isconnected:
         try:
             print(OBSO.timecode)
-            OBSO.update()
+            OBSO.update(ep)
                 
         except KeyboardInterrupt:
             err('Keyboard interrupt!')
