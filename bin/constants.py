@@ -42,59 +42,11 @@ Select your option:
 (5) {color816(strikethrough('Delete'),fg=31)}
 (0) Exit
 """
-
-MENU_DATA_CREATE_ENTRY_MESSAGE = f"""
+def data_sub_menu(sub: str) -> str:
+    return f"""
 {COPYRIGHT}
 
-{bold('Main > Data > Create a new entry')}
-
-Select your option:
-(1) {color816(strikethrough('Lets Play'),31)}
-(2) {color816(strikethrough('Episode'),31)}
-(3) {color816(strikethrough('Thumbnail Automation Data'),31)}
-(0) Exit
-"""
-
-MENU_DATA_CREATE_FILE_MESSAGE = f"""
-{COPYRIGHT}
-
-{bold('Main > Data > Create a new file')}
-
-Select your option:
-(1) {color816(strikethrough('Lets Play'),31)}
-(2) {color816(strikethrough('Episode'),31)}
-(3) {color816(strikethrough('Thumbnail Automation Data'),31)}
-(0) Exit
-"""
-
-MENU_DATA_READ_MESSAGE = f"""
-{COPYRIGHT}
-
-{bold('Main > Data > Read')}
-
-Select your option:
-(1) {color816(strikethrough('Lets Play'),31)}
-(2) {color816(strikethrough('Episode'),31)}
-(3) {color816(strikethrough('Thumbnail Automation Data'),31)}
-(0) Exit
-"""
-
-MENU_DATA_UPDATE_MESSAGE = f"""
-{COPYRIGHT}
-
-{bold('Main > Data > Update')}
-
-Select your option:
-(1) {color816(strikethrough('Lets Play'),31)}
-(2) {color816(strikethrough('Episode'),31)}
-(3) {color816(strikethrough('Thumbnail Automation Data'),31)}
-(0) Exit
-"""
-
-MENU_DATA_DELETE_MESSAGE = f"""
-{COPYRIGHT}
-
-{bold('Main > Data > Delete')}
+{bold(f'Main > Data > {sub}')}
 
 Select your option:
 (1) {color816(strikethrough('Lets Play'),31)}
