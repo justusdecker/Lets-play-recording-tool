@@ -115,14 +115,7 @@ class LetsPlay(CSVObj):
 class Episode(CSVObj):
     """
     
-    |KEY|Type|
-    |---|----|
-    |Version|`str`|
-    |episode_path|`str`|
-    |tad_path|`str`|
-    |name|`str`|
-    |game_name|`str`|
-    |episode_length|`int`|
+    !Must be added!
     
     """
     def __init__(self, filepath):
