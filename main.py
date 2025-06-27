@@ -42,8 +42,16 @@ class App:
             if not user_input.isdecimal():
                 continue
             match int(user_input):
+                case 1:
+                    self.data_sub_create_file_menu()
                 case 2:
-                    self.data_sub_create_menu()
+                    self.data_sub_create_entry_menu()
+                case 3:
+                    self.data_sub_read_menu()
+                case 4:
+                    self.data_sub_update_menu()
+                case 5:
+                    self.data_sub_delete_menu()
                 case 0:
                     return
                 case _:
@@ -81,7 +89,18 @@ class App:
                     return
                 case _:
                     print(USER_INPUT_NUM_UNMATCHED)
-    def data_sub_create_menu(self):
+    def data_sub_create_file_menu(self):
+        while self.isrunning:
+            print(MENU_DATA_CREATE_FILE_MESSAGE)
+            user_input = input()
+            if not user_input.isdecimal():
+                continue
+            match int(user_input):
+                case 0:
+                    return
+                case _:
+                    print(USER_INPUT_NUM_UNMATCHED)
+    def data_sub_create_entry_menu(self):
         while self.isrunning:
             print(MENU_DATA_CREATE_ENTRY_MESSAGE)
             user_input = input()

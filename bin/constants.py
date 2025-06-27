@@ -55,6 +55,18 @@ Select your option:
 (0) Exit
 """
 
+MENU_DATA_CREATE_FILE_MESSAGE = f"""
+{COPYRIGHT}
+
+{bold('Main > Data > Create a new file')}
+
+Select your option:
+(1) {color816(strikethrough('Lets Play'),31)}
+(2) {color816(strikethrough('Episode'),31)}
+(3) {color816(strikethrough('Thumbnail Automation Data'),31)}
+(0) Exit
+"""
+
 MENU_DATA_READ_MESSAGE = f"""
 {COPYRIGHT}
 

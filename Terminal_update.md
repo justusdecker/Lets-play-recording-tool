@@ -12,7 +12,7 @@ Terminal Walktrough
   - [ ] Data copy to other Drive
   - [ ] Generate Episode
 Markdown
-- [ ] Data
+- [x] Data
   - [x] Create a new file
     - [x] Lets Play
     - [x] Episode
