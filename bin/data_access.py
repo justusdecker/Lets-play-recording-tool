@@ -54,6 +54,7 @@ class CSVObj:
     The default csv object to inherit from.
     """
     def __init__(self, filepath: str):
+        self.filepath = filepath
         self.data = csv_read(filepath)
         for row in self.data:
             if len(row) != len(LP_KEYS):
@@ -73,6 +74,9 @@ class CSVObj:
             raise IndexError()
         if not isinstance(id,int):
             raise TypeError()
+    
+    def save(self):
+        csv_write(self.filename, self.data)
     
     def create(self,checklist: list[str], **kwargs) -> None:
         self.__check_list(cl=checklist, **kwargs)
