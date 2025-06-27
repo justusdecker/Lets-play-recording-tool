@@ -11,6 +11,7 @@ from os.path import isfile
 from bin.data_access import json_read
 from moviepy.video.io.VideoFileClip import VideoFileClip
 from pygame.image import save as img_save, load as img_load
+from bin.constants import DEFAULT_THUMBNAIL_SIZE
 
 class ThumbnailGenerator:
     def __init__(self, 
