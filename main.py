@@ -48,6 +48,17 @@ class App:
                     return
                 case _:
                     print(USER_INPUT_NUM_UNMATCHED)
+    def data_sub_read_menu(self):
+        while self.isrunning:
+            print(MENU_DATA_READ_MESSAGE)
+            user_input = input()
+            if not user_input.isdecimal():
+                continue
+            match int(user_input):
+                case 0:
+                    return
+                case _:
+                    print(USER_INPUT_NUM_UNMATCHED)
     def data_sub_create_menu(self):
         while self.isrunning:
             print(MENU_DATA_CREATE_ENTRY_MESSAGE)
@@ -55,16 +66,6 @@ class App:
             if not user_input.isdecimal():
                 continue
             match int(user_input):
-                case 1:
-                    """
-                    User create a new lets play entry:
-                    """
-                    
-                    print('Set Settings: ')
-                    for entry in LP_KEYS:
-                        if entry == 'version':
-                            continue
-                        input(f'{entry}: ')
                 case 0:
                     return
                 case _:
