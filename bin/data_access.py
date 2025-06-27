@@ -18,9 +18,16 @@ def file_read(filepath : str) -> str:
 def json_read(filepath : str) -> dict | list:
     with open(filepath, 'r') as f:
         return json.load(f)
-    
+LP_KEYS = [
+    'version',
+    'epsiode_path',
+    'tad_path',
+    'name',
+    'game_name',
+    'episode_length'] 
 class LetsPlays:
     """
+    
     |KEY|Type|
     |---|----|
     |Version|`str`|
@@ -33,6 +40,9 @@ class LetsPlays:
     """
     def __init__(self, filepath: str='letsplay.csv'):
         self.data = csv_read(filepath)
+        for row in self.data:
+            if len(row) != len(LP_KEYS):
+                raise IndexError()
     def create(self, **kwargs) -> None:
 
         
