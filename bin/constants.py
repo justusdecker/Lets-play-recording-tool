@@ -32,7 +32,7 @@ MENU_MESSAGE = f"""
 
 MENU_AUTOMATION_MESSAGE = f"""
 {header('automations')}
-(1) Thumbnail Generate
+(1) Thumbnail Generate - {color816(bold('ALPHA'),35)}
 (2) {color816(strikethrough('Fetch Audio'),31)}
 (3) {color816(strikethrough('Fix Audio'),31)}
 (4) {color816(strikethrough('Render'),31)}
