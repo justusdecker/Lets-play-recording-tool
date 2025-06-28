@@ -15,6 +15,8 @@ from bin.constants import DEFAULT_THUMBNAIL_SIZE
 from pygame.font import Font, init, get_default_font
 init()
 
+
+
 def outlining(image: Surface,color: tuple[int]=(0,0,0,255)) -> Surface:
     shade = mask.from_surface(image).to_surface()
     shade.set_colorkey((0,0,0))
@@ -136,8 +138,6 @@ class ThumbnailGenerator:
         surf = scale_by(surf,tad['scale'])
         
         surf = rotate(surf,tad['rot'])
-        
-        cropping()
         
         #center image position calculation [x,y] [w,h]
         # x - (w / 2) & y - (h / 2)
