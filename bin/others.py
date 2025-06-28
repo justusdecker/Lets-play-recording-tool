@@ -29,7 +29,7 @@ def binps(text : str, inp: str = '') -> int:
         print('\033[23m\033[39m',end='')
     return user_input
     
-def input_episode_range(max_eps:list[int], lp_names: list[str]):
+def input_episode_range(max_eps:list[int], lp_names: list[str]) -> None | tuple[int, tuple[int, int]]:
     
     if len(max_eps) != len(lp_names):
         err('ValueError')
@@ -52,11 +52,11 @@ def input_episode_range(max_eps:list[int], lp_names: list[str]):
 (3) one
     """
     RANGE_START = header('tg',['Set RANGE START']) + f'0 - {max_eps[lp_id]-1}\n'
-    RANGE_END = header('tg',['Set RANGE END']) + f'0 - {max_eps[lp_id]}\n'
-    RANGE_ONE = header('tg',['Set Index']) + f'0 - {max_eps[lp_id]}\n'
+    RANGE_END = header('tg',['Set RANGE END']) + f'0 - {max_eps[lp_id]-1}\n'
+    RANGE_ONE = header('tg',['Set Index']) + f'0 - {max_eps[lp_id]-1}\n'
     match binpi(MODE_SET):
         case 1:
-            ep_range = (0,max_eps[lp_id]-1)
+            ep_range = (0,max_eps[lp_id])
         case 2:
             _start = binpi(RANGE_START)
             _end = binpi(RANGE_END + f'\n{_start} - {max_eps[lp_id]-1}\n')
