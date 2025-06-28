@@ -1,5 +1,7 @@
 [
-    {},
+    {
+        "pos": [0,0]
+    },
     {
         "path": "test_logo.png",
         "scale": 1,

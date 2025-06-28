@@ -128,11 +128,11 @@ class ThumbnailGenerator:
         
         timg = outlining(img,tad['color'])
         
-        surf = scale_by(img,tad['scale'])
+        timg = scale_by(img,tad['scale'])
         
-        surf = rotate(img,tad['rot'])
+        timg = rotate(img,tad['rot'])
         
-        return timg
+        return timg, tad['pos']
     
     def __render_logo(self, tad: dict) -> tuple[Surface, tuple[int, int]]:
         if not isfile(tad['path']):
@@ -151,4 +151,4 @@ class ThumbnailGenerator:
         return surf, (x,y)
     
     def __render_background(self, filepath: str, frame: float, tad: dict): #Here rotation, color manipulation will be added
-        return self.__get_src_image(filepath, frame)
+        return self.__get_src_image(filepath, frame),tad['pos']
