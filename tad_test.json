@@ -5,7 +5,7 @@
     {
         "path": "test_logo.png",
         "scale": 1,
-        "rot": 0,
+        "rot": 45,
         "pos": [100,100]
     },
     {
