@@ -69,7 +69,6 @@ def input_episode_range(max_eps:list[int], lp_names: list[str]) -> None | tuple[
             if _start > _end:
                 err('Input out of range')
                 return
-            print(_end+1,'MAX')
             ep_range = (_start, _end+1)
         case 3:
             _index = binpi(RANGE_ONE)
