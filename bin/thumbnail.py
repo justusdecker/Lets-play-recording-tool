@@ -98,7 +98,7 @@ class ThumbnailGenerator:
             self.idx = frame if frame >= 0 and frame  <= self.video_src.duration else 0 
 
             _returnImage: Surface = make_surface(rot90(self.video_src.get_frame(self.idx)))
-            _returnImage: Surface = scale(_returnImage,self.default_size)
+            _returnImage: Surface = scale(_returnImage,DEFAULT_THUMBNAIL_SIZE)
             _returnImage: Surface = flip(_returnImage,True,False)
             
             return _returnImage
