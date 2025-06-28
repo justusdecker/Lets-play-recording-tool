@@ -2,8 +2,8 @@
 from bin.constants import *
 from bin.obs import OBSObserver
 from bin.data_access import LetsPlay, file_read, isfile, LP_KEYS, EP_KEYS, file_write,csv_write, Episode
-from tkinter.filedialog import asksaveasfilename as asafn
-from bin.others import binpi,binps
+from tkinter.filedialog import asksaveasfilename as asafn, askopenfilename as aofn
+from bin.others import binpi,binps, input_episode_range
 from bin.thumbnail import ThumbnailGenerator
 LP_PATH = 'lets_plays.csv'
 def obs_connect(ep: Episode):
@@ -137,17 +137,29 @@ class App:
 
             match binpi(MENU_AUTOMATION_MESSAGE):
                 case 1:
+                    letsplay = LetsPlay(LP_PATH)
+                    
                     TG = ThumbnailGenerator()
-                    _from = binpi('Enter from episode: ')
-                    _to = binpi('Enter to episode: ')
-                    
-                    lid = LetsPlay(LP_PATH).read(self.current_letsplay_id)[2]
-                    ep = Episode(lid)
-                    for i in range(_from,_to):
-                        
-                        ep.read(i)[0]
-                    
-                    
+                    res = input_episode_range([32,452,53,56,745],['minecraft','valheim','gta','the forest','Schedule I'])
+                    if res is not None:
+                        lp,epr = res
+                        ep_path,lp_name = letsplay.read(lp)[1,4]
+                        if epr[0] == epr[1]:
+                            video_path = Episode(ep_path).read(epr[0])[0]
+                            tad = aofn(filetypes=[['JSON','*.json']])
+                            if not tad:
+                                return
+                            TG.generate(
+                                str(epr[0]),
+                                video_path,
+                                tad,
+                                f'{epr[0]}_{lp_name}_thumbnail.png'
+                                )
+                            
+                            print(epr[0])
+                        else:
+                            for i in range(epr[0],epr[1]):
+                                print(i)
                 case 5:
                     return
                 case _:
