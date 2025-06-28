@@ -47,7 +47,7 @@ def input_episode_range(max_eps:list[int], lp_names: list[str]):
 (2) in range
 (3) one
     """
-    RANGE_START = header('tg',['Set RANGE START']) + f'{max_eps[lp_id]}'
+    RANGE_START = header('tg',['Set RANGE START']) + f'0 - {max_eps[lp_id]-1}\n'
     RANGE_END = header('tg',['Set RANGE END']) + f'0 - {max_eps[lp_id]}\n'
     RANGE_ONE = header('tg',['Set Index']) + f'0 - {max_eps[lp_id]}\n'
     match binpi(MODE_SET):
