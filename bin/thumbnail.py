@@ -37,6 +37,17 @@ class ThumbnailGenerator:
                  videopath: str):
         self.videopath = videopath
         self.data = json_read(filepath)
+    
+    def generate(self,
+                 text: str,
+                 video_path: str,
+                 tad_path: str,
+                 save_to_path: str,
+                 frame: float = -1,
+                 
+                 ):
+        json_read(tad_path)
+    
     def __get_src_image(self, 
                       file: str, 
                       frame: float | int = -1
@@ -103,3 +114,8 @@ class ThumbnailGenerator:
         timg = outlining(img,color)
         
         return timg
+    
+    def __render_logo(self):
+        pass
+    
+    
