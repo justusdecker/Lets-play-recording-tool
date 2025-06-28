@@ -47,7 +47,7 @@ class ThumbnailGenerator:
                  
                  ):
         _bg, _logo, _text = json_read(tad_path)
-        surface = self.__get_src_image(video_path,frame)
+        surface = self.__render_background(video_path,frame)
         text_surface = self.__render_text(_text['path'],_text['size'],text)
         self.__comp_render(
             (self.__get_src_image(video_path,frame),_bg['pos'])
@@ -125,8 +125,24 @@ class ThumbnailGenerator:
         
         return timg
     
-    def __render_logo(self):
-        pass
-    
-    def __render_background(self): #Here rotation, color manipulation will be added
-        pass
+    def __render_logo(self, filepath: str) -> tuple[Surface, tuple[int, int]]:
+        if not isfile(filepath):
+            # File does not exist so return an empty logo
+            return Surface((1,1),SRCALPHA),(0,0)
+        surf = img_load(entry['path'])
+            
+        surf = scale(surf,self.default_size)
+        
+        surf = scale_by(surf,entry['scale'])
+        
+        surf = rotate(surf,entry['rot'])
+        
+        cropping()
+        
+        x = int(entry['pos'][0] - (surf.get_width() *.5))
+            
+        y = int(entry['pos'][1] - (surf.get_height() *.5))
+        
+        return surf, (x,y)
+    def __render_background(self, filepath: str, frame: float): #Here rotation, color manipulation will be added
+        return self.__get_src_image(filepath, frame)
