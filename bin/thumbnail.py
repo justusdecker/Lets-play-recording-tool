@@ -32,11 +32,7 @@ def outlining(image: Surface,color: tuple[int]=(0,0,0,255)) -> Surface:
         surface.blit(normal,pos)
     surface.blit(image,(0,0))
 class ThumbnailGenerator:
-    def __init__(self, 
-                 filepath: str,
-                 videopath: str):
-        self.videopath = videopath
-        self.data = json_read(filepath)
+    def __init__(self): pass
     
     def generate(self,
                  text: str,
