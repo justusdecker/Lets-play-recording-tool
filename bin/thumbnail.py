@@ -47,13 +47,18 @@ class ThumbnailGenerator:
                  
                  ):
         _bg, _logo, _text = json_read(tad_path)
-        surface = self.__render_background(video_path,frame)
-        text_surface = self.__render_text(_text['path'],_text['size'],text)
-        self.__comp_render(
+
+        img = self.__comp_render(
             self.__render_background(video_path,frame,_bg),
             self.__render_logo(_logo),
-            self.__render_text(_text)
+            self.__render_text(_text,text)
             )
+        self.__save(save_to_path,img)
+        
+    def __save(self,
+               filepath: str,
+               surf: Surface):
+        img_save(surf,filepath)
         
     def __get_src_image(self, 
                       file: str, 
@@ -102,10 +107,11 @@ class ThumbnailGenerator:
             return _returnImage
         raise FileNotFoundError('Your Image does not exist!')
     
-    def __comp_render(self,objs: list[tuple[Surface,tuple[int,int]]]):
+    def __comp_render(self,objs: list[tuple[Surface,tuple[int,int]]]) -> Surface:
         COMP = Surface(DEFAULT_THUMBNAIL_SIZE,SRCALPHA)
         for obj,pos in objs:
             COMP.blit(obj,pos)
+        return COMP
     
     def __render_text(self, tad: dict,
                  text: str= ''
