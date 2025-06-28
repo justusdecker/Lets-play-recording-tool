@@ -128,6 +128,10 @@ class ThumbnailGenerator:
         
         timg = outlining(img,tad['color'])
         
+        surf = scale_by(img,tad['scale'])
+        
+        surf = rotate(img,tad['rot'])
+        
         return timg
     
     def __render_logo(self, tad: dict) -> tuple[Surface, tuple[int, int]]:

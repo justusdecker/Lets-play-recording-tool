@@ -6,8 +6,10 @@
         "rot": 0
     },
     {
-        "path": "test_logo.png",
+        "path": "",
         "scale": 1,
-        "rot": 0
+        "rot": 0,
+        "color": [255,255,255,255],
+        "size": 20
     }
 ]
