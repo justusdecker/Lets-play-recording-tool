@@ -30,6 +30,10 @@ def binps(text : str, inp: str = '') -> int:
     return user_input
     
 def input_episode_range(max_eps:list[int], lp_names: list[str]):
+    
+    if len(max_eps) != len(lp_names):
+        err('ValueError')
+        return
     # SET LP
     listed_lets_plays = "\n".join([f"({idx}) {lp}" for idx, lp in enumerate(lp_names)])
     
