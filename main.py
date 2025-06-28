@@ -144,7 +144,8 @@ class App:
                     res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
                     if res is not None:
                         lp,epr = res
-                        ep_path,lp_name = letsplay.read(lp)[1,4]
+                        lp_name = letsplay.get_name(lp)
+                        ep_path = letsplay.get_episode_path(lp)
                         if epr[0] == epr[1]:
                             video_path = Episode(ep_path).read(epr[0])[0]
                             tad = aofn(filetypes=[['JSON','*.json']])
