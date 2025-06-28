@@ -86,9 +86,9 @@ class ThumbnailGenerator:
         
         if isfile(file):
             
-            if self.videopath != file: 
-                # Create a new Video Source to get images from
-                self.video_src = VideoFileClip(file,audio=False)
+
+            # Create a new Video Source to get images from
+            self.video_src = VideoFileClip(file,audio=False)
 
             if frame == -1: 
                 # Frame is not valid so take a random value from 0 to video.duration
