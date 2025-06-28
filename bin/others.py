@@ -30,21 +30,24 @@ def binps(text : str, inp: str = '') -> int:
     return user_input
     
 def input_episode_range(max_eps:list[int], lp_names: list[str]):
-    HEADER = f"""
-{COPYRIGHT}    
-    
-{bold(f'Main > Automation > Thumbnail Generator > Select LP')}
-
-Select your Option:
-    """
     
     listed_lets_plays = "\n".join([f"({idx}) {lp}" for idx, lp in enumerate(lp_names)])
-    lp_id = binpi(f'Select Lets Play ID: \n {listed_lets_plays}')
+    
+    lp_id = binpi(f"{header('tg',['Set Lets Play'])}{listed_lets_plays}")
+    
     if lp_id < len(lp_names):
         err('Input out of range')
         return
+    MODE_SET = f"""
+{header('tg',['Set MODE'])}
+(1) all
+(2) in range
+(3) one
+(0) Return
+    """
+    mode = binpi(MODE_SET)
     f"""
     Select Option:
     """
     binpi()
-    lp_id = binpi(f'Select Lets Play ID: \n {listed_lets_plays}')
+    
