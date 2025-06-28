@@ -128,5 +128,5 @@ class ThumbnailGenerator:
     def __render_logo(self):
         pass
     
-    def __render_background(self):
+    def __render_background(self): #Here rotation, color manipulation will be added
         pass
