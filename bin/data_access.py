@@ -122,6 +122,10 @@ class LetsPlay(CSVObj):
         return super().create(LP_KEYS, **kwargs)
     def update(self, id, **kwargs):
         return super().update(id, LP_KEYS, **kwargs)
+    
+    def get_name(self,id: int) -> str:
+        return self.read(id)[4]
+    
     def get_names(self) -> list[str]:
         return [i[4] for i in self.data]
     def get_episode_ammount(self) -> list[int]:
