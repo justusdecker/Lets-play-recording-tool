@@ -6,7 +6,8 @@ COPYRIGHT = f"{bold('LPRT')} {italic(file_read('version.txt'))} - (c) Justus Dec
 SUBS = {
     'main': ['Main'],
     'automations': ['Main','Automations'],
-    'data': ['Main','Data']
+    'data': ['Main','Data'],
+    'tg': ['Main' , 'Automation' , 'Thumbnail Generator']
 }
 
 def header(key_sub: str,subs: list[str]= []) -> str:
@@ -49,11 +50,8 @@ MENU_DATA_MESSAGE = f"""
 """
 def data_sub_menu(sub: str) -> str:
     return f"""
-{COPYRIGHT}
 
-{bold(f'Main > Data > {sub}')}
 {header('data',[sub])}
-Select your option:
 (1) Lets Play
 (2) Episode
 (3) Thumbnail Automation Data
