@@ -1,5 +1,5 @@
 from bin.text_manipulation import err, bold
-from bin.constants import COPYRIGHT, header
+from bin.constants import COPYRIGHT, header, USER_INPUT_NUM_UNMATCHED
 
 def binpi(text : str, inp: str = '') -> int:
     """
@@ -30,7 +30,7 @@ def binps(text : str, inp: str = '') -> int:
     return user_input
     
 def input_episode_range(max_eps:list[int], lp_names: list[str]):
-    
+    # SET LP
     listed_lets_plays = "\n".join([f"({idx}) {lp}" for idx, lp in enumerate(lp_names)])
     
     lp_id = binpi(f"{header('tg',['Set Lets Play'])}{listed_lets_plays}")
@@ -38,6 +38,8 @@ def input_episode_range(max_eps:list[int], lp_names: list[str]):
     if lp_id < len(lp_names):
         err('Input out of range')
         return
+    
+    # SET MODE
     MODE_SET = f"""
 {header('tg',['Set MODE'])}
 (1) all
@@ -45,9 +47,15 @@ def input_episode_range(max_eps:list[int], lp_names: list[str]):
 (3) one
 (0) Return
     """
-    mode = binpi(MODE_SET)
-    f"""
-    Select Option:
-    """
-    binpi()
-    
+
+    match binpi(MODE_SET):
+        case 1:
+            pass
+        case 2:
+            pass
+        case 3:
+            pass
+        case 0:
+            return
+        case _:
+            err(USER_INPUT_NUM_UNMATCHED)
