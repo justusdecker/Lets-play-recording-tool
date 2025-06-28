@@ -50,8 +50,10 @@ class ThumbnailGenerator:
         surface = self.__render_background(video_path,frame)
         text_surface = self.__render_text(_text['path'],_text['size'],text)
         self.__comp_render(
-            (self.__get_src_image(video_path,frame),_bg['pos'])
+            self.__render_background(video_path,frame,_bg),
+            self.__render_logo(_logo)
             )
+        
     def __get_src_image(self, 
                       file: str, 
                       frame: float | int = -1
@@ -125,24 +127,23 @@ class ThumbnailGenerator:
         
         return timg
     
-    def __render_logo(self, filepath: str) -> tuple[Surface, tuple[int, int]]:
-        if not isfile(filepath):
+    def __render_logo(self, tad: dict) -> tuple[Surface, tuple[int, int]]:
+        if not isfile(tad['path']):
             # File does not exist so return an empty logo
             return Surface((1,1),SRCALPHA),(0,0)
-        surf = img_load(entry['path'])
-            
-        surf = scale(surf,self.default_size)
+        surf = img_load(tad['path'])
         
-        surf = scale_by(surf,entry['scale'])
+        surf = scale_by(surf,tad['scale'])
         
-        surf = rotate(surf,entry['rot'])
+        surf = rotate(surf,tad['rot'])
         
         cropping()
-        
-        x = int(entry['pos'][0] - (surf.get_width() *.5))
+        x, y = [i for pos,size in zip(tad['pos'], surf.get_size())]
+        x = int(tad['pos'][0] - (surf.get_width() *.5))
             
-        y = int(entry['pos'][1] - (surf.get_height() *.5))
+        y = int(tad['pos'][1] - (surf.get_height() *.5))
         
         return surf, (x,y)
-    def __render_background(self, filepath: str, frame: float): #Here rotation, color manipulation will be added
+    
+    def __render_background(self, filepath: str, frame: float, tad: dict): #Here rotation, color manipulation will be added
         return self.__get_src_image(filepath, frame)
