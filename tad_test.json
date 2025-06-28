@@ -1,5 +1,13 @@
 [
+    {},
     {
-        "path": ""
+        "path": "test_logo.png",
+        "scale": 1,
+        "rot": 0
+    },
+    {
+        "path": "test_logo.png",
+        "scale": 1,
+        "rot": 0
     }
 ]
