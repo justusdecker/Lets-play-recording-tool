@@ -39,23 +39,29 @@ def input_episode_range(max_eps:list[int], lp_names: list[str]):
         err('Input out of range')
         return
     
+    
     # SET MODE
     MODE_SET = f"""
 {header('tg',['Set MODE'])}
 (1) all
 (2) in range
 (3) one
-(0) Return
     """
-
+    RANGE_START = header('tg',['Set RANGE START']) + f'{max_eps[lp_id]}'
+    RANGE_END = header('tg',['Set RANGE END']) + f'{max_eps[lp_id]}'
+    RANGE_END = header('tg',['Set Index']) + f'{max_eps[lp_id]}'
     match binpi(MODE_SET):
         case 1:
-            pass
+            lp_range = (0,max_eps-1)
         case 2:
-            pass
+            _start = binpi(RANGE_START)
+            _end = binpi(RANGE_END + f'\nMust be greater or equal {_start}')
+            if _start > _end:
+                err('Input out of range')
+                return
+            lp_range = (_start, _end)
         case 3:
-            pass
-        case 0:
-            return
+            _index = binpi(RANGE_START)
+            lp_range = ()
         case _:
             err(USER_INPUT_NUM_UNMATCHED)
