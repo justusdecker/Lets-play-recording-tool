@@ -15,8 +15,6 @@ from bin.constants import DEFAULT_THUMBNAIL_SIZE
 from pygame.font import Font, init, get_default_font
 init()
 
-
-
 def outlining(image: Surface,color: tuple[int]=(0,0,0,255)) -> Surface:
     shade = mask.from_surface(image).to_surface()
     shade.set_colorkey((0,0,0))
@@ -53,7 +51,8 @@ class ThumbnailGenerator:
         text_surface = self.__render_text(_text['path'],_text['size'],text)
         self.__comp_render(
             self.__render_background(video_path,frame,_bg),
-            self.__render_logo(_logo)
+            self.__render_logo(_logo),
+            self.__render_text(_text)
             )
         
     def __get_src_image(self, 
@@ -108,24 +107,23 @@ class ThumbnailGenerator:
         for obj,pos in objs:
             COMP.blit(obj,pos)
     
-    def __render_text(self,
-                 font_path: str,
-                 font_size: int = 20,
-                 text: str= '',
-                 color=(0,0,0,255)
+    def __render_text(self, tad: dict,
+                 text: str= ''
                  ) -> Surface:
         """
         Returns the Text Image with outline
         """
 
-        if not isfile(font_path):
-            font = Font(get_default_font(),font_size)
+        if not 'color' in tad:
+            tad['color'] = (0,0,0,255)
+        if not isfile(tad['path']):
+            font = Font(get_default_font(),tad['size'])
         else:
-            font = Font(font_path,font_size)
+            font = Font(tad['path'],tad['size'])
         
-        img: Surface = font.render(text,False,color)
+        img: Surface = font.render(text,False,tad['color'])
         
-        timg = outlining(img,color)
+        timg = outlining(img,tad['color'])
         
         return timg
     
