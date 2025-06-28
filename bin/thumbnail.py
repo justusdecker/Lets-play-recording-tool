@@ -46,8 +46,12 @@ class ThumbnailGenerator:
                  frame: float = -1,
                  
                  ):
-        json_read(tad_path)
-    
+        _bg, _logo, _text = json_read(tad_path)
+        surface = self.__get_src_image(video_path,frame)
+        text_surface = self.__render_text(_text['path'],_text['size'],text)
+        self.__comp_render(
+            (self.__get_src_image(video_path,frame),_bg['pos'])
+            )
     def __get_src_image(self, 
                       file: str, 
                       frame: float | int = -1
@@ -93,8 +97,14 @@ class ThumbnailGenerator:
             _returnImage: Surface = flip(_returnImage,True,False)
             
             return _returnImage
+        raise FileNotFoundError('Your Image does not exist!')
     
-    def __get_text(self,
+    def __comp_render(self,objs: list[tuple[Surface,tuple[int,int]]]):
+        COMP = Surface(DEFAULT_THUMBNAIL_SIZE,SRCALPHA)
+        for obj,pos in objs:
+            COMP.blit(obj,pos)
+    
+    def __render_text(self,
                  font_path: str,
                  font_size: int = 20,
                  text: str= '',
@@ -118,4 +128,5 @@ class ThumbnailGenerator:
     def __render_logo(self):
         pass
     
-    
+    def __render_background(self):
+        pass
