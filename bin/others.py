@@ -1,4 +1,5 @@
-from bin.text_manipulation import err
+from bin.text_manipulation import err, bold
+from bin.constants import COPYRIGHT
 
 def binpi(text : str, inp: str = '') -> int:
     """
@@ -29,6 +30,14 @@ def binps(text : str, inp: str = '') -> int:
     return user_input
     
 def input_episode_range(max_eps:list[int], lp_names: list[str]):
+    HEADER = f"""
+{COPYRIGHT}    
+    
+{bold(f'Main > Automation > Thumbnail Generator > Select LP')}
+
+Select your Option:
+    """
+    
     listed_lets_plays = "\n".join([f"({idx}) {lp}" for idx, lp in enumerate(lp_names)])
     lp_id = binpi(f'Select Lets Play ID: \n {listed_lets_plays}')
     if lp_id < len(lp_names):

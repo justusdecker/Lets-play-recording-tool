@@ -23,7 +23,7 @@ MENU_AUTOMATION_MESSAGE = f"""
 {bold('Main > Automations >')}
 
 Select your option:
-(1) {color816(strikethrough('Thumbnail Generate'),31)}
+(1) Thumbnail Generate
 (2) {color816(strikethrough('Fetch Audio'),31)}
 (3) {color816(strikethrough('Fix Audio'),31)}
 (4) {color816(strikethrough('Render'),31)}
@@ -55,6 +55,15 @@ Select your option:
 (3) Thumbnail Automation Data
 (0) Exit
 """
+
+def thumbnail_automation_sub_menu(sub:str) -> str:
+    return f"""
+{COPYRIGHT}    
+    
+{bold(f'Main > Automation > Thumbnail Generator > Select LP')}
+
+Select your Option:
+    """
 
 USER_INPUT_NUM_UNMATCHED = color816(bold('This option does not exist'),31)
 
