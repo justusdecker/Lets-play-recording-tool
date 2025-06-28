@@ -31,6 +31,7 @@ def outlining(image: Surface,color: tuple[int]=(0,0,0,255)) -> Surface:
     for pos in [(-2,0),(2,0),(0,-2),(0,2)]: #outline offset
         surface.blit(normal,pos)
     surface.blit(image,(0,0))
+    return surface
 class ThumbnailGenerator:
     def __init__(self): pass
     
@@ -126,11 +127,11 @@ class ThumbnailGenerator:
         
         img: Surface = font.render(text,False,tad['color'])
         
-        timg = outlining(img,tad['color'])
+        timg = outlining(img,tad['ol_color'])
         
-        timg = scale_by(img,tad['scale'])
+        timg = scale_by(timg,tad['scale'])
         
-        timg = rotate(img,tad['rot'])
+        timg = rotate(timg,tad['rot'])
         
         return timg, tad['pos']
     
