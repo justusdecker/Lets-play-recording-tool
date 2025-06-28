@@ -53,6 +53,7 @@ class ThumbnailGenerator:
             self.__render_logo(_logo),
             self.__render_text(_text,text)
             )
+        
         self.__save(save_to_path,img)
         
     def __save(self,
