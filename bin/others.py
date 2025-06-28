@@ -52,7 +52,7 @@ def input_episode_range(max_eps:list[int], lp_names: list[str]):
     RANGE_END = header('tg',['Set Index']) + f'{max_eps[lp_id]}'
     match binpi(MODE_SET):
         case 1:
-            ep_range = (0,len(max_eps)-1)
+            ep_range = (0,max_eps[lp_id]-1)
         case 2:
             _start = binpi(RANGE_START)
             _end = binpi(RANGE_END + f'\nMust be greater or equal {_start}')
