@@ -1,5 +1,5 @@
 from bin.text_manipulation import err, bold
-from bin.constants import COPYRIGHT
+from bin.constants import COPYRIGHT, header
 
 def binpi(text : str, inp: str = '') -> int:
     """

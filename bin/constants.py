@@ -3,12 +3,24 @@ from bin.data_access import file_read
 
 COPYRIGHT = f"{bold('LPRT')} {italic(file_read('version.txt'))} - (c) Justus Decker 2024 - 2025"
 
-MENU_MESSAGE = f"""
+SUBS = {
+    'main': ['Main'],
+    'automations': ['Main','Automations'],
+    'data': ['Main','Data']
+}
+
+def header(key_sub: str,subs: list[str]= []) -> str:
+    return f"""
 {COPYRIGHT}
 
-{bold('Main >')}
+{bold(" > ").join([SUBS[key_sub]+subs])}
 
 Select your option:
+"""
+
+
+MENU_MESSAGE = f"""
+{header('main')}
 (1) Record - {color816(bold('ALPHA'),35)}
 (2) Automation - {color816(bold('ALPHA'),35)}
 (3) {color816(strikethrough('Deploy'),31)}
@@ -18,11 +30,7 @@ Select your option:
 """
 
 MENU_AUTOMATION_MESSAGE = f"""
-{COPYRIGHT}
-
-{bold('Main > Automations >')}
-
-Select your option:
+{header('automations')}
 (1) Thumbnail Generate
 (2) {color816(strikethrough('Fetch Audio'),31)}
 (3) {color816(strikethrough('Fix Audio'),31)}
@@ -31,12 +39,8 @@ Select your option:
 """
 
 MENU_DATA_MESSAGE = f"""
-{COPYRIGHT}
-
-{bold('Main > Data')}
-
-Select your option:
-(1) {color816(strikethrough('Create a new file'),31)}
+{header('data')}
+(1) Create a new file - {color816(bold('ALPHA'),35)}
 (2) Create a new entry - {color816(bold('ALPHA'),35)}
 (3) {color816(strikethrough('Update'),31)}
 (4) {color816(strikethrough('Read'),31)}
@@ -48,7 +52,7 @@ def data_sub_menu(sub: str) -> str:
 {COPYRIGHT}
 
 {bold(f'Main > Data > {sub}')}
-
+{header('data',[sub])}
 Select your option:
 (1) Lets Play
 (2) Episode
