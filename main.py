@@ -141,7 +141,7 @@ class App:
                     
                     TG = ThumbnailGenerator()
                     
-                    res = input_episode_range([32,452,53,56,745],letsplay.get_names())
+                    res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
                     if res is not None:
                         lp,epr = res
                         ep_path,lp_name = letsplay.read(lp)[1,4]
