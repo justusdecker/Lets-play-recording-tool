@@ -35,7 +35,7 @@ def input_episode_range(max_eps:list[int], lp_names: list[str]):
     
     lp_id = binpi(f"{header('tg',['Set Lets Play'])}{listed_lets_plays}")
     
-    if lp_id < len(lp_names):
+    if lp_id >= len(lp_names):
         err('Input out of range')
         return
     
