@@ -3,7 +3,8 @@
     {
         "path": "test_logo.png",
         "scale": 1,
-        "rot": 0
+        "rot": 0,
+        "pos": [100,100]
     },
     {
         "path": "",
