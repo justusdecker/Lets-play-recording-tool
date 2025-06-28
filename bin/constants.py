@@ -14,7 +14,7 @@ def header(key_sub: str,subs: list[str]= []) -> str:
     return f"""
 {COPYRIGHT}
 
-{bold(" > ").join([SUBS[key_sub]+subs])}
+{bold(" > ").join(SUBS[key_sub]+subs)}
 
 Select your option:
 """
