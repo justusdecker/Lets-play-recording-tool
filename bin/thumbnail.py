@@ -45,9 +45,9 @@ class ThumbnailGenerator:
         _bg, _logo, _text = json_read(tad_path)
 
         img = self.__comp_render(
-            self.__render_background(video_path,frame,_bg),
+            [self.__render_background(video_path,frame,_bg),
             self.__render_logo(_logo),
-            self.__render_text(_text,text)
+            self.__render_text(_text,text)]
             )
         
         self.__save(save_to_path,img)
