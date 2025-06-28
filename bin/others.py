@@ -49,7 +49,7 @@ def input_episode_range(max_eps:list[int], lp_names: list[str]):
     """
     RANGE_START = header('tg',['Set RANGE START']) + f'{max_eps[lp_id]}'
     RANGE_END = header('tg',['Set RANGE END']) + f'{max_eps[lp_id]}'
-    RANGE_END = header('tg',['Set Index']) + f'{max_eps[lp_id]}'
+    RANGE_ONE = header('tg',['Set Index']) + f'0 - {max_eps[lp_id]}\n'
     match binpi(MODE_SET):
         case 1:
             ep_range = (0,max_eps[lp_id]-1)
@@ -61,7 +61,7 @@ def input_episode_range(max_eps:list[int], lp_names: list[str]):
                 return
             ep_range = (_start, _end)
         case 3:
-            _index = binpi(RANGE_START)
+            _index = binpi(RANGE_ONE)
             ep_range = (_index,_index)
         case _:
             err(USER_INPUT_NUM_UNMATCHED)
