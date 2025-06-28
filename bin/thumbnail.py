@@ -25,7 +25,7 @@ def outlining(image: Surface,color: tuple[int]=(0,0,0,255)) -> Surface:
     for x in range(shade.get_width()):
         for y in range(shade.get_height()):
             if shade.get_at((x,y)) != Color(0,0,0,255):
-                normal.set_at((x,y),color[i])
+                normal.set_at((x,y),color)
 
     surface = Surface(image.get_size(),SRCALPHA) 
     for pos in [(-2,0),(2,0),(0,-2),(0,2)]: #outline offset
@@ -82,6 +82,7 @@ class ThumbnailGenerator:
             _returnImage: Surface = flip(_returnImage,True,False)
             
             return _returnImage
+    
     def __get_text(self,
                  font_path: str,
                  font_size: int = 20,
@@ -89,7 +90,7 @@ class ThumbnailGenerator:
                  color=(0,0,0,255)
                  ) -> Surface:
         """
-        Returns the Text Image
+        Returns the Text Image with outline
         """
 
         if not isfile(font_path):
