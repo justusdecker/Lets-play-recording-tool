@@ -138,10 +138,10 @@ class ThumbnailGenerator:
         surf = rotate(surf,tad['rot'])
         
         cropping()
-        x, y = [i for pos,size in zip(tad['pos'], surf.get_size())]
-        x = int(tad['pos'][0] - (surf.get_width() *.5))
-            
-        y = int(tad['pos'][1] - (surf.get_height() *.5))
+        
+        #center image position calculation [x,y] [w,h]
+        # x - (w / 2) & y - (h / 2)
+        x, y = [a - (b * .5) for a, b in zip(tad['pos'], surf.get_size())]
         
         return surf, (x,y)
     
