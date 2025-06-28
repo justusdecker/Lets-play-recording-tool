@@ -94,6 +94,14 @@ class CSVObj:
     def delete(self,id: int):
         self.__check_id(id)
         self.data.pop(id)
+    @property
+    def row(self) -> int:
+        return len(self.data)
+    @property
+    def col(self) -> int:
+        if not self.data:
+            return 0
+        return len(self.data[0])
 
 class LetsPlay(CSVObj):
     """
@@ -114,7 +122,8 @@ class LetsPlay(CSVObj):
         return super().create(LP_KEYS, **kwargs)
     def update(self, id, **kwargs):
         return super().update(id, LP_KEYS, **kwargs)
-
+    def get_names(self) -> list[str]:
+        return [i[4] for i in self.data]
 class Episode(CSVObj):
     """
     

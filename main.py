@@ -140,6 +140,8 @@ class App:
                     letsplay = LetsPlay(LP_PATH)
                     
                     TG = ThumbnailGenerator()
+                    [i for i in letsplay.read(lp)[4]]
+                    
                     res = input_episode_range([32,452,53,56,745],['minecraft','valheim','gta','the forest','Schedule I'])
                     if res is not None:
                         lp,epr = res
