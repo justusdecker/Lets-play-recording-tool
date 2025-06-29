@@ -231,8 +231,7 @@ class App:
                     return
                 case _:
                     err(ERROR_003)
-                    
-        
+                     
     def loop(self):
         while self.isrunning:
             self.main_menu()
