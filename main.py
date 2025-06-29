@@ -81,6 +81,7 @@ class App:
                     json_write('default_tad.json',DEFAULT_TAD)
                 case 4:
                     create_new_lp_file()
+    
     def main_menu(self):
         """
         Main Menu >
@@ -128,10 +129,20 @@ class App:
                                 f'{epr[0]}_{lp_name}_thumbnail.png'
                                 )
                             
-                            print(epr[0])
                         else:
+                            ep = Episode(ep_path)
+                            tad = aofn(filetypes=[['JSON','*.json']])
+                            if not tad:
+                                return
+                            
                             for i in range(epr[0],epr[1]):
-                                print(i)
+                                video_path = ep.read(i)[0]
+                                TG.generate(
+                                str(i),
+                                video_path,
+                                tad,
+                                f'{i}_{lp_name}_thumbnail.png'
+                                )
                 case 2:
                     nimp()
                 case 3:
