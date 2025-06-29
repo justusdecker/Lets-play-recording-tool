@@ -23,6 +23,8 @@ class DavinciReceiver:
         file_write(self.davinci_pipe if typ else self.user_pipe,'')
     
     def check_commands(self,msg:str):
+        if msg.startswith('handshake'):
+            self.send_to_user('handshake')
         if msg.startswith('import'):
             if '<' in msg:
                 video,audio,epNum = msg.split('<')[1],msg.split('<')[2],msg.split('<')[3]
