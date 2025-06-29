@@ -134,6 +134,8 @@ class LetsPlay(CSVObj):
     
     def get_episode_ammount(self) -> list[int]:
         return [Episode(i[1]).row for i in self.data]
+    def get_episodes(self,id) -> list[int]:
+        return Episode(self.read(id)[1])
 class Episode(CSVObj):
     """
     
