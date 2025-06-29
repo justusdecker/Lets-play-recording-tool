@@ -173,3 +173,5 @@ class Episode(CSVObj):
         self.read(id)[1] = data
     def set_audio_desktop_path(self,id: int, data: str):
         self.read(id)[2] = data
+    def set_thumbnail_path(self,id: int, data: str):
+        self.read(id)[3] = data
