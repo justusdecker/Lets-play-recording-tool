@@ -42,9 +42,6 @@ class App:
     def __init__(self):
         self.isrunning = True
         self.current_letsplay_id = 0
-        if not isfile('lets_play.csv'):
-            war('lets_play.csv does not exist & will be created!')
-            create_new_lp_file()
     
     def options_submenu(self):
         while self.isrunning:
@@ -56,7 +53,11 @@ class App:
                     
                     json_write('settings.json',DEFAULT_OBS_SETTINGS)
                 case 2:
-                    nimp()
+                    l = len(LetsPlay(LP_PATH).get_names())
+                    tmp = binpi(f'Enter a value from 0 to {l-1}','set lp_id: ')
+                    
+                    if tmp < l:
+                        self.current_letsplay_id = tmp
                 case 3:
                     json_write('default_tad.json',DEFAULT_TAD)
                 case 4:
