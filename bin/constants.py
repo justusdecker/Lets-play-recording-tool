@@ -39,14 +39,6 @@ MENU_AUTOMATION_MESSAGE = f"""
 (0) Back
 """
 
-MENU_DATA_MESSAGE = f"""
-{header('data')}
-(1) Create a new file - {color816(bold('ALPHA'),35)}
-(2) Create a new entry - {color816(bold('ALPHA'),35)}
-(3) {color816(strikethrough('Update'),31)}
-(4) {color816(strikethrough('Read'),31)}
-(0) Exit
-"""
 def data_sub_menu(sub: str) -> str:
     return f"""
 
