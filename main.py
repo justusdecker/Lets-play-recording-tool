@@ -53,9 +53,8 @@ class App:
             case 1:
                 # OBS - Recording
                 # Will save your recording data to the in lets_play.csv referrenced episode file
-                ep = LetsPlay(LP_PATH).get_name(self.current_letsplay_id)
-                
-                obs_connect(Episode(ep))
+                ep = LetsPlay(LP_PATH).get_episodes(self.current_letsplay_id)
+                obs_connect(ep)
             case 2:
                 self.automation_sub_menu()
             case 4:
