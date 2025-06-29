@@ -157,3 +157,7 @@ class Episode(CSVObj):
         return self.read(id)[1]
     def get_audio_desktop_path(self,id: int):
         return self.read(id)[2]
+    def set_audio_mic_path(self,id: int):
+        pass
+    def set_audio_desktop_path(self,id: int):
+        pass
