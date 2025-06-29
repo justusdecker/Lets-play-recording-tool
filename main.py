@@ -130,7 +130,7 @@ class App:
                                 str(epr[0]),
                                 video_path,
                                 tad,
-                                f'{epr[0]}_{lp_name}_thumbnail.png'
+                                f'{epr[0]+1}_{lp_name}_thumbnail.png'
                                 )
                             
                         else:
@@ -145,7 +145,7 @@ class App:
                                 str(i),
                                 video_path,
                                 tad,
-                                f'{i}_{lp_name}_thumbnail.png'
+                                f'{i+1}_{lp_name}_thumbnail.png'
                                 )
                 case 2:
                     nimp()

@@ -73,7 +73,7 @@ class CSVObj:
                 raise KeyError(f'cannot find: {e} in {kwargs}')
     
     def __check_id(self,id: int):
-        if id >= len(self.data) or id > 0:
+        if id >= len(self.data):
             raise IndexError()
         if not isinstance(id,int):
             raise TypeError()
