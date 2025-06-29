@@ -10,10 +10,8 @@ class DaviniciSender:
     def send_to_file(self,command):
         try:
             if not isfile(self.davinci_pipe):
-                with open(self.davinci_pipe,'w') as file:
-                    file.write('')
-            with open(self.davinci_pipe,'w') as file:
-                file.write(command)
+                file_write(self.davinci_pipe,'')
+            file_write(self.davinci_pipe,command)
         except PermissionError as E:
             print(E)
     def recvFromFile(self):
