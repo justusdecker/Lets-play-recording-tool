@@ -14,7 +14,6 @@ from bin.automations import (
     gen_thumbnail,
     LP_PATH
 )
-
 class App:
     def __init__(self):
         self.isrunning = True
