@@ -36,7 +36,7 @@ MENU_AUTOMATION_MESSAGE = f"""
 (2) {color816(strikethrough('Fetch Audio'),31)}
 (3) {color816(strikethrough('Fix Audio'),31)}
 (4) {color816(strikethrough('Render'),31)}
-(5) Back
+(0) Back
 """
 
 MENU_DATA_MESSAGE = f"""
@@ -45,7 +45,6 @@ MENU_DATA_MESSAGE = f"""
 (2) Create a new entry - {color816(bold('ALPHA'),35)}
 (3) {color816(strikethrough('Update'),31)}
 (4) {color816(strikethrough('Read'),31)}
-(5) {color816(strikethrough('Delete'),fg=31)}
 (0) Exit
 """
 def data_sub_menu(sub: str) -> str:
