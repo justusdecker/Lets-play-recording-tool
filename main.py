@@ -124,7 +124,7 @@ class App:
                         lp_name = letsplay.get_name(lp)
                         ep_path = letsplay.get_episode_path(lp)
                         if epr[0] == epr[1]:
-                            video_path = Episode(ep_path).read(epr[0])[0]
+                            video_path = Episode(ep_path).get_video_path(epr[0])
                             tad = aofn(filetypes=[['JSON','*.json']])
                             if not tad:
                                 return
@@ -142,7 +142,7 @@ class App:
                                 return
                             
                             for i in range(epr[0],epr[1]):
-                                video_path = ep.read(i)[0]
+                                video_path = ep.get_video_path(i)
                                 TG.generate(
                                 str(i+1),
                                 video_path,
@@ -162,7 +162,7 @@ class App:
                         lp_name = letsplay.get_name(lp)
                         ep_path = letsplay.get_episode_path(lp)
                         if epr[0] == epr[1]:
-                            video_path = Episode(ep_path).read(epr[0])[0]
+                            video_path = Episode(ep_path).get_video_path(epr[0])
                             
                             t1_path, t2_path = f'{epr[0]+1}_{lp_name}_track_mic.mp3',f'{epr[0]+1}_{lp_name}_track_desktop.mp3'
                             inf(f'Start extract track 1 from {t1_path}')
@@ -175,7 +175,7 @@ class App:
                             ep = Episode(ep_path)
                             
                             for i in range(epr[0],epr[1]):
-                                video_path = ep.read(i)[0]
+                                video_path = ep.get_video_path(i)
                                 
                                 t1_path, t2_path = f'{i+1}_{lp_name}_track_mic.mp3',f'{i+1}_{lp_name}_track_desktop.mp3'
                                 inf(f'Start extract track 1 from {t1_path}')
@@ -195,16 +195,24 @@ class App:
                         lp_name = letsplay.get_name(lp)
                         ep_path = letsplay.get_episode_path(lp)
                         if epr[0] == epr[1]:
-                            video_path = Episode(ep_path).read(epr[0])[0]
+                            episode = Episode(ep_path)
                             
-                            t1_path, t2_path = f'{epr[0]+1}_{lp_name}_track_mic.mp3',f'{epr[0]+1}_{lp_name}_track_desktop.mp3'
+                            video_path = episode.get_video_path(epr[0])
+                            audio_mic_path = episode.get_audio_mic_path(epr[0])
+                            audio_desktop_path = episode.get_audio_desktop_path(epr[0])
                             
+                            t1_path, t2_path = f'{epr[0]+1}_{lp_name}_track_mic_ln.mp3',f'{epr[0]+1}_{lp_name}_track_desktop_ln.mp3'
                             
-                            loudness_normalization(self.letsPlayComp.getCuEp(EC.ORIGINAL_AUDIO_PATH),AUDIO_PATH + '_tmp.mp3')
+                            t3_path, t4_path = f'{epr[0]+1}_{lp_name}_track_mic_fixed.mp3',f'{epr[0]+1}_{lp_name}_track_desktop_fixed.mp3'
                             
-                            limiter(AUDIO_PATH + '_tmp.mp3',self.letsPlayComp.getCompPath())
+                            loudness_normalization(audio_mic_path, t1_path)
+                            
+                            limiter(t1_path, t3_path)
+                            
+                            loudness_normalization(audio_desktop_path, t2_path)
+                            
+                            limiter(t2_path, t4_path)
                     
-                            self.lc._stop()
                             inf(f'Start extract track 1 from {t1_path}')
                             extract_audio(video_path,t1_path,1)
                             inf(f'Finished extracting track 1 from {t1_path}')
