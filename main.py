@@ -1,7 +1,7 @@
 
 from bin.constants import *
 from bin.obs import OBSObserver
-from bin.data_access import LetsPlay, file_read, isfile, LP_KEYS, EP_KEYS, file_write,csv_write, Episode
+from bin.data_access import LetsPlay, file_read, isfile, LP_KEYS, EP_KEYS, file_write,csv_write, Episode,json_write
 from tkinter.filedialog import asksaveasfilename as asafn, askopenfilename as aofn
 from bin.others import binpi,binps, input_episode_range
 from bin.thumbnail import ThumbnailGenerator
@@ -47,9 +47,20 @@ class App:
             create_new_lp_file()
     
     def options_submenu(self):
-        match binpi(MENU_OPTIONS_MESSAGE):
-            case 1:
-                pass
+        while self.isrunning:
+            match binpi(MENU_OPTIONS_MESSAGE):
+                case 1:
+                    if isfile('settings.json'):
+                        err('file already exists')
+                        continue
+                    
+                    json_write('settings.json',DEFAULT_OBS_SETTINGS)
+                case 2:
+                    nimp()
+                case 3:
+                    json_write('default_tad.json',DEFAULT_TAD)
+                case 4:
+                    create_new_lp_file()
     def main_menu(self):
         """
         Main Menu >

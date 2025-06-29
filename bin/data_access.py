@@ -48,6 +48,9 @@ def file_append(filepath : str, data : str):
 def json_read(filepath : str) -> dict | list:
     with open(filepath, 'r') as f:
         return json.load(f)
+def json_write(filepath : str, data : dict | list):
+    with open(filepath, 'w') as f:
+        f.write(json.dumps(data))
     
 class CSVObj:
     """
