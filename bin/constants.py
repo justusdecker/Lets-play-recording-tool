@@ -25,8 +25,7 @@ MENU_MESSAGE = f"""
 (1) Record
 (2) Automation
 (3) {color816(strikethrough('Deploy'),31)}
-(4) Create Lets Play File
-(5) Options
+(4) Options
 (0) Exit
 """
 

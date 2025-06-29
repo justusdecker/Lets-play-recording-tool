@@ -77,11 +77,7 @@ class App:
             case 3:
                 nimp()
             case 4:
-                create_new_lp_file()
-            case 5:
-                
-                nimp() #!
-                self.current_letsplay_id = binpi('Set the lets play id') #! 
+                self.options_submenu()
             case 0:
                 self.isrunning = False
             case _:
