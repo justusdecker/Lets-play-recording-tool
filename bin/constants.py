@@ -44,7 +44,7 @@ MENU_OPTIONS_MESSAGE = f"""
 (1) Create {bold('options.json')} - OBS
 (2) Set current lets play id
 (3) Create {bold('default_tad.json')}
-(4) Create {bold('lets_play.csv')}
+(4) Create {bold('lets_plays.csv')}
 (0) Back
 """
 
