@@ -96,9 +96,9 @@ del getlogin
 
 ROOT = f'C:\\Users\\{USERNAME}\\jri_data\\'
 
-AUDIO_FOLDER = 'audio\\'
-THUMBNAIL_FOLDER = 'thumbnails\\'
-FIXED_AUDIO_FOLDER = f'{AUDIO_FOLDER}audio_fixed\\'
+AUDIO_FOLDER = f'{ROOT}audio\\'
+THUMBNAIL_FOLDER = f'{ROOT}thumbnails\\'
+FIXED_AUDIO_FOLDER = f'{ROOT}{AUDIO_FOLDER}audio_fixed\\'
 
 #! ERRORS
 ewf = 'Exit current workflow.'
