@@ -68,11 +68,11 @@ def fix_audio(episode: Episode,i: int, lp_name):
     inf(f'Start limit track 1 to {t3_path}')
     limiter(t1_path, t3_path)
     
-    inf(f'Start normalize track 2 to {t2_path}')
-    loudness_normalization(audio_desktop_path, t2_path)
+    #inf(f'Start normalize track 2 to {t2_path}')
+    #loudness_normalization(audio_desktop_path, t2_path)
     
-    inf(f'Start limit track 2 to {t4_path}')
-    limiter(t2_path, t4_path)
+    #inf(f'Start limit track 2 to {t4_path}')
+    #limiter(t2_path, t4_path)
 
 def gen_thumbnail(
     thumbnail_gen: ThumbnailGenerator,
