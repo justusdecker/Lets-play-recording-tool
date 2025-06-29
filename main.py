@@ -61,7 +61,7 @@ class App:
             case 4:
                 self.data_sub_menu()
             case 5:
-                nimp(__name__) #!
+                nimp() #!
                 self.current_letsplay_id = binpi('Set the lets play id') #! 
             case 0:
                 self.isrunning = False
@@ -98,6 +98,12 @@ class App:
             match binpi(data_sub_menu('Delete')):
                 case 0:
                     return
+                case 1:
+                    nimp()
+                case 2:
+                    nimp()
+                case 3:
+                    nimp()
                 case _:
                     err(USER_INPUT_NUM_UNMATCHED)
     def data_sub_update_menu(self):
@@ -106,6 +112,12 @@ class App:
             match binpi(data_sub_menu('Update')):
                 case 0:
                     return
+                case 1:
+                    nimp()
+                case 2:
+                    nimp()
+                case 3:
+                    nimp()  
                 case _:
                     err(USER_INPUT_NUM_UNMATCHED)
     def data_sub_read_menu(self):
@@ -114,6 +126,12 @@ class App:
             match binpi(data_sub_menu('Read')):
                 case 0:
                     return
+                case 1:
+                    nimp()
+                case 2:
+                    nimp()
+                case 3:
+                    nimp()
                 case _:
                     err(USER_INPUT_NUM_UNMATCHED)
     
@@ -125,6 +143,7 @@ class App:
                     return
                 case 1: # Create Lets Play.csv
                     create_new_lp_file()
+                
                 case _:
                     err(USER_INPUT_NUM_UNMATCHED)
     def data_sub_create_entry_menu(self):
