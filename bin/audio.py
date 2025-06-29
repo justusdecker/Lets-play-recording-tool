@@ -1,0 +1,111 @@
+from os.path import isfile
+from moviepy.audio.io.AudioFileClip import AudioFileClip
+import subprocess
+
+def get_audio_length(filename):
+    if isfile(filename):
+        return AudioFileClip(filename).duration
+    return -1
+
+
+def extract_audio(fr:str,to:str,t:int=1):
+    subprocess.run(
+                (
+                    'ffmpeg',
+                    '-y',
+                    '-i',
+                    f"{fr}",
+                    '-map',
+                    f'0:{t}',
+                    f"{to}"
+                    ),
+                subprocess.CREATE_NO_WINDOW,
+                shell= True
+                )
+def loudness_normalization(filepath,savepath,decibel:int = -15):
+        
+    subprocess.run(
+            [
+                'ffmpeg',
+                '-y',
+                '-i',
+                filepath,
+                '-af',
+                f'loudnorm={decibel}',
+                savepath
+                ],
+                subprocess.CREATE_NO_WINDOW,
+                shell= True
+            )
+def limiter(i_filename: str,
+                o_filename: str,
+                limiter: str = '0/-3|10/-3|20/-3'):
+    subprocess.run(
+            [
+                'ffmpeg',
+                '-y',
+                '-i',
+                i_filename,
+                #'-c:a',     #Copy Audio. No Reencoding
+                #'-af compand=0 0:1 1:{limiter}:0.01:12:0:0',
+                '-af',
+                f'compand=0|0:1|1:{limiter}:0.1:0:0:0',
+                o_filename
+                ]
+            )
+        
+def cvt_audio(filename:str,#call
+                    fr:str= '.mp3',
+                    to:str= '.wav'):
+    """Convert Audio Formats"""
+    subprocess.run(
+        [
+            'ffmpeg',
+            
+            '-n',
+            '-i',
+            filename.split('.')[0] + fr,
+            filename.split('.')[0] + to
+            ],
+            subprocess.CREATE_NO_WINDOW,
+            shell= True
+        )
+    return filename.split('.')[0] + to
+
+def cvtAudioNew(fileName:str,#call
+                    fromType:str= '.mp3',
+                    toType:str= '.wav'):
+    """Convert Audio Formats"""
+    subprocess.run(
+        [
+            'ffmpeg',
+            '-y',
+            '-i',
+            fileName.split('.')[0] + fromType,
+            'temp.wav',
+            '-ac',
+            '1'
+            ],
+            subprocess.CREATE_NO_WINDOW,
+            shell=True
+        )
+    subprocess.run(
+        [
+            'ffmpeg',
+            '-y',
+            '-i',
+            'temp.wav',
+            
+            '-ar',
+            '8000',
+            '-ac',
+            '1',
+            '-c:a',
+            'pcm_s16le',
+            fileName.split('.')[0] + toType
+            ],
+            subprocess.CREATE_NO_WINDOW,
+            shell= True
+        )
+    #ffmpeg -i input.wav -ar 8000 -ac 1 -c:a pcm_s16le output.wa
+    return fileName.split('.')[0] + toType
