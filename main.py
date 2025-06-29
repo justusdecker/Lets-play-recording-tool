@@ -12,10 +12,9 @@ from bin.automations import (
     create_new_lp_file,
     fetch_audio,
     fix_audio,
-    gen_thumbnail
+    gen_thumbnail,
+    LP_PATH
 )
-
-LP_PATH = 'lets_plays.csv'
 
 class App:
     def __init__(self):
