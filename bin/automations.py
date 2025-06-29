@@ -114,3 +114,5 @@ def gen_thumbnail(
         tad,
         f'{THUMBNAIL_FOLDER}{i+1}_{lp_name}_thumbnail.png'
         )
+    episode.set_thumbnail_path()
+    episode.save()
