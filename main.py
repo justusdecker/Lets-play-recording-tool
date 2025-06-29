@@ -219,21 +219,10 @@ class App:
                         ep_path = letsplay.get_episode_path(lp)
                         if epr[0] == epr[1]:
                             fix_audio(ep_path,epr[0],lp_name)
-
                         else:
                             ep = Episode(ep_path)
-                            
                             for i in range(epr[0],epr[1]):
-                                fix_audio(ep_path,i,lp_name)
-                                video_path = ep.read(i)[0]
-                                
-                                t1_path, t2_path = f'{i+1}_{lp_name}_track_mic.mp3',f'{i+1}_{lp_name}_track_desktop.mp3'
-                                inf(f'Start extract track 1 from {t1_path}')
-                                extract_audio(video_path,t1_path,1)
-                                inf(f'Finished extracting track 1 from {t1_path}')
-                                inf(f'Start extract track 2 from {t2_path}')
-                                extract_audio(video_path,t2_path,2)
-                                inf(f'Finished extracting track 2 from {t2_path}')
+                                fix_audio(ep,i,lp_name)
                 case 4:
                     nimp()
                 case 0:
