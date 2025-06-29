@@ -34,14 +34,25 @@ class DaviniciSender:
         """
         try:
             if not isfile(self.user_pipe):
-                return 'NO RESULT'
+                return ''
             ret = ''
             _start = time()
-            while not ret and time() - _start < 2:
+            while time() - _start < 5:
                 ret = file_read(self.user_pipe)
-            return ret
+                if ret:
+                    return ret
+            return ''
+            
         except PermissionError as E:
             print(E)
     
     def clean(self,typ: bool):
-        file_write(self.davinci_pipe if typ else self.user_pipe,'')
+        pipe = self.davinci_pipe if typ else self.user_pipe
+        print(pipe)
+        print(file_read(pipe))
+        _start = time()
+        while time() - _start < 5:
+            file_write(pipe,'')
+            if not file_read(pipe):
+                return
+            
