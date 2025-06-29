@@ -63,41 +63,11 @@ class App:
             case 5:
                 nimp() #!
                 self.current_letsplay_id = binpi('Set the lets play id') #! 
-            
             case 0:
                 self.isrunning = False
             case _:
                 err(USER_INPUT_NUM_UNMATCHED)
     
-    def data_sub_update_menu(self):
-        while self.isrunning:
-            
-            match binpi(data_sub_menu('Update')):
-                case 0:
-                    return
-                case 1:
-                    nimp()
-                case 2:
-                    nimp()
-                case 3:
-                    nimp()  
-                case _:
-                    err(USER_INPUT_NUM_UNMATCHED)
- 
-    def data_sub_create_entry_menu(self):
-        while self.isrunning:
-            
-            match binpi(data_sub_menu('Create entry')):
-                case 0:
-                    return
-                case 1:
-                    nimp()
-                case 2:
-                    nimp()
-                case 3:
-                    nimp()
-                case _:
-                    err(USER_INPUT_NUM_UNMATCHED)
     def automation_sub_menu(self):
         while self.isrunning:
 
