@@ -27,7 +27,6 @@ def create_new_lp_file():
     else:
         err(ERROR_002)
 
-
 def create_new_ep_file(filepath: str):
     print(color816(f'[!TIP] > If you have a typo somewhere: You can change the data later manually!(Do it or bugs will kill your fun :D)',32))
     
@@ -35,7 +34,6 @@ def create_new_ep_file(filepath: str):
         csv_write(filepath,[[binps(f'{key}: ') for key in EP_KEYS]])
     else:
         err(ERROR_002)
-
 
 class App:
     def __init__(self):
