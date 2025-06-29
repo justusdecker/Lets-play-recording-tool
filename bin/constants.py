@@ -41,8 +41,9 @@ MENU_AUTOMATION_MESSAGE = f"""
 
 MENU_OPTIONS_MESSAGE = f"""
 {header('options')}
-(1) OBS create {bold('options.json')}
+(1) Create {bold('options.json')} - OBS
 (2) Set current lets play id
+(3) Create {bold('default_tad.json')}
 (0) Back
 """
 
