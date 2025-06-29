@@ -36,8 +36,18 @@ def create_new_ep_file(filepath: str):
     else:
         err(ERROR_002)
 
-def fetch_audio():
-    pass
+def fetch_audio(episode: Episode,i: int,lp_name: str):
+    video_path = episode.get_video_path(i)
+                                
+    t1_path, t2_path = f'{i+1}_{lp_name}_track_mic.mp3',f'{i+1}_{lp_name}_track_desktop.mp3'
+    
+    inf(f'Start extract track 1 from {t1_path}')
+    extract_audio(video_path,t1_path,1)
+
+    inf(f'Start extract track 2 from {t2_path}')
+    extract_audio(video_path,t2_path,2)
+
+    
 def fix_audio(episode: Episode,i: int, lp_name):
 
     audio_mic_path = episode.get_audio_mic_path(i)
