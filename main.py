@@ -190,8 +190,6 @@ class App:
                             
                             for i in range(epr[0],epr[1]):
                                 video_path = ep.get_video_path(i)
-                                
-                                video_path = eps.get_video_path(epr[0])
                                 gen_thumbnail(TG,lp_name,ep_path, video_path,i,tad)
                 case 2:
                     """
