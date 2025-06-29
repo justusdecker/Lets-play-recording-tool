@@ -1,7 +1,8 @@
 from bin.text_manipulation import *
 from bin.data_access import file_read
+from bin.version import VERSION
 
-COPYRIGHT = f"{bold('LPRT')} {italic(file_read('version.txt'))} - (c) Justus Decker 2024 - 2025"
+COPYRIGHT = f"{bold('LPRT')} {italic(VERSION)} - (c) Justus Decker 2024 - 2025"
 
 SUBS = {
     'main': ['Main'],
