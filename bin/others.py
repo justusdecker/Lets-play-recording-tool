@@ -1,5 +1,5 @@
 from bin.text_manipulation import err, bold
-from bin.constants import COPYRIGHT, header, USER_INPUT_NUM_UNMATCHED
+from bin.constants import COPYRIGHT, header,ERROR_003
 
 def binpi(text : str, inp: str = '') -> int:
     """
@@ -74,5 +74,5 @@ def input_episode_range(max_eps:list[int], lp_names: list[str]) -> None | tuple[
             _index = binpi(RANGE_ONE)
             ep_range = (_index,_index)
         case _:
-            err(USER_INPUT_NUM_UNMATCHED)
+            err(ERROR_003)
     return lp_id, ep_range
