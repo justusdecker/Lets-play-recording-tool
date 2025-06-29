@@ -82,8 +82,6 @@ class App:
                 case 2:
                     self.data_sub_create_entry_menu()
                 case 3:
-                    self.data_sub_read_menu()
-                case 4:
                     self.data_sub_update_menu()
                 case 0:
                     return
@@ -104,21 +102,7 @@ class App:
                     nimp()  
                 case _:
                     err(USER_INPUT_NUM_UNMATCHED)
-    def data_sub_read_menu(self):
-        while self.isrunning:
-            
-            match binpi(data_sub_menu('Read')):
-                case 0:
-                    return
-                case 1:
-                    nimp()
-                case 2:
-                    nimp()
-                case 3:
-                    nimp()
-                case _:
-                    err(USER_INPUT_NUM_UNMATCHED)
-    
+ 
     def data_sub_create_file_menu(self):
         while self.isrunning:
 
