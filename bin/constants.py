@@ -95,6 +95,10 @@ del getlogin
 
 ROOT = f'C:\\Users\\{USERNAME}\\jri_data\\'
 
+AUDIO_FOLDER = 'audio\\'
+THUMBNAIL_FOLDER = 'thumbnails\\'
+FIXED_AUDIO_FOLDER = f'{AUDIO_FOLDER}audio_fixed\\'
+
 #! ERRORS
 ewf = 'Exit current workflow.'
 ERROR_001 = f'[E001] User input is not in range. {ewf}'
