@@ -44,9 +44,13 @@ def fetch_audio(episode: Episode,i: int,lp_name: str):
     inf(f'Start extract track 1 from {t1_path}')
     extract_audio(video_path,t1_path,1)
 
+    episode.set_audio_mic_path(t1_path)
+    
     inf(f'Start extract track 2 from {t2_path}')
     extract_audio(video_path,t2_path,2)
-    episode
+    
+    episode.set_audio_desktop_path(t2_path)
+    
     episode.save()
 
     
