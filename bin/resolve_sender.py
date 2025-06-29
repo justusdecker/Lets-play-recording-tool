@@ -1,7 +1,7 @@
 """"""
 from os.path import isfile
 from bin.data_access import file_read, file_write
-DVRPATH = "C:\Users\Justus\AppData\Roaming\Blackmagic Design\DaVinci Resolve\Support\Fusion\Scripts\Edit"
+# DVRPATH = "C:\Users\Justus\AppData\Roaming\Blackmagic Design\DaVinci Resolve\Support\Fusion\Scripts\Edit"
 
 class DaviniciSender:
     """
