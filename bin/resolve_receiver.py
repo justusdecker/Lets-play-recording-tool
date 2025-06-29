@@ -16,9 +16,9 @@ class DavinciReceiver:
         From davinci to user
         """
         try:
-            if not isfile(self.davinci_pipe):
-                file_write(self.davinci_pipe,'')
-            file_write(self.davinci_pipe,msg)
+            if not isfile(self.user_pipe):
+                file_write(self.user_pipe,'')
+            file_write(self.user_pipe,msg)
         except PermissionError as E:
             print(E)
     def recv_from_davinci(self):

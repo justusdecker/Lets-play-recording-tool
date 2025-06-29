@@ -34,10 +34,10 @@ class DaviniciSender:
         """
         try:
             if not isfile(self.user_pipe):
-                return ''
+                return 'NO RESULT'
             ret = ''
             _start = time()
-            while not ret or time() - _start > 2:
+            while not ret and time() - _start < 2:
                 ret = file_read(self.user_pipe)
             return ret
         except PermissionError as E:
