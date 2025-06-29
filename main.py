@@ -36,6 +36,29 @@ def create_new_ep_file(filepath: str):
     else:
         err(ERROR_002)
 
+def fetch_audio():
+    pass
+def fix_audio(episode: Episode,i: int, lp_name):
+
+    audio_mic_path = episode.get_audio_mic_path(i)
+    audio_desktop_path = episode.get_audio_desktop_path(i)
+    
+    t1_path, t2_path = f'{i+1}_{lp_name}_track_mic_ln.mp3',f'{i+1}_{lp_name}_track_desktop_ln.mp3'
+    
+    t3_path, t4_path = f'{i+1}_{lp_name}_track_mic_fixed.mp3',f'{i+1}_{lp_name}_track_desktop_fixed.mp3'
+    
+    inf(f'Start normalize track 1 to {t1_path}')
+    loudness_normalization(audio_mic_path, t1_path)
+    
+    inf(f'Start limit track 1 to {t3_path}')
+    limiter(t1_path, t3_path)
+    
+    inf(f'Start normalize track 2 to {t2_path}')
+    loudness_normalization(audio_desktop_path, t2_path)
+    
+    inf(f'Start limit track 2 to {t4_path}')
+    limiter(t2_path, t4_path)
+
 class App:
     def __init__(self):
         self.isrunning = True
@@ -195,34 +218,13 @@ class App:
                         lp_name = letsplay.get_name(lp)
                         ep_path = letsplay.get_episode_path(lp)
                         if epr[0] == epr[1]:
-                            episode = Episode(ep_path)
-                            
-                            video_path = episode.get_video_path(epr[0])
-                            audio_mic_path = episode.get_audio_mic_path(epr[0])
-                            audio_desktop_path = episode.get_audio_desktop_path(epr[0])
-                            
-                            t1_path, t2_path = f'{epr[0]+1}_{lp_name}_track_mic_ln.mp3',f'{epr[0]+1}_{lp_name}_track_desktop_ln.mp3'
-                            
-                            t3_path, t4_path = f'{epr[0]+1}_{lp_name}_track_mic_fixed.mp3',f'{epr[0]+1}_{lp_name}_track_desktop_fixed.mp3'
-                            
-                            loudness_normalization(audio_mic_path, t1_path)
-                            
-                            limiter(t1_path, t3_path)
-                            
-                            loudness_normalization(audio_desktop_path, t2_path)
-                            
-                            limiter(t2_path, t4_path)
-                    
-                            inf(f'Start extract track 1 from {t1_path}')
-                            extract_audio(video_path,t1_path,1)
-                            inf(f'Finished extracting track 1 from {t1_path}')
-                            inf(f'Start extract track 2 from {t2_path}')
-                            extract_audio(video_path,t2_path,2)
-                            inf(f'Finished extracting track 2 from {t2_path}')
+                            fix_audio(ep_path,epr[0],lp_name)
+
                         else:
                             ep = Episode(ep_path)
                             
                             for i in range(epr[0],epr[1]):
+                                fix_audio(ep_path,i,lp_name)
                                 video_path = ep.read(i)[0]
                                 
                                 t1_path, t2_path = f'{i+1}_{lp_name}_track_mic.mp3',f'{i+1}_{lp_name}_track_desktop.mp3'
