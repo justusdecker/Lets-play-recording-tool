@@ -6,6 +6,8 @@ def war(text: str) -> None:
 
 def err(text: str) -> None:
     print(color816(bold(text),31))
+def deb(text: str) -> None:
+    print(italic(color816(bold(text),93)))
 
 def strikethrough(text: str) -> str:
     """ set strikethrough mode by using escape sequences """

@@ -47,6 +47,7 @@ class App:
         """
         Main Menu >
         """
+        deb('HELLO')
         match binpi(MENU_MESSAGE):
             case 1:
                 # OBS - Recording
