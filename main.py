@@ -195,28 +195,11 @@ class App:
                         lp_name = letsplay.get_name(lp)
                         ep_path = letsplay.get_episode_path(lp)
                         if epr[0] == epr[1]:
-                            video_path = Episode(ep_path).get_video_path(epr[0])
-                            
-                            t1_path, t2_path = f'{epr[0]+1}_{lp_name}_track_mic.mp3',f'{epr[0]+1}_{lp_name}_track_desktop.mp3'
-                            inf(f'Start extract track 1 from {t1_path}')
-                            extract_audio(video_path,t1_path,1)
-                            inf(f'Finished extracting track 1 from {t1_path}')
-                            inf(f'Start extract track 2 from {t2_path}')
-                            extract_audio(video_path,t2_path,2)
-                            inf(f'Finished extracting track 2 from {t2_path}')
+                            fetch_audio(Episode(ep_path),epr[0],lp_name)
                         else:
-                            ep = Episode(ep_path)
-                            
+                            episode = Episode(ep_path)
                             for i in range(epr[0],epr[1]):
-                                video_path = ep.get_video_path(i)
-                                
-                                t1_path, t2_path = f'{i+1}_{lp_name}_track_mic.mp3',f'{i+1}_{lp_name}_track_desktop.mp3'
-                                inf(f'Start extract track 1 from {t1_path}')
-                                extract_audio(video_path,t1_path,1)
-                                inf(f'Finished extracting track 1 from {t1_path}')
-                                inf(f'Start extract track 2 from {t2_path}')
-                                extract_audio(video_path,t2_path,2)
-                                inf(f'Finished extracting track 2 from {t2_path}')
+                                fetch_audio(episode,i,lp_name)
                 case 3:
                     """
                     (3) Audio Fix / Edit
