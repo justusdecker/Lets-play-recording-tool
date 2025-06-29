@@ -22,8 +22,8 @@ Select your option:
 
 MENU_MESSAGE = f"""
 {header('main')}
-(1) Record - {color816(bold('ALPHA'),35)}
-(2) Automation - {color816(bold('ALPHA'),35)}
+(1) Record
+(2) Automation
 (3) {color816(strikethrough('Deploy'),31)}
 (4) Create Lets Play File
 (5) Options
@@ -32,7 +32,7 @@ MENU_MESSAGE = f"""
 
 MENU_AUTOMATION_MESSAGE = f"""
 {header('automations')}
-(1) Thumbnail Generate - {color816(bold('ALPHA'),35)}
+(1) Thumbnail Generate
 (2) {color816(strikethrough('Fetch Audio'),31)}
 (3) {color816(strikethrough('Fix Audio'),31)}
 (4) {color816(strikethrough('Render'),31)}
@@ -41,21 +41,9 @@ MENU_AUTOMATION_MESSAGE = f"""
 
 MENU_OPTIONS_MESSAGE = f"""
 {header('options')}
-(1) Thumbnail Generate - {color816(bold('ALPHA'),35)}
-(2) {color816(strikethrough('Fetch Audio'),31)}
-(3) {color816(strikethrough('Fix Audio'),31)}
-(4) {color816(strikethrough('Render'),31)}
+(1) OBS create {bold('options.json')}
+(2) Set current lets play id
 (0) Back
-"""
-
-def data_sub_menu(sub: str) -> str:
-    return f"""
-
-{header('data',[sub])}
-(1) Lets Play
-(2) Episode
-(3) Thumbnail Automation Data
-(0) Exit
 """
 
 def thumbnail_automation_sub_menu(sub:str) -> str:
