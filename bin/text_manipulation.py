@@ -12,7 +12,7 @@ def deb(text: str) -> None:
     print(italic(color816(bold(text),93)))
 
 def nimp():
-    deb(f' line: {cf().f_back.f_lineno}')
+    deb(f'NotImplementedWarning line: {cf().f_back.f_lineno}')
 
 def strikethrough(text: str) -> str:
     """ set strikethrough mode by using escape sequences """

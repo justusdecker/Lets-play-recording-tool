@@ -50,7 +50,7 @@ class App:
         Main Menu >
         """
         pass
-        deb(f' line: {cf().f_back.f_lineno}')
+        nimp()
         match binpi(MENU_MESSAGE):
             case 1:
                 # OBS - Recording
