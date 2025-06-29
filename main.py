@@ -5,7 +5,6 @@ from bin.data_access import LetsPlay, file_read, isfile, LP_KEYS, EP_KEYS, file_
 from tkinter.filedialog import asksaveasfilename as asafn, askopenfilename as aofn
 from bin.others import binpi,binps, input_episode_range
 from bin.thumbnail import ThumbnailGenerator
-from inspect import currentframe as cf
 
 LP_PATH = 'lets_plays.csv'
 def obs_connect(ep: Episode):
@@ -27,7 +26,7 @@ def create_new_lp_file():
         csv_write(LP_PATH,[[binps(f'{key}: ') if key != 'version' else file_read('version.txt') for key in LP_KEYS]])
     else:
         err(ERROR_002)
-    pass
+
 
 def create_new_ep_file(filepath: str):
     print(color816(f'[!TIP] > If you have a typo somewhere: You can change the data later manually!(Do it or bugs will kill your fun :D)',32))
@@ -36,7 +35,7 @@ def create_new_ep_file(filepath: str):
         csv_write(filepath,[[binps(f'{key}: ') for key in EP_KEYS]])
     else:
         err(ERROR_002)
-    pass
+
 
 class App:
     def __init__(self):
