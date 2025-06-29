@@ -101,12 +101,11 @@ def fix_audio(episode: Episode,i: int, lp_name):
 def gen_thumbnail(
     thumbnail_gen: ThumbnailGenerator,
     lp_name: str,
-    ep_path: str,
-    video_path: str,
+    episode: Episode,
     i: int,
     tad: dict):
 
-    video_path = Episode(ep_path).get_video_path(i)
+    video_path = episode.get_video_path(i)
     if not tad:
         return
     thumbnail_gen.generate(
