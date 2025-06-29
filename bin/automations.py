@@ -4,18 +4,33 @@ from bin.obs import OBSObserver
 LP_PATH = 'lets_plays.csv'
 
 from bin.data_access import (
+    file_read,
     csv_write,
-    Episode
+    Episode,
+    EP_KEYS,
+    LP_KEYS
 )
 
 from bin.text_manipulation import (
     inf,
-    err
+    err,
+    color816
 )
 
+from bin.others import binps
+
 from bin.constants import (
-    ERROR_002
+    ERROR_002,
+    ERROR_004,
+    ERROR_005,
+    AUDIO_FOLDER,
+    FIXED_AUDIO_FOLDER,
+    THUMBNAIL_FOLDER
 )
+
+from bin.thumbnail import ThumbnailGenerator
+
+from os.path import isfile
 
 def obs_connect(ep: Episode):
     OBSO = OBSObserver()
