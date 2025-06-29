@@ -81,6 +81,10 @@ class App:
                     json_write('default_tad.json',DEFAULT_TAD)
                 case 4:
                     create_new_lp_file()
+                case 0:
+                    return
+                case _:
+                    err(ERROR_003)
     
     def main_menu(self):
         """
