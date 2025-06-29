@@ -5,6 +5,8 @@ from bin.data_access import LetsPlay, file_read, isfile, LP_KEYS, EP_KEYS, file_
 from tkinter.filedialog import asksaveasfilename as asafn, askopenfilename as aofn
 from bin.others import binpi,binps, input_episode_range
 from bin.thumbnail import ThumbnailGenerator
+from inspect import currentframe as cf
+
 LP_PATH = 'lets_plays.csv'
 def obs_connect(ep: Episode):
     OBSO = OBSObserver()
@@ -47,7 +49,8 @@ class App:
         """
         Main Menu >
         """
-        deb('HELLO')
+        pass
+        deb(f' line: {cf().f_back.f_lineno}')
         match binpi(MENU_MESSAGE):
             case 1:
                 # OBS - Recording
