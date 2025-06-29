@@ -65,3 +65,24 @@ DEFAULT_OBS_SETTINGS = {
     "pw": "",
     "timeout": 1
 }
+
+DEFAULT_TAD = [
+    {
+        "pos": [0,0]
+    },
+    {
+        "path": "test_logo.png",
+        "scale": 1,
+        "rot": 0,
+        "pos": [0,0]
+    },
+    {
+        "path": "",
+        "scale": 1,
+        "rot": 0,
+        "color": [255,255,255,255],
+        "ol_color": [1,1,1,255],
+        "size": 40,
+        "pos": [0,0]
+    }
+]
