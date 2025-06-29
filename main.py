@@ -5,6 +5,7 @@ from bin.data_access import LetsPlay, file_read, isfile, LP_KEYS, EP_KEYS, file_
 from tkinter.filedialog import asksaveasfilename as asafn, askopenfilename as aofn
 from bin.others import binpi,binps, input_episode_range
 from bin.thumbnail import ThumbnailGenerator
+from bin.audio import extract_audio
 
 LP_PATH = 'lets_plays.csv'
 def obs_connect(ep: Episode):
@@ -110,6 +111,9 @@ class App:
 
             match binpi(MENU_AUTOMATION_MESSAGE):
                 case 1:
+                    """
+                    (1) Thumbnail Generator
+                    """
                     letsplay = LetsPlay(LP_PATH)
                     
                     TG = ThumbnailGenerator()
@@ -146,8 +150,37 @@ class App:
                                 f'{i+1}_{lp_name}_thumbnail.png'
                                 )
                 case 2:
-                    nimp()
+                    """
+                    (2) Audio Fetch
+                    Get all video - audio track 1 & 2
+                    """
+                    
+                    letsplay = LetsPlay(LP_PATH)
+                    res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
+                    if res is not None:
+                        lp,epr = res
+                        lp_name = letsplay.get_name(lp)
+                        ep_path = letsplay.get_episode_path(lp)
+                        if epr[0] == epr[1]:
+                            video_path = Episode(ep_path).read(epr[0])[0]
+                            tad = aofn(filetypes=[['JSON','*.json']])
+                            if not tad:
+                                return
+                            pass
+                            
+                        else:
+                            ep = Episode(ep_path)
+                            tad = aofn(filetypes=[['JSON','*.json']])
+                            if not tad:
+                                return
+                            
+                            for i in range(epr[0],epr[1]):
+                                video_path = ep.read(i)[0]
+                                pass
                 case 3:
+                    """
+                    (3) Audio Fix / Edit
+                    """
                     nimp()
                 case 4:
                     nimp()
