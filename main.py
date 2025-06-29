@@ -49,8 +49,6 @@ class App:
         """
         Main Menu >
         """
-        pass
-        nimp()
         match binpi(MENU_MESSAGE):
             case 1:
                 # OBS - Recording
@@ -63,6 +61,7 @@ class App:
             case 4:
                 self.data_sub_menu()
             case 5:
+                nimp(__name__) #!
                 self.current_letsplay_id = binpi('Set the lets play id') #! 
             case 0:
                 self.isrunning = False
