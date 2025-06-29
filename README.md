@@ -52,7 +52,7 @@ https://ffmpeg.org/
 8. Click on show `Connection information`
 9. Copy `ip`, `port` & `password`
 10. Create a file named `settings.json` in `root`, copy & paste the lines below & replace your information with the placeholders!
-    ```
+    ```json
     {
         "ip": "{your ip}",
         "port": {your port},
@@ -86,7 +86,7 @@ Currently out of context(to reduce unused files!)
 
 This is a default TAD File
 ---
-```
+```json
 [
     {
         "pos": [0,0]
