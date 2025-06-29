@@ -46,6 +46,8 @@ def fetch_audio(episode: Episode,i: int,lp_name: str):
 
     inf(f'Start extract track 2 from {t2_path}')
     extract_audio(video_path,t2_path,2)
+    episode
+    episode.save()
 
     
 def fix_audio(episode: Episode,i: int, lp_name):
