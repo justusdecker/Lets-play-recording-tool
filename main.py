@@ -44,16 +44,15 @@ def fetch_audio(episode: Episode,i: int,lp_name: str):
     inf(f'Start extract track 1 from {t1_path}')
     extract_audio(video_path,t1_path,1)
 
-    episode.set_audio_mic_path(t1_path)
+    episode.set_audio_mic_path(i,t1_path)
     
     inf(f'Start extract track 2 from {t2_path}')
     extract_audio(video_path,t2_path,2)
     
-    episode.set_audio_desktop_path(t2_path)
+    episode.set_audio_desktop_path(i,t2_path)
     
     episode.save()
-
-    
+  
 def fix_audio(episode: Episode,i: int, lp_name):
 
     audio_mic_path = episode.get_audio_mic_path(i)
@@ -74,6 +73,25 @@ def fix_audio(episode: Episode,i: int, lp_name):
     
     inf(f'Start limit track 2 to {t4_path}')
     limiter(t2_path, t4_path)
+
+def gen_thumbnail(
+    thumbnail_gen: ThumbnailGenerator,
+    lp_name: str,
+    ep_path: str,
+    video_path: str,
+    i: int,
+    tad: dict):
+
+    video_path = Episode(ep_path).get_video_path(i)
+    tad = aofn(filetypes=[['JSON','*.json']])
+    if not tad:
+        return
+    thumbnail_gen.generate(
+        str(i+1),
+        video_path,
+        tad,
+        f'{i+1}_{lp_name}_thumbnail.png'
+        )
 
 class App:
     def __init__(self):
@@ -162,32 +180,19 @@ class App:
                         lp,epr = res
                         lp_name = letsplay.get_name(lp)
                         ep_path = letsplay.get_episode_path(lp)
+                        eps = Episode(ep_path)
+                        tad = aofn(filetypes=[['JSON','*.json']])
                         if epr[0] == epr[1]:
-                            video_path = Episode(ep_path).get_video_path(epr[0])
-                            tad = aofn(filetypes=[['JSON','*.json']])
-                            if not tad:
-                                return
-                            TG.generate(
-                                str(epr[0]+1),
-                                video_path,
-                                tad,
-                                f'{epr[0]+1}_{lp_name}_thumbnail.png'
-                                )
+                            video_path = eps.get_video_path(epr[0])
+                            gen_thumbnail(TG,lp_name,ep_path, video_path,epr[0],tad)
                             
                         else:
-                            ep = Episode(ep_path)
-                            tad = aofn(filetypes=[['JSON','*.json']])
-                            if not tad:
-                                return
                             
                             for i in range(epr[0],epr[1]):
                                 video_path = ep.get_video_path(i)
-                                TG.generate(
-                                str(i+1),
-                                video_path,
-                                tad,
-                                f'{i+1}_{lp_name}_thumbnail.png'
-                                )
+                                
+                                video_path = eps.get_video_path(epr[0])
+                                gen_thumbnail(TG,lp_name,ep_path, video_path,i,tad)
                 case 2:
                     """
                     (2) Audio Fetch
