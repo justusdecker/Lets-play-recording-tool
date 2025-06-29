@@ -143,7 +143,10 @@ class App:
                     return
                 case 1: # Create Lets Play.csv
                     create_new_lp_file()
-                
+                case 2:
+                    nimp()
+                case 3:
+                    nimp()
                 case _:
                     err(USER_INPUT_NUM_UNMATCHED)
     def data_sub_create_entry_menu(self):
@@ -152,6 +155,12 @@ class App:
             match binpi(data_sub_menu('Create entry')):
                 case 0:
                     return
+                case 1:
+                    nimp()
+                case 2:
+                    nimp()
+                case 3:
+                    nimp()
                 case _:
                     err(USER_INPUT_NUM_UNMATCHED)
     def automation_sub_menu(self):
@@ -184,7 +193,13 @@ class App:
                         else:
                             for i in range(epr[0],epr[1]):
                                 print(i)
-                case 5:
+                case 2:
+                    nimp()
+                case 3:
+                    nimp()
+                case 4:
+                    nimp()
+                case 0:
                     return
                 case _:
                     err(USER_INPUT_NUM_UNMATCHED)
