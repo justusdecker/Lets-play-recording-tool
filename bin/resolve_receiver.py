@@ -2,7 +2,9 @@ from os.path import isfile
 def file_write(filepath : str, data : str):
     with open(filepath, 'w') as f:
         f.write(data)
-
+def file_read(filepath : str) -> str:
+    with open(filepath, 'r') as f:
+        return f.read()
 class DavinciReceiver:
     def __init__(self):
         self.davinci_pipe = 'E:\\davinciResolve\\dvp.txt'
@@ -19,14 +21,25 @@ class DavinciReceiver:
             file_write(self.davinci_pipe,msg)
         except PermissionError as E:
             print(E)
-    
+    def recv_from_davinci(self):
+        """
+        Davinci result
+        """
+        try:
+            if not isfile(self.user_pipe):
+                file_write(self.davinci_pipe,'')
+            return file_read(self.davinci_pipe)
+        except PermissionError as E:
+            print(E)
     def clean(self,typ: bool):
         file_write(self.davinci_pipe if typ else self.user_pipe,'')
     
-    def check_commands(self,msg:str):
+    def check_commands(self):
+        msg = self.recv_from_davinci()
         if msg.startswith('handshake'):
             print('handshake')
             self.send_to_user('handshake')
+            self.clean(1)
         if msg.startswith('import'):
             if '<' in msg:
                 video,audio,epNum = msg.split('<')[1],msg.split('<')[2],msg.split('<')[3]
@@ -84,3 +97,5 @@ def create_new_episode(episode_number: int, clips_by_name: list[str]):
 def get_element_names(self,search_for:str='mp4'):
         #Shows all Files in ClipList
         return {idx: clip.GetName() for idx,clip in enumerate(self.root_folder.GetClipList()) if clip.GetName().endswith(f'.{search_for}')}
+while 1:
+    DR.check_commands()

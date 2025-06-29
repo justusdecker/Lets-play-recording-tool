@@ -1,6 +1,7 @@
 """"""
 from os.path import isfile
 from bin.data_access import file_read, file_write
+from time import time
 # DVRPATH = "C:\Users\Justus\AppData\Roaming\Blackmagic Design\DaVinci Resolve\Support\Fusion\Scripts\Edit"
 
 class DaviniciSender:
@@ -33,8 +34,12 @@ class DaviniciSender:
         """
         try:
             if not isfile(self.user_pipe):
-                file_write(self.user_pipe,'')
-            return file_read(self.user_pipe)
+                return ''
+            ret = ''
+            _start = time()
+            while not ret or time() - _start > 2:
+                ret = file_read(self.user_pipe)
+            return ret
         except PermissionError as E:
             print(E)
     
