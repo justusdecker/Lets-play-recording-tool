@@ -83,7 +83,6 @@ def gen_thumbnail(
     tad: dict):
 
     video_path = Episode(ep_path).get_video_path(i)
-    tad = aofn(filetypes=[['JSON','*.json']])
     if not tad:
         return
     thumbnail_gen.generate(
