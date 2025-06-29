@@ -108,11 +108,12 @@ def gen_thumbnail(
     video_path = episode.get_video_path(i)
     if not tad:
         return
+    p = f'{THUMBNAIL_FOLDER}{i+1}_{lp_name}_thumbnail.png'
     thumbnail_gen.generate(
         str(i+1),
         video_path,
         tad,
         f'{THUMBNAIL_FOLDER}{i+1}_{lp_name}_thumbnail.png'
         )
-    episode.set_thumbnail_path()
+    episode.set_thumbnail_path(i,p)
     episode.save()
