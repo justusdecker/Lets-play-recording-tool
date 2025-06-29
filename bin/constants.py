@@ -6,7 +6,7 @@ COPYRIGHT = f"{bold('LPRT')} {italic(file_read('version.txt'))} - (c) Justus Dec
 SUBS = {
     'main': ['Main'],
     'automations': ['Main','Automations'],
-    'data': ['Main','Data'],
+    'options': ['Main','Options'],
     'tg': ['Main' , 'Automation' , 'Thumbnail Generator']
 }
 
@@ -32,6 +32,15 @@ MENU_MESSAGE = f"""
 
 MENU_AUTOMATION_MESSAGE = f"""
 {header('automations')}
+(1) Thumbnail Generate - {color816(bold('ALPHA'),35)}
+(2) {color816(strikethrough('Fetch Audio'),31)}
+(3) {color816(strikethrough('Fix Audio'),31)}
+(4) {color816(strikethrough('Render'),31)}
+(0) Back
+"""
+
+MENU_OPTIONS_MESSAGE = f"""
+{header('options')}
 (1) Thumbnail Generate - {color816(bold('ALPHA'),35)}
 (2) {color816(strikethrough('Fetch Audio'),31)}
 (3) {color816(strikethrough('Fix Audio'),31)}
