@@ -57,6 +57,8 @@ class App:
                 obs_connect(ep)
             case 2:
                 self.automation_sub_menu()
+            case 3:
+                nimp()
             case 4:
                 create_new_lp_file()
             case 5:
