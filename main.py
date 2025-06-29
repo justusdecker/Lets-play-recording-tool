@@ -106,13 +106,13 @@ class App:
                         tad = aofn(filetypes=[['JSON','*.json']])
                         if epr[0] == epr[1]:
                             video_path = eps.get_video_path(epr[0])
-                            gen_thumbnail(TG,lp_name,ep_path, video_path,epr[0],tad)
+                            gen_thumbnail(TG,lp_name,Episode(ep_path), video_path,epr[0],tad)
                             
                         else:
                             
                             for i in range(epr[0],epr[1]):
                                 video_path = eps.get_video_path(i)
-                                gen_thumbnail(TG,lp_name,ep_path, video_path,i,tad)
+                                gen_thumbnail(TG,lp_name,Episode(ep_path), video_path,i,tad)
                 case 2:
                     """
                     (2) Audio Fetch
