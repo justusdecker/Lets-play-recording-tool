@@ -87,6 +87,14 @@ DEFAULT_TAD = [
 ]
 
 
+#! PATHS
+
+from os import getlogin
+USERNAME = getlogin()
+del getlogin
+
+ROOT = f'C:\\Users\\{USERNAME}\\jri_data\\'
+
 #! ERRORS
 ewf = 'Exit current workflow.'
 ERROR_001 = f'[E001] User input is not in range. {ewf}'
