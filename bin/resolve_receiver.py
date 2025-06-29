@@ -7,6 +7,7 @@ class DavinciReceiver:
     def __init__(self):
         self.davinci_pipe = 'E:\\davinciResolve\\dvp.txt'
         self.user_pipe = 'E:\\davinciResolve\\up.txt'
+        print('started Davinci Receiver')
             
     def send_to_user(self,msg):
         """
@@ -24,6 +25,7 @@ class DavinciReceiver:
     
     def check_commands(self,msg:str):
         if msg.startswith('handshake'):
+            print('handshake')
             self.send_to_user('handshake')
         if msg.startswith('import'):
             if '<' in msg:
@@ -50,9 +52,6 @@ class DavinciReceiver:
         if ':' in msg:
             msg.split()
 
-
-
-resolve = ''
 
 PROJECT = resolve.GetProjectManager().GetCurrentProject()
 ROOT = PROJECT.GetMediaPool().GetRootFolder()
