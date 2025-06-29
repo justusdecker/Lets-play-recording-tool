@@ -58,3 +58,10 @@ Select your Option:
 USER_INPUT_NUM_UNMATCHED = color816(bold('This option does not exist'),31)
 
 DEFAULT_THUMBNAIL_SIZE = (1280,720)
+
+DEFAULT_OBS_SETTINGS = {
+    "ip": "",
+    "port": 1234,
+    "pw": "",
+    "timeout": 1
+}

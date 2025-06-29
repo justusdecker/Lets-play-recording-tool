@@ -45,6 +45,11 @@ class App:
         if not isfile('lets_play.csv'):
             war('lets_play.csv does not exist & will be created!')
             create_new_lp_file()
+    
+    def options_submenu(self):
+        match binpi(MENU_OPTIONS_MESSAGE):
+            case 1:
+                pass
     def main_menu(self):
         """
         Main Menu >
@@ -62,6 +67,7 @@ class App:
             case 4:
                 create_new_lp_file()
             case 5:
+                
                 nimp() #!
                 self.current_letsplay_id = binpi('Set the lets play id') #! 
             case 0:
