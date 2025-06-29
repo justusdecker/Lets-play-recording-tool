@@ -5,7 +5,7 @@ from bin.data_access import LetsPlay, file_read, isfile, LP_KEYS, EP_KEYS, file_
 from tkinter.filedialog import asksaveasfilename as asafn, askopenfilename as aofn
 from bin.others import binpi,binps, input_episode_range
 from bin.thumbnail import ThumbnailGenerator
-from bin.audio import extract_audio
+from bin.audio import extract_audio, loudness_normalization, limiter
 
 LP_PATH = 'lets_plays.csv'
 def obs_connect(ep: Episode):
@@ -188,7 +188,42 @@ class App:
                     """
                     (3) Audio Fix / Edit
                     """
-                    nimp()
+                    letsplay = LetsPlay(LP_PATH)
+                    res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
+                    if res is not None:
+                        lp,epr = res
+                        lp_name = letsplay.get_name(lp)
+                        ep_path = letsplay.get_episode_path(lp)
+                        if epr[0] == epr[1]:
+                            video_path = Episode(ep_path).read(epr[0])[0]
+                            
+                            t1_path, t2_path = f'{epr[0]+1}_{lp_name}_track_mic.mp3',f'{epr[0]+1}_{lp_name}_track_desktop.mp3'
+                            
+                            
+                            loudness_normalization(self.letsPlayComp.getCuEp(EC.ORIGINAL_AUDIO_PATH),AUDIO_PATH + '_tmp.mp3')
+                            
+                            limiter(AUDIO_PATH + '_tmp.mp3',self.letsPlayComp.getCompPath())
+                    
+                            self.lc._stop()
+                            inf(f'Start extract track 1 from {t1_path}')
+                            extract_audio(video_path,t1_path,1)
+                            inf(f'Finished extracting track 1 from {t1_path}')
+                            inf(f'Start extract track 2 from {t2_path}')
+                            extract_audio(video_path,t2_path,2)
+                            inf(f'Finished extracting track 2 from {t2_path}')
+                        else:
+                            ep = Episode(ep_path)
+                            
+                            for i in range(epr[0],epr[1]):
+                                video_path = ep.read(i)[0]
+                                
+                                t1_path, t2_path = f'{i+1}_{lp_name}_track_mic.mp3',f'{i+1}_{lp_name}_track_desktop.mp3'
+                                inf(f'Start extract track 1 from {t1_path}')
+                                extract_audio(video_path,t1_path,1)
+                                inf(f'Finished extracting track 1 from {t1_path}')
+                                inf(f'Start extract track 2 from {t2_path}')
+                                extract_audio(video_path,t2_path,2)
+                                inf(f'Finished extracting track 2 from {t2_path}')
                 case 4:
                     nimp()
                 case 0:
