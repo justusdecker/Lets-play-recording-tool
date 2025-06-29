@@ -127,7 +127,7 @@ class App:
                             if not tad:
                                 return
                             TG.generate(
-                                str(epr[0]),
+                                str(epr[0]+1),
                                 video_path,
                                 tad,
                                 f'{epr[0]+1}_{lp_name}_thumbnail.png'
@@ -142,7 +142,7 @@ class App:
                             for i in range(epr[0],epr[1]):
                                 video_path = ep.read(i)[0]
                                 TG.generate(
-                                str(i),
+                                str(i+1),
                                 video_path,
                                 tad,
                                 f'{i+1}_{lp_name}_thumbnail.png'
