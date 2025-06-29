@@ -11,14 +11,14 @@ LP_PATH = 'lets_plays.csv'
 def obs_connect(ep: Episode):
     OBSO = OBSObserver()
     if not OBSO.isconnected:
-        err('No connection to OBS!')
+        err(ERROR_004)
     while OBSO.isconnected:
         try:
             print(OBSO.timecode)
             OBSO.update(ep)
             
         except KeyboardInterrupt:
-            err('Keyboard interrupt!')
+            err(ERROR_005)
             break
 
 def create_new_lp_file():
@@ -26,7 +26,7 @@ def create_new_lp_file():
     if not isfile(LP_PATH):
         csv_write(LP_PATH,[[binps(f'{key}: ') if key != 'version' else file_read('version.txt') for key in LP_KEYS]])
     else:
-        err('File already exist!')
+        err(ERROR_002)
     pass
 
 def create_new_ep_file(filepath: str):
@@ -35,7 +35,7 @@ def create_new_ep_file(filepath: str):
     if not isfile(filepath):
         csv_write(filepath,[[binps(f'{key}: ') for key in EP_KEYS]])
     else:
-        err('File already exist!')
+        err(ERROR_002)
     pass
 
 class App:
@@ -44,21 +44,41 @@ class App:
         self.current_letsplay_id = 0
     
     def options_submenu(self):
+        """
+        Main Menu > Options
+        """
         while self.isrunning:
             match binpi(MENU_OPTIONS_MESSAGE):
                 case 1:
+                    """
+                    (1) Create the settings.json
+                    Only if the file not exists
+                    """
                     if isfile('settings.json'):
-                        err('file already exists')
+                        err(ERROR_002)
                         continue
                     
                     json_write('settings.json',DEFAULT_OBS_SETTINGS)
                 case 2:
+                    """
+                    
+                    """
                     l = len(LetsPlay(LP_PATH).get_names())
                     tmp = binpi(f'Enter a value from 0 to {l-1}','set lp_id: ')
                     
                     if tmp < l:
                         self.current_letsplay_id = tmp
+                    else:
+                        err(ERROR_001)
+                        continue
                 case 3:
+                    """
+                    (3) Create the default_tad.json
+                    Only if the file not exists
+                    """
+                    if isfile('default_tad.json'):
+                        err(ERROR_002)
+                        continue
                     json_write('default_tad.json',DEFAULT_TAD)
                 case 4:
                     create_new_lp_file()
@@ -81,7 +101,7 @@ class App:
             case 0:
                 self.isrunning = False
             case _:
-                err(USER_INPUT_NUM_UNMATCHED)
+                err(ERROR_003)
     
     def automation_sub_menu(self):
         while self.isrunning:
@@ -122,7 +142,7 @@ class App:
                 case 0:
                     return
                 case _:
-                    err(USER_INPUT_NUM_UNMATCHED)
+                    err(ERROR_003)
                     
         
     def loop(self):

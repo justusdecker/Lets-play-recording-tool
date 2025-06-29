@@ -56,8 +56,6 @@ def thumbnail_automation_sub_menu(sub:str) -> str:
 Select your Option:
     """
 
-USER_INPUT_NUM_UNMATCHED = color816(bold('This option does not exist'),31)
-
 DEFAULT_THUMBNAIL_SIZE = (1280,720)
 
 DEFAULT_OBS_SETTINGS = {
@@ -87,3 +85,12 @@ DEFAULT_TAD = [
         "pos": [0,0]
     }
 ]
+
+
+#! ERRORS
+ewf = 'Exit current workflow.'
+ERROR_001 = f'[E001] User input is not in range. {ewf}'
+ERROR_002 = f'[E002] file already exists. {ewf}'
+ERROR_003 = f'[E003] This option does not exist. {ewf}'
+ERROR_004 = f'[E004] No connection to OBS!. {ewf}'
+ERROR_005 = f'[E005] Keyboard interrupt!. {ewf}'
