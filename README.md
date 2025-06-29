@@ -1,10 +1,17 @@
+# LPRT
 
-# Lets-play-recording-tool
-## 0.2.102
+## What is LPRT?
 
-An automation tool for lets players
+LPRT is a recording, editing & distribution Tool for Let's Players like me
 
-## What is coming up?
+This is a terminal application so you need some terminal experience.
+
+all the data is stored in `csv` & `json`.
+Easy access & edit your data using a text-editor or Excel-like apps
+
+## Current Development State
+
+Work in progress(pre alpha)
 
 - [x] Terminal Stuff(No practical usage! Only command inputs etc.)
 - [x] Recording(Saving Data etc.)
@@ -15,4 +22,59 @@ An automation tool for lets players
 - [ ] Deploy(COMING SOON!)
 - [ ] Distribute(COMING SOON!)
 
-![TODO](https://github.com/user-attachments/assets/c7c4eed5-7eda-45c1-af10-58c29b98bc63)
+> [!CAUTION]
+> So many bugs may appear!
+> Some bugs can lead to data loss. **BE CAREFUL!**
+
+## How to use?
+
+### Programs you need
+
+> [!IMPORTANT]
+> All of the programs are needed to fully function!
+https://ffmpeg.org/
+
+
+[![FFMPEG](https://img.shields.io/badge/FFMPEG-007808?style=flat-square&logo=ffmpeg&logoColor=ffffff)](https://ffmpeg.org/)
+[![OBS](https://img.shields.io/badge/obsstudio-302E31?style=flat-square&logo=obsstudio&logoColor=ffffff)](https://obsproject.com/de)
+
+### Recording
+
+#### Connecting LPRT to OBS
+
+1. Open OBS
+2. Click on the `tools` dropdown
+3. Click on `Websocket Server-Settings`
+4. Activate `Websocket Server`
+5. Set your `port`
+6. Activate `authentification`!
+7. Generate a new password
+8. Click on show `Connection information`
+9. Copy `ip`, `port` & `password`
+10. Create a file named `settings.json` in `root`, copy & paste the lines below & replace your information with the placeholders!
+    ```
+    {
+        "ip": "{your ip}",
+        "port": {your port},
+        "pw": "{your password}",
+        "timeout": 1
+    }
+    ```
+11. Now you are ready to go!
+
+#### Troubleshooting
+
+##### IP changed
+Sometimes your ip changes & LPRT will not recognize these changes.
+You need to manually adjust the ip adress in `settings.json`
+##### Password wrong
+Simply adjust your `password` in `settings.json`
+> [!IMPORTANT]
+> If you're issue is not listed here, then please create an issue for this. 
+
+#### First Recording
+
+1. Open LPRT & `obs`
+2. In LPRT select option `1`
+3. Start Recording in `obs`
+4. You see your recording time & LPRT will create a new entry in the selected episode
