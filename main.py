@@ -59,12 +59,11 @@ class App:
             case 2:
                 self.automation_sub_menu()
             case 4:
-                self.data_sub_menu()
+                create_new_lp_file()
             case 5:
                 nimp() #!
                 self.current_letsplay_id = binpi('Set the lets play id') #! 
-            case 6:
-                create_new_lp_file()
+            
             case 0:
                 self.isrunning = False
             case _:
