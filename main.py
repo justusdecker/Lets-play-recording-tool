@@ -1,14 +1,13 @@
 
 from bin.constants import *
 
-from bin.data_access import LetsPlay, cnef,file_read, isfile, LP_KEYS, EP_KEYS, file_write,csv_write, Episode,json_write
-from tkinter.filedialog import asksaveasfilename as asafn, askopenfilename as aofn
-from bin.others import binpi,binps, input_episode_range
+from bin.data_access import LetsPlay, cnef, isfile, Episode,json_write
+from tkinter.filedialog import askopenfilename as aofn
+from bin.others import binpi, input_episode_range
 from bin.thumbnail import ThumbnailGenerator
 
 from bin.automations import (
     obs_connect,
-    create_new_ep_file,
     create_new_lp_file,
     fetch_audio,
     fix_audio,
