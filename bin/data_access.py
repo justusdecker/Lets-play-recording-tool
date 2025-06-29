@@ -56,11 +56,11 @@ class CSVObj:
     """
     The default csv object to inherit from.
     """
-    def __init__(self, filepath: str):
+    def __init__(self, filepath: str,KEYS: dict):
         self.filepath = filepath
         self.data = csv_read(filepath)
         for row in self.data:
-            if len(row) != len(LP_KEYS):
+            if len(row) != len(KEYS):
                 raise IndexError()
     def __check_list(self,cl:list[str],**kwargs):
         """
@@ -120,7 +120,7 @@ class LetsPlay(CSVObj):
     
     """
     def __init__(self, filepath):
-        super().__init__(filepath)
+        super().__init__(filepath,LP_KEYS)
     def create(self, **kwargs):
         return super().create(LP_KEYS, **kwargs)
     def update(self, id, **kwargs):
@@ -146,7 +146,7 @@ class Episode(CSVObj):
     
     """
     def __init__(self, filepath):
-        super().__init__(filepath)
+        super().__init__(filepath, EP_KEYS)
     def create(self, **kwargs):
         return super().create(EP_KEYS, **kwargs)
     def update(self, id, **kwargs):
