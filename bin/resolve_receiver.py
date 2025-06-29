@@ -51,7 +51,7 @@ class DavinciReceiver:
             self.clean()
         if ':' in msg:
             msg.split()
-
+DR = DavinciReceiver()
 
 PROJECT = resolve.GetProjectManager().GetCurrentProject()
 ROOT = PROJECT.GetMediaPool().GetRootFolder()
