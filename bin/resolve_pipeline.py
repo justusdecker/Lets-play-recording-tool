@@ -17,10 +17,7 @@ class DaviniciSender:
     def recvFromFile(self):
         try:
             if not isfile(self.user_pipe):
-                with open(self.user_pipe,'w') as file:
-                    file.write('')
-            with open(self.user_pipe,'r') as file:
-                _ret =  file.read()
-                return _ret
+                file_write(self.user_pipe,'')
+            return file_read(self.user_pipe)
         except PermissionError as E:
             print(E)
