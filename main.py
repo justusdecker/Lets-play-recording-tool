@@ -6,7 +6,7 @@ from tkinter.filedialog import asksaveasfilename as asafn, askopenfilename as ao
 from bin.others import binpi,binps, input_episode_range
 from bin.thumbnail import ThumbnailGenerator
 from bin.audio import extract_audio, loudness_normalization, limiter
-cnef("C:\\Users\\Justus\\jri_data\\thumbs\\thief simulator")
+
 LP_PATH = 'lets_plays.csv'
 def obs_connect(ep: Episode):
     OBSO = OBSObserver()
@@ -39,7 +39,7 @@ def create_new_ep_file(filepath: str):
 def fetch_audio(episode: Episode,i: int,lp_name: str):
     video_path = episode.get_video_path(i)
                                 
-    t1_path, t2_path = f'{i+1}_{lp_name}_track_mic.mp3',f'{i+1}_{lp_name}_track_desktop.mp3'
+    t1_path, t2_path = f'{AUDIO_FOLDER}{i+1}_{lp_name}_track_mic.mp3',f'{AUDIO_FOLDER}{i+1}_{lp_name}_track_desktop.mp3'
     
     inf(f'Start extract track 1 from {t1_path}')
     extract_audio(video_path,t1_path,1)
@@ -58,9 +58,9 @@ def fix_audio(episode: Episode,i: int, lp_name):
     audio_mic_path = episode.get_audio_mic_path(i)
     audio_desktop_path = episode.get_audio_desktop_path(i)
     
-    t1_path, t2_path = f'{i+1}_{lp_name}_track_mic_ln.mp3',f'{i+1}_{lp_name}_track_desktop_ln.mp3'
+    t1_path, t2_path = f'{FIXED_AUDIO_FOLDER}{i+1}_{lp_name}_track_mic_ln.mp3',f'{FIXED_AUDIO_FOLDER}{i+1}_{lp_name}_track_desktop_ln.mp3'
     
-    t3_path, t4_path = f'{i+1}_{lp_name}_track_mic_fixed.mp3',f'{i+1}_{lp_name}_track_desktop_fixed.mp3'
+    t3_path, t4_path = f'{FIXED_AUDIO_FOLDER}{i+1}_{lp_name}_track_mic_fixed.mp3',f'{FIXED_AUDIO_FOLDER}{i+1}_{lp_name}_track_desktop_fixed.mp3'
     
     inf(f'Start normalize track 1 to {t1_path}')
     loudness_normalization(audio_mic_path, t1_path)
@@ -89,7 +89,7 @@ def gen_thumbnail(
         str(i+1),
         video_path,
         tad,
-        f'{i+1}_{lp_name}_thumbnail.png'
+        f'{THUMBNAIL_FOLDER}{i+1}_{lp_name}_thumbnail.png'
         )
 
 class App:
@@ -173,7 +173,7 @@ class App:
                     letsplay = LetsPlay(LP_PATH)
                     
                     TG = ThumbnailGenerator()
-                    
+                    cnef(THUMBNAIL_FOLDER)
                     res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
                     if res is not None:
                         lp,epr = res
@@ -195,7 +195,7 @@ class App:
                     (2) Audio Fetch
                     Get all video - audio track 1 & 2
                     """
-                    
+                    cnef(AUDIO_FOLDER)
                     letsplay = LetsPlay(LP_PATH)
                     res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
                     if res is not None:
@@ -212,6 +212,7 @@ class App:
                     """
                     (3) Audio Fix / Edit
                     """
+                    cnef(FIXED_AUDIO_FOLDER)
                     letsplay = LetsPlay(LP_PATH)
                     res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
                     if res is not None:
