@@ -1,12 +1,12 @@
 
 from bin.constants import *
 from bin.obs import OBSObserver
-from bin.data_access import LetsPlay, file_read, isfile, LP_KEYS, EP_KEYS, file_write,csv_write, Episode,json_write
+from bin.data_access import LetsPlay, cnef,file_read, isfile, LP_KEYS, EP_KEYS, file_write,csv_write, Episode,json_write
 from tkinter.filedialog import asksaveasfilename as asafn, askopenfilename as aofn
 from bin.others import binpi,binps, input_episode_range
 from bin.thumbnail import ThumbnailGenerator
 from bin.audio import extract_audio, loudness_normalization, limiter
-
+cnef("C:\\Users\\Justus\\jri_data\\thumbs\\thief simulator")
 LP_PATH = 'lets_plays.csv'
 def obs_connect(ep: Episode):
     OBSO = OBSObserver()
