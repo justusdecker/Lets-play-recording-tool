@@ -57,8 +57,8 @@ def json_write(filepath : str, data : dict | list):
 
 def cnef(path: str):
     if not isdir(path):
-        for p in path.split('\\'):
-            mkir()
+        for idx, p in enumerate(path.split('\\')):
+            print("\\".join(path.split('\\')[0:idx+1]))
 class CSVObj:
     """
     The default csv object to inherit from.
