@@ -1,6 +1,8 @@
 import json
 import csv
-from os.path import isfile
+from os.path import isfile, isdir
+from os import mkdir
+
 
 LP_KEYS = [
     'version',
@@ -51,7 +53,12 @@ def json_read(filepath : str) -> dict | list:
 def json_write(filepath : str, data : dict | list):
     with open(filepath, 'w') as f:
         f.write(json.dumps(data))
-    
+   
+
+def cnef(path: str):
+    if not isdir(path):
+        for p in path.split('\\'):
+            mkir()
 class CSVObj:
     """
     The default csv object to inherit from.
@@ -139,6 +146,7 @@ class LetsPlay(CSVObj):
         return [Episode(i[1]).row for i in self.data]
     def get_episodes(self,id) -> list[int]:
         return Episode(self.read(id)[1])
+
 class Episode(CSVObj):
     """
     
