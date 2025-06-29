@@ -8,8 +8,12 @@ def war(text: str) -> None:
 
 def err(text: str) -> None:
     print(color816(bold(text),31))
+    
 def deb(text: str) -> None:
     print(italic(color816(bold(text),93)))
+    
+def inf(text: str) -> None:
+    print(color816(bold(text),92))
 
 def nimp():
     c = cf().f_back

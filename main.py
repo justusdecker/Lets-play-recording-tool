@@ -163,10 +163,15 @@ class App:
                         ep_path = letsplay.get_episode_path(lp)
                         if epr[0] == epr[1]:
                             video_path = Episode(ep_path).read(epr[0])[0]
+                            
                             tad = aofn(filetypes=[['JSON','*.json']])
                             if not tad:
                                 return
-                            pass
+                            t1_path, t2_path = f'{epr[0]+1}_{lp_name}_track_mic.mp3',f'{epr[0]+1}_{lp_name}_track_desktop.mp3'
+                            
+                            extract_audio(video_path,t1_path,1)
+                            
+                            extract_audio(video_path,t2_path,2)
                             
                         else:
                             ep = Episode(ep_path)
