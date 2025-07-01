@@ -1,5 +1,7 @@
 from bin.audio import extract_audio, loudness_normalization, limiter
 from bin.obs import OBSObserver
+from shutil import copyfile
+from tkinter.filedialog import askdirectory
 
 LP_PATH = 'lets_plays.csv'
 
@@ -25,6 +27,7 @@ from bin.constants import (
     ERROR_002,
     ERROR_004,
     ERROR_005,
+    ERROR_006,
     AUDIO_FOLDER,
     FIXED_AUDIO_FOLDER,
     THUMBNAIL_FOLDER
@@ -122,24 +125,35 @@ def gen_thumbnail(
 
 
 def generate_markdown(lp: LetsPlay, ep: Episode,id: int):
-    
+    #getting info
     name = lp.get_name(id)
     game_name = lp.get_game_name(id)
-    
     eps = ep
-    md = f"""
-    # {name}
-    {game_name}
-    {eps.row} episodes
+    # Creating Markdown Header
+    MD = f"""
+# {name}
+{game_name}
+{eps.row} episodes
     """
+    #copy & paste data
+    
+    dst = askdirectory()
+    print(dst)
+    if not dst:
+        #dst is not set! Return
+        err(ERROR_006)
+        return
+    
+    
+    
+   
     for i in range(eps.row):
         video_path, audio_mic, audio_desk, thumbnail, _ = eps.read(i)
-        md += f"""
+        #copyfile(video_path,dst + '')
+        MD += f"""
 ## {i}
 - {video_path}
-- {audio_mic}
-- {audio_desk}
-- {thumbnail}
+- ![IMAGE]({thumbnail})
         """
     
-    file_write('test.md',md)
+    file_write('test.md',MD)
