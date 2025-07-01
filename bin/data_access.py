@@ -17,7 +17,16 @@ EP_KEYS = [
     'audio_mic_path',
     'audio_desktop_path',
     'thumbnail_path',
-    'thumbnail_frame'
+    'thumbnail_frame',
+    'has_problem',
+    'audio_mic_edit1_path',
+    'audio_mic_edit2_path',
+    'audio_desktop_edit1_path',
+    'audio_desktop_edit2_path',
+    'title',
+    'episode_number',
+    'upload_at',
+    'final_video'
 ]
 
 def csv_rw(filepath: str, new_data):
@@ -162,6 +171,10 @@ class Episode(CSVObj):
     """
     def __init__(self, filepath):
         super().__init__(filepath, EP_KEYS)
+    def add(self,video_path: str):
+        default = {i:'' for i in EP_KEYS}
+        default['video_path'] = video_path
+        self.create(**default)
     def create(self, **kwargs):
         return super().create(EP_KEYS, **kwargs)
     def update(self, id, **kwargs):
