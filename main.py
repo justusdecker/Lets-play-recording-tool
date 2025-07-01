@@ -14,13 +14,7 @@ from bin.automations import (
     gen_thumbnail,
     LP_PATH
 )
-from bin.resolve_sender import DaviniciSender
-DR = DaviniciSender()
-DR.send_to_davinci('handshake')
 
-print(DR.recv_from_user())
-DR.clean(0)
-print(DR.recv_from_user())
 class App:
     def __init__(self):
         self.isrunning = True

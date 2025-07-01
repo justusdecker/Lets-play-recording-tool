@@ -79,6 +79,33 @@ Simply adjust your `password` in `settings.json`
 3. Start Recording in `obs`
 4. You see your recording time & LPRT will create a new entry in the selected episode
 
+
+
+## File Formats
+
+### Episodes
+
+|key|type|desc|
+|---|---|---|
+|video_path|`str`|The path of the obs recording|
+|audio_mic_path||The fetched audio path: mic|
+|audio_desktop_path||
+|thumbnail_path||
+|thumbnail_frame||
+
+#### Currently Not implemented
+
+|key|type|desc|
+|---|---|---|
+|has_problem||
+|audio_mic_edit1_path||
+|audio_mic_edit2_path||
+|audio_desktop_edit1_path||
+|audio_desktop_edit2_path||
+|title||
+|episode_number||
+|upload_at||
+
 Currently out of context(to reduce unused files!)
 ---
 
@@ -134,3 +161,4 @@ The text is the third index. You can define:
 |color|`tuple` or `list` cont. **4** `int`|
 |ol_color|`tuple` or `list` cont. **4** `int`|
 |size|`int`|
+
