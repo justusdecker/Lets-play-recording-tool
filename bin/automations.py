@@ -129,8 +129,19 @@ def generate_markdown(lp: LetsPlay, ep: Episode,id: int):
     eps = lp.get_episodes(id)
     eps : Episode
     eps.get_video_path()
-    
+    f"""
+    # {name}
+    {game_name}
+    {eps.row} episodes
+    """
     for i in range(eps.row):
         video_path, audio_mic, audio_desk, thumbnail, _ = eps.get_video_path(i)
-    
+        f"""
+## {i}
+- {video_path}
+- {audio_mic}
+- {audio_desk}
+- {thumbnail}
+        """
+        
     file_write()
