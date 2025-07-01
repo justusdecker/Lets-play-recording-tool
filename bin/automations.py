@@ -5,8 +5,10 @@ LP_PATH = 'lets_plays.csv'
 
 from bin.data_access import (
     file_read,
+    file_write,
     csv_write,
     Episode,
+    LetsPlay,
     EP_KEYS,
     LP_KEYS
 )
@@ -117,3 +119,7 @@ def gen_thumbnail(
         )
     episode.set_thumbnail_path(i,p)
     episode.save()
+
+
+def generate_markdown(lp: LetsPlay, ep: Episode):
+    file_write()
