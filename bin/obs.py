@@ -13,7 +13,7 @@ class OBSObserver:
         self.connect() # Reconnect
         if self.isrecording and not self.recording_flag: # Recording started
             self.recording_flag = True
-            ep.create(video_path=self.filepath,audio_mic_path='',audio_desktop_path='',thumbnail_path='',thumbnail_frame=0)
+            ep.add(video_path=self.filepath)
             ep.save()
         elif not self.isrecording and self.recording_flag: # Recording stopped
             self.recording_flag = False
