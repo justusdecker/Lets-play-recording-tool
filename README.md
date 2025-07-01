@@ -85,26 +85,32 @@ Simply adjust your `password` in `settings.json`
 
 ### Episodes
 
-|key|type|
-|---|---|
-|video_path|`str`|
-|audio_mic_path|`str`|
-|audio_desktop_path|`str`|
-|thumbnail_path|`str`|
-|thumbnail_frame|`float`|
-
-#### Currently Not implemented
-
-|key|type|desc|
+|id|key|type|
 |---|---|---|
-|has_problem||
-|audio_mic_edit1_path||
-|audio_mic_edit2_path||
-|audio_desktop_edit1_path||
-|audio_desktop_edit2_path||
-|title||
-|episode_number||
-|upload_at||
+|0|video_path|`str`|
+|1|audio_mic_path|`str`|
+|2|audio_desktop_path|`str`|
+|3|thumbnail_path|`str`|
+|4|thumbnail_frame|`float`|
+|5|has_problem|`bool`|
+|6|audio_mic_edit1_path|`str`|
+|7|audio_mic_edit2_path|`str`|
+|8|audio_desktop_edit1_path|`str`|
+|9|audio_desktop_edit2_path|`str`|
+|10|title|`str`|
+|11|episode_number|`int`|
+|12|upload_at|`int`|
+
+### Lets Play
+
+|id|key|type|
+|---|---|---|
+|0|version|`str`|
+|1|episode_path|`str`|
+|2|tad_path|`str`|
+|3|name|`str`|
+|4|game_name|`str`|
+|5|episode_length|`int`|
 
 Currently out of context(to reduce unused files!)
 ---
