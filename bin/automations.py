@@ -198,6 +198,7 @@ def deploy(lp: LetsPlay, ep: Episode,id: int):
         
         if not isfile(video_path) or not isfile(thumbnail_path):
             err(ERROR_007)
+            return
         vpe = video_path.split('.')[1]
         
         new_video_path = f'{dst}{i+1}_video_{game_name}.{vpe}'
