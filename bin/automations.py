@@ -133,7 +133,7 @@ def generate_markdown(lp: LetsPlay, ep: Episode,id: int):
     {eps.row} episodes
     """
     for i in range(eps.row):
-        video_path, audio_mic, audio_desk, thumbnail, _ = eps.get_video_path(i)
+        video_path, audio_mic, audio_desk, thumbnail, _ = eps.read(i)
         f"""
 ## {i}
 - {video_path}
