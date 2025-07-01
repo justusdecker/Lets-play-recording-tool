@@ -100,6 +100,7 @@ Simply adjust your `password` in `settings.json`
 |10|title|`str`|
 |11|episode_number|`int`|
 |12|upload_at|`int`|
+|12|final_video|`str`|
 
 ### Lets Play
 
