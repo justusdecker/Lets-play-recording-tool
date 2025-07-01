@@ -28,6 +28,7 @@ from bin.constants import (
     ERROR_004,
     ERROR_005,
     ERROR_006,
+    ERROR_007,
     AUDIO_FOLDER,
     FIXED_AUDIO_FOLDER,
     THUMBNAIL_FOLDER
@@ -194,6 +195,9 @@ def deploy(lp: LetsPlay, ep: Episode,id: int):
         
         video_path = eps.get_final_video_path(i)
         thumbnail_path = eps.get_thumbnail_path(i)
+        
+        if not isfile(video_path) or not isfile(thumbnail_path):
+            err(ERROR_007)
         vpe = video_path.split('.')[1]
         
         new_video_path = f'{dst}{i+1}_video_{game_name}.{vpe}'
