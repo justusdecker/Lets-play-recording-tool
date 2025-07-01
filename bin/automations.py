@@ -124,7 +124,12 @@ def gen_thumbnail(
     episode.save()
 
 
-def generate_markdown(lp: LetsPlay, ep: Episode,id: int):
+def deploy(lp: LetsPlay, ep: Episode,id: int):
+    """
+    
+    """
+    
+    
     #getting info
     name = lp.get_name(id)
     game_name = lp.get_game_name(id)
@@ -137,23 +142,26 @@ def generate_markdown(lp: LetsPlay, ep: Episode,id: int):
     """
     #copy & paste data
     
-    dst = askdirectory()
+    dst = askdirectory() + '/'
     print(dst)
     if not dst:
         #dst is not set! Return
         err(ERROR_006)
         return
-    
-    
-    
-   
     for i in range(eps.row):
         video_path, audio_mic, audio_desk, thumbnail, _ = eps.read(i)
-        #copyfile(video_path,dst + '')
+        vpe = video_path.split('.')[1]
+        
+        new_video_path = f'{dst}{i+1}_video_{game_name}.{vpe}'
+        new_thumbnail_path = f'{dst}{i+1}_thumbnail_{game_name}.png'
+        
+        copyfile(video_path,new_video_path)
+        copyfile(thumbnail,new_thumbnail_path)
+        
         MD += f"""
 ## {i}
-- {video_path}
-- ![IMAGE]({thumbnail})
+- {new_video_path.split('/')[-1]}
+- ![IMAGE]({new_thumbnail_path.split('/')[-1]})
         """
     
     file_write('test.md',MD)
