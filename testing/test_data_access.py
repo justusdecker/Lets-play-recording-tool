@@ -16,7 +16,12 @@ def test_read_empty_csv():
 def test_write_empty_csv():
     csv_write('test.csv',[])
     
+def test_ep_add():
+    ep = Episode('test.csv')
+    ep.add('test123')
+    ep.save()
     
+
 def test_csv(csvi):
     csvi
     

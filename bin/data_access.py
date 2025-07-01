@@ -173,7 +173,7 @@ class Episode(CSVObj):
         super().__init__(filepath, EP_KEYS)
     def add(self,video_path: str):
         default = {i:'' for i in EP_KEYS}
-        default['video_path'] = video_path
+        #default['video_path'] = video_path
         self.create(**default)
     def create(self, **kwargs):
         return super().create(EP_KEYS, **kwargs)
