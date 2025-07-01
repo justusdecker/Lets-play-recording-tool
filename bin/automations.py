@@ -126,9 +126,7 @@ def generate_markdown(lp: LetsPlay, ep: Episode,id: int):
     name = lp.get_name(id)
     game_name = lp.get_game_name(id)
     
-    eps = lp.get_episodes(id)
-    eps : Episode
-    eps.get_video_path()
+    eps = ep
     f"""
     # {name}
     {game_name}
