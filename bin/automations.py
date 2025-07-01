@@ -142,4 +142,4 @@ def generate_markdown(lp: LetsPlay, ep: Episode,id: int):
 - {thumbnail}
         """
     
-    #file_write()
+    file_write('test.md',md)
