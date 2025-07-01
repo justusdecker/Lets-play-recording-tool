@@ -146,9 +146,6 @@ def deploy(lp: LetsPlay, ep: Episode,id: int):
 {game_name}
 {eps.row} episodes
     """
-    
-    
-    
     #ask the user about the target destination for the files
     # will print an error & return if empty
     dst = askdirectory() + '/'
@@ -161,8 +158,12 @@ def deploy(lp: LetsPlay, ep: Episode,id: int):
         """
         In this loop we do a lot:
         - fetch the data from the episode
+            #!We only need the video_path( in later versions we need the final_video_path )
+            And the thumbnail_path
+        - We create two new paths thats the destinations for video & thumbnail
+        - Copying the files over to the new location
+        - Append essential data to the Markdown
         """
-        
         
         video_path, _, _, thumbnail, _ = eps.read(i)
         vpe = video_path.split('.')[1]
@@ -179,4 +180,5 @@ def deploy(lp: LetsPlay, ep: Episode,id: int):
 - ![IMAGE]({new_thumbnail_path.split('/')[-1]})
         """
     
+    #At the end we write all stuff in MD to disk
     file_write('test.md',MD)
