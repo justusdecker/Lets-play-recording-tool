@@ -124,5 +124,5 @@ def gen_thumbnail(
 def generate_markdown(lp: LetsPlay, ep: Episode,id: int):
     
     name = lp.get_name(id)
-    game_name = lp.get_name(id)
+    game_name = lp.get_game_name(id)
     file_write()
