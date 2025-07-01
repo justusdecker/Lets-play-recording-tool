@@ -181,6 +181,8 @@ class Episode(CSVObj):
         return super().update(id, EP_KEYS, **kwargs)
     def get_video_path(self,id: int):
         return self.read(id)[0]
+    def get_final_video_path(self,id: int):
+        return self.read(id)[13]
     def get_audio_mic_path(self,id: int):
         return self.read(id)[1]
     def get_audio_desktop_path(self,id: int):
