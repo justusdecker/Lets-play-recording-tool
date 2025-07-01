@@ -140,6 +140,9 @@ class LetsPlay(CSVObj):
     def get_episode_path(self,id: int) -> str:
         return self.read(id)[1]
     
+    def get_game_name(self,id: int) -> str:
+        return self.read(id)[3]
+    
     def get_name(self,id: int) -> str:
         return self.read(id)[4]
     
