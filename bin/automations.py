@@ -126,30 +126,45 @@ def gen_thumbnail(
 
 def deploy(lp: LetsPlay, ep: Episode,id: int):
     """
+    Deploying is for moving lets play data & files to other folders & drives
     
+    This will create on the top one markdown file that contains essential data for the videoupload
+    
+    The user only need to copy & paste
     """
     
     
-    #getting info
+    #getting lets play info
+    # name etc. to write it in the header: follows below
     name = lp.get_name(id)
     game_name = lp.get_game_name(id)
     eps = ep
+    
     # Creating Markdown Header
     MD = f"""
 # {name}
 {game_name}
 {eps.row} episodes
     """
-    #copy & paste data
     
+    
+    
+    #ask the user about the target destination for the files
+    # will print an error & return if empty
     dst = askdirectory() + '/'
-    print(dst)
     if not dst:
-        #dst is not set! Return
         err(ERROR_006)
         return
+    
+    
     for i in range(eps.row):
-        video_path, audio_mic, audio_desk, thumbnail, _ = eps.read(i)
+        """
+        In this loop we do a lot:
+        - fetch the data from the episode
+        """
+        
+        
+        video_path, _, _, thumbnail, _ = eps.read(i)
         vpe = video_path.split('.')[1]
         
         new_video_path = f'{dst}{i+1}_video_{game_name}.{vpe}'
