@@ -38,19 +38,28 @@ from bin.thumbnail import ThumbnailGenerator
 from os.path import isfile
 
 def obs_connect(ep: Episode):
+    """
+    Connects to the obs_ws API
+    
+    Runs until the connection breaks up or a keyboard interrupt happens
+    """
     OBSO = OBSObserver()
     if not OBSO.isconnected:
         err(ERROR_004)
     while OBSO.isconnected:
         try:
-            print(OBSO.timecode)
+            print(OBSO.timecode) #! Will be changed to a one line print by using esc seqs
             OBSO.update(ep)
-            
         except KeyboardInterrupt:
             err(ERROR_005)
             break
 
 def create_new_lp_file():
+    """
+    Creates a new CSV File in Lets Play Format
+    
+    Already existing will cause an error message
+    """
     print(color816(f'[!TIP] > If you have a typo somewhere: You can change the data later manually!(Do it or bugs will kill your fun :D)',32))
     if not isfile(LP_PATH):
         csv_write(LP_PATH,[[binps(f'{key}: ') if key != 'version' else file_read('version.txt') for key in LP_KEYS]])
@@ -58,6 +67,11 @@ def create_new_lp_file():
         err(ERROR_002)
 
 def create_new_ep_file(filepath: str):
+    """
+    Creates a new CSV File in Episode Format
+    
+    Already existing will cause an error message
+    """
     print(color816(f'[!TIP] > If you have a typo somewhere: You can change the data later manually!(Do it or bugs will kill your fun :D)',32))
     
     if not isfile(filepath):
@@ -66,6 +80,9 @@ def create_new_ep_file(filepath: str):
         err(ERROR_002)
 
 def fetch_audio(episode: Episode,i: int,lp_name: str):
+    """
+    Get 2 Track from the original video file & save them & their path
+    """
     video_path = episode.get_video_path(i)
                                 
     t1_path, t2_path = f'{AUDIO_FOLDER}{i+1}_{lp_name}_track_mic.mp3',f'{AUDIO_FOLDER}{i+1}_{lp_name}_track_desktop.mp3'
@@ -83,7 +100,11 @@ def fetch_audio(episode: Episode,i: int,lp_name: str):
     episode.save()
   
 def fix_audio(episode: Episode,i: int, lp_name):
-
+    """
+    Take the audio & uses limiter & loudness normalization to fix the most issues in the mic record.
+    
+    It fixes only the first Track.
+    """
     audio_mic_path = episode.get_audio_mic_path(i)
     audio_desktop_path = episode.get_audio_desktop_path(i)
     
@@ -109,6 +130,11 @@ def gen_thumbnail(
     episode: Episode,
     i: int,
     tad: dict):
+    """
+    Generate a thumbnail
+    Based on the given tad elements will be placed.
+    Saves the image & their path
+    """
 
     video_path = episode.get_video_path(i)
     if not tad:
@@ -158,21 +184,23 @@ def deploy(lp: LetsPlay, ep: Episode,id: int):
         """
         In this loop we do a lot:
         - fetch the data from the episode
-            #!We only need the video_path( in later versions we need the final_video_path )
+            We only need the final_video_path
             And the thumbnail_path
         - We create two new paths thats the destinations for video & thumbnail
         - Copying the files over to the new location
         - Append essential data to the Markdown
         """
         
-        video_path, _, _, thumbnail, _ = eps.read(i)
+        
+        video_path = eps.get_final_video_path(i)
+        thumbnail_path = eps.get_thumbnail_path(i)
         vpe = video_path.split('.')[1]
         
         new_video_path = f'{dst}{i+1}_video_{game_name}.{vpe}'
         new_thumbnail_path = f'{dst}{i+1}_thumbnail_{game_name}.png'
         
         copyfile(video_path,new_video_path)
-        copyfile(thumbnail,new_thumbnail_path)
+        copyfile(thumbnail_path,new_thumbnail_path)
         
         MD += f"""
 ## {i}
