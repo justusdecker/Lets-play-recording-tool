@@ -166,7 +166,22 @@ class LetsPlay(CSVObj):
 class Episode(CSVObj):
     """
     
-    !Must be added!
+    |id|key|type|
+|---|---|---|
+|0|video_path|`str`|
+|1|audio_mic_path|`str`|
+|2|audio_desktop_path|`str`|
+|3|thumbnail_path|`str`|
+|4|thumbnail_frame|`float`|
+|5|has_problem|`bool`|
+|6|audio_mic_edit1_path|`str`|
+|7|audio_mic_edit2_path|`str`|
+|8|audio_desktop_edit1_path|`str`|
+|9|audio_desktop_edit2_path|`str`|
+|10|title|`str`|
+|11|episode_number|`int`|
+|12|upload_at|`int`|
+|12|final_video|`str`|
     
     """
     def __init__(self, filepath):
