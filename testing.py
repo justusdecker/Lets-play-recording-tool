@@ -2,8 +2,12 @@ import pytest
 from bin.data_access import *
 from bin.automations import deploy
 
-lp = LetsPlay('lets_plays.csv')
+ep = Episode('test.csv')
+ep.add('test123')
+ep.save()
 
-ep = Episode('eps_schedule_one.csv')
+#lp = LetsPlay('lets_plays.csv')
 
-deploy(lp,ep,0)
+#ep = Episode('eps_schedule_one.csv')
+
+#deploy(lp,ep,0)
