@@ -85,13 +85,13 @@ Simply adjust your `password` in `settings.json`
 
 ### Episodes
 
-|key|type|desc|
-|---|---|---|
-|video_path|`str`|The path of the obs recording|
-|audio_mic_path||The fetched audio path: mic|
-|audio_desktop_path||
-|thumbnail_path||
-|thumbnail_frame||
+|key|type|
+|---|---|
+|video_path|`str`|
+|audio_mic_path|`str`|
+|audio_desktop_path|`str`|
+|thumbnail_path|`str`|
+|thumbnail_frame|`float`|
 
 #### Currently Not implemented
 
