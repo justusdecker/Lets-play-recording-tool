@@ -176,7 +176,7 @@ class AudioPlayer:
                         # Will be generated in a range from 0 - 5 minutes startpos + 2 minutes
                         if not get_busy():
                             set_title('Generating Audio')
-                            s = ri(0,5)
+                            s = 0#ri(0,5)
                             combine_audio(self.t1,self.t2,f'00:0{s}:00',f'00:{s+2}:00',self.vol)
                             load('temp.mp3')
                             play()
