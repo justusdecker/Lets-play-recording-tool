@@ -8,14 +8,45 @@ __email__ = "justus.d2025@gmail.com"
 __status__ = "Testing"
 
 from audio import combine_audio
-import pygame as pg
+
+from pygame.mixer import init as m_init
+from pygame.font import init as f_init
+from pygame.display import (
+    set_caption, 
+    set_mode, 
+    update
+    )
+
+from pygame.font import Font, get_default_font
+from pygame.mixer_music import (
+    load,
+    play,
+    pause,
+    get_busy
+)
+from pygame.event import get as ev_get
+from pygame import (
+    QUIT,
+    KEYDOWN,
+    K_RETURN,
+    K_SPACE,
+    K_KP2,
+    K_KP8,
+    K_KP4,
+    K_KP6
+)
 
 from os.path import isfile
 from sys import argv
 from random import randint as ri
 
+f_init()
+m_init()
+
+
+
 def set_title(text: str):
-    pg.display.set_caption(f'{text} - (c) Justus Decker - LPRT Project')
+    set_caption(f'{text} - (c) Justus Decker - LPRT Project')
 
 
 if len(argv) != 3:
@@ -31,10 +62,9 @@ class AudioPlayer:
     """
     def __init__(self):
         self.isrunning = True
-        self.display = pg.display.set_mode((300,200))
-        pg.font.init()
-        pg.mixer.init()
-        self.font = pg.font.Font(pg.font.get_default_font(),80)
+        self.display = set_mode((300,200))
+        
+        self.font = Font(get_default_font(),80)
         self.vol = 1.0
         
         self.t1, self.t2 = argv[1:2]
@@ -53,7 +83,7 @@ class AudioPlayer:
         self.display.fill((24,24,24))
         self.display.blit(self.font.render('00:00',False,(255,255,255)))
         self.display.blit(self.font.render(f'{int(self.vol*100)}%',False,(255,255,255)),(0,self.font.get_height()))
-        pg.display.update()
+        update()
         
     def update(self):
         """
@@ -61,44 +91,44 @@ class AudioPlayer:
         """
         while self.isrunning:
             self.render()
-            if pg.mixer_music.get_busy():
-                pg.display.set_caption('Playing Audio')
+            if get_busy():
+                set_title('Playing Audio')
             else:
 
-                pg.display.set_caption('Audio Player')
-            for e in pg.event.get():
+                set_title('Audio Player')
+            for e in ev_get():
                 
-                if e.type == pg.QUIT:
+                if e.type == QUIT:
                     self.isrunning = False
                     
-                if e.type == pg.KEYDOWN:
+                if e.type == KEYDOWN:
                     
                     # generate audio 2 minutes only for performance reasons(Will be changed later)
-                    if e.key == pg.K_RETURN:
+                    if e.key == K_RETURN:
                         # Will be generated in a range from 0 - 5 minutes startpos + 2 minutes
-                        if not pg.mixer_music.get_busy():
-                            pg.display.set_caption('Generating Audio')
-                            combine_audio(p1,p2,f'00:0{ri(0,5)}:00','00:02:00',self.vol)
-                            pg.mixer_music.load('temp.mp3')
-                            pg.mixer_music.play()
-                    if e.key == pg.K_SPACE:
-                        if pg.mixer_music.get_busy():
-                            pg.mixer_music.pause()
+                        if not get_busy():
+                            set_title('Generating Audio')
+                            combine_audio(self.t1,self.t2,f'00:0{ri(0,5)}:00','00:02:00',self.vol)
+                            load('temp.mp3')
+                            play()
+                    if e.key == K_SPACE:
+                        if get_busy():
+                            pause()
                         else:
                             if isfile('temp.mp3'):
-                                pg.mixer_music.load('temp.mp3')
-                                pg.mixer_music.play()
+                                load('temp.mp3')
+                                play()
                             else:
                                 pass
                     
                     # Set the volume for the next prehearing
-                    if e.key == pg.K_KP8:
+                    if e.key == K_KP8:
                         self.vol += 0.05
-                    if e.key == pg.K_KP2:
+                    if e.key == K_KP2:
                         self.vol -= 0.05
-                    if e.key == pg.K_KP6:
+                    if e.key == K_KP6:
                         self.vol += 0.01
-                    if e.key == pg.K_KP4:
+                    if e.key == K_KP4:
                         self.vol -= 0.01
                 
                     # keep the volume in range!
