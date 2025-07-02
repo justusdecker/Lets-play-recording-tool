@@ -15,12 +15,14 @@ class AudioPlayer:
         self.vol = 1.0
     def run(self):
         self.update()
+    def render_normal(self):
+        self.display.fill((24,24,24))
+        self.display.blit(self.font.render('00:00',False,(255,255,255)))
+        self.display.blit(self.font.render(f'{int(self.vol*100)}%',False,(255,255,255)),(0,self.font.get_height()))
+        pg.display.update()
     def update(self):
         while self.isrunning:
-            self.display.fill((24,24,24))
-            self.display.blit(self.font.render('00:00',False,(255,255,255)))
-            self.display.blit(self.font.render(f'{self.vol}',False,(255,255,255)),(0,self.font.get_height()))
-            pg.display.update()
+            self.render_normal()
             for e in pg.event.get():
                 if e.type == pg.QUIT:
                     self.isrunning = False
@@ -41,6 +43,7 @@ class AudioPlayer:
                         self.vol = 1
                     elif self.vol < 0:
                         self.vol = 0
+                        
                     self.vol = float(f'{self.vol:.2f}') # keeps the volume clean
                     
 AP = AudioPlayer('','')
