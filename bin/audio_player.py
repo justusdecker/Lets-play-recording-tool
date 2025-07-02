@@ -22,7 +22,7 @@ class AudioPlayer:
             #
             
             pg.draw.rect(self.display,(25,25,25),(0,100,100,100))
-            
+            pg.display.update()
             for e in pg.event.get():
                 if e.type == pg.QUIT:
                     self.isrunning = False
