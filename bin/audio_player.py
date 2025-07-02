@@ -7,8 +7,6 @@ __maintainer__ = "Justus Decker"
 __email__ = "justus.d2025@gmail.com"
 __status__ = "Testing"
 
-from audio import combine_audio
-
 from pygame.mixer import init as m_init
 from pygame.font import init as f_init
 from pygame.display import (
@@ -40,10 +38,79 @@ from os.path import isfile
 from sys import argv
 from random import randint as ri
 
+from subprocess import run, CREATE_NO_WINDOW
+
 f_init()
 m_init()
 
+def combine_audio(t1: str,t2: str,st: str,et: str, vol: float):
+    """
+    Combine two audio files
+    
+    .. t1::
+        The mic track
+    .. t2::
+        The desktop track (This track will be volume modified)
+    .. st::
+        starttime in HH:MM:SS format must be a `str`
+    .. et::
+        endtime in HH:MM:SS format must be a `str`
+    
+    """
+    #ffmpeg -ss 00:01:00 -to 00:02:00 -i {input_file} -c copy {result_file}
+    
+    """
+    
+                   add 
+                   -filter:a "volume=0.5"
+                    
+                      
+    """
+    run(
+                (
+                    'ffmpeg',
+                    '-y',               # Will replace existing output
+                    
+                    '-ss',
+                    f'{st}',
+                    '-to',
+                    f'{et}',
+                    '-i',               # Input filepath 2
+                    f"{t2}",            # Input filepath 2
 
+                    '-filter_complex',  #for merging
+                    f'volume={vol}',  # For merging
+                    '-ac', '2',         # Set audio channel
+                    f"temp_t2.mp3"         # output filepath
+                    ),
+                CREATE_NO_WINDOW,
+                shell= True
+                )
+    
+    run(
+                (
+                    'ffmpeg',
+                    '-y',               # Will replace existing output
+                    '-ss',
+                    f'{st}',
+                    '-to',
+                    f'{et}',
+                    '-i',               # Input filepath 1
+                    f"{t1}",            # Input filepath 1
+                    
+
+                    '-i',               # Input filepath 2
+                    f"temp_t2.mp3",            # Input filepath 2
+
+                    
+                    '-filter_complex',  #for merging
+                    'amerge=inputs=2',  # For merging
+                    '-ac', '2',         # Set audio channel
+                    f"temp.mp3"         # output filepath
+                    ),
+                CREATE_NO_WINDOW,
+                shell= True
+                )
 
 def set_title(text: str):
     set_caption(f'{text} - (c) Justus Decker - LPRT Project')
