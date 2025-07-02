@@ -1,3 +1,12 @@
+__author__ = "Justus Decker"
+__copyright__ = "(c) 2024 - 2025 , The LPRT Project"
+__credits__ = []
+__license__ = "CC BY-NC-ND" # No changes in the obs_ws source code!
+__version__ = ""
+__maintainer__ = "Justus Decker"
+__email__ = "justus.d2025@gmail.com"
+__status__ = "Testing"
+
 from pygame.surfarray import make_surface
 from pygame.transform import scale, flip, rotate, scale_by
 from pygame import Surface,SRCALPHA,Color,mask
