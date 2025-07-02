@@ -24,7 +24,6 @@ def combine_audio(t1: str,t2: str,st: str,et: str):
         The mic track
     .. t2::
         The desktop track (This track will be volume modified)
-    
     .. st::
         starttime in HH:MM:SS format must be a `str`
     .. et::
@@ -44,6 +43,27 @@ def combine_audio(t1: str,t2: str,st: str,et: str):
                 (
                     'ffmpeg',
                     '-y',               # Will replace existing output
+                    
+                    '-ss',
+                    f'{st}',
+                    '-to',
+                    f'{et}',
+                    '-i',               # Input filepath 2
+                    f"{t2}",            # Input filepath 2
+
+                    '-filter_complex',  #for merging
+                    'volume=0.15',  # For merging
+                    '-ac', '2',         # Set audio channel
+                    f"temp_t2.mp3"         # output filepath
+                    ),
+                subprocess.CREATE_NO_WINDOW,
+                shell= True
+                )
+    
+    subprocess.run(
+                (
+                    'ffmpeg',
+                    '-y',               # Will replace existing output
                     '-ss',
                     f'{st}',
                     '-to',
@@ -56,8 +76,8 @@ def combine_audio(t1: str,t2: str,st: str,et: str):
                     '-to',
                     f'{et}',
                     '-i',               # Input filepath 2
-                    f"{t2}",            # Input filepath 2
-                    
+                    f"temp_t2.mp3",            # Input filepath 2
+
                     
                     '-filter_complex',  #for merging
                     'amerge=inputs=2',  # For merging
