@@ -71,10 +71,7 @@ def combine_audio(t1: str,t2: str,st: str,et: str):
                     '-i',               # Input filepath 1
                     f"{t1}",            # Input filepath 1
                     
-                    '-ss',
-                    f'{st}',
-                    '-to',
-                    f'{et}',
+
                     '-i',               # Input filepath 2
                     f"temp_t2.mp3",            # Input filepath 2
 
