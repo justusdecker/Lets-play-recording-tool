@@ -20,12 +20,14 @@ class AudioPlayer:
         while self.isrunning:
             
             self.display.blit(self.font.render('00:00',False,(255,255,255)))
-            self.display.blit(self.font.render('Volume',False,(255,255,255)),(0,self.font.get_height()))
+            self.display.blit(self.font.render(f'{self.vol}',False,(255,255,255)),(0,self.font.get_height()))
             pg.display.update()
             for e in pg.event.get():
                 if e.type == pg.QUIT:
                     self.isrunning = False
                 if e.type == pg.KEYDOWN:
+                    
+                    # Set the volume for the next prehearing
                     if e.key == pg.K_2:
                         self.vol += 0.05
                     if e.key == pg.K_8:
@@ -34,9 +36,12 @@ class AudioPlayer:
                         self.vol += 0.01
                     if e.key == pg.K_4:
                         self.vol -= 0.01
+                
+                    # keep the volume in range!
                     if self.vol > 1:
                         self.vol = 1
                     elif self.vol < 0:
                         self.vol = 0
+                    
 AP = AudioPlayer('','')
 AP.run()
