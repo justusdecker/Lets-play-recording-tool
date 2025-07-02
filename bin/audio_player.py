@@ -14,10 +14,22 @@ import pygame as pg
 from os.path import isfile
 from sys import argv
 from random import randint as ri
+
+def set_title(text: str):
+    pg.display.set_caption(f'{text} - (c) Justus Decker - LPRT Project')
+
+
 if len(argv) != 3:
     raise Exception("Insufficent Arguments")
 class AudioPlayer:
-    def __init__(self,t1,t2):
+    """
+    The Audio Player uses Pygame:
+    
+    You can change the volume of the second track
+    
+    Play, Pause & Generate a comp
+    """
+    def __init__(self):
         self.isrunning = True
         self.display = pg.display.set_mode((300,200))
         pg.font.init()
@@ -34,7 +46,10 @@ class AudioPlayer:
         """
         self.update()
     
-    def render_normal(self):
+    def render(self):
+        """
+        Here renders all the elements on screen
+        """
         self.display.fill((24,24,24))
         self.display.blit(self.font.render('00:00',False,(255,255,255)))
         self.display.blit(self.font.render(f'{int(self.vol*100)}%',False,(255,255,255)),(0,self.font.get_height()))
@@ -45,8 +60,12 @@ class AudioPlayer:
         This method runs until the user closes the window
         """
         while self.isrunning:
-            self.render_normal()
-            
+            self.render()
+            if pg.mixer_music.get_busy():
+                pg.display.set_caption('Playing Audio')
+            else:
+
+                pg.display.set_caption('Audio Player')
             for e in pg.event.get():
                 
                 if e.type == pg.QUIT:
@@ -58,7 +77,7 @@ class AudioPlayer:
                     if e.key == pg.K_RETURN:
                         # Will be generated in a range from 0 - 5 minutes startpos + 2 minutes
                         if not pg.mixer_music.get_busy():
-                            
+                            pg.display.set_caption('Generating Audio')
                             combine_audio(p1,p2,f'00:0{ri(0,5)}:00','00:02:00',self.vol)
                             pg.mixer_music.load('temp.mp3')
                             pg.mixer_music.play()
