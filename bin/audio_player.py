@@ -1,9 +1,8 @@
 #from pydub import AudioSegment
 
-# Pydub is broken
-# playsound
-# wave
-#pyaudio noplayback
+# generate audio sample ()
+# combine audio samples
+# play in pygame
 
 import pygame as pg
 
@@ -13,12 +12,12 @@ class AudioPlayer:
         self.display = pg.display.set_mode((300,200))
         pg.font.init()
         self.font = pg.font.Font(pg.font.get_default_font(),80)
-        self.vol = 1
+        self.vol = 1.0
     def run(self):
         self.update()
     def update(self):
         while self.isrunning:
-            
+            self.display.fill((24,24,24))
             self.display.blit(self.font.render('00:00',False,(255,255,255)))
             self.display.blit(self.font.render(f'{self.vol}',False,(255,255,255)),(0,self.font.get_height()))
             pg.display.update()
@@ -28,13 +27,13 @@ class AudioPlayer:
                 if e.type == pg.KEYDOWN:
                     
                     # Set the volume for the next prehearing
-                    if e.key == pg.K_2:
+                    if e.key == pg.K_KP8:
                         self.vol += 0.05
-                    if e.key == pg.K_8:
+                    if e.key == pg.K_KP2:
                         self.vol -= 0.05
-                    if e.key == pg.K_6:
+                    if e.key == pg.K_KP6:
                         self.vol += 0.01
-                    if e.key == pg.K_4:
+                    if e.key == pg.K_KP4:
                         self.vol -= 0.01
                 
                     # keep the volume in range!
@@ -42,6 +41,7 @@ class AudioPlayer:
                         self.vol = 1
                     elif self.vol < 0:
                         self.vol = 0
+                    self.vol = float(f'{self.vol:.2f}') # keeps the volume clean
                     
 AP = AudioPlayer('','')
 AP.run()
