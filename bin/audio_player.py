@@ -20,9 +20,11 @@ class AudioPlayer:
         self.isrunning = True
         self.display = pg.display.set_mode((300,200))
         pg.font.init()
+        pg.mixer.init()
         self.font = pg.font.Font(pg.font.get_default_font(),80)
         self.vol = 1.0
-        self.t1, self.t2 = argv[1:2]
+        
+        #self.t1, self.t2 = argv[1:2]
         
         
     def run(self):
@@ -57,13 +59,15 @@ class AudioPlayer:
                         if not pg.mixer_music.get_busy():
                             
                             combine_audio(p1,p2,f'00:0{ri(0,5)}:00','00:02:00',self.vol)
-                            pg.mixer_music.play('temp.mp3')
+                            pg.mixer_music.load('temp.mp3')
+                            pg.mixer_music.play()
                     if e.key == pg.K_SPACE:
                         if pg.mixer_music.get_busy():
                             pg.mixer_music.pause()
                         else:
                             if isfile('temp.mp3'):
-                                pg.mixer_music.play('temp.mp3')
+                                pg.mixer_music.load('temp.mp3')
+                                pg.mixer_music.play()
                             else:
                                 pass
                     
