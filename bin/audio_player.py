@@ -13,16 +13,30 @@ class AudioPlayer:
         self.display = pg.display.set_mode((300,200))
         pg.font.init()
         self.font = pg.font.Font(pg.font.get_default_font(),80)
+        self.vol = 1
     def run(self):
         self.update()
     def update(self):
         while self.isrunning:
             
             self.display.blit(self.font.render('00:00',False,(255,255,255)))
-            self.display.blit(self.font.render('00:00',False,(255,255,255)),(0,self.font.get_height()))
+            self.display.blit(self.font.render('Volume',False,(255,255,255)),(0,self.font.get_height()))
             pg.display.update()
             for e in pg.event.get():
                 if e.type == pg.QUIT:
                     self.isrunning = False
+                if e.type == pg.KEYDOWN:
+                    if e.key == pg.K_2:
+                        self.vol += 0.05
+                    if e.key == pg.K_8:
+                        self.vol -= 0.05
+                    if e.key == pg.K_6:
+                        self.vol += 0.01
+                    if e.key == pg.K_4:
+                        self.vol -= 0.01
+                    if self.vol > 1:
+                        self.vol = 1
+                    elif self.vol < 0:
+                        self.vol = 0
 AP = AudioPlayer('','')
 AP.run()
