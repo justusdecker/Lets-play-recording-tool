@@ -85,5 +85,5 @@ class AudioPlayer:
                         
                     self.vol = float(f'{self.vol:.2f}') # keeps the volume clean
                     
-AP = AudioPlayer('','')
+AP = AudioPlayer()
 AP.run()
