@@ -16,12 +16,14 @@ def get_audio_length(filename):
         return AudioFileClip(filename).duration
     return -1
 
-def combine_audio(t1,t2,st,et):
+def combine_audio(t1: str,t2: str,st: str,et: str):
     """
     Combine two audio files
     
     .. st::
         starttime in HH:MM:SS format must be a `str`
+    .. et::
+        endtime in HH:MM:SS format must be a `str`
     """
     #ffmpeg -ss 00:01:00 -to 00:02:00 -i {input_file} -c copy {result_file}
     
@@ -44,10 +46,21 @@ def combine_audio(t1,t2,st,et):
                 (
                     'ffmpeg',
                     '-y',               # Will replace existing output
+                    
                     '-i',               # Input filepath 1
                     f"{t1}",            # Input filepath 1
+                    '-ss',
+                    f'{st}',
+                    'to',
+                    f'{et}',
+                    
                     '-i',               # Input filepath 2
                     f"{t2}",            # Input filepath 2
+                    '-ss',
+                    f'{st}',
+                    'to',
+                    f'{et}',
+                    
                     '-filter_complex',  #for merging
                     'amerge=inputs=2',  # For merging
                     '-ac', '2',         # Set audio channel

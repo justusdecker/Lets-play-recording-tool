@@ -9,7 +9,7 @@
 p2 = 'E:\\musik\\sortiert\\S3RL\\bad-boy.mp3'
 p1 = 'E:\\musik\\sortiert\\S3RL\\Waifu.mp3'
 from audio import combine_audio
-combine_audio(p1,p2,0,0)
+combine_audio(p1,p2,'00:00:10','00:00:20')
 import pygame as pg
 
 class AudioPlayer:
