@@ -14,9 +14,10 @@ import pygame as pg
 from os.path import isfile
 from sys import argv
 from random import randint as ri
-
+if len(argv) != 3:
+    raise Exception("Insufficent Arguments")
 class AudioPlayer:
-    def __init__(self):
+    def __init__(self,t1,t2):
         self.isrunning = True
         self.display = pg.display.set_mode((300,200))
         pg.font.init()
@@ -24,7 +25,7 @@ class AudioPlayer:
         self.font = pg.font.Font(pg.font.get_default_font(),80)
         self.vol = 1.0
         
-        #self.t1, self.t2 = argv[1:2]
+        self.t1, self.t2 = argv[1:2]
         
         
     def run(self):
