@@ -157,8 +157,10 @@ class App:
                             for i in range(epr[0],epr[1]):
                                 fix_audio(ep,i,lp_name)
                 case 4:
-                    nimp()
-                case 5:
+                    """
+                    Audio Check & rendering
+                    
+                    """
                     nimp()
                 case 0:
                     return
