@@ -16,7 +16,39 @@ def get_audio_length(filename):
         return AudioFileClip(filename).duration
     return -1
 
-
+def combine_audio(t1,t2,st,et):
+    
+    #ffmpeg -ss 00:01:00 -to 00:02:00 -i {input_file} -c copy {result_file}
+    
+    """
+    
+                    '-ss',
+                    f'{st}',
+                    'to',
+                    f'{et}',
+                    
+                    
+                    '-ss',
+                    f'{st}',
+                    'to',
+                    f'{et}',
+    """
+    subprocess.run(
+                (
+                    'ffmpeg',
+                    '-y',
+                    '-i',
+                    f"{t1}",
+                    
+                    '-i',
+                    f"{t2}",
+                    
+                    
+                    f"temp.mp3"
+                    ),
+                subprocess.CREATE_NO_WINDOW,
+                shell= True
+                )
 def extract_audio(fr:str,to:str,t:int=1):
     subprocess.run(
                 (

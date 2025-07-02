@@ -1,6 +1,7 @@
 #from pydub import AudioSegment
 
 # generate audio sample ()
+# will be a snippet from the original 15 seconds from a random position
 # combine audio samples
 # play in pygame
 
