@@ -31,13 +31,13 @@ def combine_audio(t1: str,t2: str,st: str,et: str):
     
                     '-ss',
                     f'{st}',
-                    'to',
+                    '-to',
                     f'{et}',
                     
                     
                     '-ss',
                     f'{st}',
-                    'to',
+                    '-to',
                     f'{et}',
                     
                       
@@ -46,20 +46,20 @@ def combine_audio(t1: str,t2: str,st: str,et: str):
                 (
                     'ffmpeg',
                     '-y',               # Will replace existing output
-                    
+                    '-ss',
+                    f'{st}',
+                    '-to',
+                    f'{et}',
                     '-i',               # Input filepath 1
                     f"{t1}",            # Input filepath 1
+                    
                     '-ss',
                     f'{st}',
-                    'to',
+                    '-to',
                     f'{et}',
-                    
                     '-i',               # Input filepath 2
                     f"{t2}",            # Input filepath 2
-                    '-ss',
-                    f'{st}',
-                    'to',
-                    f'{et}',
+                    
                     
                     '-filter_complex',  #for merging
                     'amerge=inputs=2',  # For merging
