@@ -64,6 +64,8 @@ class AudioPlayer:
                         else:
                             if isfile('temp.mp3'):
                                 pg.mixer_music.play('temp.mp3')
+                            else:
+                                pass
                     
                     # Set the volume for the next prehearing
                     if e.key == pg.K_KP8:
