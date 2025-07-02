@@ -1,13 +1,12 @@
-# will be converted to exe & called with arguments
+__author__ = "Justus Decker"
+__copyright__ = "(c) 2024 - 2025 , The LPRT Project"
+__credits__ = []
+__license__ = "CC BY-NC-ND"
+__version__ = "0.3.146"
+__maintainer__ = "Justus Decker"
+__email__ = "justus.d2025@gmail.com"
+__status__ = "Testing"
 
-# will be a snippet from the original 15 seconds from the start pos
-# The second time the audio will be rendered for two minutes straight
-
-# combine audio samples
-# play in pygame
-
-p2 = 'E:\\musik\\sortiert\\S3RL\\bad-boy.mp3'
-p1 = 'E:\\musik\\sortiert\\S3RL\\Waifu.mp3'
 from audio import combine_audio
 import pygame as pg
 
@@ -21,6 +20,7 @@ def set_title(text: str):
 
 if len(argv) != 3:
     raise Exception("Insufficent Arguments")
+
 class AudioPlayer:
     """
     The Audio Player uses Pygame:
