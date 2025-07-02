@@ -6,10 +6,10 @@
 # combine audio samples
 # play in pygame
 
-p2 = 'E:\\musik\\Disturbia (Techno).mp3'
-p1 = 'Demeter & ZVBXR - How We Do-converted'
+p2 = 'E:\\musik\\sortiert\\S3RL\\bad-boy.mp3'
+p1 = 'E:\\musik\\sortiert\\S3RL\\Waifu.mp3'
 from audio import combine_audio
-combine_audio(p1,p2)
+combine_audio(p1,p2,0,0)
 import pygame as pg
 
 class AudioPlayer:

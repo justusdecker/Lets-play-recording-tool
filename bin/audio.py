@@ -32,6 +32,8 @@ def combine_audio(t1,t2,st,et):
                     f'{st}',
                     'to',
                     f'{et}',
+                    
+                      
     """
     subprocess.run(
                 (
@@ -39,11 +41,11 @@ def combine_audio(t1,t2,st,et):
                     '-y',
                     '-i',
                     f"{t1}",
-                    
                     '-i',
                     f"{t2}",
-                    
-                    
+                    '-filter_complex',
+                    'amerge=inputs=2',
+                    '-ac', '2',
                     f"temp.mp3"
                     ),
                 subprocess.CREATE_NO_WINDOW,
