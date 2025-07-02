@@ -1,7 +1,7 @@
 from pygame.surfarray import make_surface
 from pygame.transform import scale, flip, rotate, scale_by
 from pygame import Surface,SRCALPHA,Color,mask
-from bin.text_manipulation import inf
+from bin.text_manipulation import color816
 
 from numpy import rot90
 
@@ -44,7 +44,7 @@ class ThumbnailGenerator:
                  frame: float = -1,
                  
                  ):
-        inf(f'[Thumbnail Generate]: {video_path}')
+        color816(f'[Thumbnail Generate]: {video_path}',94)
         _bg, _logo, _text = json_read(tad_path)
 
         img = self.__comp_render(
