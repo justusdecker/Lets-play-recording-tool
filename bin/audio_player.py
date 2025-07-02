@@ -114,8 +114,8 @@ def combine_audio(t1: str,t2: str,st: str,et: str, vol: float):
 
 def set_title(text: str):
     set_caption(f'{text} - (c) Justus Decker - LPRT Project')
-
-
+'audio_player E:\musik\sortiert\S3RL\better-off-alone-s3rl-feat-tamika E:\musik\sortiert\S3RL\Waifu.mp3'
+print(len(argv))
 if len(argv) != 3:
     raise Exception("Insufficent Arguments")
 
