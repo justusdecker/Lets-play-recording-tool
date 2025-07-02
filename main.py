@@ -19,6 +19,7 @@ class App:
     def __init__(self):
         self.isrunning = True
         self.current_letsplay_id = 0
+        print(color816('',31),end='')
     
     def options_submenu(self):
         """
