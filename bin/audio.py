@@ -29,16 +29,8 @@ def combine_audio(t1: str,t2: str,st: str,et: str):
     
     """
     
-                    '-ss',
-                    f'{st}',
-                    '-to',
-                    f'{et}',
-                    
-                    
-                    '-ss',
-                    f'{st}',
-                    '-to',
-                    f'{et}',
+                   add 
+                   -filter:a "volume=0.5"
                     
                       
     """
