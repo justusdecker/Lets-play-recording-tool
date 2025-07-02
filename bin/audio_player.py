@@ -1,7 +1,5 @@
 # will be converted to exe & called with arguments
 
-argv[1:2]
-
 # will be a snippet from the original 15 seconds from the start pos
 # The second time the audio will be rendered for two minutes straight
 
@@ -11,8 +9,9 @@ argv[1:2]
 p2 = 'E:\\musik\\sortiert\\S3RL\\bad-boy.mp3'
 p1 = 'E:\\musik\\sortiert\\S3RL\\Waifu.mp3'
 from audio import combine_audio
-
 import pygame as pg
+
+from os.path import isfile
 from sys import argv
 from random import randint as ri
 
@@ -24,6 +23,7 @@ class AudioPlayer:
         self.font = pg.font.Font(pg.font.get_default_font(),80)
         self.vol = 1.0
         self.t1, self.t2 = argv[1:2]
+        
         
     def run(self):
         """
@@ -52,9 +52,18 @@ class AudioPlayer:
                 if e.type == pg.KEYDOWN:
                     
                     # generate audio 2 minutes only for performance reasons(Will be changed later)
-                    if e.key == pg.K_SPACE:
+                    if e.key == pg.K_RETURN:
                         # Will be generated in a range from 0 - 5 minutes startpos + 2 minutes
-                        combine_audio(p1,p2,f'00:0{ri(0,5)}:00','00:02:00',self.vol)
+                        if not pg.mixer_music.get_busy():
+                            
+                            combine_audio(p1,p2,f'00:0{ri(0,5)}:00','00:02:00',self.vol)
+                            pg.mixer_music.play('temp.mp3')
+                    if e.key == pg.K_SPACE:
+                        if pg.mixer_music.get_busy():
+                            pg.mixer_music.pause()
+                        else:
+                            if isfile('temp.mp3'):
+                                pg.mixer_music.play('temp.mp3')
                     
                     # Set the volume for the next prehearing
                     if e.key == pg.K_KP8:
