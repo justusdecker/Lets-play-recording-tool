@@ -17,7 +17,12 @@ def get_audio_length(filename):
     return -1
 
 def combine_audio(t1,t2,st,et):
+    """
+    Combine two audio files
     
+    .. st::
+        starttime in HH:MM:SS format must be a `str`
+    """
     #ffmpeg -ss 00:01:00 -to 00:02:00 -i {input_file} -c copy {result_file}
     
     """
@@ -38,15 +43,15 @@ def combine_audio(t1,t2,st,et):
     subprocess.run(
                 (
                     'ffmpeg',
-                    '-y',
-                    '-i',
-                    f"{t1}",
-                    '-i',
-                    f"{t2}",
-                    '-filter_complex',
-                    'amerge=inputs=2',
-                    '-ac', '2',
-                    f"temp.mp3"
+                    '-y',               # Will replace existing output
+                    '-i',               # Input filepath 1
+                    f"{t1}",            # Input filepath 1
+                    '-i',               # Input filepath 2
+                    f"{t2}",            # Input filepath 2
+                    '-filter_complex',  #for merging
+                    'amerge=inputs=2',  # For merging
+                    '-ac', '2',         # Set audio channel
+                    f"temp.mp3"         # output filepath
                     ),
                 subprocess.CREATE_NO_WINDOW,
                 shell= True
