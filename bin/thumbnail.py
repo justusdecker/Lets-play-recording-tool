@@ -44,7 +44,7 @@ class ThumbnailGenerator:
                  frame: float = -1,
                  
                  ):
-        color816(f'[Thumbnail Generate]: {video_path}',94)
+        print(color816(f'[Thumbnail Generate]: {video_path}',94))
         _bg, _logo, _text = json_read(tad_path)
 
         img = self.__comp_render(
