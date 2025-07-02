@@ -103,6 +103,7 @@ class App:
                         lp_name = letsplay.get_name(lp)
                         ep_path = letsplay.get_episode_path(lp)
                         eps = Episode(ep_path)
+                        inf('Please answer the filedialog')
                         tad = aofn(filetypes=[['JSON','*.json']])
                         if epr[0] == epr[1]:
                             video_path = eps.get_video_path(epr[0])
