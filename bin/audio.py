@@ -16,7 +16,7 @@ def get_audio_length(filename):
         return AudioFileClip(filename).duration
     return -1
 
-def combine_audio(t1: str,t2: str,st: str,et: str):
+def combine_audio(t1: str,t2: str,st: str,et: str, vol: float):
     """
     Combine two audio files
     
@@ -52,7 +52,7 @@ def combine_audio(t1: str,t2: str,st: str,et: str):
                     f"{t2}",            # Input filepath 2
 
                     '-filter_complex',  #for merging
-                    'volume=0.15',  # For merging
+                    f'volume={vol}',  # For merging
                     '-ac', '2',         # Set audio channel
                     f"temp_t2.mp3"         # output filepath
                     ),
