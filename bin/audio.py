@@ -20,10 +20,16 @@ def combine_audio(t1: str,t2: str,st: str,et: str):
     """
     Combine two audio files
     
+    .. t1::
+        The mic track
+    .. t2::
+        The desktop track (This track will be volume modified)
+    
     .. st::
         starttime in HH:MM:SS format must be a `str`
     .. et::
         endtime in HH:MM:SS format must be a `str`
+    
     """
     #ffmpeg -ss 00:01:00 -to 00:02:00 -i {input_file} -c copy {result_file}
     
