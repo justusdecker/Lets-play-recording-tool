@@ -55,6 +55,7 @@ def thumbnail_automation_sub_menu(sub:str) -> str:
 {bold(f'Main > Automation > Thumbnail Generator > Select LP')}
 
 Select your Option:
+
     """
 
 DEFAULT_THUMBNAIL_SIZE = (1280,720)

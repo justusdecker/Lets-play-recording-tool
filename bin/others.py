@@ -37,7 +37,7 @@ def input_episode_range(max_eps:list[int], lp_names: list[str]) -> None | tuple[
     # SET LP
     listed_lets_plays = "\n".join([f"({idx}) {lp}" for idx, lp in enumerate(lp_names)])
     
-    lp_id = binpi(f"{header('tg',['Set Lets Play'])}{listed_lets_plays}")
+    lp_id = binpi(f"{header('tg',['Set Lets Play'])}{listed_lets_plays}\n")
     
     if lp_id >= len(lp_names):
         err('Input out of range')
