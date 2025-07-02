@@ -2,6 +2,7 @@
 
 # generate audio sample ()
 # will be a snippet from the original 15 seconds from a random position
+# ffmpeg -ss 00:01:00 -to 00:02:00 -i {input_file} -c copy {result_file}
 # combine audio samples
 # play in pygame
 
