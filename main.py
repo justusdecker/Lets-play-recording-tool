@@ -161,22 +161,34 @@ class App:
                     Audio Check & rendering
                     
                     """
-                    eps: Episode = LetsPlay(LP_PATH).get_episodes(self.current_letsplay_id)
                     
-                    run(['cmd\\audio_player.py', eps.get_audio_mic_path(), eps.get_audio_desktop_path()])
-                    #! FIX HERE
-                    input_in_range(0,100)
+                    letsplay = LetsPlay(LP_PATH)
                     res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
+                    
+                    
                     if res is not None:
                         lp,epr = res
-                        lp_name = letsplay.get_name(lp)
                         ep_path = letsplay.get_episode_path(lp)
+                        ep = Episode(ep_path)
                         if epr[0] == epr[1]:
-                            fix_audio(ep_path,epr[0],lp_name)
+                            ep.get_audio_mic_path(epr[0])
+                            ep.get_audio_desktop_path(epr[0])
+                            volume = input_in_range(0,100)
+                            if volume is not None:
+                                pass
                         else:
-                            ep = Episode(ep_path)
+                            
                             for i in range(epr[0],epr[1]):
-                                fix_audio(ep,i,lp_name)
+                                volume = input_in_range(0,100)
+                                if volume is not None:
+                                    pass
+                    # iterate over a defined range
+                    
+                    run(['cmd\\audio_player.py', eps.get_audio_mic_path(), eps.get_audio_desktop_path()])
+                    # user must memorize the audio volume will be changed later
+                    volume = input_in_range(0,100)
+                    if volume is not None:
+                        pass
                 case 0:
                     return
                 case _:
