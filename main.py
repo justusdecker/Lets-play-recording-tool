@@ -164,7 +164,7 @@ class App:
                     
                     letsplay = LetsPlay(LP_PATH)
                     res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
-                    
+                    # user must memorize the audio volume will be changed later
                     
                     if res is not None:
                         lp,epr = res
@@ -179,6 +179,7 @@ class App:
                                 print(mic,desk,volume)
                         else:
                             for i in range(epr[0],epr[1]):
+                                inf(f'[Volume Set] Episode: {epr[0]+1}')
                                 volume = input_in_range(0,100,'Set Volume: ')
                                 if volume is not None:
                                     mic = ep.get_audio_mic_path(epr[0])
@@ -190,10 +191,7 @@ class App:
                     # iterate over a defined range
                     
                     
-                    # user must memorize the audio volume will be changed later
-                    volume = input_in_range(0,100)
-                    if volume is not None:
-                        pass
+                    
                 case 0:
                     return
                 case _:
