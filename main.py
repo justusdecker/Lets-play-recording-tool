@@ -179,7 +179,7 @@ class App:
                                 print(mic,desk)
                         else:
                             for i in range(epr[0],epr[1]):
-                                volume = input_in_range(0,100)
+                                volume = input_in_range(0,100,'Set Volume: ')
                                 if volume is not None:
                                     mic = ep.get_audio_mic_path(epr[0])
                                     desk = ep.get_audio_desktop_path(epr[0])
