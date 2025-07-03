@@ -162,7 +162,6 @@ class AudioPlayer:
 
                 set_title('Audio Player')
             self.clk.tick(30)
-            ev_get()
             for e in ev_get():
                 
                 if e.type == QUIT:
