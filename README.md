@@ -26,9 +26,30 @@ Work in progress(pre alpha)
 > So many bugs may appear!
 > Some bugs can lead to data loss. **BE CAREFUL!**
 
-## How to use?
+## Workflow (Production)
 
-### Programs you need
+### Record
+
+Select Option 1 in the Main Menu
+
+Thats it! You only need to start the recording in OBS.
+
+If you want to quit the recording menu: `STRG + C` in terminal.
+
+> [!CAUTION]
+> `STRG + C` or closing the terminal while you recording can lead to data loss!
+
+To record you need connection to the OBS Webserver!
+
+### Thumbnail Generation
+
+### Audio Fetch
+
+### Audio Fix
+
+### Render
+
+## Programs you need
 
 > [!IMPORTANT]
 > All of the programs are needed to fully function!
@@ -37,8 +58,6 @@ https://ffmpeg.org/
 
 [![FFMPEG](https://img.shields.io/badge/FFMPEG-007808?style=flat-square&logo=ffmpeg&logoColor=ffffff)](https://ffmpeg.org/)
 [![OBS](https://img.shields.io/badge/obsstudio-302E31?style=flat-square&logo=obsstudio&logoColor=ffffff)](https://obsproject.com/de)
-
-### Recording
 
 #### Connecting LPRT to OBS
 
@@ -79,9 +98,11 @@ Simply adjust your `password` in `settings.json`
 3. Start Recording in `obs`
 4. You see your recording time & LPRT will create a new entry in the selected episode
 
+## File Structures
 
-
-## File Formats
+> [!CAUTION]
+> Some file structures will change in development.
+> Keep yourself up to date!
 
 ### Episodes
 
