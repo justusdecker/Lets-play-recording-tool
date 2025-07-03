@@ -44,7 +44,7 @@ MENU_AUTOMATION_MESSAGE = f"""
 (1) Thumbnail Generate
 (2) Fetch Audio
 (3) 'Fix Audio
-(4) {color816(strikethrough('Render'),31)}
+(4) Render
 (0) Back
 """
 
