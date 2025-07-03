@@ -23,6 +23,7 @@ from pygame.mixer_music import (
     get_busy
 )
 from pygame.event import get as ev_get
+from pygame.time import Clock
 from pygame import (
     QUIT,
     KEYDOWN,
@@ -128,7 +129,7 @@ class AudioPlayer:
     def __init__(self, t1, t2):
         self.isrunning = True
         self.display = set_mode((300,200))
-
+        self.clk = Clock()
         self.vol = 1.0
         
         self.t1, self.t2 = t1, t2
@@ -160,6 +161,7 @@ class AudioPlayer:
             else:
 
                 set_title('Audio Player')
+            self.clk.tick(30)
             ev_get()
             for e in ev_get():
                 
