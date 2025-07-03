@@ -77,7 +77,7 @@ def combine_audio(t1: str,t2: str,st: str,et: str, vol: float):
                     '-to',
                     f'{et}',
                     '-i',               # Input filepath 2
-                    f'"{t2}"',            # Input filepath 2
+                    f'{t2}',            # Input filepath 2
 
                     '-filter_complex',  #for merging
                     f'volume={vol}',  # For merging
@@ -97,7 +97,7 @@ def combine_audio(t1: str,t2: str,st: str,et: str, vol: float):
                     '-to',
                     f'{et}',
                     '-i',               # Input filepath 1
-                    f'"{t1}"',            # Input filepath 1
+                    f'{t1}',            # Input filepath 1
                     
 
                     '-i',               # Input filepath 2
