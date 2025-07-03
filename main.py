@@ -13,7 +13,7 @@ from bin.data_access import LetsPlay, cnef, isfile, Episode,json_write
 from tkinter.filedialog import askopenfilename as aofn
 from bin.others import binpi, input_episode_range
 from bin.thumbnail import ThumbnailGenerator
-
+from subprocess import run, CREATE_NO_WINDOW
 from bin.automations import (
     obs_connect,
     create_new_lp_file,
@@ -161,7 +161,21 @@ class App:
                     Audio Check & rendering
                     
                     """
-                    nimp()
+                    eps: Episode = LetsPlay(LP_PATH).get_episodes(self.current_letsplay_id)
+                    
+                    run(['cmd\\audio_player.py', eps.get_audio_mic_path(), eps.get_audio_desktop_path()])
+                    #! FIX HERE
+                    res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
+                    if res is not None:
+                        lp,epr = res
+                        lp_name = letsplay.get_name(lp)
+                        ep_path = letsplay.get_episode_path(lp)
+                        if epr[0] == epr[1]:
+                            fix_audio(ep_path,epr[0],lp_name)
+                        else:
+                            ep = Episode(ep_path)
+                            for i in range(epr[0],epr[1]):
+                                fix_audio(ep,i,lp_name)
                 case 0:
                     return
                 case _:
