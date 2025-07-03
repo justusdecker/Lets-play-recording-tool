@@ -14,9 +14,7 @@ def render(vid,aud):
                     
 
                     '-i',               # Input filepath 2
-                    f"{aud}",            # Input filepath 2
-
-                    
+                    f"{aud}",           # Input filepath 2
                     '-filter_complex',  #for merging
                     'amerge=inputs=2',  # For merging
                     '-ac', '2',         # Set audio channel
