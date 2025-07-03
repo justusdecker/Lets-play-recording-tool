@@ -12,7 +12,7 @@ from pygame.font import init as f_init
 from pygame.display import (
     set_caption, 
     set_mode, 
-    update
+    update as d_update
     )
 
 from pygame.font import Font, get_default_font
@@ -36,12 +36,13 @@ from pygame import (
 )
 
 from os.path import isfile
-from random import randint as ri
 
 from subprocess import run, CREATE_NO_WINDOW
 
 f_init()
 m_init()
+
+FONT = Font(get_default_font(),80)
 
 def combine_audio(t1: str,t2: str,st: str,et: str, vol: float):
     """
@@ -127,8 +128,7 @@ class AudioPlayer:
     def __init__(self, t1, t2):
         self.isrunning = True
         self.display = set_mode((300,200))
-        
-        self.font = Font(get_default_font(),80)
+
         self.vol = 1.0
         
         self.t1, self.t2 = t1, t2
@@ -145,9 +145,9 @@ class AudioPlayer:
         Here renders all the elements on screen
         """
         self.display.fill((24,24,24))
-        self.display.blit(self.font.render('00:00',False,(255,255,255)))
-        self.display.blit(self.font.render(f'{int(self.vol*100)}%',False,(255,255,255)),(0,self.font.get_height()))
-        update()
+        self.display.blit(FONT.render('00:00',False,(255,255,255)))
+        self.display.blit(FONT.render(f'{int(self.vol*100)}%',False,(255,255,255)),(0,FONT.get_height()))
+        d_update()
         
     def update(self):
         """
@@ -160,6 +160,7 @@ class AudioPlayer:
             else:
 
                 set_title('Audio Player')
+            ev_get()
             for e in ev_get():
                 
                 if e.type == QUIT:
@@ -204,3 +205,8 @@ class AudioPlayer:
                         
                     self.vol = float(f'{self.vol:.2f}') # keeps the volume clean
         pg_quit()
+
+if __name__ == "__main__":
+    AP = AudioPlayer('','')
+    AP.run()
+    input('SLOW')
