@@ -171,20 +171,23 @@ class App:
                         ep_path = letsplay.get_episode_path(lp)
                         ep = Episode(ep_path)
                         if epr[0] == epr[1]:
-                            ep.get_audio_mic_path(epr[0])
-                            ep.get_audio_desktop_path(epr[0])
+                            mic = ep.get_audio_mic_path(epr[0])
+                            desk = ep.get_audio_desktop_path(epr[0])
                             volume = input_in_range(0,100)
                             if volume is not None:
-                                pass
+                                run(['cmd\\audio_player.py', mic, desk])
                         else:
-                            
                             for i in range(epr[0],epr[1]):
                                 volume = input_in_range(0,100)
                                 if volume is not None:
-                                    pass
+                                    mic = ep.get_audio_mic_path(epr[0])
+                                    desk = ep.get_audio_desktop_path(epr[0])
+                                    volume = input_in_range(0,100)
+                                    if volume is not None:
+                                        run(['cmd\\audio_player.py', mic, desk])
                     # iterate over a defined range
                     
-                    run(['cmd\\audio_player.py', eps.get_audio_mic_path(), eps.get_audio_desktop_path()])
+                    
                     # user must memorize the audio volume will be changed later
                     volume = input_in_range(0,100)
                     if volume is not None:
