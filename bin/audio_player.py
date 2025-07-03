@@ -36,7 +36,6 @@ from pygame import (
 )
 
 from os.path import isfile
-from sys import argv
 from random import randint as ri
 
 from subprocess import run, CREATE_NO_WINDOW
@@ -116,10 +115,6 @@ def combine_audio(t1: str,t2: str,st: str,et: str, vol: float):
 def set_title(text: str):
     set_caption(f'{text} - (c) Justus Decker - LPRT Project')
 'audio_player E:\musik\sortiert\S3RL\better-off-alone-s3rl-feat-tamika E:\musik\sortiert\S3RL\Waifu.mp3'
-print(len(argv))
-print(argv)
-if len(argv) != 3:
-    raise Exception("Insufficent Arguments")
 
 class AudioPlayer:
     """
@@ -129,14 +124,14 @@ class AudioPlayer:
     
     Play, Pause & Generate a comp
     """
-    def __init__(self):
+    def __init__(self, t1, t2):
         self.isrunning = True
         self.display = set_mode((300,200))
         
         self.font = Font(get_default_font(),80)
         self.vol = 1.0
         
-        self.t1, self.t2 = argv[1], argv[2]
+        self.t1, self.t2 = t1, t2
         
         
     def run(self):
