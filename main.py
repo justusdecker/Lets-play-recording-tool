@@ -179,7 +179,7 @@ class App:
                                 print(mic,desk,volume)
                         else:
                             for i in range(epr[0],epr[1]):
-                                inf(f'[Volume Set] Episode: {epr[0]+1}')
+                                inf(f'[Volume Set] Episode: {i+1}')
                                 volume = input_in_range(0,100,'Set Volume: ')
                                 if volume is not None:
                                     mic = ep.get_audio_mic_path(epr[0])
