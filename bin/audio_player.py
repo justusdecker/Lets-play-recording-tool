@@ -203,6 +203,4 @@ class AudioPlayer:
                         self.vol = 0
                         
                     self.vol = float(f'{self.vol:.2f}') # keeps the volume clean
-        pg_quit()           
-AP = AudioPlayer()
-AP.run()
+        pg_quit()
