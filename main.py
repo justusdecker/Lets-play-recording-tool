@@ -175,13 +175,17 @@ class App:
                         if epr[0] == epr[1]:
                             mic = ep.get_audio_mic_path(epr[0])
                             desk = ep.get_audio_desktop_path(epr[0])
+                            AP = AudioPlayer(mic, desk)
+                            AP.run()
                             volume = input_in_range(0,100,'Set Volume: ')
                             if volume is not None:
-                                AudioPlayer(mic, desk)
-                                #run(['cmd\\audio_player.exe', mic, desk])
+                                
                                 print(mic,desk,volume)
                         else:
                             for i in range(epr[0],epr[1]):
+                                
+                                AP = AudioPlayer(mic, desk)
+                                AP.run()
                                 inf(f'[Volume Set] Episode: {i+1}')
                                 volume = input_in_range(0,100,'Set Volume: ')
                                 if volume is not None:
@@ -189,7 +193,7 @@ class App:
                                     desk = ep.get_audio_desktop_path(epr[0])
                                     
                                     if volume is not None:
-                                        AudioPlayer(mic, desk)
+                                        
                                         print(mic,desk,volume)
                     # iterate over a defined range
                     
