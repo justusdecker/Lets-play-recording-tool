@@ -20,7 +20,8 @@ from pygame.mixer_music import (
     load,
     play,
     pause,
-    get_busy
+    get_busy,
+    unload
 )
 from pygame.event import get as ev_get
 from pygame.time import Clock
@@ -175,7 +176,7 @@ class AudioPlayer:
                         if not get_busy():
                             set_title('Generating Audio')
                             s = 0#ri(0,5)
-                            
+                            unload()
                             combine_audio(self.t1,self.t2,f'00:0{s}:00',f'00:{s+2}:00',self.vol)
                             load('temp.mp3')
                             play()
