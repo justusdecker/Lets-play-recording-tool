@@ -31,7 +31,8 @@ from pygame import (
     K_KP2,
     K_KP8,
     K_KP4,
-    K_KP6
+    K_KP6,
+    quit as pg_quit
 )
 
 from os.path import isfile
@@ -207,6 +208,6 @@ class AudioPlayer:
                         self.vol = 0
                         
                     self.vol = float(f'{self.vol:.2f}') # keeps the volume clean
-                    
+        pg_quit()           
 AP = AudioPlayer()
 AP.run()
