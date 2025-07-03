@@ -165,6 +165,7 @@ class App:
                     
                     run(['cmd\\audio_player.py', eps.get_audio_mic_path(), eps.get_audio_desktop_path()])
                     #! FIX HERE
+                    input_in_range(0,100)
                     res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
                     if res is not None:
                         lp,epr = res

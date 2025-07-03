@@ -37,7 +37,15 @@ def binps(text : str, inp: str = '') -> int:
         user_input = input(f'{inp}\033[92m\033[3m')
         print('\033[23m\033[39m',end='')
     return user_input
-    
+
+def input_in_range(start,end,text):
+    inp = binpi(text)
+
+    if inp >= start and inp <= end:
+        return inp
+    else:
+        err('Outside range')
+
 def input_episode_range(max_eps:list[int], lp_names: list[str]) -> None | tuple[int, tuple[int, int]]:
     
     if len(max_eps) != len(lp_names):
