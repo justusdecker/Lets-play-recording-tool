@@ -113,10 +113,9 @@ Simply adjust your `password` in `settings.json`
 |4|game_name|`str`|
 |5|episode_length|`int`|
 
-Currently out of context(to reduce unused files!)
----
 
-# Thumbnail Automation Data
+
+### Thumbnail Automation Data
 
 This is a default TAD File
 ---
@@ -144,12 +143,12 @@ This is a default TAD File
 ```
 
 
-### Background
+#### Background
 The background is the first index currently you can define only the `fixed` Background position.
 > [!NOTE]
 > In the future there will be more options!
 > Something like random position, rotation etc.
-### Logo
+#### Logo
 The logo is the second index. You can define:
 |key|val|
 |---|---|
@@ -157,7 +156,7 @@ The logo is the second index. You can define:
 |scale|`float` or `int`|
 |rot|`float` or `int`|
 |pos| `tuple` or `list` cont. `int`|
-### Text
+#### Text
 The text is the third index. You can define:
 |key|val|
 |---|---|
