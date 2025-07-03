@@ -40,8 +40,7 @@ from os.path import isfile
 
 from subprocess import run, CREATE_NO_WINDOW
 
-f_init()
-m_init()
+
 
 FONT = Font(get_default_font(),80)
 
@@ -133,7 +132,8 @@ class AudioPlayer:
         self.vol = 1.0
         
         self.t1, self.t2 = t1, t2
-        
+        f_init()
+        m_init()
         
     def run(self):
         """

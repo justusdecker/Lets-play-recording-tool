@@ -186,7 +186,7 @@ class App:
                             for i in range(epr[0],epr[1]):
                                 mic = ep.get_audio_mic_path(i)
                                 desk = ep.get_audio_desktop_path(i)
-                                print(mic,desk)
+                                inf(f'{mic} {desk}')
                                 AP = AudioPlayer(mic, desk)
                                 AP.run()
                                 inf(f'[Volume Set] Episode: {i+1}')
