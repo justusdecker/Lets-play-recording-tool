@@ -11,7 +11,7 @@ from bin.constants import *
 
 from bin.data_access import LetsPlay, cnef, isfile, Episode,json_write
 from tkinter.filedialog import askopenfilename as aofn
-from bin.others import binpi, input_episode_range
+from bin.others import binpi, input_episode_range, input_in_range
 from bin.thumbnail import ThumbnailGenerator
 from subprocess import run, CREATE_NO_WINDOW
 from bin.automations import (
