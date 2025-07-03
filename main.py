@@ -23,6 +23,8 @@ from bin.automations import (
     LP_PATH
 )
 
+from bin.audio_player import AudioPlayer
+
 class App:
     def __init__(self):
         self.isrunning = True
@@ -175,7 +177,8 @@ class App:
                             desk = ep.get_audio_desktop_path(epr[0])
                             volume = input_in_range(0,100,'Set Volume: ')
                             if volume is not None:
-                                run(['cmd\\audio_player.exe', mic, desk])
+                                AudioPlayer(mic, desk)
+                                #run(['cmd\\audio_player.exe', mic, desk])
                                 print(mic,desk,volume)
                         else:
                             for i in range(epr[0],epr[1]):
@@ -186,7 +189,7 @@ class App:
                                     desk = ep.get_audio_desktop_path(epr[0])
                                     
                                     if volume is not None:
-                                        run(['cmd\\audio_player.exe', mic, desk])
+                                        AudioPlayer(mic, desk)
                                         print(mic,desk,volume)
                     # iterate over a defined range
                     
