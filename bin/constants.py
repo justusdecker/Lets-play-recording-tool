@@ -155,5 +155,5 @@ def ffmpeg_build(cmd: list[str], replacer: list[tuple[str,str]]):
 
     return [replacer[i] if i in replacer else i for i in cmd]
 
-def ffmpeg_run(cmd: list[list]):
-    run(cmd, CREATE_NO_WINDOW, shell= True)
+def ffmpeg_run(cmd: list[list], replacer: list[tuple[str,str]]):
+    run(ffmpeg_build(cmd,replacer), CREATE_NO_WINDOW, shell= True)
