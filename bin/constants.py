@@ -133,17 +133,9 @@ FFMPEG_LOUDNESS_NORMALIZATION = ['ffmpeg', '-y', '-i', '__IN__', '-af', 'loudnor
 #mapping 0:1 0:2
 FFMPEG_EXTRACT = ['ffmpeg', '-y', '-i', '__IN__', '-map', '0:__MAPPING__', '__OUT__']
 
-FFMPEG_VOLUME_APPLIER = [
-'ffmpeg',
-'-y',
-'-i',
-f"__IN__",
+FFMPEG_VOLUME_APPLIER = ['ffmpeg', '-y', '-i', "__IN__", '-filter_complex', 'volume=__VOLUME__', '-ac', '2', "temp_t2.mp3"]
 
-'-filter_complex',
-f'volume=__VOLUME__',
-'-ac', '2',
-f"temp_t2.mp3"   
-]
+FFMPEG_AUDIO_COMBINE = ['ffmpeg', '-y', '-i', "__IN__", '-i', "temp_t2.mp3", '-filter_complex', 'amerge=inputs=2', '-ac', '2', "temp.mp3"]
 
 def ffmpeg_build(cmd: str, replacer: list[tuple[str,str]]):
     """
