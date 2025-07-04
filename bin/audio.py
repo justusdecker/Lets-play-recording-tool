@@ -5,7 +5,7 @@ __license__ = "CC BY-NC-ND"
 __version__ = "0.3.117"
 __maintainer__ = "Justus Decker"
 __email__ = "justus.d2025@gmail.com"
-__status__ = "Testing"
+__status__ = "Deprecated"
 raise DeprecationWarning('This Method will be replaced in the future')
 from os.path import isfile
 from moviepy.audio.io.AudioFileClip import AudioFileClip
