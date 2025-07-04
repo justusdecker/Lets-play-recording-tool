@@ -119,3 +119,45 @@ ERROR_004 = f'[E004] No connection to OBS! {ewf}'
 ERROR_005 = f'[E005] Keyboard interrupt! {ewf}'
 ERROR_006 = f'[E006] Destination not set. {ewf}'
 ERROR_007 = f'[E007] file does not exist. {ewf}'
+
+
+
+## FFMPEG COMMANDS
+
+FFMPEG_CONVERT_AUDIO_TYPE = ['ffmpeg', '-n', '-i', '__IN__', '__OUT__']
+
+FFMPEG_LIMITER = ['ffmpeg', '-y', '-i', '__IN__', '-af', 'compand=0|0:1|1:0/-3|10/-3|20/-3:0.1:0:0:0', '__OUT__']
+
+FFMPEG_LOUDNESS_NORMALIZATION = ['ffmpeg', '-y', '-i', '__IN__', '-af', 'loudnorm=-15', '__OUT__']
+
+#mapping 0:1 0:2
+FFMPEG_EXTRACT = ['ffmpeg', '-y', '-i', '__IN__', '-map', '0:__MAPPING__', '__OUT__']
+
+FFMPEG_VOLUME_APPLIER = [
+'ffmpeg',
+'-y',
+'-i',
+f"__IN__",
+
+'-filter_complex',
+f'volume=__VOLUME__',
+'-ac', '2',
+f"temp_t2.mp3"   
+]
+
+def ffmpeg_build(cmd: str, replacer: list[tuple[str,str]]):
+    """
+    :file_input_1
+    :file_output
+    
+    {
+        
+        "file_input_1" : "test.mp3"
+        
+    }
+    """
+    
+    for key, rep in replacer:
+        cmd = [arg.replace(key,rep) if key in arg else arg for arg in cmd]
+
+    return [replacer[i] if i in replacer else i for i in cmd]
