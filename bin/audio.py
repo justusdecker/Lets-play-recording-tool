@@ -6,7 +6,7 @@ __version__ = "0.3.117"
 __maintainer__ = "Justus Decker"
 __email__ = "justus.d2025@gmail.com"
 __status__ = "Testing"
-
+raise DeprecationWarning('This Method will be replaced in the future')
 from os.path import isfile
 from moviepy.audio.io.AudioFileClip import AudioFileClip
 import subprocess
@@ -134,41 +134,3 @@ def cvt_audio(filename:str,#call
             shell= True
         )
     return filename.split('.')[0] + to
-
-def cvtAudioNew(fileName:str,#call
-                    fromType:str= '.mp3',
-                    toType:str= '.wav'):
-    """Convert Audio Formats"""
-    subprocess.run(
-        [
-            'ffmpeg',
-            '-y',
-            '-i',
-            fileName.split('.')[0] + fromType,
-            'temp.wav',
-            '-ac',
-            '1'
-            ],
-            subprocess.CREATE_NO_WINDOW,
-            shell=True
-        )
-    subprocess.run(
-        [
-            'ffmpeg',
-            '-y',
-            '-i',
-            'temp.wav',
-            
-            '-ar',
-            '8000',
-            '-ac',
-            '1',
-            '-c:a',
-            'pcm_s16le',
-            fileName.split('.')[0] + toType
-            ],
-            subprocess.CREATE_NO_WINDOW,
-            shell= True
-        )
-    #ffmpeg -i input.wav -ar 8000 -ac 1 -c:a pcm_s16le output.wa
-    return fileName.split('.')[0] + toType
