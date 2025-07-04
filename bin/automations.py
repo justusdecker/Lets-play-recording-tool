@@ -47,6 +47,23 @@ from bin.thumbnail import ThumbnailGenerator
 
 from os.path import isfile
 
+## FFMPEG COMMANDS
+
+
+
+def ffmpeg_build(cmd: str, replacer: dict[str, str]):
+    """
+    :file_input_1
+    :file_output
+    
+    {
+        
+        "file_input_1" : "test.mp3"
+        
+    }
+    """
+    return [replacer[i] if i in replacer else i for i in cmd]
+
 def obs_connect(ep: Episode):
     """
     Connects to the obs_ws API
