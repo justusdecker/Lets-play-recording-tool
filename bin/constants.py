@@ -121,6 +121,7 @@ ERROR_006 = f'[E006] Destination not set. {ewf}'
 ERROR_007 = f'[E007] file does not exist. {ewf}'
 
 
+from subprocess import run, CREATE_NO_WINDOW
 
 ## FFMPEG COMMANDS
 
@@ -137,7 +138,7 @@ FFMPEG_VOLUME_APPLIER = ['ffmpeg', '-y', '-i', "__IN__", '-filter_complex', 'vol
 
 FFMPEG_AUDIO_COMBINE = ['ffmpeg', '-y', '-i', "__IN__", '-i', "temp_t2.mp3", '-filter_complex', 'amerge=inputs=2', '-ac', '2', "temp.mp3"]
 
-def ffmpeg_build(cmd: str, replacer: list[tuple[str,str]]):
+def ffmpeg_build(cmd: list[str], replacer: list[tuple[str,str]]):
     """
     :file_input_1
     :file_output
@@ -153,3 +154,6 @@ def ffmpeg_build(cmd: str, replacer: list[tuple[str,str]]):
         cmd = [arg.replace(key,rep) if key in arg else arg for arg in cmd]
 
     return [replacer[i] if i in replacer else i for i in cmd]
+
+def ffmpeg_run(cmd: list[list]):
+    run(cmd, CREATE_NO_WINDOW, shell= True)
