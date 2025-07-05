@@ -101,29 +101,19 @@ class App:
 
             match binpi(MENU_AUTOMATION_MESSAGE):
                 case 1:
-                    """
-                    (1) Thumbnail Generator
-                    """
                     gen_thumbnail()
                 case 2:
-                    """
-                    (2) Audio Fetch
-                    Get all video - audio track 1 & 2
-                    """
                     fetch_audio()
                 case 3:
-                    """
-                    (3) Audio Fix / Edit
-                    """
                     fix_audio()
                 case 4:
-                    """
-                    Audio Compare
-                    
-                    """
-                    
                     compare_audio()
                 case 5:
+                    
+                    # Send video
+                    # remove all tracks
+                    # Send final audio
+                    
                     pass  
                 case 0:
                     return
