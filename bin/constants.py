@@ -132,14 +132,25 @@ The new FFMPEG Command Format
 
 """
 
+# Simply change the ending of a file to convert it. So .mp3 -> .wav
+#? Need an input path & output path
 FFMPEG_CONVERT_AUDIO_TYPE = ['ffmpeg', '-n', '-i', '__IN__', '__OUT__']
 
+# A simple way to get rid of some unnesseccary frequencys & some noises.
+# Works in most cases with default settings.
+#! Must be enhanced in the future
+#? Need an input path & output path
 FFMPEG_LIMITER = ['ffmpeg', '-y', '-i', '__IN__', '-af', 'compand=0|0:1|1:0/-3|10/-3|20/-3:0.1:0:0:0', '__OUT__']
 
+# Normalizes audio to -15 decibel
+#? Need an input path & output path
 FFMPEG_LOUDNESS_NORMALIZATION = ['ffmpeg', '-y', '-i', '__IN__', '-af', 'loudnorm=-15', '__OUT__']
 
-#mapping 0:1 0:2
+# Extract audio from a video file
+#! Will be optimized in the futere by splitting the output to two output streams
+#? Need an input path, output path & a mapping id <- this is the track you want(starts by 1)
 FFMPEG_EXTRACT = ['ffmpeg', '-y', '-i', '__IN__', '-map', '0:__MAPPING__', '__OUT__']
+
 
 FFMPEG_VOLUME_APPLIER = ['ffmpeg', '-y', '-i', "__IN__", '-filter_complex', 'volume=__VOLUME__', '-ac', '2', "temp_t2.mp3"]
 
