@@ -125,13 +125,6 @@ from subprocess import run, CREATE_NO_WINDOW
 
 ## FFMPEG COMMANDS
 
-"""
-
-The new FFMPEG Command Format
-
-
-"""
-
 # Simply change the ending of a file to convert it. So .mp3 -> .wav
 #? Need an input path & output path
 FFMPEG_CONVERT_AUDIO_TYPE = ['ffmpeg', '-n', '-i', '__IN__', '__OUT__']
