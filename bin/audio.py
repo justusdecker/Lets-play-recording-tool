@@ -116,7 +116,8 @@ def limiter(i_filename: str,
                 o_filename
                 ]
             )
-        
+#compand=0|0:1|1:0/-3|10/-3|20/-3:0.1:0:0:0
+#compand=0|0:1|1:0/-3|10/-3|20/-3:0.1:0:0:0
 def cvt_audio(filename:str,#call
                     fr:str= '.mp3',
                     to:str= '.wav'):

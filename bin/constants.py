@@ -133,7 +133,9 @@ FFMPEG_CONVERT_AUDIO_TYPE = ['ffmpeg', '-n', '-i', '__IN__', '__OUT__']
 # Works in most cases with default settings.
 #! Must be enhanced in the future
 #? Need an input path & output path
-FFMPEG_LIMITER = ['ffmpeg', '-y', '-i', '__IN__', '-af', 'compand=0|0:1|1:0/-3|10/-3|20/-3:0.1:0:0:0', '__OUT__']
+
+limiter = '0/-3|10/-3|20/-3'
+FFMPEG_LIMITER = ['ffmpeg', '-y', '-i', '__IN__', '-af', f'compand=0|0:1|1:{limiter}:0.1:0:0:0', '__OUT__']
 
 # Normalizes audio to -15 decibel
 #? Need an input path & output path
@@ -163,8 +165,7 @@ def ffmpeg_build(cmd: list[str], replacer: dict[str,str]):
     for key in replacer:
         cmd = [arg.replace(key,replacer[key]) if key in arg else arg for arg in cmd]
     deb(cmd)
-    return [replacer[i] if i in replacer else i for i in cmd]
-
+    return cmd
 def ffmpeg_run(cmd: list[list], replacer: dict[str,str]):
     """
     This function runs your FFMPEG command. Before this happens this function calls ffmpeg_build to replace some essential variables.
@@ -173,4 +174,5 @@ def ffmpeg_run(cmd: list[list], replacer: dict[str,str]):
     
     The settings are: NO WINDOW <- Don't work with terminal applications!
     """
+    
     run(ffmpeg_build(cmd,replacer), CREATE_NO_WINDOW, shell= True)
