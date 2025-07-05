@@ -222,6 +222,8 @@ def gen_thumbnail():
                 __gen_thumbnail(TG,lp_name,eps,i,tad)
 
 def compare_audio():
+    # final audio path
+    # {episode_number}_{letsplay_name}_final.mp3
     letsplay = LetsPlay(LP_PATH)
     res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
     if res is not None:
