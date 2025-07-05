@@ -101,13 +101,13 @@ def fetch_audio(episode: Episode,i: int,lp_name: str):
     t1_path, t2_path = f'{AUDIO_FOLDER}{i+1}_{lp_name}_track_mic.mp3',f'{AUDIO_FOLDER}{i+1}_{lp_name}_track_desktop.mp3'
     
     inf(f'Start extract track 1 from {t1_path}')
-    ffmpeg_run(FFMPEG_EXTRACT,{'__IN__':video_path,'__OUT__':t1_path,'__MAPPING__':1})
+    ffmpeg_run(FFMPEG_EXTRACT,{'__IN__':video_path,'__OUT__':t1_path,'__MAPPING__':str(1)})
     #extract_audio(video_path,t1_path,1)
 
     episode.set_audio_mic_path(i,t1_path)
     
     inf(f'Start extract track 2 from {t2_path}')
-    ffmpeg_run(FFMPEG_EXTRACT,{'__IN__':video_path,'__OUT__':t2_path,'__MAPPING__':2})
+    ffmpeg_run(FFMPEG_EXTRACT,{'__IN__':video_path,'__OUT__':t2_path,'__MAPPING__':str(2)})
     #extract_audio(video_path,t2_path,2)
     
     episode.set_audio_desktop_path(i,t2_path)
