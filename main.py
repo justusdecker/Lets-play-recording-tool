@@ -109,19 +109,7 @@ class App:
                     (2) Audio Fetch
                     Get all video - audio track 1 & 2
                     """
-                    cnef(AUDIO_FOLDER)
-                    letsplay = LetsPlay(LP_PATH)
-                    res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
-                    if res is not None:
-                        lp,epr = res
-                        lp_name = letsplay.get_name(lp)
-                        ep_path = letsplay.get_episode_path(lp)
-                        if epr[0] == epr[1]:
-                            fetch_audio(Episode(ep_path),epr[0],lp_name)
-                        else:
-                            episode = Episode(ep_path)
-                            for i in range(epr[0],epr[1]):
-                                fetch_audio(episode,i,lp_name)
+                    fetch_audio()
                 case 3:
                     """
                     (3) Audio Fix / Edit

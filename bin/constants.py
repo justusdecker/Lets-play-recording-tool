@@ -109,7 +109,7 @@ ROOT = f'C:\\Users\\{USERNAME}\\jri_data\\'
 
 AUDIO_FOLDER = f'{ROOT}audio\\'
 THUMBNAIL_FOLDER = f'{ROOT}thumbnails\\'
-FIXED_AUDIO_FOLDER = f'{ROOT}{AUDIO_FOLDER}audio_fixed\\'
+FIXED_AUDIO_FOLDER = f'{ROOT}audio_fixed\\'
 
 #! ERRORS
 ewf = 'Exit current workflow.'

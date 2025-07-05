@@ -96,7 +96,7 @@ def create_new_ep_file(filepath: str):
     else:
         err(ERROR_002)
 
-def fetch_audio(episode: Episode,i: int,lp_name: str):
+def __fetch_audio(episode: Episode,i: int,lp_name: str):
     """
     Get 2 Track from the original video file & save them & their path
     """
@@ -117,6 +117,21 @@ def fetch_audio(episode: Episode,i: int,lp_name: str):
     episode.set_audio_desktop_path(i,t2_path)
     
     episode.save()
+
+def fetch_audio():
+    cnef(AUDIO_FOLDER)
+    letsplay = LetsPlay(LP_PATH)
+    res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
+    if res is not None:
+        lp,epr = res
+        lp_name = letsplay.get_name(lp)
+        ep_path = letsplay.get_episode_path(lp)
+        if epr[0] == epr[1]:
+            __fetch_audio(Episode(ep_path),epr[0],lp_name)
+        else:
+            episode = Episode(ep_path)
+            for i in range(epr[0],epr[1]):
+                __fetch_audio(episode,i,lp_name)
   
 def __fix_audio(episode: Episode,i: int, lp_name):
     """
@@ -153,11 +168,12 @@ def fix_audio():
         lp_name = letsplay.get_name(lp)
         ep_path = letsplay.get_episode_path(lp)
         if epr[0] == epr[1]:
-            fix_audio(ep_path,epr[0],lp_name)
+            __fix_audio(ep_path,epr[0],lp_name)
         else:
             ep = Episode(ep_path)
             for i in range(epr[0],epr[1]):
-                fix_audio(ep,i,lp_name)
+                __fix_audio(ep,i,lp_name)
+                
 def __gen_thumbnail(
     thumbnail_gen: ThumbnailGenerator,
     lp_name: str,
