@@ -49,6 +49,9 @@ To record you need connection to the OBS Webserver!
 
 ### Render
 
+> [!NOTE]
+> Rendering is currently not avaiable because some features like peak normalization cannot be automated without a significant performance impact.
+
 ## Programs you need
 
 > [!IMPORTANT]
