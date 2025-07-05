@@ -17,6 +17,7 @@ from bin.data_access import (
     file_read,
     file_write,
     csv_write,
+    cnef,
     Episode,
     LetsPlay,
     EP_KEYS,
@@ -29,7 +30,9 @@ from bin.text_manipulation import (
     color816
 )
 
-from bin.others import binps
+from tkinter.filedialog import askopenfilename as aofn
+
+from bin.others import binps, input_episode_range
 
 from bin.constants import (
     ERROR_002,
@@ -141,7 +144,7 @@ def fix_audio(episode: Episode,i: int, lp_name):
     #inf(f'Start limit track 2 to {t4_path}')
     #limiter(t2_path, t4_path)
 
-def gen_thumbnail(
+def __gen_thumbnail(
     thumbnail_gen: ThumbnailGenerator,
     lp_name: str,
     episode: Episode,
@@ -166,7 +169,26 @@ def gen_thumbnail(
     episode.set_thumbnail_path(i,p)
     episode.save()
 
-
+def gen_thumbnail():
+    letsplay = LetsPlay(LP_PATH)
+    TG = ThumbnailGenerator()
+    cnef(THUMBNAIL_FOLDER)
+    res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
+    if res is not None:
+        lp,epr = res
+        lp_name = letsplay.get_name(lp)
+        ep_path = letsplay.get_episode_path(lp)
+        eps = Episode(ep_path)
+        inf('Please answer the filedialog')
+        tad = aofn(filetypes=[['JSON','*.json']])
+        if epr[0] == epr[1]:
+            __gen_thumbnail(TG,lp_name,eps,epr[0],tad)
+            
+        else:
+            
+            for i in range(epr[0],epr[1]):
+                __gen_thumbnail(TG,lp_name,eps,i,tad)
+    
 def deploy(lp: LetsPlay, ep: Episode,id: int):
     """
     Deploying is for moving lets play data & files to other folders & drives
