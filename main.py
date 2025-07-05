@@ -9,8 +9,8 @@ __status__ = "Testing"
 
 from bin.constants import *
 
-from bin.data_access import LetsPlay, cnef, isfile, Episode,json_write
-from bin.others import binpi, input_episode_range
+from bin.data_access import LetsPlay, isfile, Episode,json_write
+from bin.others import binpi
 
 
 from bin.automations import (
@@ -19,10 +19,11 @@ from bin.automations import (
     fetch_audio,
     fix_audio,
     gen_thumbnail,
+    compare_audio,
     LP_PATH
 )
 
-from bin.audio_player import AudioPlayer
+
 
 class App:
     def __init__(self):
@@ -121,34 +122,7 @@ class App:
                     
                     """
                     
-                    letsplay = LetsPlay(LP_PATH)
-                    res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
-                    if res is not None:
-                        lp,epr = res
-                        ep_path = letsplay.get_episode_path(lp)
-                        ep = Episode(ep_path)
-                        if epr[0] == epr[1]:
-                            mic = ep.get_audio_mic_path(epr[0])
-                            desk = ep.get_audio_desktop_path(epr[0])
-                            
-                            AP = AudioPlayer(mic, desk)
-                            AP.run()
-                            volume = AP.vol
-                            del AP
-
-                                
-                            print(mic,desk,volume)
-                        else:
-                            for i in range(epr[0],epr[1]):
-                                mic = ep.get_audio_mic_path(i)
-                                desk = ep.get_audio_desktop_path(i)
-                                inf(f'{mic} {desk}')
-                                AP = AudioPlayer(mic, desk)
-                                AP.run()
-                                volume = AP.vol
-                                del AP
-                                        
-                                print(mic,desk,volume)
+                    compare_audio()
                 case 5:
                     pass  
                 case 0:
