@@ -11,9 +11,9 @@ from bin.constants import *
 
 from bin.data_access import LetsPlay, cnef, isfile, Episode,json_write
 from tkinter.filedialog import askopenfilename as aofn
-from bin.others import binpi, input_episode_range, input_in_range
+from bin.others import binpi, input_episode_range
 from bin.thumbnail import ThumbnailGenerator
-from subprocess import run, CREATE_NO_WINDOW
+
 from bin.automations import (
     obs_connect,
     create_new_lp_file,
@@ -28,8 +28,8 @@ from bin.audio_player import AudioPlayer
 class App:
     def __init__(self):
         self.isrunning = True
-        self.current_letsplay_id = 0
-        print(color816('',31),end='')
+        self.current_letsplay_id = 0 #! will be changed to a setting
+        print(color816('',31),end='') # resets the terminal color
     
     def options_submenu(self):
         """
@@ -166,8 +166,6 @@ class App:
                     
                     letsplay = LetsPlay(LP_PATH)
                     res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
-                    # user must memorize the audio volume will be changed later
-                    
                     if res is not None:
                         lp,epr = res
                         ep_path = letsplay.get_episode_path(lp)
@@ -196,9 +194,7 @@ class App:
                                 print(mic,desk,volume)
                     # iterate over a defined range
                 case 5:
-                    pass 
-                    
-                    
+                    pass  
                 case 0:
                     return
                 case _:
