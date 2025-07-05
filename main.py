@@ -160,7 +160,7 @@ class App:
                                 fix_audio(ep,i,lp_name)
                 case 4:
                     """
-                    Audio Check & rendering
+                    Audio Compare
                     
                     """
                     
@@ -195,7 +195,8 @@ class App:
                                         
                                 print(mic,desk,volume)
                     # iterate over a defined range
-                    
+                case 5:
+                    pass 
                     
                     
                 case 0:
