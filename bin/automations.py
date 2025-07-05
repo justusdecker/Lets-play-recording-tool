@@ -167,10 +167,11 @@ def fix_audio():
         lp,epr = res
         lp_name = letsplay.get_name(lp)
         ep_path = letsplay.get_episode_path(lp)
+        ep = Episode(ep_path)
         if epr[0] == epr[1]:
-            __fix_audio(ep_path,epr[0],lp_name)
+            __fix_audio(ep,epr[0],lp_name)
         else:
-            ep = Episode(ep_path)
+            
             for i in range(epr[0],epr[1]):
                 __fix_audio(ep,i,lp_name)
                 
