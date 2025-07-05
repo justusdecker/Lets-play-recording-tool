@@ -62,6 +62,22 @@ You only need to:
 
 Rendering will moved to resolve again.
 
+### In Resolve
+
+Import all needed videos LPRT will automatically create a new timeline for each episode.
+
+For each Episode you need todo:
+
+1. Select a timeline
+2. Select the audio track
+3. Press H + ENTER (This will normalize your audio to -1db)
+4. Go to the "Deliver" page
+5. Set the location(You only need to select the complete filepath one time, after that your only need to increase the episode number) My preset is {episode_number}_{letsplay_name}.mp4
+6. Restrict bitrate to 15000 - 20000.
+7. Add to render queue
+
+If you appended all videos click "Render all"
+
 ## Programs you need
 
 > [!IMPORTANT]
@@ -151,8 +167,6 @@ Simply adjust your `password` in `settings.json`
 
 ### Thumbnail Automation Data
 
-This is a default TAD File
----
 ```json
 [
     {
