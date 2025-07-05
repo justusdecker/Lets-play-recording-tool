@@ -71,20 +71,20 @@ def combine_audio(t1: str,t2: str, vol: float):
                 subprocess.CREATE_NO_WINDOW,
                 shell= True
                 )
-def extract_audio(fr:str,to:str,t:int=1):
-    subprocess.run(
-                (
-                    'ffmpeg',
-                    '-y',
-                    '-i',
-                    f"{fr}",
-                    '-map',
-                    f'0:{t}',
-                    f"{to}"
-                    ),
-                subprocess.CREATE_NO_WINDOW,
-                shell= True
-                )
+#def extract_audio(fr:str,to:str,t:int=1):
+#    subprocess.run(
+#                (
+#                    'ffmpeg',
+#                    '-y',
+#                    '-i',
+#                    f"{fr}",
+#                    '-map',
+#                    f'0:{t}',
+#                    f"{to}"
+#                    ),
+#                subprocess.CREATE_NO_WINDOW,
+#                shell= True
+#                )
 def loudness_normalization(filepath,savepath,decibel:int = -15):
         
     subprocess.run(
