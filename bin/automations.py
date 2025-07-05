@@ -118,7 +118,7 @@ def fetch_audio(episode: Episode,i: int,lp_name: str):
     
     episode.save()
   
-def fix_audio(episode: Episode,i: int, lp_name):
+def __fix_audio(episode: Episode,i: int, lp_name):
     """
     Take the audio & uses limiter & loudness normalization to fix the most issues in the mic record.
     
@@ -144,6 +144,20 @@ def fix_audio(episode: Episode,i: int, lp_name):
     #inf(f'Start limit track 2 to {t4_path}')
     #limiter(t2_path, t4_path)
 
+def fix_audio():
+    cnef(FIXED_AUDIO_FOLDER)
+    letsplay = LetsPlay(LP_PATH)
+    res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
+    if res is not None:
+        lp,epr = res
+        lp_name = letsplay.get_name(lp)
+        ep_path = letsplay.get_episode_path(lp)
+        if epr[0] == epr[1]:
+            fix_audio(ep_path,epr[0],lp_name)
+        else:
+            ep = Episode(ep_path)
+            for i in range(epr[0],epr[1]):
+                fix_audio(ep,i,lp_name)
 def __gen_thumbnail(
     thumbnail_gen: ThumbnailGenerator,
     lp_name: str,
