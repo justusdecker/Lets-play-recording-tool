@@ -134,8 +134,8 @@ FFMPEG_CONVERT_AUDIO_TYPE = ['ffmpeg', '-n', '-i', '__IN__', '__OUT__']
 #! Must be enhanced in the future
 #? Need an input path & output path
 
-limiter = '0/-3|10/-3|20/-3'
-FFMPEG_LIMITER = ['ffmpeg', '-y', '-i', '__IN__', '-af', f'compand=0|0:1|1:{limiter}:0.1:0:0:0', '__OUT__']
+limiter = 'compand=0|0:1|1:0/-3|10/-3|20/-3:0.1:0:0:0'
+FFMPEG_LIMITER = ['ffmpeg', '-y', '-i', '__IN__', '-af', limiter, '__OUT__']
 
 # Normalizes audio to -15 decibel
 #? Need an input path & output path
@@ -173,6 +173,8 @@ def ffmpeg_run(cmd: list[list], replacer: dict[str,str]):
     Subprocess is used to call FFMPEG
     
     The settings are: NO WINDOW <- Don't work with terminal applications!
+    
+    shell= True is compatible with limiter compand
     """
     
-    run(ffmpeg_build(cmd,replacer), CREATE_NO_WINDOW, shell= True)
+    run(ffmpeg_build(cmd,replacer), CREATE_NO_WINDOW)
