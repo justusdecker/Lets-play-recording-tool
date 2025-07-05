@@ -47,10 +47,20 @@ To record you need connection to the OBS Webserver!
 
 ### Audio Fix
 
+### Audio Compare
+
+Audio comparing is mostly automated. 
+You only need to: 
+- start audio compare
+- change audio volume
+- apply audio volume from memory into the program
+
 ### Render
 
 > [!NOTE]
 > Rendering is currently not avaiable because some features like peak normalization cannot be automated without a significant performance impact.
+
+Rendering will moved to resolve again.
 
 ## Programs you need
 
