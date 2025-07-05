@@ -7,7 +7,7 @@ __maintainer__ = "Justus Decker"
 __email__ = "justus.d2025@gmail.com"
 __status__ = "Testing"
 
-from bin.audio import extract_audio, loudness_normalization, limiter
+from bin.audio import loudness_normalization, limiter
 from bin.obs import OBSObserver
 from shutil import copyfile
 from tkinter.filedialog import askdirectory
@@ -40,7 +40,9 @@ from bin.constants import (
     ERROR_007,
     AUDIO_FOLDER,
     FIXED_AUDIO_FOLDER,
-    THUMBNAIL_FOLDER
+    THUMBNAIL_FOLDER,
+    FFMPEG_EXTRACT,
+    ffmpeg_run
 )
 
 from bin.thumbnail import ThumbnailGenerator
@@ -99,12 +101,14 @@ def fetch_audio(episode: Episode,i: int,lp_name: str):
     t1_path, t2_path = f'{AUDIO_FOLDER}{i+1}_{lp_name}_track_mic.mp3',f'{AUDIO_FOLDER}{i+1}_{lp_name}_track_desktop.mp3'
     
     inf(f'Start extract track 1 from {t1_path}')
-    extract_audio(video_path,t1_path,1)
+    ffmpeg_run(FFMPEG_EXTRACT,{'__IN__':video_path,'__OUT__':t1_path,'__MAPPING__':1})
+    #extract_audio(video_path,t1_path,1)
 
     episode.set_audio_mic_path(i,t1_path)
     
     inf(f'Start extract track 2 from {t2_path}')
-    extract_audio(video_path,t2_path,2)
+    ffmpeg_run(FFMPEG_EXTRACT,{'__IN__':video_path,'__OUT__':t2_path,'__MAPPING__':2})
+    #extract_audio(video_path,t2_path,2)
     
     episode.set_audio_desktop_path(i,t2_path)
     
