@@ -46,6 +46,8 @@ from bin.constants import (
     FFMPEG_EXTRACT,
     FFMPEG_LOUDNESS_NORMALIZATION,
     FFMPEG_LIMITER,
+    FFMPEG_VOLUME_APPLIER,
+    FFMPEG_AUDIO_COMBINE,
     ffmpeg_run
 )
 
@@ -231,6 +233,7 @@ def compare_audio():
         ep_path = letsplay.get_episode_path(lp)
         ep = Episode(ep_path)
         if epr[0] == epr[1]:
+            final_path = f'{epr[0]}_{letsplay.get_game_name(lp)}.mp3'
             mic = ep.get_audio_mic_path(epr[0])
             desk = ep.get_audio_desktop_path(epr[0])
             
@@ -238,11 +241,11 @@ def compare_audio():
             AP.run()
             volume = AP.vol
             del AP
-
-                
-            print(mic,desk,volume)
+            ffmpeg_run(FFMPEG_VOLUME_APPLIER,{'__IN__':desk,'__VOLUME__': volume})
+            ffmpeg_run(FFMPEG_AUDIO_COMBINE,{'__IN__':mic,'__OUT__':final_path})
         else:
             for i in range(epr[0],epr[1]):
+                final_path = f'{i}_{letsplay.get_game_name(lp)}.mp3'
                 mic = ep.get_audio_mic_path(i)
                 desk = ep.get_audio_desktop_path(i)
                 inf(f'{mic} {desk}')
@@ -250,8 +253,8 @@ def compare_audio():
                 AP.run()
                 volume = AP.vol
                 del AP
-                        
-                print(mic,desk,volume)
+                ffmpeg_run(FFMPEG_VOLUME_APPLIER,{'__IN__':desk,'__VOLUME__': volume})
+                ffmpeg_run(FFMPEG_AUDIO_COMBINE,{'__IN__':mic,'__OUT__':final_path})
  
 def deploy(lp: LetsPlay, ep: Episode,id: int):
     """
