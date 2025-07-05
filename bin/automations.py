@@ -53,6 +53,7 @@ from bin.thumbnail import ThumbnailGenerator
 
 from os.path import isfile
 
+from bin.audio_player import AudioPlayer
 
 def obs_connect(ep: Episode):
     """
