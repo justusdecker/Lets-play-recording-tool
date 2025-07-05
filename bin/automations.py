@@ -219,7 +219,37 @@ def gen_thumbnail():
             
             for i in range(epr[0],epr[1]):
                 __gen_thumbnail(TG,lp_name,eps,i,tad)
-    
+
+def compare_audio():
+    letsplay = LetsPlay(LP_PATH)
+    res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
+    if res is not None:
+        lp,epr = res
+        ep_path = letsplay.get_episode_path(lp)
+        ep = Episode(ep_path)
+        if epr[0] == epr[1]:
+            mic = ep.get_audio_mic_path(epr[0])
+            desk = ep.get_audio_desktop_path(epr[0])
+            
+            AP = AudioPlayer(mic, desk)
+            AP.run()
+            volume = AP.vol
+            del AP
+
+                
+            print(mic,desk,volume)
+        else:
+            for i in range(epr[0],epr[1]):
+                mic = ep.get_audio_mic_path(i)
+                desk = ep.get_audio_desktop_path(i)
+                inf(f'{mic} {desk}')
+                AP = AudioPlayer(mic, desk)
+                AP.run()
+                volume = AP.vol
+                del AP
+                        
+                print(mic,desk,volume)
+ 
 def deploy(lp: LetsPlay, ep: Episode,id: int):
     """
     Deploying is for moving lets play data & files to other folders & drives
