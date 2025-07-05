@@ -42,6 +42,8 @@ from bin.constants import (
     FIXED_AUDIO_FOLDER,
     THUMBNAIL_FOLDER,
     FFMPEG_EXTRACT,
+    FFMPEG_LOUDNESS_NORMALIZATION,
+    FFMPEG_LIMITER,
     ffmpeg_run
 )
 
@@ -128,10 +130,11 @@ def fix_audio(episode: Episode,i: int, lp_name):
     t3_path, t4_path = f'{FIXED_AUDIO_FOLDER}{i+1}_{lp_name}_track_mic_fixed.mp3',f'{FIXED_AUDIO_FOLDER}{i+1}_{lp_name}_track_desktop_fixed.mp3'
     
     inf(f'Start normalize track 1 to {t1_path}')
-    loudness_normalization(audio_mic_path, t1_path)
-    
+    #loudness_normalization(audio_mic_path, t1_path)
+    ffmpeg_run(FFMPEG_LOUDNESS_NORMALIZATION,{'__IN__': audio_mic_path,'__OUT__':t1_path})
     inf(f'Start limit track 1 to {t3_path}')
-    limiter(t1_path, t3_path)
+    #limiter(t1_path, t3_path)
+    ffmpeg_run(FFMPEG_LIMITER,{'__IN__': t1_path,'__OUT__':t3_path})
     
     #inf(f'Start normalize track 2 to {t2_path}')
     #loudness_normalization(audio_desktop_path, t2_path)
