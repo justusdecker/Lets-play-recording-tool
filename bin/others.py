@@ -92,4 +92,5 @@ def input_episode_range(max_eps:list[int], lp_names: list[str]) -> None | tuple[
             ep_range = (_index,_index)
         case _:
             err(ERROR_003)
+            return lp_id, (0,0)
     return lp_id, ep_range

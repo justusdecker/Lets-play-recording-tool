@@ -104,25 +104,7 @@ class App:
                     """
                     (1) Thumbnail Generator
                     """
-                    letsplay = LetsPlay(LP_PATH)
-                    
-                    TG = ThumbnailGenerator()
-                    cnef(THUMBNAIL_FOLDER)
-                    res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
-                    if res is not None:
-                        lp,epr = res
-                        lp_name = letsplay.get_name(lp)
-                        ep_path = letsplay.get_episode_path(lp)
-                        eps = Episode(ep_path)
-                        inf('Please answer the filedialog')
-                        tad = aofn(filetypes=[['JSON','*.json']])
-                        if epr[0] == epr[1]:
-                            gen_thumbnail(TG,lp_name,eps,epr[0],tad)
-                            
-                        else:
-                            
-                            for i in range(epr[0],epr[1]):
-                                gen_thumbnail(TG,lp_name,eps,i,tad)
+                    gen_thumbnail()
                 case 2:
                     """
                     (2) Audio Fetch
@@ -192,7 +174,6 @@ class App:
                                 del AP
                                         
                                 print(mic,desk,volume)
-                    # iterate over a defined range
                 case 5:
                     pass  
                 case 0:
