@@ -125,6 +125,13 @@ from subprocess import run, CREATE_NO_WINDOW
 
 ## FFMPEG COMMANDS
 
+"""
+
+The new FFMPEG Command Format
+
+
+"""
+
 FFMPEG_CONVERT_AUDIO_TYPE = ['ffmpeg', '-n', '-i', '__IN__', '__OUT__']
 
 FFMPEG_LIMITER = ['ffmpeg', '-y', '-i', '__IN__', '-af', 'compand=0|0:1|1:0/-3|10/-3|20/-3:0.1:0:0:0', '__OUT__']
@@ -140,21 +147,23 @@ FFMPEG_AUDIO_COMBINE = ['ffmpeg', '-y', '-i', "__IN__", '-i', "temp_t2.mp3", '-f
 
 def ffmpeg_build(cmd: list[str], replacer: dict[str,str]):
     """
-    :file_input_1
-    :file_output
+    This function takes the FFMPEG command and replaces all of the keys that can be found in the command!
     
-    {
-        
-        "file_input_1" : "test.mp3"
-        
-    }
+    If you forget to change a key, this will result in an error from FFMPEG. No Exception raises.
+    
+    Is a key not existent it will replace nothing.
     """
-    
     for key in replacer:
-        
         cmd = [arg.replace(key,replacer[key]) if key in arg else arg for arg in cmd]
     deb(cmd)
     return [replacer[i] if i in replacer else i for i in cmd]
 
-def ffmpeg_run(cmd: list[list], replacer: list[tuple[str,str]]):
+def ffmpeg_run(cmd: list[list], replacer: dict[str,str]):
+    """
+    This function runs your FFMPEG command. Before this happens this function calls ffmpeg_build to replace some essential variables.
+    
+    Subprocess is used to call FFMPEG
+    
+    The settings are: NO WINDOW <- Don't work with terminal applications!
+    """
     run(ffmpeg_build(cmd,replacer), CREATE_NO_WINDOW, shell= True)
