@@ -35,7 +35,7 @@ EP_KEYS = [
     'title',
     'episode_number',
     'upload_at',
-    'final_video'
+    'final_audio'
 ]
 
 def csv_rw(filepath: str, new_data):
@@ -190,7 +190,7 @@ class Episode(CSVObj):
 |10|title|`str`|
 |11|episode_number|`int`|
 |12|upload_at|`int`|
-|12|final_video|`str`|
+|12|final_audio|`str`|
     
     """
     def __init__(self, filepath):
@@ -212,7 +212,7 @@ class Episode(CSVObj):
         return self.read(id)[2]
     def get_thumbnail_path(self,id: int):
         return self.read(id)[3]
-    def get_final_video_path(self,id: int):
+    def get_final_audio_path(self,id: int):
         return self.read(id)[13]
     
     def set_audio_mic_path(self,id: int, data: str):
