@@ -7,7 +7,6 @@ __maintainer__ = "Justus Decker"
 __email__ = "justus.d2025@gmail.com"
 __status__ = "Testing"
 
-from bin.audio import loudness_normalization, limiter
 from bin.obs import OBSObserver
 from shutil import copyfile
 from tkinter.filedialog import askdirectory
