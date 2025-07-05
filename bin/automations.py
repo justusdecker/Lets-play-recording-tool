@@ -244,8 +244,8 @@ def compare_audio():
             ffmpeg_run(FFMPEG_VOLUME_APPLIER,{'__IN__':desk,'__VOLUME__': str(volume)})
             ffmpeg_run(FFMPEG_AUDIO_COMBINE,{'__IN__':mic,'__OUT__':final_path})
             print(mic, desk, volume)
-            #ep.set_final_audio_path(epr[0],final_path)
-            #ep.save()
+            ep.set_final_audio_path(epr[0],final_path)
+            ep.save()
         else:
             for i in range(epr[0],epr[1]):
                 final_path = f'{i}_{letsplay.get_game_name(lp)}.mp3'
@@ -259,8 +259,8 @@ def compare_audio():
                 ffmpeg_run(FFMPEG_VOLUME_APPLIER,{'__IN__':desk,'__VOLUME__': str(volume)})
                 ffmpeg_run(FFMPEG_AUDIO_COMBINE,{'__IN__':mic,'__OUT__':final_path})
                 print(mic, desk, volume)
-                #ep.set_final_audio_path(i,final_path)
-                #ep.save()
+                ep.set_final_audio_path(i,final_path)
+                ep.save()
  
 def deploy(lp: LetsPlay, ep: Episode,id: int):
     """
