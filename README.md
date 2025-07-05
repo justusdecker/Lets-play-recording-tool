@@ -134,7 +134,7 @@ Simply adjust your `password` in `settings.json`
 |10|title|`str`|
 |11|episode_number|`int`|
 |12|upload_at|`int`|
-|13|final_video|`str`|
+|13|final_audio|`str`|
 
 ### Lets Play
 
