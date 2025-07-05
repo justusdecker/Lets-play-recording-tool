@@ -1,13 +1,5 @@
 import pytest
-from bin.data_access import *
-from bin.automations import deploy
+from bin.constants import ffmpeg_run
+from bin.constants import FFMPEG_EXTRACT
 
-#ep = Episode('test.csv')
-#ep.add('test123')
-#ep.save()
-
-lp = LetsPlay('lets_plays.csv')
-
-ep = Episode('eps_schedule_one.csv')
-
-deploy(lp,ep,0)
+ffmpeg_run(FFMPEG_EXTRACT,{'__IN__': 'C:/Users/Justus/Videos/2025-06-29 22-43-39.mp4','__OUT__':'test.mp3','__MAPPING__':'1'})

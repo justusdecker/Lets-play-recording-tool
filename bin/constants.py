@@ -138,7 +138,7 @@ FFMPEG_VOLUME_APPLIER = ['ffmpeg', '-y', '-i', "__IN__", '-filter_complex', 'vol
 
 FFMPEG_AUDIO_COMBINE = ['ffmpeg', '-y', '-i', "__IN__", '-i', "temp_t2.mp3", '-filter_complex', 'amerge=inputs=2', '-ac', '2', "temp.mp3"]
 
-def ffmpeg_build(cmd: list[str], replacer: list[dict[str,str]]):
+def ffmpeg_build(cmd: list[str], replacer: dict[str,str]):
     """
     :file_input_1
     :file_output
@@ -150,9 +150,10 @@ def ffmpeg_build(cmd: list[str], replacer: list[dict[str,str]]):
     }
     """
     
-    for key, rep in replacer:
-        cmd = [arg.replace(key,rep) if key in arg else arg for arg in cmd]
-
+    for key in replacer:
+        
+        cmd = [arg.replace(key,replacer[key]) if key in arg else arg for arg in cmd]
+    deb(cmd)
     return [replacer[i] if i in replacer else i for i in cmd]
 
 def ffmpeg_run(cmd: list[list], replacer: list[tuple[str,str]]):
