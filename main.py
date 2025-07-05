@@ -180,7 +180,7 @@ class App:
                             AP.run()
                             volume = AP.vol
                             del AP
-                            print(mic,desk)
+
                                 
                             print(mic,desk,volume)
                         else:

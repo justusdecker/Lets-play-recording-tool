@@ -43,7 +43,7 @@ from subprocess import run, CREATE_NO_WINDOW
 
 
 
-FONT = Font(get_default_font(),80)
+
 
 def combine_audio(t1: str,t2: str,st: str,et: str, vol: float):
     """
@@ -135,6 +135,7 @@ class AudioPlayer:
         self.t1, self.t2 = t1, t2
         f_init()
         m_init()
+        self.font = Font(get_default_font(),80)
         
     def run(self):
         """
@@ -147,8 +148,8 @@ class AudioPlayer:
         Here renders all the elements on screen
         """
         self.display.fill((24,24,24))
-        self.display.blit(FONT.render('00:00',False,(255,255,255)))
-        self.display.blit(FONT.render(f'{int(self.vol*100)}%',False,(255,255,255)),(0,FONT.get_height()))
+        self.display.blit(self.font.render('00:00',False,(255,255,255)))
+        self.display.blit(self.font.render(f'{int(self.vol*100)}%',False,(255,255,255)),(0,self.font.get_height()))
         d_update()
         
     def update(self):
