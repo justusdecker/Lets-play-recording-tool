@@ -232,7 +232,7 @@ def compare_audio():
         ep_path = letsplay.get_episode_path(lp)
         ep = Episode(ep_path)
         if epr[0] == epr[1]:
-            final_path = f'{epr[0]}_{letsplay.get_game_name(lp)}.mp3'
+            final_path = f'{AUDIO_FOLDER}{epr[0]}_{letsplay.get_game_name(lp)}_final.mp3'
             mic = ep.get_audio_mic_path(epr[0])
             desk = ep.get_audio_desktop_path(epr[0])
             
@@ -246,7 +246,7 @@ def compare_audio():
             ep.save()
         else:
             for i in range(epr[0],epr[1]):
-                final_path = f'{i}_{letsplay.get_game_name(lp)}.mp3'
+                final_path = f'{AUDIO_FOLDER}{i}_{letsplay.get_game_name(lp)}_final.mp3'
                 mic = ep.get_audio_mic_path(i)
                 desk = ep.get_audio_desktop_path(i)
                 inf(f'{mic} {desk}')
