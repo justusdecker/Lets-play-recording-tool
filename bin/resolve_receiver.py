@@ -63,7 +63,7 @@ class DavinciReceiver:
                 to_page(5)
                 print('import',int(epNum))
             
-            self.clean()
+            self.clean(1)
         if msg.startswith('reset'):
             print('reset')
             self.clean()
