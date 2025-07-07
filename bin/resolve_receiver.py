@@ -52,10 +52,11 @@ class DavinciReceiver:
         if msg.startswith('import'):
             if '<' in msg:
                 video,audio,epNum = msg.split('<')[1],msg.split('<')[2],msg.split('<')[3]
-                
+                print(video, audio, epNum)
                 add_media([video,audio])
                 vid = get_elements([video.split('\\')[-1]])
                 #audio.split('\\')[-1]
+                print(vid)
                 create_new_episode(int(epNum),vid)
                 delete_tracks()
                 aud = get_elements([audio.split('\\')[-1]])            
@@ -80,9 +81,12 @@ ROOT = PROJECT.GetMediaPool().GetRootFolder()
 
 def get_elements(search_for=list):
     _ret = []
+    
     for item in search_for:
+        
         for clip in ROOT.GetClipList():
-            if clip.GetName() == item.split('\\')[-1]:
+            print(clip.GetName(), item.split('\\')[-1].split('/')[-1])
+            if clip.GetName() == item.split('\\')[-1].split('/')[-1]:
                 _ret.append(clip)
     return _ret
 
@@ -101,7 +105,8 @@ def delete_tracks():
     resolve.GetProjectManager().GetCurrentProject().GetCurrentTimeline().AddTrack('audio','stereo')
     
 def create_new_episode(episode_number: int, clips_by_name: list[str]):
-    resolve.GetMediaStorage().CreateTimelineFromClips(str(episode_number), [clips_by_name])
+    print(PROJECT.GetMediaPool())
+    PROJECT.GetMediaPool().CreateTimelineFromClips(str(episode_number), [clips_by_name])
     
 def get_element_names(self,search_for:str='mp4'):
         #Shows all Files in ClipList
