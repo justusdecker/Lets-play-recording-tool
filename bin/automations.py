@@ -232,7 +232,7 @@ def compare_audio():
         ep_path = letsplay.get_episode_path(lp)
         ep = Episode(ep_path)
         if epr[0] == epr[1]:
-            final_path = f'{AUDIO_FOLDER}{epr[0]}_{letsplay.get_game_name(lp)}_final.mp3'
+            final_path = f'{AUDIO_FOLDER}{epr[0]+1}_{letsplay.get_game_name(lp)}_final.mp3'
             mic = ep.get_audio_mic_path(epr[0])
             desk = ep.get_audio_desktop_path(epr[0])
             
@@ -240,13 +240,13 @@ def compare_audio():
             AP.run()
             volume = AP.vol
             del AP
-            ffmpeg_run(FFMPEG_AUDIO_COMBINE,{'__IN1__':mic,'__IN2__': desk,'__VOLUME1__': str(1.0),'__VOLUME2__': str(volume),'__OUT__':'out.mp3'})
+            ffmpeg_run(FFMPEG_AUDIO_COMBINE,{'__IN1__':mic,'__IN2__': desk,'__VOLUME1__': str(1.0),'__VOLUME2__': str(volume),'__OUT__':final_path})
             print(mic, desk, volume)
             ep.set_final_audio_path(epr[0],final_path)
             ep.save()
         else:
             for i in range(epr[0],epr[1]):
-                final_path = f'{AUDIO_FOLDER}{i}_{letsplay.get_game_name(lp)}_final.mp3'
+                final_path = f'{AUDIO_FOLDER}{i+1}_{letsplay.get_game_name(lp)}_final.mp3'
                 mic = ep.get_audio_mic_path(i)
                 desk = ep.get_audio_desktop_path(i)
                 inf(f'{mic} {desk}')
@@ -254,7 +254,7 @@ def compare_audio():
                 AP.run()
                 volume = AP.vol
                 del AP
-                ffmpeg_run(FFMPEG_AUDIO_COMBINE,{'__IN1__':mic,'__IN2__': desk,'__VOLUME1__': str(1.0),'__VOLUME2__': str(volume),'__OUT__':'out.mp3'})
+                ffmpeg_run(FFMPEG_AUDIO_COMBINE,{'__IN1__':mic,'__IN2__': desk,'__VOLUME1__': str(1.0),'__VOLUME2__': str(volume),'__OUT__':final_path})
                 print(mic, desk, volume)
                 ep.set_final_audio_path(i,final_path)
                 ep.save()
