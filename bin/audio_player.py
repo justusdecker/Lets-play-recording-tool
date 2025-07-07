@@ -43,77 +43,6 @@ from subprocess import run, CREATE_NO_WINDOW
 
 from bin.constants import ffmpeg_run,FFMPEG_AUDIO_COMBINE_TRUNCATED
 
-
-
-def combine_audio(t1: str,t2: str,st: str,et: str, vol: float):
-    """
-    Combine two audio files
-    
-    .. t1::
-        The mic track
-    .. t2::
-        The desktop track (This track will be volume modified)
-    .. st::
-        starttime in HH:MM:SS format must be a `str`
-    .. et::
-        endtime in HH:MM:SS format must be a `str`
-    
-    """
-    #ffmpeg -ss 00:01:00 -to 00:02:00 -i {input_file} -c copy {result_file}
-    
-    """
-    
-                   add 
-                   -filter:a "volume=0.5"
-                    
-                      
-    """
-    run(
-                (
-                    'ffmpeg',
-                    '-y',               # Will replace existing output
-                    
-                    '-ss',
-                    f'{st}',
-                    '-to',
-                    f'{et}',
-                    '-i',               # Input filepath 2
-                    f'{t2}',            # Input filepath 2
-
-                    '-filter_complex',  #for merging
-                    f'volume={vol}',  # For merging
-                    '-ac', '2',         # Set audio channel
-                    f"temp_t2.mp3"         # output filepath
-                    ),
-                CREATE_NO_WINDOW,
-                shell= True
-                )
-    
-    run(
-                (
-                    'ffmpeg',
-                    '-y',               # Will replace existing output
-                    '-ss',
-                    f'{st}',
-                    '-to',
-                    f'{et}',
-                    '-i',               # Input filepath 1
-                    f'{t1}',            # Input filepath 1
-                    
-
-                    '-i',               # Input filepath 2
-                    f"temp_t2.mp3",            # Input filepath 2
-
-                    
-                    '-filter_complex',  #for merging
-                    'amerge=inputs=2',  # For merging
-                    '-ac', '2',         # Set audio channel
-                    f"temp.mp3"         # output filepath
-                    ),
-                CREATE_NO_WINDOW,
-                shell= True
-                )
-
 def set_title(text: str):
     set_caption(f'{text} - (c) Justus Decker - LPRT Project')
 'audio_player E:\musik\sortiert\S3RL\better-off-alone-s3rl-feat-tamika E:\musik\sortiert\S3RL\Waifu.mp3'
@@ -178,8 +107,8 @@ class AudioPlayer:
                             set_title('Generating Audio')
                             s = 0#ri(0,5)
                             unload()
-                            ffmpeg_run(FFMPEG_AUDIO_COMBINE_TRUNCATED,{'__IN1__':self.t1,'__IN2__': self.t2,'__VOLUME1__': str(1.0),'__VOLUME2__': str(self.vol),'__OUT__':'out.mp3'})
-                            combine_audio(self.t1,self.t2,f'00:0{s}:00',f'00:{s+2}:00',self.vol)
+                            ffmpeg_run(FFMPEG_AUDIO_COMBINE_TRUNCATED,{'__IN1__':self.t1,'__IN2__': self.t2,'__VOLUME1__': str(1.0),'__VOLUME2__': str(self.vol),'__OUT__':'temp.mp3'})
+                            #combine_audio(self.t1,self.t2,f'00:0{s}:00',f'00:{s+2}:00',self.vol)
                             load('temp.mp3')
                             play()
                     if e.key == K_SPACE:
