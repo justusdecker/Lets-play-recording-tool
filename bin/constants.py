@@ -153,7 +153,7 @@ FFMPEG_VOLUME_APPLIER = ['ffmpeg', '-y', '-i', "__IN__", '-filter_complex', 'vol
 
 # Combine two audio tracks
 #? Need an input path & output path
-FFMPEG_AUDIO_COMBINE = ['ffmpeg', '-y', '-i', "__IN__", '-i', "temp_t2.mp3", '-filter_complex', 'amerge=inputs=2', '-ac', '2', "__OUT__"]
+FFMPEG_AUDIO_COMBINE = ['ffmpeg', '-y', '-i', "__IN__", '-i', "temp_t2.mp3", '-filter_complex', '[0:0]volume=0.09[a];[1:0]volume=1.8[b];[a][b]amix=inputs=2:duration=longest', "__OUT__"]# '-ac', '2', amerge=inputs=2
 
 def ffmpeg_build(cmd: list[str], replacer: dict[str,str]):
     """
