@@ -35,7 +35,7 @@ class DavinciReceiver:
         Davinci result
         """
         try:
-            if not isfile(self.davinci_pipe_pipe):
+            if not isfile(self.davinci_pipe):
                 file_write(self.davinci_pipe,'')
             return file_read(self.davinci_pipe)
         except PermissionError as E:
