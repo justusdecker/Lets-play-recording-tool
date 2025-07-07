@@ -41,7 +41,7 @@ from os.path import isfile
 
 from subprocess import run, CREATE_NO_WINDOW
 
-
+from bin.constants import ffmpeg_run,FFMPEG_AUDIO_COMBINE_TRUNCATED
 
 
 
@@ -178,6 +178,7 @@ class AudioPlayer:
                             set_title('Generating Audio')
                             s = 0#ri(0,5)
                             unload()
+                            ffmpeg_run(FFMPEG_AUDIO_COMBINE_TRUNCATED,{'__IN1__':self.t1,'__IN2__': self.t2,'__VOLUME1__': str(1.0),'__VOLUME2__': str(self.vol),'__OUT__':'out.mp3'})
                             combine_audio(self.t1,self.t2,f'00:0{s}:00',f'00:{s+2}:00',self.vol)
                             load('temp.mp3')
                             play()
