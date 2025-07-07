@@ -11,4 +11,4 @@ for i in range(20):
 mic = "C:\\Users\\Justus\\jri_data\\audio\\1_schedule_one_track_mic.mp3"
 desk = "C:\\Users\\Justus\\jri_data\\audio\\1_schedule_one_track_desktop.mp3"
 #ffmpeg_run(FFMPEG_VOLUME_APPLIER,{'__IN__':desk,'__VOLUME__': str('0.5')})
-ffmpeg_run(FFMPEG_AUDIO_COMBINE,{'__IN__':mic,'__OUT__':'out.mp3'})
+ffmpeg_run(FFMPEG_AUDIO_COMBINE,{'__IN1__':mic,'__IN2__': desk,'__VOLUME1__': str(1.0),'__VOLUME2__': str(0.5),'__OUT__':'out.mp3'})
