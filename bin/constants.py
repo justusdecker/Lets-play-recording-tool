@@ -147,13 +147,9 @@ FFMPEG_LOUDNESS_NORMALIZATION = ['ffmpeg', '-y', '-i', '__IN__', '-af', 'loudnor
 #? Need an input path, output path & a mapping id <- this is the track you want(starts by 1)
 FFMPEG_EXTRACT = ['ffmpeg', '-y', '-i', '__IN__', '-map', '0:__MAPPING__', '__OUT__']
 
-# Sets the volume of a audio file & save it to a specific filepath -> temp_t2.mp3
-#? Need an input path & the wanted volume in range from 0 to 1 <- should be an .:2f
-FFMPEG_VOLUME_APPLIER = ['ffmpeg', '-y', '-i', "__IN__", '-filter_complex', 'volume=__VOLUME__', '-ac', '2', "temp_t2.mp3"]
-
 # Combine two audio tracks
 #? Need an input path & output path
-FFMPEG_AUDIO_COMBINE = ['ffmpeg', '-y', '-i', "__IN__", '-i', "temp_t2.mp3", '-filter_complex', '[0:0]volume=1.00[a];[1:0]volume=0.25[b];[a][b]amix=inputs=2:duration=longest', "__OUT__"]# '-ac', '2', amerge=inputs=2
+FFMPEG_AUDIO_COMBINE = ['ffmpeg', '-y', '-i', "__IN1__", '-i', "__IN2__", '-filter_complex', '[0:0]volume=1.00[a];[1:0]volume=0.25[b];[a][b]amix=inputs=2:duration=longest', "__OUT__"]# '-ac', '2', amerge=inputs=2
 
 def ffmpeg_build(cmd: list[str], replacer: dict[str,str]):
     """
