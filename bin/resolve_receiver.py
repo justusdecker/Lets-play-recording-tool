@@ -85,7 +85,6 @@ def get_elements(search_for=list):
     for item in search_for:
         
         for clip in ROOT.GetClipList():
-            print(clip.GetName(), item.split('\\')[-1].split('/')[-1])
             if clip.GetName() == item.split('\\')[-1].split('/')[-1]:
                 _ret.append(clip)
     return _ret
@@ -100,13 +99,19 @@ def to_page(id: int):
     resolve.OpenPage({0:'media',1:'cut',2:'edit',3:'fusion',4:'color',5:'fairlight',6:'deliver'}[id])
 
 def delete_tracks():
-    resolve.GetProjectManager().GetCurrentProject().GetCurrentTimeline().DeleteTrack('audio',1)
-    resolve.GetProjectManager().GetCurrentProject().GetCurrentTimeline().DeleteTrack('audio',2)
-    resolve.GetProjectManager().GetCurrentProject().GetCurrentTimeline().AddTrack('audio','stereo')
+    for i in range(3):
+        if i == 2: # Min 1 Track required so we create new empty one
+            resolve.GetProjectManager().GetCurrentProject().GetCurrentTimeline().AddTrack('audio','stereo')
+        resolve.GetProjectManager().GetCurrentProject().GetCurrentTimeline().DeleteTrack('audio',1)
+        
+    #resolve.GetProjectManager().GetCurrentProject().GetCurrentTimeline().DeleteTrack('audio',2)
+    
+    # Add a new blank audio track
+    #
     
 def create_new_episode(episode_number: int, clips_by_name: list[str]):
-    print(PROJECT.GetMediaPool())
-    PROJECT.GetMediaPool().CreateTimelineFromClips(str(episode_number), [clips_by_name])
+    print(str(episode_number), [clips_by_name])
+    PROJECT.GetMediaPool().CreateTimelineFromClips(str(episode_number), clips_by_name)
     
 def get_element_names(self,search_for:str='mp4'):
         #Shows all Files in ClipList
