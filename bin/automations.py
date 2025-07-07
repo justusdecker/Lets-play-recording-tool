@@ -46,7 +46,6 @@ from bin.constants import (
     FFMPEG_EXTRACT,
     FFMPEG_LOUDNESS_NORMALIZATION,
     FFMPEG_LIMITER,
-    FFMPEG_VOLUME_APPLIER,
     FFMPEG_AUDIO_COMBINE,
     ffmpeg_run
 )
@@ -255,8 +254,7 @@ def compare_audio():
                 AP.run()
                 volume = AP.vol
                 del AP
-                ffmpeg_run(FFMPEG_VOLUME_APPLIER,{'__IN__':desk,'__VOLUME__': str(volume)})
-                ffmpeg_run(FFMPEG_AUDIO_COMBINE,{'__IN__':mic,'__OUT__':final_path})
+                ffmpeg_run(FFMPEG_AUDIO_COMBINE,{'__IN1__':mic,'__IN2__': desk,'__VOLUME1__': str(1.0),'__VOLUME2__': str(volume),'__OUT__':'out.mp3'})
                 print(mic, desk, volume)
                 ep.set_final_audio_path(i,final_path)
                 ep.save()
