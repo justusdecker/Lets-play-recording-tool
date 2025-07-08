@@ -236,14 +236,11 @@ def compare_audio_and_render():
         # Only this part must be edited
         # The part above is abandoned. A much simpler approch like relink epr to use in a list will work i think
         # This count for every function that does use this workflow
-        for i in range(epr[0],epr[1]):
-            print(i)
-        print(epr)
-        if epr[0] == epr[1]:pass
-        pass
         rendering_queue = []
-        for i in range(epr[0],epr[1]):
-            final_path = f'{AUDIO_FOLDER}{i+1}_{letsplay.get_game_name(lp)}_final.mp3'
+        path_ending = f'_{letsplay.get_game_name(lp)}_final.mp3' # this only needs to generate once
+        for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
+            
+            final_path = f'{AUDIO_FOLDER}{i+1}{path_ending}'
             mic = ep.get_audio_mic_path(i)
             desk = ep.get_audio_desktop_path(i)
             inf(f'{mic} {desk}')
