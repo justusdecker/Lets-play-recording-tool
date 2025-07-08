@@ -247,6 +247,14 @@ def compare_audio_and_render():
             ep.set_final_audio_path(epr[0],final_path)
             ep.save()
         else:
+            # Only this part must be edited
+            # The part above is abandoned. A much simpler approch like relink epr to use in a list will work i think
+            # This count for every function that does use this workflow
+            for i in range(epr[0],epr[1]):
+                print(i)
+            print(epr)
+            pass
+            rendering_queue = []
             for i in range(epr[0],epr[1]):
                 final_path = f'{AUDIO_FOLDER}{i+1}_{letsplay.get_game_name(lp)}_final.mp3'
                 mic = ep.get_audio_mic_path(i)
@@ -256,7 +264,7 @@ def compare_audio_and_render():
                 AP.run()
                 volume = AP.vol
                 del AP
-                ffmpeg_run(FFMPEG_AUDIO_COMBINE,{'__IN1__':mic,'__IN2__': desk,'__VOLUME1__': str(1.0),'__VOLUME2__': str(volume),'__OUT__':'temp_audio_final.mp3'})
+                ffmpeg_run(FFMPEG_AUDIO_COMBINE,{'__IN1__':mic,'__IN2__': desk,'__VOLUME1__': str(1.0),'__VOLUME2__': str(volume),'__OUT__':f'temp{i+1}_audio_final.mp3'})
                 print(mic, desk, volume)
                 
                 
