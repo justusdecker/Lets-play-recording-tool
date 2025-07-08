@@ -170,7 +170,7 @@ class ThumbnailGenerator:
         mpx = tad['pos'][0] + rx
         mpy = tad['pos'][1] + ry
         img = self.__get_src_image(filepath, frame)
-        
+        print(mpx,mpy)
         a, b = tad['r_scale']
         a, b = int(a * 100), int(b * 100)
         s = tad['scale'] + (ri(a, b) / 100)
