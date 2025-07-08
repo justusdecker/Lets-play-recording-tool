@@ -113,7 +113,7 @@ def __fetch_audio(episode: Episode,i: int,lp_name: str):
 
     ffmpeg_run(FFMPEG_OPTIMIZED_EXTRACT,{'__IN__':video_path,'__OUT1__':t1_path, '__OUT2__':t2_path})
 
-    
+    episode.set_audio_mic_path(i,t1_path)
     episode.set_audio_desktop_path(i,t2_path)
     
     episode.save()
@@ -168,6 +168,7 @@ def fix_audio():
         ep = Episode(ep_path)
         for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
             __fix_audio(ep,i,lp_name)
+
         
 def __gen_thumbnail(
     thumbnail_gen: ThumbnailGenerator,
@@ -314,6 +315,7 @@ def deploy(lp: LetsPlay, ep: Episode,id: int):
     MD = f"""
 # {name}
 {game_name}
+DESCRIPTION
 {eps.row} episodes
     """
     #ask the user about the target destination for the files
