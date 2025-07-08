@@ -41,6 +41,7 @@ from bin.constants import (
     ERROR_006,
     ERROR_007,
     AUDIO_FOLDER,
+    VIDEO_FOLDER,
     FIXED_AUDIO_FOLDER,
     THUMBNAIL_FOLDER,
     FFMPEG_EXTRACT,
@@ -252,7 +253,7 @@ def compare_audio_and_render():
         rendering_queue = []
         
         path_ending = f'_{letsplay.get_game_name(lp)}_final.mp3'
-        
+        cnef(AUDIO_FOLDER)
         for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
             
             
@@ -288,16 +289,16 @@ def compare_audio_and_render():
             rendering_queue.append((vid, tmp_audio_path, i))
         
         path_ending = f'_{letsplay.get_game_name(lp)}_final.mp4'
-        
+        cnef(VIDEO_FOLDER)
         for video, audio, index in rendering_queue:
             # Here rendering my lord :D
-            final_path = 
+            final_path = f'{VIDEO_FOLDER}{i+1}{path_ending}'
             ffmpeg_run(
                 FFMPEG_VIDEO_RENDER,
                 {
                     '__VIDEO__': video,
                     '__AUDIO__': audio,
-                    '__OUTPUT__': 
+                    '__OUTPUT__': final_path
                 }
             )
             pass

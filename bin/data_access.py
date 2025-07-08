@@ -212,7 +212,7 @@ class Episode(CSVObj):
         return self.read(id)[2]
     def get_thumbnail_path(self,id: int):
         return self.read(id)[3]
-    def get_final_audio_path(self,id: int):
+    def get_final_video_path(self,id: int):
         return self.read(id)[13]
     
     def set_audio_mic_path(self,id: int, data: str):
