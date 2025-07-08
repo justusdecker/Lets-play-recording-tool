@@ -57,8 +57,8 @@ class ThumbnailGenerator:
         _bg, _logo, _text = json_read(tad_path)
         bg = self.__render_background(video_path,frame,_bg)
         bg_pos = (
-            1280-(bg[0].get_width() // 2), 
-            720-(bg[0].get_height() // 2)
+            (1280//2) - (bg[0].get_width() // 2), 
+            (720//2) - (bg[0].get_height() // 2)
             )
         print(bg_pos, bg[0].get_size())
         img = self.__comp_render(
