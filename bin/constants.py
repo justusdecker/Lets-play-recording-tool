@@ -13,7 +13,7 @@ from bin.version import VERSION
 
 COPYRIGHT = f"{bold('LPRT')} {italic(VERSION)} - (c) Justus Decker 2024 - 2025"
 
-SUBS = { 'main': ['Main'],'automations': ['Main','Automations'],'options': ['Main','Options']}
+SUBS = { 'main': ['Main'],'automations': ['Main','Automations'],'options': ['Main','Options'], 'tg':['Main', 'Automations', 'Thumbnail']}
 
 MENU_OPTIONS = ['Record', 'Automation', color816(strikethrough('Deploy'),31), 'Options'] # main
 
@@ -23,7 +23,7 @@ MENU_SETTINGS_OPTIONS = [f"Create {bold('options.json')} - OBS", 'Set current le
 
 def header(key_sub: str,subs: list[str]) -> str:
     tmp = bold(" > ").join(SUBS[key_sub]+subs) + ' >'
-    return f'{COPYRIGHT}\n\n{tmp}\n\nSelect your option:'
+    return f'{COPYRIGHT}\n\n{tmp}\n\nSelect your option:\n'
 
 def menu(options: list[str], key: str, subs: list[str] = [], exit_name: str = 'Exit'):
     """
