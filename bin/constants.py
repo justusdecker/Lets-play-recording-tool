@@ -100,9 +100,11 @@ from subprocess import run, CREATE_NO_WINDOW
 
 ## FFMPEG COMMANDS
 
+FFMPEG_DEFAULT = ['ffmpeg','-hide_banner' , '-loglevel', '-y', 'error']
+
 # Simply change the ending of a file to convert it. So .mp3 -> .wav
 #? Need an input path & output path
-FFMPEG_CONVERT_AUDIO_TYPE = ['ffmpeg', '-n', '-i', '__IN__', '__OUT__']
+FFMPEG_CONVERT_AUDIO_TYPE = [*FFMPEG_DEFAULT, '-i', '__IN__', '__OUT__']
 
 # A simple way to get rid of some unnesseccary frequencys & some noises.
 # Works in most cases with default settings.
@@ -110,28 +112,28 @@ FFMPEG_CONVERT_AUDIO_TYPE = ['ffmpeg', '-n', '-i', '__IN__', '__OUT__']
 #? Need an input path & output path
 
 limiter = 'compand=0|0:1|1:0/-3|10/-3|20/-3:0.1:0:0:0'
-FFMPEG_LIMITER = ['ffmpeg', '-y', '-i', '__IN__', '-af', limiter, '__OUT__']
+FFMPEG_LIMITER = [*FFMPEG_DEFAULT, '-i', '__IN__', '-af', limiter, '__OUT__']
 
 # Normalizes audio to -15 decibel
 #? Need an input path & output path
-FFMPEG_LOUDNESS_NORMALIZATION = ['ffmpeg', '-y', '-i', '__IN__', '-af', 'loudnorm=-15', '__OUT__']
+FFMPEG_LOUDNESS_NORMALIZATION = [*FFMPEG_DEFAULT, '-i', '__IN__', '-af', 'loudnorm=-15', '__OUT__']
 
 # Extract audio from a video file
 #! Will be optimized in the futere by splitting the output to two output streams
 #? Need an input path, output path & a mapping id <- this is the track you want(starts by 1)
-FFMPEG_EXTRACT = ['ffmpeg', '-y', '-i', '__IN__', '-map', '0:__MAPPING__', '__OUT__']
+FFMPEG_EXTRACT = [*FFMPEG_DEFAULT, '-i', '__IN__', '-map', '0:__MAPPING__', '__OUT__']
 
-FFMPEG_OPTIMIZED_EXTRACT = ['ffmpeg', '-y', '-i', '__IN__', '-map', '0:1', '__OUT1__', '-map', '0:2', '__OUT2__']
-
-# Combine two audio tracks
-#? Need an input path & output path
-FFMPEG_AUDIO_COMBINE = ['ffmpeg', '-y', '-i', "__IN1__", '-i', "__IN2__", '-filter_complex', '[0:0]volume=__VOLUME1__[a];[1:0]volume=__VOLUME2__[b];[a][b]amix=inputs=2:duration=longest', "__OUT__"]# '-ac', '2', amerge=inputs=2
+FFMPEG_OPTIMIZED_EXTRACT = [*FFMPEG_DEFAULT, '-i', '__IN__', '-map', '0:1', '__OUT1__', '-map', '0:2', '__OUT2__']
 
 # Combine two audio tracks
 #? Need an input path & output path
-FFMPEG_AUDIO_COMBINE_TRUNCATED = ['ffmpeg', '-y', '-ss' ,'00:00:00', '-to', '00:02:00', '-i', "__IN1__", '-ss' ,'00:00:00', '-to', '00:02:00', '-i', "__IN2__", '-filter_complex', '[0:0]volume=__VOLUME1__[a];[1:0]volume=__VOLUME2__[b];[a][b]amix=inputs=2:duration=longest', "__OUT__"] # '-ac', '2', amerge=inputs=2
+FFMPEG_AUDIO_COMBINE = [*FFMPEG_DEFAULT, '-i', "__IN1__", '-i', "__IN2__", '-filter_complex', '[0:0]volume=__VOLUME1__[a];[1:0]volume=__VOLUME2__[b];[a][b]amix=inputs=2:duration=longest', "__OUT__"]# '-ac', '2', amerge=inputs=2
 
-FFMPEG_VIDEO_RENDER = ['ffmpeg', '-y', '-an', '-i', '__VIDEO__', '-i', '__AUDIO__', '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'copy', '__OUTPUT__']
+# Combine two audio tracks
+#? Need an input path & output path
+FFMPEG_AUDIO_COMBINE_TRUNCATED = [*FFMPEG_DEFAULT, '-ss' ,'00:00:00', '-to', '00:02:00', '-i', "__IN1__", '-ss' ,'00:00:00', '-to', '00:02:00', '-i', "__IN2__", '-filter_complex', '[0:0]volume=__VOLUME1__[a];[1:0]volume=__VOLUME2__[b];[a][b]amix=inputs=2:duration=longest', "__OUT__"] # '-ac', '2', amerge=inputs=2
+
+FFMPEG_VIDEO_RENDER = [*FFMPEG_DEFAULT, '-an', '-i', '__VIDEO__', '-i', '__AUDIO__', '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'copy', '__OUTPUT__']
 
 #!A quick non pro explanation about the map argument
 #
