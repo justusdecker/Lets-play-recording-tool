@@ -292,7 +292,7 @@ def compare_audio_and_render():
         cnef(VIDEO_FOLDER)
         for video, audio, index in rendering_queue:
             # Here rendering my lord :D
-            final_path = f'{VIDEO_FOLDER}{i+1}{path_ending}'
+            final_path = f'{VIDEO_FOLDER}{index+1}{path_ending}'
             ffmpeg_run(
                 FFMPEG_VIDEO_RENDER,
                 {
@@ -301,11 +301,10 @@ def compare_audio_and_render():
                     '__OUTPUT__': final_path
                 }
             )
-            pass
 
-        # writes the final_video_path in episodes so the user can get this video by deploy
-        ep.set_final_video_path(i,final_path)
-        ep.save()
+            # writes the final_video_path in episodes so the user can get this video by deploy
+            ep.set_final_video_path(index,final_path)
+            ep.save()
  
 def deploy(lp: LetsPlay, ep: Episode,id: int):
     """
