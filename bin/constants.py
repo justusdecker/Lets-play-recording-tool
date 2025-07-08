@@ -108,6 +108,7 @@ del getlogin
 ROOT = f'C:\\Users\\{USERNAME}\\jri_data\\'
 
 AUDIO_FOLDER = f'{ROOT}audio\\'
+VIDEO_FOLDER = f'{ROOT}video\\'
 THUMBNAIL_FOLDER = f'{ROOT}thumbnails\\'
 FIXED_AUDIO_FOLDER = f'{ROOT}audio_fixed\\'
 

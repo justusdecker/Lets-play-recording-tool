@@ -47,6 +47,7 @@ from bin.constants import (
     FFMPEG_LOUDNESS_NORMALIZATION,
     FFMPEG_LIMITER,
     FFMPEG_AUDIO_COMBINE,
+    FFMPEG_VIDEO_RENDER,
     ffmpeg_run
 )
 
@@ -286,8 +287,19 @@ def compare_audio_and_render():
                 )
             rendering_queue.append((vid, tmp_audio_path, i))
         
+        path_ending = f'_{letsplay.get_game_name(lp)}_final.mp4'
+        
         for video, audio, index in rendering_queue:
             # Here rendering my lord :D
+            final_path = 
+            ffmpeg_run(
+                FFMPEG_VIDEO_RENDER,
+                {
+                    '__VIDEO__': video,
+                    '__AUDIO__': audio,
+                    '__OUTPUT__': 
+                }
+            )
             pass
 
         # writes the final_video_path in episodes so the user can get this video by deploy
