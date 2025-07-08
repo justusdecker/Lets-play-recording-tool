@@ -222,7 +222,7 @@ def gen_thumbnail():
             for i in range(epr[0],epr[1]):
                 __gen_thumbnail(TG,lp_name,eps,i,tad)
 
-def compare_audio():
+def compare_audio_and_render():
     # final audio path
     # {episode_number}_{letsplay_name}_final.mp3
     letsplay = LetsPlay(LP_PATH)
@@ -240,8 +240,10 @@ def compare_audio():
             AP.run()
             volume = AP.vol
             del AP
-            ffmpeg_run(FFMPEG_AUDIO_COMBINE,{'__IN1__':mic,'__IN2__': desk,'__VOLUME1__': str(1.0),'__VOLUME2__': str(volume),'__OUT__':final_path})
+            ffmpeg_run(FFMPEG_AUDIO_COMBINE,{'__IN1__':mic,'__IN2__': desk,'__VOLUME1__': str(1.0),'__VOLUME2__': str(volume),'__OUT__':'temp_audio_final.mp3'})
             print(mic, desk, volume)
+            
+            #! NO
             ep.set_final_audio_path(epr[0],final_path)
             ep.save()
         else:
@@ -254,8 +256,11 @@ def compare_audio():
                 AP.run()
                 volume = AP.vol
                 del AP
-                ffmpeg_run(FFMPEG_AUDIO_COMBINE,{'__IN1__':mic,'__IN2__': desk,'__VOLUME1__': str(1.0),'__VOLUME2__': str(volume),'__OUT__':final_path})
+                ffmpeg_run(FFMPEG_AUDIO_COMBINE,{'__IN1__':mic,'__IN2__': desk,'__VOLUME1__': str(1.0),'__VOLUME2__': str(volume),'__OUT__':'temp_audio_final.mp3'})
                 print(mic, desk, volume)
+                
+                
+                #! NO
                 ep.set_final_audio_path(i,final_path)
                 ep.save()
  
