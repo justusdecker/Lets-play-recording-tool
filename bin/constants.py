@@ -29,15 +29,29 @@ def header(key_sub: str,subs: list[str]= []) -> str:
 Select your option:
 """
 
+MENU_OPTIONS = ['Record', 'Automation', color816(strikethrough('Deploy'),31), 'Options']
 
-MENU_MESSAGE = f"""
-{header('main')}
-(1) Record
-(2) Automation
-(3) {color816(strikethrough('Deploy'),31)}
-(4) Options
-(0) Exit
-"""
+MENU_AUTOMATION_OPTIONS = ['Thumbnail Generate', 'Fetch Audio', 'Fix Audio', 'Compare Audio & render']
+
+def menu(options: list[str], key: str, subs: list[str] = [], exit_name: str = 'Exit'):
+    """
+    Prints the menu
+    """
+    _ret = header(key) + '\n'
+    
+    for index, option in enumerate(options):
+        _ret += f'({index + 1}) {option}\n'
+    _ret += f'(0) {exit_name}\n'
+    print(_ret)
+    
+    
+test = [
+    'Record',
+'Automation',
+color816(strikethrough('Deploy'),31),
+'Options'
+]
+menu(test,'main')
 
 MENU_AUTOMATION_MESSAGE = f"""
 {header('automations')}
