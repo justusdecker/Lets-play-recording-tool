@@ -42,6 +42,7 @@ from bin.constants import (
     ERROR_007,
     AUDIO_FOLDER,
     VIDEO_FOLDER,
+    TEMP_FOLDER,
     FIXED_AUDIO_FOLDER,
     THUMBNAIL_FOLDER,
     FFMPEG_OPTIMIZED_EXTRACT,
@@ -251,13 +252,9 @@ def compare_audio_and_render():
         ep = Episode(ep_path)
 
         rendering_queue = []
-        
-        path_ending = f'_{letsplay.get_game_name(lp)}_final.mp3'
-        cnef(AUDIO_FOLDER)
+    
+        cnef(TEMP_FOLDER)
         for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
-            
-            
-            final_path = f'{AUDIO_FOLDER}{i+1}{path_ending}'
             
             # Get paths
             mic = ep.get_audio_mic_path(i)
@@ -273,7 +270,7 @@ def compare_audio_and_render():
             volume = AP.vol
             del AP
             
-            tmp_audio_path = f'temp_{i+1}_audio_final.mp3'
+            tmp_audio_path = f'{TEMP_FOLDER}temp_{i+1}_audio_final.mp3'
             
             # This combines the mic & desktop audio & apply volume manipulation
             ffmpeg_run(
