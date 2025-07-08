@@ -30,8 +30,6 @@ from bin.text_manipulation import (
     color816
 )
 
-from tkinter.filedialog import askopenfilename as aofn
-
 from bin.others import binps, input_episode_range
 
 from bin.constants import (

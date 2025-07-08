@@ -100,7 +100,7 @@ from subprocess import run, CREATE_NO_WINDOW
 
 ## FFMPEG COMMANDS
 
-FFMPEG_DEFAULT = ['ffmpeg','-hide_banner' , '-loglevel', '-y', 'error']
+FFMPEG_DEFAULT = ['ffmpeg','-hide_banner' , '-loglevel', 'error', '-y']
 
 # Simply change the ending of a file to convert it. So .mp3 -> .wav
 #? Need an input path & output path
@@ -157,7 +157,6 @@ def ffmpeg_build(cmd: list[str], replacer: dict[str,str]):
     """
     for key in replacer:
         cmd = [arg.replace(key,replacer[key]) if key in arg else arg for arg in cmd]
-    deb(cmd)
     return cmd
 
 def ffmpeg_run(cmd: list[list], replacer: dict[str,str]):
