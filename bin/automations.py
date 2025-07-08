@@ -126,12 +126,10 @@ def fetch_audio():
         lp,epr = res
         lp_name = letsplay.get_name(lp)
         ep_path = letsplay.get_episode_path(lp)
-        if epr[0] == epr[1]:
-            __fetch_audio(Episode(ep_path),epr[0],lp_name)
-        else:
-            episode = Episode(ep_path)
-            for i in range(epr[0],epr[1]):
-                __fetch_audio(episode,i,lp_name)
+        
+        episode = Episode(ep_path)
+        for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
+            __fetch_audio(episode,i,lp_name)
   
 def __fix_audio(episode: Episode,i: int, lp_name):
     """
@@ -168,13 +166,9 @@ def fix_audio():
         lp_name = letsplay.get_name(lp)
         ep_path = letsplay.get_episode_path(lp)
         ep = Episode(ep_path)
-        if epr[0] == epr[1]:
-            __fix_audio(ep,epr[0],lp_name)
-        else:
-            
-            for i in range(epr[0],epr[1]):
-                __fix_audio(ep,i,lp_name)
-                
+        for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
+            __fix_audio(ep,i,lp_name)
+        
 def __gen_thumbnail(
     thumbnail_gen: ThumbnailGenerator,
     lp_name: str,
