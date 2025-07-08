@@ -36,7 +36,7 @@ class App:
         Main Menu > Options
         """
         while self.isrunning:
-            match binpi(MENU_OPTIONS_MESSAGE):
+            match binpi(menu(MENU_SETTINGS_OPTIONS,'options',exit_name='Back')):
                 case 1:
                     """
                     (1) Create the settings.json
@@ -79,7 +79,7 @@ class App:
         """
         Main Menu >
         """
-        match binpi(MENU_MESSAGE):
+        match binpi(menu(MENU_OPTIONS,'main')):
             case 1:
                 # OBS - Recording
                 # Will save your recording data to the in lets_play.csv referrenced episode file
@@ -99,7 +99,7 @@ class App:
     def automation_sub_menu(self):
         while self.isrunning:
 
-            match binpi(MENU_AUTOMATION_MESSAGE):
+            match binpi(menu(MENU_AUTOMATION_OPTIONS,'automations',exit_name='Back')):
                 case 1:
                     gen_thumbnail()
                 case 2:

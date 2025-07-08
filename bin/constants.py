@@ -20,66 +20,26 @@ SUBS = {
     'tg': ['Main' , 'Automation' , 'Thumbnail Generator']
 }
 
-def header(key_sub: str,subs: list[str]= []) -> str:
-    return f"""
-{COPYRIGHT}
+def header(key_sub: str,subs: list[str]) -> str:
+    tmp = bold(" > ").join(SUBS[key_sub]+subs) + ' >'
+    return f'{COPYRIGHT}\n\n{tmp}\n\nSelect your option:'
 
-{bold(" > ").join(SUBS[key_sub]+subs)}
+MENU_OPTIONS = ['Record', 'Automation', color816(strikethrough('Deploy'),31), 'Options'] # main
 
-Select your option:
-"""
+MENU_AUTOMATION_OPTIONS = ['Thumbnail Generate', 'Fetch Audio', 'Fix Audio', 'Compare Audio & render'] # automations
 
-MENU_OPTIONS = ['Record', 'Automation', color816(strikethrough('Deploy'),31), 'Options']
-
-MENU_AUTOMATION_OPTIONS = ['Thumbnail Generate', 'Fetch Audio', 'Fix Audio', 'Compare Audio & render']
+MENU_SETTINGS_OPTIONS = [f"Create {bold('options.json')} - OBS", 'Set current lets play id', f"Create {bold('default_tad.json')}", f"Create {bold('lets_plays.csv')}"] # options
 
 def menu(options: list[str], key: str, subs: list[str] = [], exit_name: str = 'Exit'):
     """
-    Prints the menu
+    Returns the menu
     """
-    _ret = header(key) + '\n'
+    _ret = header(key,subs) + '\n'
     
     for index, option in enumerate(options):
         _ret += f'({index + 1}) {option}\n'
     _ret += f'(0) {exit_name}\n'
-    print(_ret)
-    
-    
-test = [
-    'Record',
-'Automation',
-color816(strikethrough('Deploy'),31),
-'Options'
-]
-menu(test,'main')
-
-MENU_AUTOMATION_MESSAGE = f"""
-{header('automations')}
-(1) Thumbnail Generate
-(2) Fetch Audio
-(3) Fix Audio
-(4) Compare Audio
-(0) Back
-"""
-
-MENU_OPTIONS_MESSAGE = f"""
-{header('options')}
-(1) Create {bold('options.json')} - OBS
-(2) Set current lets play id
-(3) Create {bold('default_tad.json')}
-(4) Create {bold('lets_plays.csv')}
-(0) Back
-"""
-
-def thumbnail_automation_sub_menu(sub:str) -> str:
-    return f"""
-{COPYRIGHT}    
-    
-{bold(f'Main > Automation > Thumbnail Generator > Select LP')}
-
-Select your Option:
-
-"""
+    return _ret
 
 DEFAULT_THUMBNAIL_SIZE = (1280,720)
 
