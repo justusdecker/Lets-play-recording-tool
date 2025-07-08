@@ -217,6 +217,15 @@ class Episode(CSVObj):
     def get_final_video_path(self,id: int):
         return self.read(id)[13]
     
+    def set_audio_mic_edit1_path(self,id: int, data: str):
+        self.read(id)[6] = data
+    def set_audio_mic_edit2_path(self,id: int, data: str):
+        self.read(id)[7] = data
+    def set_audio_desktop_edit1_path(self,id: int, data: str):
+        self.read(id)[8] = data
+    def set_audio_desktop_edit2_path(self,id: int, data: str):
+        self.read(id)[9] = data
+    
     def set_audio_mic_path(self,id: int, data: str):
         self.read(id)[1] = data
     def set_audio_desktop_path(self,id: int, data: str):

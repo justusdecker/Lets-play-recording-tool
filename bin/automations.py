@@ -154,6 +154,9 @@ def __fix_audio(episode: Episode,i: int, lp_name):
     
     #inf(f'Start limit track 2 to {t4_path}')
     #limiter(t2_path, t4_path)
+    episode.set_audio_mic_edit1_path(i,t1_path)
+    episode.set_audio_mic_edit2_path(i,t3_path)
+    episode.save()
 
 def fix_audio():
     cnef(FIXED_AUDIO_FOLDER)
@@ -166,6 +169,7 @@ def fix_audio():
         ep = Episode(ep_path)
         for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
             __fix_audio(ep,i,lp_name)
+            
 
         
 def __gen_thumbnail(
