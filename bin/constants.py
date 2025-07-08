@@ -109,6 +109,7 @@ ROOT = f'C:\\Users\\{USERNAME}\\jri_data\\'
 
 AUDIO_FOLDER = f'{ROOT}audio\\'
 VIDEO_FOLDER = f'{ROOT}video\\'
+TEMP_FOLDER = f'{ROOT}temp\\'
 THUMBNAIL_FOLDER = f'{ROOT}thumbnails\\'
 FIXED_AUDIO_FOLDER = f'{ROOT}audio_fixed\\'
 
