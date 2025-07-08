@@ -19,7 +19,7 @@ from bin.automations import (
     fetch_audio,
     fix_audio,
     gen_thumbnail,
-    compare_audio,
+    compare_audio_and_render,
     LP_PATH
 )
 
@@ -107,12 +107,13 @@ class App:
                 case 3:
                     fix_audio()
                 case 4:
-                    compare_audio()
+                    compare_audio_and_render()
                 case 5:
                     
-                    # Send video
-                    # remove all tracks
-                    # Send final audio
+                    # render audio & video
+                    # If something went wrong error(true) then print a warning message
+                    
+                    
                     
                     pass  
                 case 0:
