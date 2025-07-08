@@ -14,7 +14,7 @@ from bin.text_manipulation import color816
 
 from numpy import rot90
 
-from random import random as rnd
+from random import random as rnd, randint as ri
 
 from os.path import isfile
 
@@ -55,9 +55,9 @@ class ThumbnailGenerator:
                  ):
         print(color816(f'[Thumbnail Generate]: {video_path}',94))
         _bg, _logo, _text = json_read(tad_path)
-
+        bg = self.__render_background(video_path,frame,_bg)
         img = self.__comp_render(
-            [self.__render_background(video_path,frame,_bg),
+            [(bg[0],(1280-(bg[0].get_width() // 2), 720-(bg[0].get_height() // 2))) if _bg['center'] else bg,
             self.__render_logo(_logo),
             self.__render_text(_text,text)]
             )
@@ -163,4 +163,21 @@ class ThumbnailGenerator:
         return surf, (x,y)
     
     def __render_background(self, filepath: str, frame: float, tad: dict): #Here rotation, color manipulation will be added
-        return self.__get_src_image(filepath, frame),tad['pos']
+        
+        # Manipulate pos
+        rx,ry = tad['r_pos']
+        rx, ry = ri(*rx), ri(*ry)
+        mpx = tad['pos'][0] + rx
+        mpy = tad['pos'][1] + ry
+        img = self.__get_src_image(filepath, frame)
+        
+        s = tad['scale'] + ri(*tad['r_scale'])
+        if s != 1:
+            img = scale_by(img, s)
+        
+        r = tad['rot'] + ri(*tad['r_rot'])
+        if r:
+            img = rotate(img, r)
+        
+        
+        return self.__get_src_image(filepath, frame),(mpx, mpy)

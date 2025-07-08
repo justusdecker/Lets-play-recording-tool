@@ -97,7 +97,8 @@ DEFAULT_TAD = [
         "pos": [0,0],
         "r_pos": [[0,0],[0,0]],
         "r_scale": [1,1],
-        "r_rot": [0,0]
+        "r_rot": [0,0],
+        "center": True
     }
 ]
 
