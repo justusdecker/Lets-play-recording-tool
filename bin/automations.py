@@ -205,7 +205,8 @@ def gen_thumbnail():
         ep_path = letsplay.get_episode_path(lp)
         eps = Episode(ep_path)
         inf('Please answer the filedialog')
-        tad = aofn(filetypes=[['JSON','*.json']])
+        #tad = aofn(filetypes=[['JSON','*.json']])
+        tad = letsplay.get_tad_path(lp)
         for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
             __gen_thumbnail(TG,lp_name,eps,i,tad)
 
