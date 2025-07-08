@@ -155,6 +155,20 @@ FFMPEG_AUDIO_COMBINE = ['ffmpeg', '-y', '-i', "__IN1__", '-i', "__IN2__", '-filt
 #? Need an input path & output path
 FFMPEG_AUDIO_COMBINE_TRUNCATED = ['ffmpeg', '-y', '-ss' ,'00:00:00', '-to', '00:02:00', '-i', "__IN1__", '-ss' ,'00:00:00', '-to', '00:02:00', '-i', "__IN2__", '-filter_complex', '[0:0]volume=__VOLUME1__[a];[1:0]volume=__VOLUME2__[b];[a][b]amix=inputs=2:duration=longest', "__OUT__"]# '-ac', '2', amerge=inputs=2
 
+FFMPEG_VIDEO_RENDER = ['ffmpeg', '-y', '-an', '-i', '__VIDEO__', '-i', '__AUDIO__', '-map', '0:v', '-map', '0:a', '-c:v', 'copy', '-c:a', '__OUTPUT__']
+
+#!A quick non pro explanation about the map argument
+#
+#? when you split the argument by ':' you get two values:
+#
+#. the first one is the file identifier ( so if have two files input you can map 0:? and 1:? to the output)
+#. the second is the stream identifier:
+#+      here you can use:
+#+          a       audio stream
+#+          v       video stream
+#+          0-1234  the stream you want(audio and video i guess?)
+
+
 def ffmpeg_build(cmd: list[str], replacer: dict[str,str]):
     """
     This function takes the FFMPEG command and replaces all of the keys that can be found in the command!
