@@ -19,7 +19,8 @@ LP_KEYS = [
     'tad_path',
     'name',
     'game_name',
-    'episode_length'] 
+    'episode_length',
+    'description_path'] 
 
 EP_KEYS = [
     'video_path',
@@ -146,6 +147,7 @@ class LetsPlay(CSVObj):
     |name|`str`|
     |game_name|`str`|
     |episode_length|`int`|
+    |description_path|`str`|
     
     """
     def __init__(self, filepath):
@@ -216,6 +218,15 @@ class Episode(CSVObj):
         return self.read(id)[3]
     def get_final_video_path(self,id: int):
         return self.read(id)[13]
+    
+    def get_audio_mic_edit1_path(self,id: int):
+        return self.read(id)[6]
+    def get_audio_mic_edit2_path(self,id: int):
+        return self.read(id)[7]
+    def get_audio_desktop_edit1_path(self,id: int):
+        return self.read(id)[8]
+    def get_audio_desktop_edit2_path(self,id: int):
+        return self.read(id)[9]
     
     def set_audio_mic_edit1_path(self,id: int, data: str):
         self.read(id)[6] = data

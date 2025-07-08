@@ -162,7 +162,7 @@ Simply adjust your `password` in `settings.json`
 |3|name|`str`|
 |4|game_name|`str`|
 |5|episode_length|`int`|
-
+|5|description_path|`str`|
 
 
 ### Thumbnail Automation Data
