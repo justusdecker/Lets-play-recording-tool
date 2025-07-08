@@ -171,6 +171,8 @@ class LetsPlay(CSVObj):
         return [Episode(i[1]).row for i in self.data]
     def get_episodes(self,id) -> list:
         return Episode(self.read(id)[1])
+    def get_tad_path(self,id) -> list:
+        return self.read(id)[2]
 
 class Episode(CSVObj):
     """
