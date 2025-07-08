@@ -1,12 +1,18 @@
 [
     {
-        "pos": [0,0]
+        "pos": [0,0],
+        "r_pos": [[0,0],[0,0]],
+        "r_scale": [-0.05,0.05],
+        "r_rot": [-15,15],
+        "center": true,
+        "scale": 1.05,
+        "rot": 0
     },
     {
         "path": "E:\\scheduleone.png",
-        "scale": 1,
+        "scale": 0.3,
         "rot": 0,
-        "pos": [0,0]
+        "pos": [300,300]
     },
     {
         "path": "",
@@ -15,10 +21,6 @@
         "color": [255,255,255,255],
         "ol_color": [1,1,1,255],
         "size": 40,
-        "pos": [0,0],
-        "r_pos": [[0,0],[0,0]],
-        "r_scale": [1,1],
-        "r_rot": [0,0],
-        "center": true
+        "pos": [0,0]
     }
 ]
