@@ -154,9 +154,9 @@ FFMPEG_AUDIO_COMBINE = ['ffmpeg', '-y', '-i', "__IN1__", '-i', "__IN2__", '-filt
 
 # Combine two audio tracks
 #? Need an input path & output path
-FFMPEG_AUDIO_COMBINE_TRUNCATED = ['ffmpeg', '-y', '-ss' ,'00:00:00', '-to', '00:02:00', '-i', "__IN1__", '-ss' ,'00:00:00', '-to', '00:02:00', '-i', "__IN2__", '-filter_complex', '[0:0]volume=__VOLUME1__[a];[1:0]volume=__VOLUME2__[b];[a][b]amix=inputs=2:duration=longest', "__OUT__"]# '-ac', '2', amerge=inputs=2
+FFMPEG_AUDIO_COMBINE_TRUNCATED = ['ffmpeg', '-y', '-ss' ,'00:00:00', '-to', '00:02:00', '-i', "__IN1__", '-ss' ,'00:00:00', '-to', '00:02:00', '-i', "__IN2__", '-filter_complex', '[0:0]volume=__VOLUME1__[a];[1:0]volume=__VOLUME2__[b];[a][b]amix=inputs=2:duration=longest', "__OUT__"] # '-ac', '2', amerge=inputs=2
 
-FFMPEG_VIDEO_RENDER = ['ffmpeg', '-y', '-an', '-i', '__VIDEO__', '-i', '__AUDIO__', '-map', '0:v', '-map', '0:a', '-c:v', 'copy', '-c:a', '__OUTPUT__']
+FFMPEG_VIDEO_RENDER = ['ffmpeg', '-y', '-an', '-i', '__VIDEO__', '-i', '__AUDIO__', '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'copy', '__OUTPUT__']
 
 #!A quick non pro explanation about the map argument
 #

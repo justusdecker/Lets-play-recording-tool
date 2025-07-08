@@ -293,6 +293,12 @@ def compare_audio_and_render():
         for video, audio, index in rendering_queue:
             # Here: rendering my lord :D
             final_path = f'{VIDEO_FOLDER}{index+1}{path_ending}'
+            inf(f'{video}\n{audio}\n{index}')
+            inf(str({
+                    '__VIDEO__': video,
+                    '__AUDIO__': audio,
+                    '__OUTPUT__': final_path
+                }))
             ffmpeg_run(
                 FFMPEG_VIDEO_RENDER,
                 {
