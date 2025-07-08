@@ -56,9 +56,13 @@ class ThumbnailGenerator:
         print(color816(f'[Thumbnail Generate]: {video_path}',94))
         _bg, _logo, _text = json_read(tad_path)
         bg = self.__render_background(video_path,frame,_bg)
-        print((1280-(bg[0].get_width()), 720-(bg[0].get_height())))
+        bg_pos = (
+            1280-(bg[0].get_width() // 2), 
+            720-(bg[0].get_height() // 2)
+            )
+        print(bg_pos, bg[0].get_size())
         img = self.__comp_render(
-            [(bg[0],(1280-(bg[0].get_width()), 720-(bg[0].get_height()))) if _bg['center'] else bg,
+            [(bg[0],bg_pos) if _bg['center'] else bg,
             self.__render_logo(_logo),
             self.__render_text(_text,text)]
             )
