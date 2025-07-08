@@ -226,7 +226,9 @@ def compare_audio_and_render():
     # final audio path
     # {episode_number}_{letsplay_name}_final.mp3
     letsplay = LetsPlay(LP_PATH)
+    
     res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
+    
     if res is not None:
         lp,epr = res
         ep_path = letsplay.get_episode_path(lp)
@@ -236,25 +238,51 @@ def compare_audio_and_render():
         # Only this part must be edited
         # The part above is abandoned. A much simpler approch like relink epr to use in a list will work i think
         # This count for every function that does use this workflow
+        
+        # Because rendering takes a long time the paths will be stored temporary in this list. Formatted like: (video, audio)
         rendering_queue = []
+        
+        
+        
         path_ending = f'_{letsplay.get_game_name(lp)}_final.mp3' # this only needs to generate once
+        
         for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
             
+            
             final_path = f'{AUDIO_FOLDER}{i+1}{path_ending}'
+            
+            # Get paths
             mic = ep.get_audio_mic_path(i)
             desk = ep.get_audio_desktop_path(i)
+            vid = ep.get_video_path(i)
+            
             inf(f'{mic} {desk}')
+            
+            
+            # Get the audio volume for track 2 <- will be enhanced further after 1.0 to support more than 2 tracks
             AP = AudioPlayer(mic, desk)
             AP.run()
             volume = AP.vol
             del AP
-            ffmpeg_run(FFMPEG_AUDIO_COMBINE,{'__IN1__':mic,'__IN2__': desk,'__VOLUME1__': str(1.0),'__VOLUME2__': str(volume),'__OUT__':f'temp{i+1}_audio_final.mp3'})
-            print(mic, desk, volume)
             
+            tmp_audio_path = f'temp_{i+1}_audio_final.mp3'
             
-            #! NO
-            ep.set_final_audio_path(i,final_path)
-            ep.save()
+            # This combines the mic & desktop audio & apply volume manipulation
+            ffmpeg_run(
+                FFMPEG_AUDIO_COMBINE,
+                {
+                    '__IN1__':mic,
+                    '__IN2__': desk,
+                    '__VOLUME1__': str(1.0),
+                    '__VOLUME2__': str(volume),
+                    '__OUT__':tmp_audio_path
+                    }
+                )
+            rendering_queue.append((vid, tmp_audio_path))
+
+        # writes the final_video_path in episodes so the user can get this video by deploy
+        ep.set_final_video_path(i,final_path)
+        ep.save()
  
 def deploy(lp: LetsPlay, ep: Episode,id: int):
     """
