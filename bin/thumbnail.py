@@ -56,6 +56,7 @@ class ThumbnailGenerator:
         print(color816(f'[Thumbnail Generate]: {video_path}',94))
         _bg, _logo, _text = json_read(tad_path)
         bg = self.__render_background(video_path,frame,_bg)
+        print((1280-(bg[0].get_width()), 720-(bg[0].get_height())))
         img = self.__comp_render(
             [(bg[0],(1280-(bg[0].get_width()), 720-(bg[0].get_height()))) if _bg['center'] else bg,
             self.__render_logo(_logo),
@@ -171,18 +172,22 @@ class ThumbnailGenerator:
         mpy = tad['pos'][1] + ry
         img = self.__get_src_image(filepath, frame)
         print(mpx,mpy)
+        
+        a, b = tad['r_rot']
+        a, b = int(a * 100), int(b * 100)
+        r = tad['rot'] + (ri(a, b) / 100)
+        if r:
+            img = rotate(img, r)
+        print(r)
+        
         a, b = tad['r_scale']
         a, b = int(a * 100), int(b * 100)
         s = tad['scale'] + (ri(a, b) / 100)
         if s != 1:
             img = scale_by(img, s)
         print(s)
-        a, b = tad['r_rot']
-        a, b = int(a * 100), int(b * 100)
-        r = tad['rot'] + (ri(a, b) / 100)
-        print(r)
-        if r:
-            img = rotate(img, r)
+        
+        
         
         
         return img,(mpx, mpy)
