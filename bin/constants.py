@@ -148,7 +148,7 @@ FFMPEG_LOUDNESS_NORMALIZATION = ['ffmpeg', '-y', '-i', '__IN__', '-af', 'loudnor
 #? Need an input path, output path & a mapping id <- this is the track you want(starts by 1)
 FFMPEG_EXTRACT = ['ffmpeg', '-y', '-i', '__IN__', '-map', '0:__MAPPING__', '__OUT__']
 
-FFMPEG_OPTIMIZED_EXTRACT = ['ffmpeg', '-y','-vn',  '-i', '__IN__', '-map', '0:1', '-c:a', 'copy', '__OUT1__']
+FFMPEG_OPTIMIZED_EXTRACT = ['ffmpeg', '-y', '-i', '__IN__', '-map', '0:1', '__OUT1__', '-map', '0:2', '__OUT2__']
 
 
 # Combine two audio tracks
