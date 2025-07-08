@@ -232,7 +232,7 @@ def compare_audio_and_render():
     
     
     .. render_queue::
-        Because rendering takes a long time the paths will be stored temporary in this list. Formatted like: (video, audio)
+        Because rendering takes a long time the paths will be stored temporary in this list. Formatted like: (video, audio, index)
     
     .. result_file_path::
         **AUDIO_FOLDER/**{`ep_index` + `1`}_{`name`}_final.mp3
@@ -284,7 +284,11 @@ def compare_audio_and_render():
                     '__OUT__':tmp_audio_path
                     }
                 )
-            rendering_queue.append((vid, tmp_audio_path))
+            rendering_queue.append((vid, tmp_audio_path, i))
+        
+        for video, audio, index in rendering_queue:
+            # Here rendering my lord :D
+            pass
 
         # writes the final_video_path in episodes so the user can get this video by deploy
         ep.set_final_video_path(i,final_path)
