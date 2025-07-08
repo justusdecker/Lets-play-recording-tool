@@ -171,13 +171,18 @@ class ThumbnailGenerator:
         mpy = tad['pos'][1] + ry
         img = self.__get_src_image(filepath, frame)
         
-        s = tad['scale'] + ri(*tad['r_scale'])
+        a, b = tad['r_scale']
+        a, b = int(a * 100), int(b * 100)
+        s = tad['scale'] + (ri(a, b) / 100)
         if s != 1:
             img = scale_by(img, s)
-        
-        r = tad['rot'] + ri(*tad['r_rot'])
+        print(s)
+        a, b = tad['r_rot']
+        a, b = int(a * 100), int(b * 100)
+        r = tad['rot'] + (ri(a, b) / 100)
+        print(r)
         if r:
             img = rotate(img, r)
         
         
-        return self.__get_src_image(filepath, frame),(mpx, mpy)
+        return img,(mpx, mpy)
