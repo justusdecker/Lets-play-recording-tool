@@ -45,7 +45,6 @@ MENU_AUTOMATION_MESSAGE = f"""
 (2) Fetch Audio
 (3) Fix Audio
 (4) Compare Audio
-(5) {color816(strikethrough('Export to Resolve'),31)}
 (0) Back
 """
 

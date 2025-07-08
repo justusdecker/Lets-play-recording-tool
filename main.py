@@ -108,14 +108,6 @@ class App:
                     fix_audio()
                 case 4:
                     compare_audio_and_render()
-                case 5:
-                    
-                    # render audio & video
-                    # If something went wrong error(true) then print a warning message
-                    
-                    
-                    
-                    pass  
                 case 0:
                     return
                 case _:
