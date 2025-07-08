@@ -223,6 +223,20 @@ def gen_thumbnail():
                 __gen_thumbnail(TG,lp_name,eps,i,tad)
 
 def compare_audio_and_render():
+    """
+    CAAR
+    ---
+    Audio Compare & render the results at the end
+    
+    Uses FFMPEG to edit audio & render video in bulk.
+    
+    
+    .. render_queue::
+        Because rendering takes a long time the paths will be stored temporary in this list. Formatted like: (video, audio)
+    
+    .. result_file_path::
+        **AUDIO_FOLDER/**{`ep_index` + `1`}_{`name`}_final.mp3
+    """
     # final audio path
     # {episode_number}_{letsplay_name}_final.mp3
     letsplay = LetsPlay(LP_PATH)
@@ -233,18 +247,10 @@ def compare_audio_and_render():
         lp,epr = res
         ep_path = letsplay.get_episode_path(lp)
         ep = Episode(ep_path)
-        
 
-        # Only this part must be edited
-        # The part above is abandoned. A much simpler approch like relink epr to use in a list will work i think
-        # This count for every function that does use this workflow
-        
-        # Because rendering takes a long time the paths will be stored temporary in this list. Formatted like: (video, audio)
         rendering_queue = []
         
-        
-        
-        path_ending = f'_{letsplay.get_game_name(lp)}_final.mp3' # this only needs to generate once
+        path_ending = f'_{letsplay.get_game_name(lp)}_final.mp3'
         
         for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
             
