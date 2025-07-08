@@ -190,7 +190,7 @@ class Episode(CSVObj):
 |10|title|`str`|
 |11|episode_number|`int`|
 |12|upload_at|`int`|
-|12|final_audio|`str`|
+|12|final_video|`str`|
     
     """
     def __init__(self, filepath):

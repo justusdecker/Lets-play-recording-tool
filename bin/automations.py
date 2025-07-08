@@ -291,7 +291,7 @@ def compare_audio_and_render():
         path_ending = f'_{letsplay.get_game_name(lp)}_final.mp4'
         cnef(VIDEO_FOLDER)
         for video, audio, index in rendering_queue:
-            # Here rendering my lord :D
+            # Here: rendering my lord :D
             final_path = f'{VIDEO_FOLDER}{index+1}{path_ending}'
             ffmpeg_run(
                 FFMPEG_VIDEO_RENDER,
