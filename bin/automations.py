@@ -110,14 +110,9 @@ def __fetch_audio(episode: Episode,i: int,lp_name: str):
     t1_path, t2_path = f'{AUDIO_FOLDER}{i+1}_{lp_name}_track_mic.mp3',f'{AUDIO_FOLDER}{i+1}_{lp_name}_track_desktop.mp3'
     
     inf(f'Start extract tracks from {video_path}')
-    #ffmpeg_run(FFMPEG_OPTIMIZED_EXTRACT,{'__IN__':video_path,'__OUT__':t1_path,'__MAPPING__':str(1)})
-    #extract_audio(video_path,t1_path,1)
 
-    #episode.set_audio_mic_path(i,t1_path)
-    
-    #inf(f'Start extract track 2 from {t2_path}')
     ffmpeg_run(FFMPEG_OPTIMIZED_EXTRACT,{'__IN__':video_path,'__OUT1__':t1_path, '__OUT2__':t2_path})
-    #extract_audio(video_path,t2_path,2)
+
     
     episode.set_audio_desktop_path(i,t2_path)
     
@@ -217,13 +212,8 @@ def gen_thumbnail():
         eps = Episode(ep_path)
         inf('Please answer the filedialog')
         tad = aofn(filetypes=[['JSON','*.json']])
-        if epr[0] == epr[1]:
-            __gen_thumbnail(TG,lp_name,eps,epr[0],tad)
-            
-        else:
-            
-            for i in range(epr[0],epr[1]):
-                __gen_thumbnail(TG,lp_name,eps,i,tad)
+        for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
+            __gen_thumbnail(TG,lp_name,eps,i,tad)
 
 def compare_audio_and_render():
     """
