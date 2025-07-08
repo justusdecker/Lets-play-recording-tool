@@ -221,5 +221,5 @@ class Episode(CSVObj):
         self.read(id)[2] = data
     def set_thumbnail_path(self,id: int, data: str):
         self.read(id)[3] = data
-    def set_final_audio_path(self,id: int, data: str):
+    def set_final_video_path(self,id: int, data: str):
         self.read(id)[13] = data
