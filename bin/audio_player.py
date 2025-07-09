@@ -24,7 +24,7 @@ from pygame.mixer_music import (
     unload
 )
 
-from pygame.draw import rect as draw_rect
+from pygame.draw import rect as draw_rect, line as draw_line
 from pygame.event import get as ev_get
 from pygame.time import Clock
 from pygame import (
@@ -110,13 +110,23 @@ class AudioPlayer:
         h = 200
         
         0,200
-        draw_rect(self.display,(128,128,128),(260,0,40,self.audio_list[self.current_episode][4]*200))
+        draw_rect(self.display,(64,64,64),(260,0,40,self.audio_list[self.current_episode][4]*200))
+        
+        v = self.audio_list[self.current_episode][4]
+        #!! will be changed later
+        if v > 0.25:
+            draw_line(self.display,(255,128,128),(260,50),(300,50))
+        if v > 0.5:
+            draw_line(self.display,(255,128,128),(260,100),(300,100))
+        if v > 0.75:
+            draw_line(self.display,(255,128,128),(260,150),(300,150))
         mp = get_pressed()[0]
         x, y = get_pos()
         if mp:
             if x >= 260 and x <= 300 and y >= 0 and y <= 199:
                 self.audio_list[self.current_episode][4] = y / 199
                 self.audio_list[self.current_episode][4] = float(f'{self.audio_list[self.current_episode][4]:.2f}')
+                draw_line(self.display,(128,255,128),(260,y),(300,y),3)
         
         
     def update(self):
