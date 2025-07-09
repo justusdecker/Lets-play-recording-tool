@@ -33,6 +33,8 @@ from pygame import (
     K_KP8,
     K_KP4,
     K_KP6,
+    K_LEFT,
+    K_RIGHT,
     quit as pg_quit
 )
 
@@ -45,7 +47,6 @@ from bin.constants import ffmpeg_run,FFMPEG_AUDIO_COMBINE_TRUNCATED
 def set_title(text: str):
     set_caption(f'{text} - (c) Justus Decker - LPRT Project')
 'audio_player E:\musik\sortiert\S3RL\better-off-alone-s3rl-feat-tamika E:\musik\sortiert\S3RL\Waifu.mp3'
-
 class AudioPlayer:
     """
     The Audio Player uses Pygame:
@@ -54,13 +55,14 @@ class AudioPlayer:
     
     Play, Pause & Generate a comp
     """
-    def __init__(self, t1, t2):
+    def __init__(self, audio_list):
         self.isrunning = True
         self.display = set_mode((300,200))
         self.clk = Clock()
         self.vol = 1.0
-        
-        self.t1, self.t2 = t1, t2
+        self.current_episode = 0
+        self.ready_to_play = False
+        self.audio_list = [[*i,0] for i in audio_list]# a1 a2 vol
         f_init()
         m_init()
         self.font = Font(get_default_font(),80)
@@ -80,36 +82,60 @@ class AudioPlayer:
         self.display.blit(self.font.render(f'{int(self.vol*100)}%',False,(255,255,255)),(0,self.font.get_height()))
         d_update()
         
+    def titleset(self):
+        if get_busy():
+            set_title('Playing Audio')
+        else:
+
+            set_title('Audio Player')
+            
+    def select_episode(self,direction: int):
+        new_location = self.current_episode + direction
+        
+        l = len(self.audio_list)
+        
+        if new_location >= l:
+            self.current_episode = l - 1
+            
+        elif new_location < 0:
+            self.current_episode = 0
+        else:
+            self.ready_to_play = False
+            
     def update(self):
         """
         This method runs until the user closes the window
         """
         while self.isrunning:
+            
             self.render()
-            if get_busy():
-                set_title('Playing Audio')
-            else:
-
-                set_title('Audio Player')
+            self.titleset()
             self.clk.tick(30)
             for e in ev_get():
                 
                 if e.type == QUIT:
                     self.isrunning = False
-                    
+                
                 if e.type == KEYDOWN:
                     
+                    if e.key == K_LEFT:
+                        self.select_episode(-1)
+                    elif e.key == K_RIGHT:
+                        
+                        self.select_episode(1)
                     # generate audio 2 minutes only for performance reasons(Will be changed later)
                     if e.key == K_RETURN:
                         # Will be generated in a range from 0 - 5 minutes startpos + 2 minutes
                         if not get_busy():
                             set_title('Generating Audio')
-                            s = 0#ri(0,5)
                             unload()
-                            ffmpeg_run(FFMPEG_AUDIO_COMBINE_TRUNCATED,{'__IN1__':self.t1,'__IN2__': self.t2,'__VOLUME1__': str(1.0),'__VOLUME2__': str(self.vol),'__OUT__':'temp.mp3'})
+                            ffmpeg_run(FFMPEG_AUDIO_COMBINE_TRUNCATED,{'__IN1__':self.audio_list[self.current_episode][0],'__IN2__': self.audio_list[self.current_episode][1],'__VOLUME1__': str(1.0),'__VOLUME2__': str(self.audio_list[self.current_episode][2]),'__OUT__':'temp.mp3'})
+                            self.ready_to_play = True
                             #combine_audio(self.t1,self.t2,f'00:0{s}:00',f'00:{s+2}:00',self.vol)
-                            load('temp.mp3')
-                            play()
+                            if isfile('temp.mp3'):
+                                load('temp.mp3')
+                                play()
+                            
                     if e.key == K_SPACE:
                         if get_busy():
                             pause()
@@ -138,7 +164,7 @@ class AudioPlayer:
                         
                     self.vol = float(f'{self.vol:.2f}') # keeps the volume clean
         pg_quit()
-
+        
 if __name__ == "__main__":
     AP = AudioPlayer('','')
     AP.run()
