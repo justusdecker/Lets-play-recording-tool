@@ -9,7 +9,7 @@ __status__ = "Testing"
 
 from bin.constants import *
 
-from bin.data_access import LetsPlay, isfile, Episode,json_write
+from bin.data_access import LetsPlay, isfile, json_write
 from bin.others import binpi
 
 
@@ -37,20 +37,13 @@ class App:
         """
         while self.isrunning:
             match binpi(menu(MENU_SETTINGS_OPTIONS,'options',exit_name='Back')):
-                case 1:
-                    """
-                    (1) Create the settings.json
-                    Only if the file not exists
-                    """
+                case 1: #. (1) Create the settings.json > Only if the file not exists
                     if isfile('settings.json'):
                         err(ERROR_002)
                         continue
                     
                     json_write('settings.json',DEFAULT_OBS_SETTINGS)
-                case 2:
-                    """
-                    
-                    """
+                case 2:#. (2) Change Lets Play ID
                     l = len(LetsPlay(LP_PATH).get_names())
                     tmp = binpi(f'Enter a value from 0 to {l-1}','set lp_id: ')
                     
@@ -59,16 +52,12 @@ class App:
                     else:
                         err(ERROR_001)
                         continue
-                case 3:
-                    """
-                    (3) Create the default_tad.json
-                    Only if the file not exists
-                    """
+                case 3: #. (3) Create the default_tad.json > Only if the file not exists
                     if isfile('default_tad.json'):
                         err(ERROR_002)
                         continue
                     json_write('default_tad.json',DEFAULT_TAD)
-                case 4:
+                case 4:#. (4) Create a new Lets Play File > IF not exist
                     create_new_lp_file()
                 case 0:
                     return
@@ -80,12 +69,10 @@ class App:
         Main Menu >
         """
         match binpi(menu(MENU_OPTIONS,'main')):
-            case 1:
-                # OBS - Recording
-                # Will save your recording data to the in lets_play.csv referrenced episode file
+            case 1: #. (1) OBS - Recording >  Will save your recording data to the in lets_play.csv referrenced episode file
                 ep = LetsPlay(LP_PATH).get_episodes(self.current_letsplay_id)
                 obs_connect(ep)
-            case 2:
+            case 2: #. (2) Select the automation submenu
                 self.automation_sub_menu()
             case 3:
                 nimp()
