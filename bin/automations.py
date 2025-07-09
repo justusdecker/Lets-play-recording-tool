@@ -241,7 +241,7 @@ def compare_audio_and_render():
         AP.run()
         result = AP.audio_list
         del AP
-        for i, mic, desk, vol in AP.audio_list:
+        for i, mic, desk, vid, vol in result:
             tmp_audio_path = f'{TEMP_FOLDER}temp_{i+1}_audio_final.mp3'
             inf(f'[{i}]({vol}) - {mic} {desk}')
             ffmpeg_run(
@@ -256,37 +256,37 @@ def compare_audio_and_render():
                 )
             rendering_queue.append((vid, tmp_audio_path, i))
             
-        for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
-            
-            # Get paths
-            mic = ep.get_audio_mic_edit2_path(i)
-            desk = ep.get_audio_desktop_path(i)
-            vid = ep.get_video_path(i)
-            
-            inf(f'{mic} {desk}')
-            
-            
-            # Get the audio volume for track 2 <- will be enhanced further after 1.0 to support more than 2 tracks
-            AP = AudioPlayer(mic, desk)
-            AP.run()
-            volume = AP.vol
-            del AP
-            
-            tmp_audio_path = f'{TEMP_FOLDER}temp_{i+1}_audio_final.mp3'
-            
-            # This combines the mic & desktop audio & apply volume manipulation
-            ffmpeg_run(
-                FFMPEG_AUDIO_COMBINE,
-                {
-                    '__IN1__':mic,
-                    '__IN2__': desk,
-                    '__VOLUME1__': str(1.0),
-                    '__VOLUME2__': str(volume),
-                    '__OUT__':tmp_audio_path
-                    }
-                )
-            rendering_queue.append((vid, tmp_audio_path, i))
-        
+        #for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
+        #    
+        #    # Get paths
+        #    mic = ep.get_audio_mic_edit2_path(i)
+        #    desk = ep.get_audio_desktop_path(i)
+        #    vid = ep.get_video_path(i)
+        #    
+        #    inf(f'{mic} {desk}')
+        #    
+        #    
+        #    # Get the audio volume for track 2 <- will be enhanced further after 1.0 to support more than 2 tracks
+        #    AP = AudioPlayer(mic, desk)
+        #    AP.run()
+        #    volume = AP.vol
+        #    del AP
+        #    
+        #    tmp_audio_path = f'{TEMP_FOLDER}temp_{i+1}_audio_final.mp3'
+        #    
+        #    # This combines the mic & desktop audio & apply volume manipulation
+        #    ffmpeg_run(
+        #        FFMPEG_AUDIO_COMBINE,
+        #        {
+        #            '__IN1__':mic,
+        #            '__IN2__': desk,
+        #            '__VOLUME1__': str(1.0),
+        #            '__VOLUME2__': str(volume),
+        #            '__OUT__':tmp_audio_path
+        #            }
+        #        )
+        #    rendering_queue.append((vid, tmp_audio_path, i))
+        #
         path_ending = f'_{letsplay.get_game_name(lp)}_final.mp4'
         cnef(VIDEO_FOLDER)
         for video, audio, index in rendering_queue:

@@ -62,7 +62,7 @@ class AudioPlayer:
         self.vol = 1.0
         self.current_episode = 0
         self.ready_to_play = False
-        self.audio_list = [[*i,1] for i in audio_list]# idx a1 a2 vol
+        self.audio_list = [[*i,1] for i in audio_list]# idx a1 a2 vid vol
         f_init()
         m_init()
         self.font = Font(get_default_font(),80)
@@ -79,7 +79,7 @@ class AudioPlayer:
         """
         self.display.fill((24,24,24))
         self.display.blit(self.font.render('00:00',False,(255,255,255)))
-        self.display.blit(self.font.render(f'{int(self.audio_list[self.current_episode][3]*100)}%',False,(255,255,255)),(0,self.font.get_height()))
+        self.display.blit(self.font.render(f'{int(self.audio_list[self.current_episode][4]*100)}%',False,(255,255,255)),(0,self.font.get_height()))
         d_update()
         
     def titleset(self):
@@ -129,7 +129,7 @@ class AudioPlayer:
                         if not get_busy():
                             set_title('Generating Audio')
                             unload()
-                            ffmpeg_run(FFMPEG_AUDIO_COMBINE_TRUNCATED,{'__IN1__':self.audio_list[self.current_episode][1],'__IN2__': self.audio_list[self.current_episode][2],'__VOLUME1__': str(1.0),'__VOLUME2__': str(self.audio_list[self.current_episode][3]),'__OUT__':'temp.mp3'})
+                            ffmpeg_run(FFMPEG_AUDIO_COMBINE_TRUNCATED,{'__IN1__':self.audio_list[self.current_episode][1],'__IN2__': self.audio_list[self.current_episode][2],'__VOLUME1__': str(1.0),'__VOLUME2__': str(self.audio_list[self.current_episode][4]),'__OUT__':'temp.mp3'})
                             self.ready_to_play = True
                             #combine_audio(self.t1,self.t2,f'00:0{s}:00',f'00:{s+2}:00',self.vol)
                             if isfile('temp.mp3'):
@@ -148,21 +148,21 @@ class AudioPlayer:
                     
                     # Set the volume for the next prehearing
                     if e.key == K_KP8:
-                        self.audio_list[self.current_episode][3] += 0.05
+                        self.audio_list[self.current_episode][4] += 0.05
                     if e.key == K_KP2:
-                        self.audio_list[self.current_episode][3] -= 0.05
+                        self.audio_list[self.current_episode][4] -= 0.05
                     if e.key == K_KP6:
-                        self.audio_list[self.current_episode][3] += 0.01
+                        self.audio_list[self.current_episode][4] += 0.01
                     if e.key == K_KP4:
-                        self.audio_list[self.current_episode][3] -= 0.01
+                        self.audio_list[self.current_episode][4] -= 0.01
                 
                     # keep the volume in range!
-                    if self.audio_list[self.current_episode][3] > 1:
-                        self.audio_list[self.current_episode][3] = 1
-                    elif self.audio_list[self.current_episode][3] < 0:
-                        self.audio_list[self.current_episode][3] = 0
+                    if self.audio_list[self.current_episode][4] > 1:
+                        self.audio_list[self.current_episode][4] = 1
+                    elif self.audio_list[self.current_episode][4] < 0:
+                        self.audio_list[self.current_episode][4] = 0
                         
-                    self.audio_list[self.current_episode][3] = float(f'{self.audio_list[self.current_episode][3]:.2f}') # keeps the volume clean
+                    self.audio_list[self.current_episode][4] = float(f'{self.audio_list[self.current_episode][4]:.2f}') # keeps the volume clean
         pg_quit()
         
 if __name__ == "__main__":
