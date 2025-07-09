@@ -44,8 +44,7 @@ from subprocess import run, CREATE_NO_WINDOW
 
 from bin.constants import ffmpeg_run,FFMPEG_AUDIO_COMBINE_TRUNCATED
 
-def set_title(text: str):
-    set_caption(f'{text} - (c) Justus Decker - LPRT Project')
+
 'audio_player E:\musik\sortiert\S3RL\better-off-alone-s3rl-feat-tamika E:\musik\sortiert\S3RL\Waifu.mp3'
 class AudioPlayer:
     """
@@ -66,7 +65,8 @@ class AudioPlayer:
         f_init()
         m_init()
         self.font = Font(get_default_font(),80)
-        
+    def set_title(self, text: str):
+        set_caption(f'[{self.current_episode}] {text} - (c) Justus Decker - LPRT Project')
     def run(self):
         """
         Here starts app the app
@@ -84,10 +84,10 @@ class AudioPlayer:
         
     def titleset(self):
         if get_busy():
-            set_title('Playing Audio')
+            self.set_title('Playing Audio')
         else:
 
-            set_title('Audio Player')
+            self.set_title('Audio Player')
             
     def select_episode(self,direction: int):
         new_location = self.current_episode + direction
@@ -127,7 +127,7 @@ class AudioPlayer:
                     if e.key == K_RETURN:
                         # Will be generated in a range from 0 - 5 minutes startpos + 2 minutes
                         if not get_busy():
-                            set_title('Generating Audio')
+                            self.set_title('Generating Audio')
                             unload()
                             ffmpeg_run(FFMPEG_AUDIO_COMBINE_TRUNCATED,{'__IN1__':self.audio_list[self.current_episode][1],'__IN2__': self.audio_list[self.current_episode][2],'__VOLUME1__': str(1.0),'__VOLUME2__': str(self.audio_list[self.current_episode][4]),'__OUT__':'temp.mp3'})
                             self.ready_to_play = True

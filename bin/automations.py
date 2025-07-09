@@ -236,7 +236,7 @@ def compare_audio_and_render():
         rendering_queue = []
     
         cnef(TEMP_FOLDER)
-        paths = [[i, ep.get_audio_mic_edit2_path(i), ep.get_audio_desktop_path(i)] for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0))]
+        paths = [[i, ep.get_audio_mic_edit2_path(i), ep.get_audio_desktop_path(i), ep.get_video_path(i)] for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0))]
         AP = AudioPlayer(paths)
         AP.run()
         result = AP.audio_list
