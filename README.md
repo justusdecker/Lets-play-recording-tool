@@ -17,16 +17,16 @@ Work in progress(pre alpha)
 - [x] Recording(Saving Data etc.)
 - [x] Automation(Thumbnails)
 - [x] Automation(Audio Fetch)
-- [ ] Automation(Audio Fix)
+- [x] Automation(Audio Fix)
   - [x] Volume Comare & Set
   - [x] Loudness Normalization
-  - [ ] Noise Reduction
+  - [x] Noise Reduction
 - [x] Automation(Combine Video & Audio)
 - [ ] Deploy
 - [ ] Distribute(COMING SOON!)
 
 > [!CAUTION]
-> This Application is still in development, so many bugs may appear!(gotta catch them all🦍)
+> This Application is still in development, many bugs may appear!(gotta catch them all🦍)
 > 
 > Some bugs can lead to data loss. **BE CAREFUL!**
 
