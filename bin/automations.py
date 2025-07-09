@@ -128,7 +128,8 @@ def fetch_audio():
         episode = Episode(ep_path)
         for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
             __fetch_audio(episode,i,lp_name)
-  
+    toast_finished("Fetch Audio")
+    
 def __fix_audio(episode: Episode,i: int, lp_name):
     """
     Take the audio & uses limiter & loudness normalization to fix the most issues in the mic record.
@@ -165,7 +166,7 @@ def fix_audio():
         ep = Episode(ep_path)
         for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
             __fix_audio(ep,i,lp_name)
-              
+    toast_finished("Fix Audio")        
 def __gen_thumbnail(
     thumbnail_gen: ThumbnailGenerator,
     lp_name: str,
@@ -255,7 +256,7 @@ def compare_audio_and_render():
                     }
                 )
             rendering_queue.append((vid, tmp_audio_path, i))
-            
+        toast_finished("[1/2] Audio combine")   
         #for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
         #    
         #    # Get paths
@@ -310,7 +311,7 @@ def compare_audio_and_render():
             # writes the final_video_path in episodes so the user can get this video by deploy
             ep.set_final_video_path(index,final_path)
             ep.save()
- 
+        toast_finished("[2/2] Video Render")   
 def deploy(lp: LetsPlay, ep: Episode,id: int):
     """
     Deploying is for moving lets play data & files to other folders & drives
