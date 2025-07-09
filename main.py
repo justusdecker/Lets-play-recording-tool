@@ -1,8 +1,7 @@
 __author__ = "Justus Decker"
 __copyright__ = "(c) 2024 - 2025 , The LPRT Project"
 __credits__ = []
-__license__ = "CC BY-NC-ND"
-__version__ = "0.3.118"
+__version__ = "0.8.4"
 __maintainer__ = "Justus Decker"
 __email__ = "justus.d2025@gmail.com"
 __status__ = "Testing"
@@ -11,7 +10,6 @@ from bin.constants import *
 
 from bin.data_access import LetsPlay, isfile, json_write
 from bin.others import binpi
-
 
 from bin.automations import (
     obs_connect,
@@ -22,8 +20,6 @@ from bin.automations import (
     compare_audio_and_render,
     LP_PATH
 )
-
-
 
 class App:
     def __init__(self):
@@ -57,11 +53,11 @@ class App:
                         err(ERROR_002)
                         continue
                     json_write('default_tad.json',DEFAULT_TAD)
-                case 4:#. (4) Create a new Lets Play File > IF not exist
+                case 4: #. (4) Create a new Lets Play File > IF not exist
                     create_new_lp_file()
-                case 0:
+                case 0: #+ Returns to the main menu
                     return
-                case _:
+                case _: #! Error occured - User input is not in option range
                     err(ERROR_003)
     
     def main_menu(self):
@@ -74,26 +70,25 @@ class App:
                 obs_connect(ep)
             case 2: #. (2) Select the automation submenu
                 self.automation_sub_menu()
-            case 3:
+            case 3: #. (3) Deploy
                 nimp()
-            case 4:
+            case 4: #. (4) Select the options submenu
                 self.options_submenu()
-            case 0:
+            case 0: #+ Close the app
                 self.isrunning = False
-            case _:
+            case _: #! Error occured - User input is not in option range
                 err(ERROR_003)
     
     def automation_sub_menu(self):
         while self.isrunning:
-
             match binpi(menu(MENU_AUTOMATION_OPTIONS,'automations',exit_name='Back')):
-                case 1:
+                case 1: #. (1) Thumbnail Generator
                     gen_thumbnail()
-                case 2:
+                case 2: #. (2) Audio Extraction
                     fetch_audio()
-                case 3:
+                case 3: #. (3) Audio: Limiter , Loudness Normalization & Noise Reduction
                     fix_audio()
-                case 4:
+                case 4: #. (4) User compare audio & rendering
                     compare_audio_and_render()
                 case 0:
                     return
