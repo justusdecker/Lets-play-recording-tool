@@ -141,22 +141,16 @@ def __fix_audio(episode: Episode,i: int, lp_name):
     t1_path, t2_path = f'{FIXED_AUDIO_FOLDER}{i+1}_{lp_name}_track_mic_ln.mp3',f'{FIXED_AUDIO_FOLDER}{i+1}_{lp_name}_track_desktop_ln.mp3'
     
     t3_path, t4_path = f'{FIXED_AUDIO_FOLDER}{i+1}_{lp_name}_track_mic_fixed.mp3',f'{FIXED_AUDIO_FOLDER}{i+1}_{lp_name}_track_desktop_fixed.mp3'
+    cnef(TEMP_FOLDER)
+    inf(f'Start noise reduction track 1 to {t3_path}. This may take a while, dont close this app!')
+    ffmpeg_run(FFMPEG_AUDIO_NOISE_REDUCTION,{'__IN__': f'{TEMP_FOLDER}ln2.mp3','__OUT__':t3_path})
     
-    inf(f'Start normalize track 1 to {t1_path}')
-    #loudness_normalization(audio_mic_path, t1_path)
-    ffmpeg_run(FFMPEG_LOUDNESS_NORMALIZATION,{'__IN__': audio_mic_path,'__OUT__':'ln1.mp3'})
-    inf(f'Start limit track 1 to {t3_path}')
-    #limiter(t1_path, t3_path)
-    ffmpeg_run(FFMPEG_LIMITER,{'__IN__': 'ln1.mp3','__OUT__':'ln2.mp3'})
+    inf(f'Start normalize track 1 to {t1_path}. This may take a while, dont close this app!') 
+    ffmpeg_run(FFMPEG_LOUDNESS_NORMALIZATION,{'__IN__': audio_mic_path,'__OUT__':f'{TEMP_FOLDER}ln1.mp3'})
     
-    ffmpeg_run(FFMPEG_AUDIO_NOISE_REDUCTION,{'__IN__': 'ln2.mp3','__OUT__':t3_path})
+    inf(f'Start limit track 1 to {t3_path}. This may take a while, dont close this app!')
+    ffmpeg_run(FFMPEG_LIMITER,{'__IN__': f'{TEMP_FOLDER}ln1.mp3','__OUT__':f'{TEMP_FOLDER}ln2.mp3'})
     
-    #inf(f'Start normalize track 2 to {t2_path}')
-    #loudness_normalization(audio_desktop_path, t2_path)
-    
-    #inf(f'Start limit track 2 to {t4_path}')
-    #limiter(t2_path, t4_path)
-    #episode.set_audio_mic_edit1_path(i,t1_path)
     episode.set_audio_mic_edit2_path(i,t3_path)
     episode.save()
 
