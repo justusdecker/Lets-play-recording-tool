@@ -245,7 +245,7 @@ def compare_audio_and_render():
         for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
             
             # Get paths
-            mic = ep.get_audio_mic_path(i) #! GET AUDIO FIXED PATH
+            mic = ep.get_audio_mic_edit2_path(i)
             desk = ep.get_audio_desktop_path(i)
             vid = ep.get_video_path(i)
             
