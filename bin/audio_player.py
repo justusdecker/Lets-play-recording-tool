@@ -100,6 +100,7 @@ class AudioPlayer:
         elif new_location < 0:
             self.current_episode = 0
         else:
+            self.current_episode = new_location
             self.ready_to_play = False
             
     def update(self):
