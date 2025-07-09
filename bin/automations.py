@@ -29,7 +29,7 @@ from bin.text_manipulation import (
     color816
 )
 
-from bin.others import binps, input_episode_range
+from bin.others import binps, input_episode_range, toast_finished
 
 from bin.constants import (
     ERROR_002,
@@ -206,7 +206,7 @@ def gen_thumbnail():
         tad = letsplay.get_tad_path(lp)
         for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
             __gen_thumbnail(TG,lp_name,eps,i,tad)
-
+    toast_finished("Generate Thumbnail")
 def compare_audio_and_render():
     """
     CAAR

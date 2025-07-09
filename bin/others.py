@@ -5,7 +5,7 @@ __version__ = "0.3.112"
 __maintainer__ = "Justus Decker"
 __email__ = "justus.d2025@gmail.com"
 __status__ = "Testing"
-
+from os import getcwd
 from bin.text_manipulation import err, bold
 from bin.constants import COPYRIGHT, header,ERROR_003
 from bin.constants import (
@@ -110,3 +110,20 @@ def input_episode_range(max_eps:list[int], lp_names: list[str]) -> None | tuple[
             err(ERROR_003)
             return None
     return lp_id, ep_range
+
+
+import winotify
+from winotify import audio
+
+"""
+Documentation: https://pypi.org/project/winotify/
+
+"""
+
+TOAST = winotify.Notification('LPRT','Welcome','Up & Running',f'{getcwd()}\\logo.ico')
+TOAST.set_audio(audio.Mail,False)
+
+def toast_finished(msg: str=""):
+    TOAST.title = 'Job finished'
+    TOAST.msg = msg
+    TOAST.show()
