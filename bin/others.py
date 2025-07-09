@@ -117,7 +117,6 @@ from winotify import audio
 
 """
 Documentation: https://pypi.org/project/winotify/
-
 """
 
 TOAST = winotify.Notification('LPRT','Welcome','Up & Running',f'{getcwd()}\\logo.ico')

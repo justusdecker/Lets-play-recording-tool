@@ -15,6 +15,7 @@ from pygame.display import (
     )
 
 from pygame.font import Font, get_default_font
+from pygame.mouse import get_pos, get_pressed
 from pygame.mixer_music import (
     load,
     play,
@@ -22,6 +23,8 @@ from pygame.mixer_music import (
     get_busy,
     unload
 )
+
+from pygame.draw import rect as draw_rect
 from pygame.event import get as ev_get
 from pygame.time import Clock
 from pygame import (
@@ -106,6 +109,13 @@ class AudioPlayer:
         h = 200
         
         0,200
+        draw_rect(self.display,(128,128,128),(0,0,20,self.audio_list[self.current_episode][4]*200))
+        mp = get_pressed()[0]
+        x, y = get_pos()
+        
+        if x > 0 and x <= 20 and y > 0 and y <= 200:
+            self.audio_list[self.current_episode][4] = y / 200
+            self.audio_list[self.current_episode][4] = float(f'{self.audio_list[self.current_episode][4]:.2f}')
         
         
     def update(self):
@@ -113,7 +123,7 @@ class AudioPlayer:
         This method runs until the user closes the window
         """
         while self.isrunning:
-            
+            self.volume_slider()
             self.render()
             self.titleset()
             self.clk.tick(30)
