@@ -116,7 +116,7 @@ from subprocess import run, CREATE_NO_WINDOW
 
 ## FFMPEG COMMANDS
 
-FFMPEG_DEFAULT = ['ffmpeg','-hide_banner' , '-loglevel', 'error', '-y']
+FFMPEG_DEFAULT = ['ffmpeg', '-v', 'quiet', '-stats' , '-loglevel', 'error', '-y']
 
 # Simply change the ending of a file to convert it. So .mp3 -> .wav
 #? Need an input path & output path
