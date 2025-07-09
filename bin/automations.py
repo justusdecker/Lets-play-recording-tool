@@ -243,7 +243,7 @@ def compare_audio_and_render():
         del AP
         for i, mic, desk, vid, vol in result:
             tmp_audio_path = f'{TEMP_FOLDER}temp_{i+1}_audio_final.mp3'
-            inf(f'[{i}]({vol}) - {mic} {desk}')
+            inf(f'[{i}]({vol}) - {tmp_audio_path}')
             ffmpeg_run(
                 FFMPEG_AUDIO_COMBINE,
                 {
