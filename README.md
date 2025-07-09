@@ -30,6 +30,15 @@ Work in progress(pre alpha)
 > 
 > Some bugs can lead to data loss. **BE CAREFUL!**
 
+## Requirements
+
+> [!NOTE]
+> I tested this app only on my own computer.
+>
+> More testing comes in the 0.9 update
+
+Windows 10 64bit [R9 5900X, 32GB 3200Mhz, GTX 1660 6GB]
+
 ## Workflow (Production)
 
 ### Record
@@ -122,7 +131,10 @@ You need to manually adjust the ip adress in `settings.json`
 ##### Password wrong
 Simply adjust your `password` in `settings.json`
 > [!IMPORTANT]
-> If you're issue is not listed here, then please create an issue for this. 
+> If you're issue is not listed here, then please create an issue for this.
+##### Known issues
+###### Audio Stuff
+Audio extract, limit, loudness normalize & noise reduce take ages currently.
 
 #### First Recording
 
