@@ -17,9 +17,12 @@ Work in progress(pre alpha)
 - [x] Recording(Saving Data etc.)
 - [x] Automation(Thumbnails)
 - [x] Automation(Audio Fetch)
-- [x] Automation(Audio Fix)
-- [ ] Automation(Combine Video & Audio)
-- [ ] Deploy(COMING SOON!)
+- [ ] Automation(Audio Fix)
+  - [x] Volume Comare & Set
+  - [x] Loudness Normalization
+  - [ ] Noise Reduction
+- [x] Automation(Combine Video & Audio)
+- [ ] Deploy
 - [ ] Distribute(COMING SOON!)
 
 > [!CAUTION]
