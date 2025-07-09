@@ -7,20 +7,30 @@ __email__ = "justus.d2025@gmail.com"
 __status__ = "Production"
 
 from inspect import currentframe as cf
+from bin.constants import (
+    feedback,
+    FB_SUCCESS,
+    FB_WARNING,
+    FB_ERROR,
+    FB_INFO
+)
 
 COLOR_TABLE816FG = [90 + i for i in range(8)]  + [30 + i for i in range(10)]
 COLOR_TABLE816BG = [40 + i for i in range(10)] + [100 + i for i in range(8)]
 
 def war(text: str) -> None:
+    feedback(FB_WARNING)
     print(color816(bold(text),33))
 
 def err(text: str) -> None:
+    feedback(FB_ERROR)
     print(color816(bold(text),31))
     
 def deb(text: str) -> None:
     print(italic(color816(bold(text),93)))
     
 def inf(text: str) -> None:
+    feedback(FB_INFO)
     print(color816(bold(text),92))
 
 def nimp():

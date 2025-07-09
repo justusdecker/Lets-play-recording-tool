@@ -102,7 +102,12 @@ class AudioPlayer:
         else:
             self.current_episode = new_location
             self.ready_to_play = False
-            
+    def volume_slider(self):
+        h = 200
+        
+        0,200
+        
+        
     def update(self):
         """
         This method runs until the user closes the window

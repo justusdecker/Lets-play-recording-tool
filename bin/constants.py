@@ -6,6 +6,23 @@ __maintainer__ = "Justus Decker"
 __email__ = "justus.d2025@gmail.com"
 __status__ = "Testing"
 
+from win32api import Beep
+
+FB_ENTER = (600,100,1)
+FB_BACK = (400,100,1)
+FB_ERROR = (500,100,3)
+FB_WARNING = (500,100,2)
+FB_CRITICAL = (500,400,10)
+FB_SUCCESS = (750,100,1)
+FB_INFO = (700,100,1)
+def feedback(key: str) -> None:
+    """
+    Gives user sound feedback
+    """
+    f,d,i = key
+    for it in range(i):
+        Beep(f,d)
+
 from bin.text_manipulation import *
 
 from bin.version import VERSION
