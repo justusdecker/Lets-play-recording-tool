@@ -317,9 +317,13 @@ def deploy(lp: LetsPlay, ep: Episode,id: int):
     # Creating Markdown Header
     MD = f"""
 # {name}
-{game_name}
-DESCRIPTION
-{eps.row} episodes
+## {game_name}
+
+```
+{description}
+```
+
+### {eps.row} episodes
     """
     #ask the user about the target destination for the files
     # will print an error & return if empty
@@ -356,7 +360,7 @@ DESCRIPTION
         copyfile(thumbnail_path,new_thumbnail_path)
         
         MD += f"""
-## {i}
+#### {i}
 - {new_video_path.split('/')[-1]}
 - ![IMAGE]({new_thumbnail_path.split('/')[-1]})
         """
