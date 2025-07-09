@@ -166,6 +166,9 @@ class LetsPlay(CSVObj):
     def get_name(self,id: int) -> str:
         return self.read(id)[4]
     
+    def get_description(self,id: int) -> str:
+        return file_read(self.read(id)[6])
+    
     def get_names(self) -> list[str]:
         return [i[4] for i in self.data]
     

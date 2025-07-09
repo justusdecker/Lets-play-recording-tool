@@ -310,6 +310,7 @@ def deploy(lp: LetsPlay, ep: Episode,id: int):
     #getting lets play info
     # name etc. to write it in the header: follows below
     name = lp.get_name(id)
+    description = lp.get_description(id)
     game_name = lp.get_game_name(id)
     eps = ep
     
