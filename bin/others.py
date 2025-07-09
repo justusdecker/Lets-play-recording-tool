@@ -8,6 +8,14 @@ __status__ = "Testing"
 
 from bin.text_manipulation import err, bold
 from bin.constants import COPYRIGHT, header,ERROR_003
+from bin.constants import (
+    feedback,
+    FB_SUCCESS,
+    FB_WARNING,
+    FB_ERROR,
+    FB_INFO,
+    FB_ENTER
+)
 
 def binpi(text : str, inp: str = '') -> int:
     """
@@ -20,6 +28,7 @@ def binpi(text : str, inp: str = '') -> int:
     while not user_input.isdecimal():
         print(text, end='')
         user_input = input(f'{inp}\033[92m\033[3m')
+        feedback(FB_ENTER)
         print('\033[23m\033[39m',end='')
     return int(user_input)
 
@@ -34,6 +43,7 @@ def binps(text : str, inp: str = '') -> int:
     while not user_input:
         print(text, end='')
         user_input = input(f'{inp}\033[92m\033[3m')
+        feedback(FB_ENTER)
         print('\033[23m\033[39m',end='')
     return user_input
 
@@ -43,11 +53,13 @@ def input_in_range(start,end,text):
     if inp >= start and inp <= end:
         return inp
     else:
+        feedback(FB_ERROR)
         err('Outside range')
 
 def input_episode_range(max_eps:list[int], lp_names: list[str]) -> None | tuple[int, tuple[int, int]]:
     
     if len(max_eps) != len(lp_names):
+        feedback(FB_ERROR)
         err('ValueError')
         return
     # SET LP
@@ -56,6 +68,7 @@ def input_episode_range(max_eps:list[int], lp_names: list[str]) -> None | tuple[
     lp_id = binpi(f"{header('tg',['Set Lets Play'])}{listed_lets_plays}\n")
     
     if lp_id >= len(lp_names):
+        feedback(FB_ERROR)
         err('Input out of range')
         return
     
@@ -76,13 +89,16 @@ def input_episode_range(max_eps:list[int], lp_names: list[str]) -> None | tuple[
         case 2:
             _start = binpi(RANGE_START)
             if _start >= max_eps[lp_id]:
+                feedback(FB_ERROR)
                 err('Input out of range')
                 return
             _end = binpi(RANGE_END + f'\n{_start} - {max_eps[lp_id]-1}\n')
             if _end >= max_eps[lp_id]:
+                feedback(FB_ERROR)
                 err('Input out of range')
                 return
             if _start > _end:
+                feedback(FB_ERROR)
                 err('Input out of range')
                 return
             ep_range = (_start, _end+1)
@@ -90,6 +106,7 @@ def input_episode_range(max_eps:list[int], lp_names: list[str]) -> None | tuple[
             _index = binpi(RANGE_ONE)
             ep_range = (_index,_index)
         case _:
+            feedback(FB_ERROR)
             err(ERROR_003)
             return None
     return lp_id, ep_range
