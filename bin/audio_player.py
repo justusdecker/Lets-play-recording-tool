@@ -81,6 +81,7 @@ class AudioPlayer:
         Here renders all the elements on screen
         """
         self.display.fill((24,24,24))
+        self.volume_slider()
         self.display.blit(self.font.render('00:00',False,(255,255,255)))
         self.display.blit(self.font.render(f'{int(self.audio_list[self.current_episode][4]*100)}%',False,(255,255,255)),(0,self.font.get_height()))
         d_update()
@@ -109,13 +110,13 @@ class AudioPlayer:
         h = 200
         
         0,200
-        draw_rect(self.display,(128,128,128),(0,0,20,self.audio_list[self.current_episode][4]*200))
+        draw_rect(self.display,(128,128,128),(260,0,40,self.audio_list[self.current_episode][4]*200))
         mp = get_pressed()[0]
         x, y = get_pos()
-        
-        if x > 0 and x <= 20 and y > 0 and y <= 200:
-            self.audio_list[self.current_episode][4] = y / 200
-            self.audio_list[self.current_episode][4] = float(f'{self.audio_list[self.current_episode][4]:.2f}')
+        if mp:
+            if x >= 260 and x <= 300 and y >= 0 and y <= 199:
+                self.audio_list[self.current_episode][4] = y / 199
+                self.audio_list[self.current_episode][4] = float(f'{self.audio_list[self.current_episode][4]:.2f}')
         
         
     def update(self):
@@ -123,7 +124,7 @@ class AudioPlayer:
         This method runs until the user closes the window
         """
         while self.isrunning:
-            self.volume_slider()
+            
             self.render()
             self.titleset()
             self.clk.tick(30)
