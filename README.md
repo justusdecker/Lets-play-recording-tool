@@ -26,7 +26,7 @@ Work in progress(pre alpha)
 - [ ] Distribute(COMING SOON!)
 
 > [!CAUTION]
-> So many bugs may appear!
+> This Application is still in development, so many bugs may appear!(gotta catch them all🦍)
 > Some bugs can lead to data loss. **BE CAREFUL!**
 
 ## Workflow (Production)
