@@ -1,7 +1,7 @@
 __author__ = "Justus Decker"
 __copyright__ = "(c) 2024 - 2025 , The LPRT Project"
 __credits__ = []
-__version__ = "0.3.115"
+__version__ = "0.8.5"
 __maintainer__ = "Justus Decker"
 __email__ = "justus.d2025@gmail.com"
 __status__ = "Testing"
@@ -131,6 +131,8 @@ FFMPEG_AUDIO_COMBINE = [*FFMPEG_DEFAULT, '-i', "__IN1__", '-i', "__IN2__", '-fil
 # Combine two audio tracks
 #? Need an input path & output path
 FFMPEG_AUDIO_COMBINE_TRUNCATED = [*FFMPEG_DEFAULT, '-ss' ,'00:00:00', '-to', '00:02:00', '-i', "__IN1__", '-ss' ,'00:00:00', '-to', '00:02:00', '-i', "__IN2__", '-filter_complex', '[0:0]volume=__VOLUME1__[a];[1:0]volume=__VOLUME2__[b];[a][b]amix=inputs=2:duration=longest', "__OUT__"] # '-ac', '2', amerge=inputs=2
+
+FFMPEG_AUDIO_NOISE_REDUCTION = [*FFMPEG_DEFAULT, '-i', '__IN__', '-map', '0:1', '-af', '"anlmdn"', '__OUT__']
 
 FFMPEG_VIDEO_RENDER = [*FFMPEG_DEFAULT, '-an', '-i', '__VIDEO__', '-i', '__AUDIO__', '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'copy', '__OUTPUT__']
 

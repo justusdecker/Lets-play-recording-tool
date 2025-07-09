@@ -47,6 +47,7 @@ from bin.constants import (
     FFMPEG_LIMITER,
     FFMPEG_AUDIO_COMBINE,
     FFMPEG_VIDEO_RENDER,
+    FFMPEG_AUDIO_NOISE_REDUCTION,
     ffmpeg_run
 )
 
@@ -143,17 +144,19 @@ def __fix_audio(episode: Episode,i: int, lp_name):
     
     inf(f'Start normalize track 1 to {t1_path}')
     #loudness_normalization(audio_mic_path, t1_path)
-    ffmpeg_run(FFMPEG_LOUDNESS_NORMALIZATION,{'__IN__': audio_mic_path,'__OUT__':t1_path})
+    ffmpeg_run(FFMPEG_LOUDNESS_NORMALIZATION,{'__IN__': audio_mic_path,'__OUT__':'ln1.mp3'})
     inf(f'Start limit track 1 to {t3_path}')
     #limiter(t1_path, t3_path)
-    ffmpeg_run(FFMPEG_LIMITER,{'__IN__': t1_path,'__OUT__':t3_path})
+    ffmpeg_run(FFMPEG_LIMITER,{'__IN__': 'ln1.mp3','__OUT__':'ln2.mp3'})
+    
+    ffmpeg_run(FFMPEG_AUDIO_NOISE_REDUCTION,{'__IN__': 'ln2.mp3','__OUT__':t3_path})
     
     #inf(f'Start normalize track 2 to {t2_path}')
     #loudness_normalization(audio_desktop_path, t2_path)
     
     #inf(f'Start limit track 2 to {t4_path}')
     #limiter(t2_path, t4_path)
-    episode.set_audio_mic_edit1_path(i,t1_path)
+    #episode.set_audio_mic_edit1_path(i,t1_path)
     episode.set_audio_mic_edit2_path(i,t3_path)
     episode.save()
 
