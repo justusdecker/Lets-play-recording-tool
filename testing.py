@@ -4,7 +4,6 @@ def get_silence(filepath: str,silence: int = -36, duration: float = 0.5) -> list
     
 
     result = ffmpeg_run(FFMPEG_GET_SILENCE,{'__IN__':filepath, '__DUR__': duration, '__SIL__': silence})
-    print(result.stderr)
     data = []
     for idx,line in enumerate(str(result.stderr).split('\n')):
         line: str     

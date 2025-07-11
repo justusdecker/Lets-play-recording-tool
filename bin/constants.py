@@ -181,7 +181,7 @@ def ffmpeg_build(cmd: list[str], replacer: dict[str,str]):
     Is a key not existent it will replace nothing.
     """
     for key in replacer:
-        cmd = [arg.replace(key,replacer[key]) if key in arg else arg for arg in cmd]
+        cmd = [arg.replace(key,str(replacer[key])) if key in arg else arg for arg in cmd]
     return cmd
 
 def ffmpeg_run(cmd: list[list], replacer: dict[str,str]):
