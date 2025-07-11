@@ -158,6 +158,8 @@ SOX_AUDIO_NOISE_REDUCTION = []
 
 FFMPEG_VIDEO_RENDER = [*FFMPEG_DEFAULT, '-an', '-i', '__VIDEO__', '-i', '__AUDIO__', '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'copy', '__OUTPUT__']
 
+FFMPEG_GET_SILENCE = ['ffmpeg', '-i', '__IN__', '-af', 'silencedetect=n=__SIL__dB:d=__DUR__' ,'-f', 'null', '2>data.txt']
+
 #!A quick non pro explanation about the map argument
 #
 #? when you split the argument by ':' you get two values:
@@ -193,4 +195,4 @@ def ffmpeg_run(cmd: list[list], replacer: dict[str,str]):
     shell= True is compatible with limiter compand
     """
     
-    run(ffmpeg_build(cmd,replacer), CREATE_NO_WINDOW)
+    return run(ffmpeg_build(cmd,replacer), CREATE_NO_WINDOW, capture_output=True, text=True)
