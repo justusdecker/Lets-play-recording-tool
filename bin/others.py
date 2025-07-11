@@ -111,6 +111,13 @@ def input_episode_range(max_eps:list[int], lp_names: list[str]) -> None | tuple[
             return None
     return lp_id, ep_range
 
+def convert_to_tc(t:float):
+    h, m, s = t // 60 // 60,t // 60, t % 60
+    h, m, s = int(h), int(m), int(s)
+    h = f'0{h}' if h < 10 else str(h)
+    m = f'0{m}' if m < 10 else str(m)
+    s = f'0{s}' if s < 10 else str(s)
+    return f'{h}:{m}:{s}'
 
 import winotify
 from winotify import audio

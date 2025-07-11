@@ -18,6 +18,7 @@ from bin.automations import (
     fix_audio,
     gen_thumbnail,
     compare_audio_and_render,
+    get_silence,
     LP_PATH
 )
 
@@ -86,9 +87,11 @@ class App:
                     gen_thumbnail()
                 case 2: #. (2) Audio Extraction
                     fetch_audio()
-                case 3: #. (3) Audio: Limiter , Loudness Normalization & Noise Reduction
+                case 4: #. (3) Get Silence
+                    get_silence()
+                case 4: #. (4) Audio: Limiter , Loudness Normalization & Noise Reduction
                     fix_audio()
-                case 4: #. (4) User compare audio & rendering
+                case 5: #. (5) User compare audio & rendering
                     compare_audio_and_render()
                 case 0:
                     return
