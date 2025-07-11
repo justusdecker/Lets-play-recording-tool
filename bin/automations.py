@@ -43,11 +43,9 @@ from bin.constants import (
     FIXED_AUDIO_FOLDER,
     THUMBNAIL_FOLDER,
     FFMPEG_OPTIMIZED_EXTRACT,
-    FFMPEG_LOUDNESS_NORMALIZATION,
-    FFMPEG_LIMITER,
     FFMPEG_AUDIO_COMBINE,
     FFMPEG_VIDEO_RENDER,
-    FFMPEG_AUDIO_NOISE_REDUCTION,
+    FFMPEG_AUDIO_PF_LN_L,
     ffmpeg_run
 )
 
@@ -143,14 +141,19 @@ def __fix_audio(episode: Episode,i: int, lp_name):
     
     t3_path, t4_path = f'{FIXED_AUDIO_FOLDER}{i+1}_{lp_name}_track_mic_fixed.mp3',f'{FIXED_AUDIO_FOLDER}{i+1}_{lp_name}_track_desktop_fixed.mp3'
     cnef(TEMP_FOLDER)
-    inf(f'Start noise reduction track 1 to {t3_path}. This may take a while, dont close this app!')
-    ffmpeg_run(FFMPEG_AUDIO_NOISE_REDUCTION,{'__IN__': audio_mic_path,'__OUT__':f'{TEMP_FOLDER}wfr1.mp3'})
     
-    inf(f'Start normalize track 1 to {t1_path}. This may take a while, dont close this app!') 
-    ffmpeg_run(FFMPEG_LOUDNESS_NORMALIZATION,{'__IN__': f'{TEMP_FOLDER}wfr1.mp3','__OUT__':f'{TEMP_FOLDER}wfr2.mp3'})
+    ffmpeg_run(FFMPEG_AUDIO_PF_LN_L,{'__IN__': audio_mic_path,'__OUT__':f'{TEMP_FOLDER}wfr1.mp3'})
     
-    inf(f'Start limit track 1 to {t3_path}. This may take a while, dont close this app!')
-    ffmpeg_run(FFMPEG_LIMITER,{'__IN__': f'{TEMP_FOLDER}wfr2.mp3','__OUT__':t3_path})
+    #! ADD NEW Noise Reduction method
+    
+    #inf(f'Start noise reduction track 1 to {t3_path}. This may take a while, dont close this app!')
+    #ffmpeg_run(FFMPEG_AUDIO_NOISE_REDUCTION,{'__IN__': audio_mic_path,'__OUT__':f'{TEMP_FOLDER}wfr1.mp3'})
+    
+    #inf(f'Start normalize track 1 to {t1_path}. This may take a while, dont close this app!') 
+    #ffmpeg_run(FFMPEG_LOUDNESS_NORMALIZATION,{'__IN__': f'{TEMP_FOLDER}wfr1.mp3','__OUT__':f'{TEMP_FOLDER}wfr2.mp3'})
+    
+    #inf(f'Start limit track 1 to {t3_path}. This may take a while, dont close this app!')
+    #ffmpeg_run(FFMPEG_LIMITER,{'__IN__': f'{TEMP_FOLDER}wfr2.mp3','__OUT__':t3_path})
     
     episode.set_audio_mic_edit2_path(i,t3_path)
     episode.save()
