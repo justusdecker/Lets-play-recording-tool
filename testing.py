@@ -25,7 +25,7 @@ def convert_to_tc(t:float):
 
     h = f'0{h}' if h < 10 else str(h)
     m = f'0{m}' if m < 10 else str(m)
-    m = f'0{m}' if m < 10 else str(m)
+    s = f'0{s}' if s < 10 else str(s)
     return f'{h}:{m}:{s}'
 path = "C:\\Users\\Justus\\jri_data\\audio\\1_schedule_one_track_mic.aac"
 result = get_silence(path)
