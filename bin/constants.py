@@ -33,7 +33,7 @@ SUBS = { 'main': ['Main'],'automations': ['Main','Automations'],'options': ['Mai
 
 MENU_OPTIONS = ['Record', 'Automation', color816(strikethrough('Deploy'),31), 'Options'] # main
 
-MENU_AUTOMATION_OPTIONS = ['Thumbnail Generate', 'Fetch Audio','Get Noise Profiles', 'Fix Audio', 'Compare Audio & render'] # automations
+MENU_AUTOMATION_OPTIONS = ['Thumbnail Generate', 'Fetch Audio','Get Silence', 'Create Noise Profiles', 'Fix Audio', 'Compare Audio & render'] # automations
 
 MENU_SETTINGS_OPTIONS = [f"Create {bold('options.json')} - OBS", 'Set current lets play id', f"Create {bold('default_tad.json')}", f"Create {bold('lets_plays.csv')}"] # options
 

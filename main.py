@@ -89,9 +89,11 @@ class App:
                     fetch_audio()
                 case 3: #. (3) Get Silence
                     extract_silence()
-                case 4: #. (4) Audio: Limiter , Loudness Normalization & Noise Reduction
+                case 4: #. (4) Create Noise profiles
+                    extract_silence()
+                case 5: #. (5) Audio: Limiter , Loudness Normalization & Noise Reduction
                     fix_audio()
-                case 5: #. (5) User compare audio & rendering
+                case 6: #. (6) User compare audio & rendering
                     compare_audio_and_render()
                 case 0:
                     return
