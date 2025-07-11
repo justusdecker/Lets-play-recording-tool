@@ -16,9 +16,10 @@ from bin.automations import (
     create_new_lp_file,
     fetch_audio,
     fix_audio,
-    gen_thumbnail,
+    #gen_thumbnail,
     compare_audio_and_render,
     extract_silence,
+    GenerateThumbnail,
     LP_PATH
 )
 
@@ -84,7 +85,7 @@ class App:
         while self.isrunning:
             match binpi(menu(MENU_AUTOMATION_OPTIONS,'automations',exit_name='Back')):
                 case 1: #. (1) Thumbnail Generator
-                    gen_thumbnail()
+                    GenerateThumbnail()
                 case 2: #. (2) Audio Extraction
                     fetch_audio()
                 case 3: #. (3) Get Silence

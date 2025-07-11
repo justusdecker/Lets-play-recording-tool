@@ -103,8 +103,10 @@ def create_new_ep_file(filepath: str):
 
 
 class GenericWorkFlow:
-    def __init__(self, folder: str):
+    def __init__(self, folder: str, finish_message: str):
         self.auto_create_folder_path = folder
+        self.finish_message = finish_message
+        self.run()
     
     @property
     def rng(self) -> tuple[int,int]:
@@ -119,13 +121,36 @@ class GenericWorkFlow:
             self.lp_name = self.letsplay.get_name(self.lpid)
             self.ep_path = self.letsplay.get_episode_path(self.lpid)
             self.episode = Episode(self.ep_path)
-    
-    def user_workflow(self):
-        if self.ui_result is None:
-            return
-        # for i in range(*self.rng):
-        #   your code here...
         
+    def user_workflow(self):
+        toast_finished(self.finish_message)
+
+class GenerateThumbnail(GenericWorkFlow):
+    """
+    Generating Thumbnails based on the thumbnail automation data
+    """
+    def __init__(self, folder = THUMBNAIL_FOLDER, finish_message = 'Thumbnail Generation'):
+        super().__init__(folder, finish_message)
+        self.user_workflow()
+        
+    def user_workflow(self):
+        TG = ThumbnailGenerator()
+        tad = self.letsplay.get_tad_path(self.lpid)
+        for i in range(*self.rng): 
+            video_path = self.episode.get_video_path(i)
+            if not tad:
+                return
+            p = f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
+            TG.generate(
+                str(i+1),
+                video_path,
+                tad,
+                f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
+                )
+            self.episode.set_thumbnail_path(i,p)
+            self.episode.save()
+        super().user_workflow()
+            
 def __extract_silence(filepath: str, lp: str, i: int):
     deb(f'[Analyze Silence] of ep: {i+1}')
     result = get_silence(filepath)
@@ -285,47 +310,47 @@ def fix_audio():
         for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
             __fix_audio(ep,i,lp_name)
     toast_finished("Fix Audio")        
-def __gen_thumbnail(
-    thumbnail_gen: ThumbnailGenerator,
-    lp_name: str,
-    episode: Episode,
-    i: int,
-    tad: dict):
-    """
-    Generate a thumbnail
-    Based on the given tad elements will be placed.
-    Saves the image & their path
-    """
-
-    video_path = episode.get_video_path(i)
-    if not tad:
-        return
-    p = f'{THUMBNAIL_FOLDER}{i+1}_{lp_name}_thumbnail.png'
-    thumbnail_gen.generate(
-        str(i+1),
-        video_path,
-        tad,
-        f'{THUMBNAIL_FOLDER}{i+1}_{lp_name}_thumbnail.png'
-        )
-    episode.set_thumbnail_path(i,p)
-    episode.save()
-
-def gen_thumbnail():
-    letsplay = LetsPlay(LP_PATH)
-    TG = ThumbnailGenerator()
-    cnef(THUMBNAIL_FOLDER)
-    res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
-    if res is not None:
-        lp,epr = res
-        lp_name = letsplay.get_name(lp)
-        ep_path = letsplay.get_episode_path(lp)
-        eps = Episode(ep_path)
-        inf('Please answer the filedialog')
-        #tad = aofn(filetypes=[['JSON','*.json']])
-        tad = letsplay.get_tad_path(lp)
-        for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
-            __gen_thumbnail(TG,lp_name,eps,i,tad)
-    toast_finished("Generate Thumbnail")
+#def __gen_thumbnail(
+#    thumbnail_gen: ThumbnailGenerator,
+#    lp_name: str,
+#    episode: Episode,
+#    i: int,
+#    tad: dict):
+#    """
+#    Generate a thumbnail
+#    Based on the given tad elements will be placed.
+#    Saves the image & their path
+#    """
+#
+#    video_path = episode.get_video_path(i)
+#    if not tad:
+#        return
+#    p = f'{THUMBNAIL_FOLDER}{i+1}_{lp_name}_thumbnail.png'
+#    thumbnail_gen.generate(
+#        str(i+1),
+#        video_path,
+#        tad,
+#        f'{THUMBNAIL_FOLDER}{i+1}_{lp_name}_thumbnail.png'
+#        )
+#    episode.set_thumbnail_path(i,p)
+#    episode.save()
+#
+#def gen_thumbnail():
+#    letsplay = LetsPlay(LP_PATH)
+#    TG = ThumbnailGenerator()
+#    cnef(THUMBNAIL_FOLDER)
+#    res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
+#    if res is not None:
+#        lp,epr = res
+#        lp_name = letsplay.get_name(lp)
+#        ep_path = letsplay.get_episode_path(lp)
+#        eps = Episode(ep_path)
+#        inf('Please answer the filedialog')
+#        #tad = aofn(filetypes=[['JSON','*.json']])
+#        tad = letsplay.get_tad_path(lp)
+#        for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
+#            __gen_thumbnail(TG,lp_name,eps,i,tad)
+#    toast_finished("Generate Thumbnail")
 def compare_audio_and_render():
     """
     CAAR
