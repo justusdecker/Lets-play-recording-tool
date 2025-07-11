@@ -46,6 +46,7 @@ from bin.constants import (
     FFMPEG_AUDIO_COMBINE,
     FFMPEG_VIDEO_RENDER,
     FFMPEG_AUDIO_PF_LN_L,
+    FFMPEG_GET_SILENCE,
     ffmpeg_run
 )
 
@@ -96,6 +97,31 @@ def create_new_ep_file(filepath: str):
         csv_write(filepath,[[binps(f'{key}: ') for key in EP_KEYS]])
     else:
         err(ERROR_002)
+
+def get_silence(filepath: str,silence: int = -50, duration: float = 0.5) -> dict[int, tuple[float, float]]:
+    """
+    Get the silence from a audiotrack
+    
+    Noise is considered:
+        Silence below `silence`dB & the length of the silence must be at least `duration`.
+    
+    .. args::
+        silence : threshold in decibel
+            
+        duration : time in seconds
+
+    .. returns::
+        dict[int, tuple[float, float]]
+            {0: (`start`, `end`)...}
+    """
+
+    result = ffmpeg_run(FFMPEG_GET_SILENCE,{'__IN__':filepath, '__DUR__': duration, '__SIL__': silence})
+    data = []
+    for line in result.stderr.split('\n'):   
+        if line.startswith('[silencedetect'):
+            args = line.split(']')[1].split(' ')
+            data.append(float(args[2]))
+    return {i: (data[i] , data[i+1]) for i in range(0,len(data),2)}
 
 def __fetch_audio(episode: Episode,i: int,lp_name: str):
     """
@@ -315,6 +341,8 @@ def compare_audio_and_render():
             ep.set_final_video_path(index,final_path)
             ep.save()
         toast_finished("[2/2] Video Render")   
+
+
 def deploy(lp: LetsPlay, ep: Episode,id: int):
     """
     Deploying is for moving lets play data & files to other folders & drives

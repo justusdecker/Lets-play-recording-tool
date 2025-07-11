@@ -1,6 +1,6 @@
 from bin.constants import *
 
-def get_silence(filepath: str,silence: int = -36, duration: float = 0.5) -> list[str]:
+def get_silence(filepath: str,silence: int = -50, duration: float = 0.5) -> list[str]:
     
 
     result = ffmpeg_run(FFMPEG_GET_SILENCE,{'__IN__':filepath, '__DUR__': duration, '__SIL__': silence})
@@ -31,9 +31,11 @@ path = "C:\\Users\\Justus\\jri_data\\audio\\1_schedule_one_track_mic.aac"
 result = get_silence(path)
 print(result)
 for key in result:
-    start, end = convert_to_tc(result[key][0]),convert_to_tc(result[key][1] - result[key][0])
+    start, end = result[key][0],result[key][1] - result[key][0]
     if start == end: continue
-    print(start, end)
-    ffmpeg_run(FFPLAY_PLAY_AUDIO,{'__IN__': path,'__SS__': start,'__TO__': end})
+    print(convert_to_tc(start), convert_to_tc(end))
+    
+    #TODO export silence
+    ffmpeg_run(FFMPEG_EXPORT_SILENCE,{'__IN__': path,'__SS__': start,'__TO__': end,'__OUT__': f'test\\{key}.mp3'})
     #TODO SOX Command
 
