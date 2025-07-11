@@ -49,6 +49,7 @@ from bin.constants import (
     FFMPEG_AUDIO_PF_LN_L,
     FFMPEG_GET_SILENCE,
     FFMPEG_EXPORT_SILENCE,
+    SOX_AUDIO_NOISE_REDUCTION,
     ffmpeg_run
 )
 
@@ -102,9 +103,29 @@ def create_new_ep_file(filepath: str):
 
 
 class GenericWorkFlow:
-    def __init__(self):
-        pass
-
+    def __init__(self, folder: str):
+        self.auto_create_folder_path = folder
+    
+    @property
+    def rng(self) -> tuple[int,int]:
+        return self.epr[0],self.epr[1]+(1 if self.epr[0] == self.epr[1] else 0)
+    
+    def run(self):
+        cnef(self.auto_create_folder_path)
+        self.letsplay = LetsPlay(LP_PATH)
+        self.ui_result = input_episode_range(self.letsplay.get_episode_ammount(),self.letsplay.get_names())
+        if self.ui_result is not None:
+            self.lpid,self.epr = self.ui_result
+            self.lp_name = self.letsplay.get_name(self.lpid)
+            self.ep_path = self.letsplay.get_episode_path(self.lpid)
+            self.episode = Episode(self.ep_path)
+    
+    def user_workflow(self):
+        if self.ui_result is None:
+            return
+        # for i in range(*self.rng):
+        #   your code here...
+        
 def __extract_silence(filepath: str, lp: str, i: int):
     deb(f'[Analyze Silence] of ep: {i+1}')
     result = get_silence(filepath)
@@ -144,8 +165,8 @@ def extract_silence():
         
     toast_finished("Fetch Audio")
 
-def __generate_noise_profile(filepath: str):
-    pass
+def __generate_noise_profile(filepath: str, lp_name: str):
+    ffmpeg_run(SOX_AUDIO_NOISE_REDUCTION,{'__IN__': '', '__OUT__': f'{TEMP_FOLDER}{lp_name}\\noise_profiles\\'})
 
 def generate_noise_profile():
     cnef(TEMP_FOLDER)
@@ -157,10 +178,11 @@ def generate_noise_profile():
         ep_path = letsplay.get_episode_path(lp)
         
         episode = Episode(ep_path)
-        cnef(TEMP_FOLDER+lp_name)
+        cnef(f'{TEMP_FOLDER}{lp_name}\\noise_profiles\\')
         for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
-            
-            __extract_silence(episode.get_audio_mic_path(i), lp_name, i)
+            # TODO Get audio snippets
+            __generate_noise_profile()
+            #__extract_silence(episode.get_audio_mic_path(i), lp_name, i)
             
         
     toast_finished("Fetch Audio")
