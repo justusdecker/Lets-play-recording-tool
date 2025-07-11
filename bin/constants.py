@@ -137,9 +137,10 @@ FFMPEG_LOUDNESS_NORMALIZATION = [*FFMPEG_DEFAULT, '-i', '__IN__', '-af', 'loudno
 # Extract audio from a video file
 #! Will be optimized in the futere by splitting the output to two output streams
 #? Need an input path, output path & a mapping id <- this is the track you want(starts by 1)
-FFMPEG_EXTRACT = [*FFMPEG_DEFAULT, '-i', '__IN__', '-map', '0:__MAPPING__', '__OUT__']
+FFMPEG_EXTRACT = [*FFMPEG_DEFAULT, '-i', '__IN__', '-map', '0:a:0', '-c:a', 'copy', '__OUT1__', '-map', '0:a:1', '-c:a', 'copy','__OUT2__']
 
-FFMPEG_OPTIMIZED_EXTRACT = [*FFMPEG_DEFAULT, '-i', '__IN__', '-map', '0:1', '__OUT1__', '-map', '0:2', '__OUT2__']
+
+FFMPEG_OPTIMIZED_EXTRACT = [*FFMPEG_DEFAULT, '-i', '__IN__', '-map', '0:a:0', '-c:a', 'copy', '__OUT1__', '-map',  '0:a:1', '-c:a', 'copy', '__OUT2__']
 
 # Combine two audio tracks
 #? Need an input path & output path

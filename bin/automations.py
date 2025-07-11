@@ -105,7 +105,7 @@ def __fetch_audio(episode: Episode,i: int,lp_name: str):
     """
     video_path = episode.get_video_path(i)
                                 
-    t1_path, t2_path = f'{AUDIO_FOLDER}{i+1}_{lp_name}_track_mic.mp3',f'{AUDIO_FOLDER}{i+1}_{lp_name}_track_desktop.mp3'
+    t1_path, t2_path = f'{AUDIO_FOLDER}{i+1}_{lp_name}_track_mic.aac',f'{AUDIO_FOLDER}{i+1}_{lp_name}_track_desktop.aac'
     
     inf(f'Start extract tracks from {video_path}')
 
