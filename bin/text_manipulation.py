@@ -27,7 +27,8 @@ def err(text: str) -> None:
     print(color816(bold(text),31))
     
 def deb(text: str) -> None:
-    print(italic(color816(bold(text),93)))
+    feedback(FB_INFO)
+    print(italic(color816(bold(text),36)))
     
 def inf(text: str) -> None:
     feedback(FB_INFO)

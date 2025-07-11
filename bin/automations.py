@@ -25,6 +25,7 @@ from bin.data_access import (
 
 from bin.text_manipulation import (
     inf,
+    deb,
     err,
     color816
 )
@@ -99,12 +100,31 @@ def create_new_ep_file(filepath: str):
     else:
         err(ERROR_002)
 
-def __extract_silence(filepath: str, lp: str):
+
+class GenericWorkFlow:
+    def __init__(self):
+        pass
+
+def __extract_silence(filepath: str, lp: str, i: int):
+    deb(f'[Analyze Silence] of ep: {i+1}')
     result = get_silence(filepath)
-    for key in result:
+    
+    cnef(f'{TEMP_FOLDER}{lp}\\{i}\\')
+    l = len(result)
+    if l > 100: # a bunch of samples so only take ...
+        skipper = 10
+    elif l > 50:
+        skipper = 5
+    else:
+        skipper = 0
+    deb(f'[Extract Silence] of ep: {i+1}')
+    for idx,key in enumerate(result):
+        if skipper != 0:
+            if idx % skipper != 0: continue
         start, end = result[key][0],result[key][1] - result[key][0]
         if start == end: continue
-        ffmpeg_run(FFMPEG_EXPORT_SILENCE,{'__IN__': filepath,'__SS__': start,'__TO__': end,'__OUT__': f'{TEMP_FOLDER}{lp}\\{key}.mp3'})
+        
+        ffmpeg_run(FFMPEG_EXPORT_SILENCE,{'__IN__': filepath,'__SS__': start,'__TO__': end,'__OUT__': f'{TEMP_FOLDER}{lp}\\{i}\\{key}.mp3'})
 
 def extract_silence():
     cnef(TEMP_FOLDER)
@@ -116,8 +136,12 @@ def extract_silence():
         ep_path = letsplay.get_episode_path(lp)
         
         episode = Episode(ep_path)
+        cnef(TEMP_FOLDER+lp_name)
         for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
-            __extract_silence(episode.get_audio_mic_path(i), lp_name)
+            
+            __extract_silence(episode.get_audio_mic_path(i), lp_name, i)
+            
+        
     toast_finished("Fetch Audio")
 
 def get_silence(filepath: str,silence: int = -50, duration: float = 0.5) -> dict[int, tuple[float, float]]:
