@@ -19,6 +19,11 @@ def get_silence(filepath: str,silence: int = -36, duration: float = 0.5) -> list
     return {i: (data[i] , data[i+1]) for i in range(0,l,2)}
         
     #! Will not see the last one when odd
-    
-result = get_silence("C:\\Users\\Justus\\jri_data\\audio\\1_schedule_one_track_mic.aac")
+path = "C:\\Users\\Justus\\jri_data\\audio\\1_schedule_one_track_mic.aac"
+result = get_silence(path)
 print(result)
+for key in result:
+    
+    ffmpeg_run(FFPLAY_PLAY_AUDIO,{'__IN__': path,'__SS__': result['start'],'__TO__': result['end']})
+    #TODO SOX Command
+
