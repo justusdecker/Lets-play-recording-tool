@@ -99,15 +99,15 @@ def create_new_ep_file(filepath: str):
     else:
         err(ERROR_002)
 
-def __extract_silence(filepath: str):
+def __extract_silence(filepath: str, lp: str):
     result = get_silence(filepath)
     for key in result:
         start, end = result[key][0],result[key][1] - result[key][0]
         if start == end: continue
-        ffmpeg_run(FFMPEG_EXPORT_SILENCE,{'__IN__': filepath,'__SS__': start,'__TO__': end,'__OUT__': f'test\\{key}.mp3'})
+        ffmpeg_run(FFMPEG_EXPORT_SILENCE,{'__IN__': filepath,'__SS__': start,'__TO__': end,'__OUT__': f'{TEMP_FOLDER}{lp}\\{key}.mp3'})
 
 def extract_silence():
-    cnef(AUDIO_FOLDER)
+    cnef(TEMP_FOLDER)
     letsplay = LetsPlay(LP_PATH)
     res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
     if res is not None:
@@ -117,7 +117,7 @@ def extract_silence():
         
         episode = Episode(ep_path)
         for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
-            __extract_silence(episode.get_audio_mic_path(i))
+            __extract_silence(episode.get_audio_mic_path(i), lp_name)
     toast_finished("Fetch Audio")
 
 def get_silence(filepath: str,silence: int = -50, duration: float = 0.5) -> dict[int, tuple[float, float]]:
