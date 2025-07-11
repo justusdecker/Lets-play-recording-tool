@@ -144,6 +144,27 @@ def extract_silence():
         
     toast_finished("Fetch Audio")
 
+def __generate_noise_profile(filepath: str):
+    pass
+
+def generate_noise_profile():
+    cnef(TEMP_FOLDER)
+    letsplay = LetsPlay(LP_PATH)
+    res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
+    if res is not None:
+        lp,epr = res
+        lp_name = letsplay.get_name(lp)
+        ep_path = letsplay.get_episode_path(lp)
+        
+        episode = Episode(ep_path)
+        cnef(TEMP_FOLDER+lp_name)
+        for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
+            
+            __extract_silence(episode.get_audio_mic_path(i), lp_name, i)
+            
+        
+    toast_finished("Fetch Audio")
+
 def get_silence(filepath: str,silence: int = -50, duration: float = 0.5) -> dict[int, tuple[float, float]]:
     """
     Get the silence from a audiotrack

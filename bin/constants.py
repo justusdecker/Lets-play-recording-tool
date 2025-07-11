@@ -154,7 +154,9 @@ FFMPEG_AUDIO_COMBINE_TRUNCATED = [*FFMPEG_DEFAULT, '-ss' ,'00:00:00', '-to', '00
 
 FFMPEG_AUDIO_PF_LN_L = [*FFMPEG_DEFAULT, '-i', '__IN__', '-af','highpass=f=175, lowpass=f=13000, loudnorm=-15, compand=0|0:1|1:0/-3|10/-3|20/-3:0.1:0:0:0', '__OUT__']
 
-SOX_AUDIO_NOISE_REDUCTION = []
+SOX_AUDIO_NOISE_REDUCTION = ['sox', '__IN__', '-n', 'noiseprof', '__OUT__']
+
+#sox noiseaud.wav -n noiseprof noise.prof
 
 FFMPEG_VIDEO_RENDER = [*FFMPEG_DEFAULT, '-an', '-i', '__VIDEO__', '-i', '__AUDIO__', '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'copy', '__OUTPUT__']
 
