@@ -301,13 +301,12 @@ class CompareAndRenderWF(GenericWorkFlow):
     .. result_file_path::
         **AUDIO_FOLDER/**{`ep_index` + `1`}_{`name`}_final.mp3
     """
-    def __init__(self, folder, finish_message):
-        super().__init__(folder, finish_message)
+    def __init__(self):
+        super().__init__(folder=TEMP_FOLDER, finish_message="CAAR")
     def user_workflow(self):
         
         rendering_queue = []
-    
-        cnef(TEMP_FOLDER)
+
         paths = [[i, self.episode.get_audio_mic_edit2_path(i), self.episode.get_audio_desktop_path(i), self.episode.get_video_path(i)] for i in range(*self.rng)]
         AP = AudioPlayer(paths)
         AP.run()
