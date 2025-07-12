@@ -18,7 +18,8 @@ from bin.automations import (
     #fix_audio,
     #gen_thumbnail,
     compare_audio_and_render,
-    extract_silence,
+    #extract_silence,
+    GetSilenceWF,
     GenerateThumbnailWF,
     ExtractAudioWF,
     FixAudioWF,
@@ -91,7 +92,7 @@ class App:
                 case 2: #. (2) Audio Extraction
                     ExtractAudioWF()
                 case 3: #. (3) Get Silence
-                    extract_silence()
+                     GetSilenceWF()
                 case 4: #. (4) Create Noise profiles
                     extract_silence()
                 case 5: #. (5) Audio: Limiter , Loudness Normalization & Noise Reduction
