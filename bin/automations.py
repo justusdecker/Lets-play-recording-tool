@@ -12,16 +12,7 @@ from tkinter.filedialog import askdirectory
 
 LP_PATH = 'lets_plays.csv'
 
-from bin.data_access import (
-    file_read,
-    file_write,
-    csv_write,
-    cnef,
-    Episode,
-    LetsPlay,
-    EP_KEYS,
-    LP_KEYS
-)
+from bin.data_access import *
 
 from bin.text_manipulation import (
     inf,
@@ -32,26 +23,7 @@ from bin.text_manipulation import (
 
 from bin.others import binps, input_episode_range, toast_finished
 
-from bin.constants import (
-    ERROR_002,
-    ERROR_004,
-    ERROR_005,
-    ERROR_006,
-    ERROR_007,
-    AUDIO_FOLDER,
-    VIDEO_FOLDER,
-    TEMP_FOLDER,
-    FIXED_AUDIO_FOLDER,
-    THUMBNAIL_FOLDER,
-    FFMPEG_OPTIMIZED_EXTRACT,
-    FFMPEG_AUDIO_COMBINE,
-    FFMPEG_VIDEO_RENDER,
-    FFMPEG_AUDIO_PF_LN_L,
-    FFMPEG_GET_SILENCE,
-    FFMPEG_EXPORT_SILENCE,
-    SOX_AUDIO_NOISE_REDUCTION,
-    ffmpeg_run
-)
+from bin.constants import *
 
 from bin.thumbnail import ThumbnailGenerator
 
@@ -204,7 +176,15 @@ class FixAudioWF(GenericWorkFlow):
             self.episode.set_audio_mic_edit2_path(i,dest)
             self.episode.save()
             super().user_workflow()
-        
+
+#! get silence
+
+#! deploy
+
+#! compare & render
+
+#? generate noise profile
+
 def __extract_silence(filepath: str, lp: str, i: int):
     deb(f'[Analyze Silence] of ep: {i+1}')
     result = get_silence(filepath)
