@@ -21,15 +21,18 @@ from bin.text_manipulation import (
     color816
 )
 
-from bin.others import binps, input_episode_range, toast_finished
+from bin.others import binps, input_episode_range, toast_finished, binpi
 
 from bin.constants import *
 
 from bin.thumbnail import ThumbnailGenerator
 
 from os.path import isfile
+from os import listdir
 
 from bin.audio_player import AudioPlayer
+
+from bin.lprtplay import play_audio
 
 def obs_connect(ep: Episode):
     """
@@ -173,7 +176,7 @@ class FixAudioWF(GenericWorkFlow):
             
             #! ADD NEW Noise Reduction method
             
-            self.episode.set_audio_mic_edit2_path(i,dest)
+            self.episode.set_audio_mic_edit1_path(i,dest)
             self.episode.save()
             super().user_workflow()
 
@@ -376,10 +379,44 @@ class CompareAndRenderWF(GenericWorkFlow):
             self.episode.save()
         super().user_workflow()
 
-class GenerateNoiseProfile(GenericWorkFlow):
+class AudioNRWF(GenericWorkFlow):
     def __init__(self, folder, finish_message):
         super().__init__(folder=TEMP_FOLDER, finish_message='Noise Profiling')
         self.user_workflow()
     def user_workflow(self):
-        ffmpeg_run(SOX_AUDIO_NOISE_REDUCTION,{'__IN__': '', '__OUT__': f'{TEMP_FOLDER}{self.lp_name}\\noise_profiles\\'})
+        # get noise profiles
+        noise_path = f'{TEMP_FOLDER}noise\\'
+        noise_audio = listdir(noise_path)
+        SCREEN = """
+(1) Okay
+(2) Not Okay
+(0) Exit (If you messed something up)
+Select an option:
+        """
+        selected_noise_paths = []
+        for i in range(*self.rng):
+            for j in noise_audio:
+                if j.split('_')[0] == str(i):
+                    current_noise_path = f'{noise_path}{j}'
+                    play_audio(current_noise_path)
+                    ui = binpi(SCREEN)
+                    if ui == 0:
+                        err('User Interrupt')
+                    elif ui == 1:
+                        selected_noise_paths.append((j, self.episode.get_audio_mic_edit1_path(i),i))
+                        break
+                    elif ui == 2:
+                        continue
+                    else:
+                        err('User wrong input')
+        for audio, noise, i in selected_noise_paths:
+            noise_path + noise # NOISE
+            audio
+                        
+            ffmpeg_run(SOX_CREATE_NOISE_PROFILE,{'__IN__': noise, '__OUT__': f'{TEMP_FOLDER}temp.prof'})
+            output = f'{FIXED_AUDIO_FOLDER}{i}_{self.lp_name}_nr.mp3'
+            
+            ffmpeg_run(SOX_APPLY_NR,{'__IN__': audio, '__OUT__': output, '__PROF__': f'{TEMP_FOLDER}temp.prof'})
+            self.episode.set_audio_mic_edit2_path(i,output)
+        
         super().user_workflow()

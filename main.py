@@ -24,6 +24,7 @@ from bin.automations import (
     ExtractAudioWF,
     FixAudioWF,
     CompareAndRenderWF,
+    AudioNRWF,
     LP_PATH
 )
 
@@ -95,7 +96,7 @@ class App:
                 case 3: #. (3) Get Silence
                      GetSilenceWF()
                 case 4: #. (4) Create Noise profiles
-                    extract_silence()
+                    AudioNRWF()
                 case 5: #. (5) Audio: Limiter , Loudness Normalization & Noise Reduction
                     FixAudioWF()
                 case 6: #. (6) User compare audio & rendering
