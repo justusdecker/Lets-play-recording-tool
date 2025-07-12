@@ -17,12 +17,13 @@ from bin.automations import (
     #fetch_audio,
     #fix_audio,
     #gen_thumbnail,
-    compare_audio_and_render,
+    #compare_audio_and_render,
     #extract_silence,
     GetSilenceWF,
     GenerateThumbnailWF,
     ExtractAudioWF,
     FixAudioWF,
+    CompareAndRenderWF,
     LP_PATH
 )
 
@@ -98,7 +99,7 @@ class App:
                 case 5: #. (5) Audio: Limiter , Loudness Normalization & Noise Reduction
                     FixAudioWF()
                 case 6: #. (6) User compare audio & rendering
-                    compare_audio_and_render()
+                    CompareAndRenderWF()
                 case 0:
                     return
                 case _:
