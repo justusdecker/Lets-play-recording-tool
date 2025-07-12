@@ -303,6 +303,7 @@ class CompareAndRenderWF(GenericWorkFlow):
     """
     def __init__(self):
         super().__init__(folder=TEMP_FOLDER, finish_message="CAAR")
+        self.user_workflow()
     def user_workflow(self):
         
         rendering_queue = []
@@ -351,7 +352,6 @@ class CompareAndRenderWF(GenericWorkFlow):
             # writes the final_video_path in episodes so the user can get this video by deploy
             self.episode.set_final_video_path(index,final_path)
             self.episode.save()
-        toast_finished("[2/2] Video Render")   
         super().user_workflow()
 #! compare & render
 
