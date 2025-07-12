@@ -162,7 +162,7 @@ FFMPEG_VIDEO_RENDER = [*FFMPEG_DEFAULT, '-an', '-i', '__VIDEO__', '-i', '__AUDIO
 
 FFMPEG_GET_SILENCE = ['ffmpeg', '-i', '__IN__', '-af', 'silencedetect=n=__SIL__dB:d=__DUR__' ,'-f', 'null', '2>data.txt']
 
-FFMPEG_EXPORT_SILENCE = ['ffmpeg','-ss', '__SS__', '-t', '__TO__', '-i', '__IN__', '__OUT__']
+FFMPEG_EXPORT_SILENCE = ['ffmpeg','-y', '-ss', '__SS__', '-t', '__TO__', '-i', '__IN__', '__OUT__']
 #-ss 00:15:20 -t 00:00:02 -showmode 1 -loop 0 C:\Users\Justus\jri_data\temp\wfr1.mp3
 #!A quick non pro explanation about the map argument
 #
