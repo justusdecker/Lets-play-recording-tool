@@ -178,6 +178,21 @@ class FixAudioWF(GenericWorkFlow):
             super().user_workflow()
 
 class GetSilenceWF(GenericWorkFlow):
+    """
+    Get the silence from a audiotrack
+    
+    Noise is considered:
+        Silence below `silence`dB & the length of the silence must be at least `duration`.
+    
+    .. args::
+        silence : threshold in decibel
+            
+        duration : time in seconds
+
+    .. returns::
+        dict[int, tuple[float, float]]
+            {0: (`start`, `end`)...}
+    """
     def __init__(self):
         super().__init__(folder=TEMP_FOLDER, finish_message='Extract Silence')
         self.user_workflow()
@@ -186,7 +201,14 @@ class GetSilenceWF(GenericWorkFlow):
         for i in range(*self.rng): 
             deb(f'[Analyze Silence] of ep: {i+1}')
             filepath = self.episode.get_audio_mic_path(i)
-            result = get_silence(filepath)
+            
+            result = ffmpeg_run(FFMPEG_GET_SILENCE,{'__IN__':filepath, '__DUR__': -50, '__SIL__': 0.5})
+            data = []
+            for line in result.stderr.split('\n'):   
+                if line.startswith('[silencedetect'):
+                    args = line.split(']')[1].split(' ')
+                    data.append(float(args[2]))
+            result = {i: (data[i] , data[i+1]) for i in range(0,len(data),2)}
             
             cnef(f'{TEMP_FOLDER}noise')
             l = len(result)
@@ -353,7 +375,6 @@ class CompareAndRenderWF(GenericWorkFlow):
             self.episode.set_final_video_path(index,final_path)
             self.episode.save()
         super().user_workflow()
-#! compare & render
 
 #? generate noise profile
 
@@ -361,205 +382,3 @@ class CompareAndRenderWF(GenericWorkFlow):
 
 def __generate_noise_profile(filepath: str, lp_name: str):
     ffmpeg_run(SOX_AUDIO_NOISE_REDUCTION,{'__IN__': '', '__OUT__': f'{TEMP_FOLDER}{lp_name}\\noise_profiles\\'})
-
-def generate_noise_profile():
-    cnef(TEMP_FOLDER)
-    letsplay = LetsPlay(LP_PATH)
-    res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
-    if res is not None:
-        lp,epr = res
-        lp_name = letsplay.get_name(lp)
-        ep_path = letsplay.get_episode_path(lp)
-        
-        episode = Episode(ep_path)
-        cnef(f'{TEMP_FOLDER}{lp_name}\\noise_profiles\\')
-        for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
-            # TODO Get audio snippets
-            __generate_noise_profile()
-            #__extract_silence(episode.get_audio_mic_path(i), lp_name, i)
-            
-        
-    toast_finished("Fetch Audio")
-
-def get_silence(filepath: str,silence: int = -50, duration: float = 0.5) -> dict[int, tuple[float, float]]:
-    """
-    Get the silence from a audiotrack
-    
-    Noise is considered:
-        Silence below `silence`dB & the length of the silence must be at least `duration`.
-    
-    .. args::
-        silence : threshold in decibel
-            
-        duration : time in seconds
-
-    .. returns::
-        dict[int, tuple[float, float]]
-            {0: (`start`, `end`)...}
-    """
-
-    result = ffmpeg_run(FFMPEG_GET_SILENCE,{'__IN__':filepath, '__DUR__': duration, '__SIL__': silence})
-    data = []
-    for line in result.stderr.split('\n'):   
-        if line.startswith('[silencedetect'):
-            args = line.split(']')[1].split(' ')
-            data.append(float(args[2]))
-    return {i: (data[i] , data[i+1]) for i in range(0,len(data),2)}
-  
-    letsplay = LetsPlay(LP_PATH)
-    
-    res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
-    
-    if res is not None:
-        lp,epr = res
-        ep_path = letsplay.get_episode_path(lp)
-        ep = Episode(ep_path)
-
-        rendering_queue = []
-    
-        cnef(TEMP_FOLDER)
-        paths = [[i, ep.get_audio_mic_edit2_path(i), ep.get_audio_desktop_path(i), ep.get_video_path(i)] for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0))]
-        AP = AudioPlayer(paths)
-        AP.run()
-        result = AP.audio_list
-        del AP
-        for i, mic, desk, vid, vol in result:
-            tmp_audio_path = f'{TEMP_FOLDER}temp_{i+1}_audio_final.mp3'
-            inf(f'[{i}]({vol}) - {tmp_audio_path}')
-            ffmpeg_run(
-                FFMPEG_AUDIO_COMBINE,
-                {
-                    '__IN1__':mic,
-                    '__IN2__': desk,
-                    '__VOLUME1__': str(1.0),
-                    '__VOLUME2__': str(vol),
-                    '__OUT__':tmp_audio_path
-                    }
-                )
-            rendering_queue.append((vid, tmp_audio_path, i))
-        toast_finished("[1/2] Audio combine")   
-        #for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
-        #    
-        #    # Get paths
-        #    mic = ep.get_audio_mic_edit2_path(i)
-        #    desk = ep.get_audio_desktop_path(i)
-        #    vid = ep.get_video_path(i)
-        #    
-        #    inf(f'{mic} {desk}')
-        #    
-        #    
-        #    # Get the audio volume for track 2 <- will be enhanced further after 1.0 to support more than 2 tracks
-        #    AP = AudioPlayer(mic, desk)
-        #    AP.run()
-        #    volume = AP.vol
-        #    del AP
-        #    
-        #    tmp_audio_path = f'{TEMP_FOLDER}temp_{i+1}_audio_final.mp3'
-        #    
-        #    # This combines the mic & desktop audio & apply volume manipulation
-        #    ffmpeg_run(
-        #        FFMPEG_AUDIO_COMBINE,
-        #        {
-        #            '__IN1__':mic,
-        #            '__IN2__': desk,
-        #            '__VOLUME1__': str(1.0),
-        #            '__VOLUME2__': str(volume),
-        #            '__OUT__':tmp_audio_path
-        #            }
-        #        )
-        #    rendering_queue.append((vid, tmp_audio_path, i))
-        #
-        path_ending = f'_{letsplay.get_game_name(lp)}_final.mp4'
-        cnef(VIDEO_FOLDER)
-        for video, audio, index in rendering_queue:
-            # Here: rendering my lord :D
-            final_path = f'{VIDEO_FOLDER}{index+1}{path_ending}'
-            inf(f'{video}\n{audio}\n{index}')
-            inf(str({
-                    '__VIDEO__': video,
-                    '__AUDIO__': audio,
-                    '__OUTPUT__': final_path
-                }))
-            ffmpeg_run(
-                FFMPEG_VIDEO_RENDER,
-                {
-                    '__VIDEO__': video,
-                    '__AUDIO__': audio,
-                    '__OUTPUT__': final_path
-                }
-            )
-
-            # writes the final_video_path in episodes so the user can get this video by deploy
-            ep.set_final_video_path(index,final_path)
-            ep.save()
-        toast_finished("[2/2] Video Render")   
-
-    """
-    Deploying is for moving lets play data & files to other folders & drives
-    
-    This will create on the top one markdown file that contains essential data for the videoupload
-    
-    The user only need to copy & paste
-    """
-    
-    
-    #getting lets play info
-    # name etc. to write it in the header: follows below
-    name = lp.get_name(id)
-    description = lp.get_description(id)
-    game_name = lp.get_game_name(id)
-    eps = ep
-    
-    # Creating Markdown Header
-    MD = f"""
-# {name}
-## {game_name}
-
-```
-{description}
-```
-
-### {eps.row} episodes
-    """
-    #ask the user about the target destination for the files
-    # will print an error & return if empty
-    dst = askdirectory() + '/'
-    if not dst:
-        err(ERROR_006)
-        return
-    
-    
-    for i in range(eps.row):
-        """
-        In this loop we do a lot:
-        - fetch the data from the episode
-            We only need the final_video_path
-            And the thumbnail_path
-        - We create two new paths thats the destinations for video & thumbnail
-        - Copying the files over to the new location
-        - Append essential data to the Markdown
-        """
-        
-        
-        video_path = eps.get_final_video_path(i)
-        thumbnail_path = eps.get_thumbnail_path(i)
-        
-        if not isfile(video_path) or not isfile(thumbnail_path):
-            err(ERROR_007)
-            return
-        vpe = video_path.split('.')[1]
-        
-        new_video_path = f'{dst}{i+1}_video_{game_name}.{vpe}'
-        new_thumbnail_path = f'{dst}{i+1}_thumbnail_{game_name}.png'
-        
-        copyfile(video_path,new_video_path)
-        copyfile(thumbnail_path,new_thumbnail_path)
-        
-        MD += f"""
-#### {i}
-- {new_video_path.split('/')[-1]}
-- ![IMAGE]({new_thumbnail_path.split('/')[-1]})
-        """
-    
-    #At the end we write all stuff in MD to disk
-    file_write('test.md',MD)
