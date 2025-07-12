@@ -376,9 +376,10 @@ class CompareAndRenderWF(GenericWorkFlow):
             self.episode.save()
         super().user_workflow()
 
-#? generate noise profile
-
-
-
-def __generate_noise_profile(filepath: str, lp_name: str):
-    ffmpeg_run(SOX_AUDIO_NOISE_REDUCTION,{'__IN__': '', '__OUT__': f'{TEMP_FOLDER}{lp_name}\\noise_profiles\\'})
+class GenerateNoiseProfile(GenericWorkFlow):
+    def __init__(self, folder, finish_message):
+        super().__init__(folder=TEMP_FOLDER, finish_message='Noise Profiling')
+        self.user_workflow()
+    def user_workflow(self):
+        ffmpeg_run(SOX_AUDIO_NOISE_REDUCTION,{'__IN__': '', '__OUT__': f'{TEMP_FOLDER}{self.lp_name}\\noise_profiles\\'})
+        super().user_workflow()
