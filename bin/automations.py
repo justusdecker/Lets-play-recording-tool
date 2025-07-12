@@ -173,6 +173,37 @@ class ExtractAudioWF(GenericWorkFlow):
             
             self.episode.save()
         super().user_workflow()
+     
+class FixAudioWF(GenericWorkFlow):
+    """
+    Fixes your mic recording
+    
+    Uses filters:
+    - Lowpass
+    - Highpass
+    - Loudness Normalize
+    - Limiter
+    - & later noise reduction
+    """
+    def __init__(self):
+        super().__init__(folder = FIXED_AUDIO_FOLDER, finish_message = 'Audio Fix')
+        self.user_workflow()
+    def user_workflow(self):
+        
+        for i in range(*self.rng): 
+            audio_mic_path = self.episode.get_audio_mic_path(i)
+            
+            dest = f'{FIXED_AUDIO_FOLDER}{i+1}_{self.lp_name}_track_desktop_fixed.mp3'
+            
+            cnef(TEMP_FOLDER)
+            
+            ffmpeg_run(FFMPEG_AUDIO_PF_LN_L,{'__IN__': audio_mic_path,'__OUT__':f'{TEMP_FOLDER}wfr1.mp3'})
+            
+            #! ADD NEW Noise Reduction method
+            
+            self.episode.set_audio_mic_edit2_path(i,dest)
+            self.episode.save()
+            super().user_workflow()
         
 def __extract_silence(filepath: str, lp: str, i: int):
     deb(f'[Analyze Silence] of ep: {i+1}')
@@ -260,49 +291,6 @@ def get_silence(filepath: str,silence: int = -50, duration: float = 0.5) -> dict
             data.append(float(args[2]))
     return {i: (data[i] , data[i+1]) for i in range(0,len(data),2)}
   
-def __fix_audio(episode: Episode,i: int, lp_name):
-    """
-    Take the audio & uses limiter & loudness normalization to fix the most issues in the mic record.
-    
-    It fixes only the first Track.
-    """
-    audio_mic_path = episode.get_audio_mic_path(i)
-    audio_desktop_path = episode.get_audio_desktop_path(i)
-    
-    t1_path, t2_path = f'{FIXED_AUDIO_FOLDER}{i+1}_{lp_name}_track_mic_ln.mp3',f'{FIXED_AUDIO_FOLDER}{i+1}_{lp_name}_track_desktop_ln.mp3'
-    
-    t3_path, t4_path = f'{FIXED_AUDIO_FOLDER}{i+1}_{lp_name}_track_mic_fixed.mp3',f'{FIXED_AUDIO_FOLDER}{i+1}_{lp_name}_track_desktop_fixed.mp3'
-    cnef(TEMP_FOLDER)
-    
-    ffmpeg_run(FFMPEG_AUDIO_PF_LN_L,{'__IN__': audio_mic_path,'__OUT__':f'{TEMP_FOLDER}wfr1.mp3'})
-    
-    #! ADD NEW Noise Reduction method
-    
-    #inf(f'Start noise reduction track 1 to {t3_path}. This may take a while, dont close this app!')
-    #ffmpeg_run(FFMPEG_AUDIO_NOISE_REDUCTION,{'__IN__': audio_mic_path,'__OUT__':f'{TEMP_FOLDER}wfr1.mp3'})
-    
-    #inf(f'Start normalize track 1 to {t1_path}. This may take a while, dont close this app!') 
-    #ffmpeg_run(FFMPEG_LOUDNESS_NORMALIZATION,{'__IN__': f'{TEMP_FOLDER}wfr1.mp3','__OUT__':f'{TEMP_FOLDER}wfr2.mp3'})
-    
-    #inf(f'Start limit track 1 to {t3_path}. This may take a while, dont close this app!')
-    #ffmpeg_run(FFMPEG_LIMITER,{'__IN__': f'{TEMP_FOLDER}wfr2.mp3','__OUT__':t3_path})
-    
-    episode.set_audio_mic_edit2_path(i,t3_path)
-    episode.save()
-
-def fix_audio():
-    cnef(FIXED_AUDIO_FOLDER)
-    letsplay = LetsPlay(LP_PATH)
-    res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
-    if res is not None:
-        lp,epr = res
-        lp_name = letsplay.get_name(lp)
-        ep_path = letsplay.get_episode_path(lp)
-        ep = Episode(ep_path)
-        for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
-            __fix_audio(ep,i,lp_name)
-    toast_finished("Fix Audio")        
-
 def compare_audio_and_render():
     """
     CAAR
@@ -407,7 +395,6 @@ def compare_audio_and_render():
             ep.set_final_video_path(index,final_path)
             ep.save()
         toast_finished("[2/2] Video Render")   
-
 
 def deploy(lp: LetsPlay, ep: Episode,id: int):
     """

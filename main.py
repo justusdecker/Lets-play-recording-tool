@@ -15,12 +15,13 @@ from bin.automations import (
     obs_connect,
     create_new_lp_file,
     #fetch_audio,
-    fix_audio,
+    #fix_audio,
     #gen_thumbnail,
     compare_audio_and_render,
     extract_silence,
     GenerateThumbnailWF,
     ExtractAudioWF,
+    FixAudioWF,
     LP_PATH
 )
 
@@ -94,7 +95,7 @@ class App:
                 case 4: #. (4) Create Noise profiles
                     extract_silence()
                 case 5: #. (5) Audio: Limiter , Loudness Normalization & Noise Reduction
-                    fix_audio()
+                    FixAudioWF()
                 case 6: #. (6) User compare audio & rendering
                     compare_audio_and_render()
                 case 0:
