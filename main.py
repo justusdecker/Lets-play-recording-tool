@@ -19,8 +19,8 @@ from bin.automations import (
     #gen_thumbnail,
     compare_audio_and_render,
     extract_silence,
-    GenerateThumbnail,
-    ExtractAudio,
+    GenerateThumbnailWF,
+    ExtractAudioWF,
     LP_PATH
 )
 
@@ -86,9 +86,9 @@ class App:
         while self.isrunning:
             match binpi(menu(MENU_AUTOMATION_OPTIONS,'automations',exit_name='Back')):
                 case 1: #. (1) Thumbnail Generator
-                    GenerateThumbnail()
+                    GenerateThumbnailWF()
                 case 2: #. (2) Audio Extraction
-                    ExtractAudio()
+                    ExtractAudioWF()
                 case 3: #. (3) Get Silence
                     extract_silence()
                 case 4: #. (4) Create Noise profiles

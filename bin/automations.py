@@ -125,7 +125,7 @@ class GenericWorkFlow:
     def user_workflow(self):
         toast_finished(self.finish_message)
 
-class GenerateThumbnail(GenericWorkFlow):
+class GenerateThumbnailWF(GenericWorkFlow):
     """
     Generating Thumbnails based on the thumbnail automation data
     """
@@ -151,7 +151,10 @@ class GenerateThumbnail(GenericWorkFlow):
             self.episode.save()
         super().user_workflow()
 
-class ExtractAudio(GenericWorkFlow):
+class ExtractAudioWF(GenericWorkFlow):
+    """
+    Audio Extraction from Video
+    """
     def __init__(self):
         super().__init__(folder=AUDIO_FOLDER, finish_message='Audio extraction finished')
         self.user_workflow()
@@ -256,38 +259,7 @@ def get_silence(filepath: str,silence: int = -50, duration: float = 0.5) -> dict
             args = line.split(']')[1].split(' ')
             data.append(float(args[2]))
     return {i: (data[i] , data[i+1]) for i in range(0,len(data),2)}
-
-#def __fetch_audio(episode: Episode,i: int,lp_name: str):
-#    """
-#    Get 2 Track from the original video file & save them & their path
-#    """
-#    video_path = episode.get_video_path(i)
-#                                
-#    t1_path, t2_path = f'{AUDIO_FOLDER}{i+1}_{lp_name}_track_mic.aac',f'{AUDIO_FOLDER}{i+1}_{lp_name}_track_desktop.aac'
-#    
-#    inf(f'Start extract tracks from {video_path}')
-#
-#    ffmpeg_run(FFMPEG_OPTIMIZED_EXTRACT,{'__IN__':video_path,'__OUT1__':t1_path, '__OUT2__':t2_path})
-#
-#    episode.set_audio_mic_path(i,t1_path)
-#    episode.set_audio_desktop_path(i,t2_path)
-#    
-#    episode.save()
-#
-#def fetch_audio():
-#    cnef(AUDIO_FOLDER)
-#    letsplay = LetsPlay(LP_PATH)
-#    res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
-#    if res is not None:
-#        lp,epr = res
-#        lp_name = letsplay.get_name(lp)
-#        ep_path = letsplay.get_episode_path(lp)
-#        
-#        episode = Episode(ep_path)
-#        for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
-#            __fetch_audio(episode,i,lp_name)
-#    toast_finished("Fetch Audio")
-    
+  
 def __fix_audio(episode: Episode,i: int, lp_name):
     """
     Take the audio & uses limiter & loudness normalization to fix the most issues in the mic record.
