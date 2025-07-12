@@ -14,12 +14,13 @@ from bin.others import binpi
 from bin.automations import (
     obs_connect,
     create_new_lp_file,
-    fetch_audio,
+    #fetch_audio,
     fix_audio,
     #gen_thumbnail,
     compare_audio_and_render,
     extract_silence,
     GenerateThumbnail,
+    ExtractAudio,
     LP_PATH
 )
 
@@ -87,7 +88,7 @@ class App:
                 case 1: #. (1) Thumbnail Generator
                     GenerateThumbnail()
                 case 2: #. (2) Audio Extraction
-                    fetch_audio()
+                    ExtractAudio()
                 case 3: #. (3) Get Silence
                     extract_silence()
                 case 4: #. (4) Create Noise profiles

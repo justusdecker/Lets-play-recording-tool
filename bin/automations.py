@@ -129,8 +129,8 @@ class GenerateThumbnail(GenericWorkFlow):
     """
     Generating Thumbnails based on the thumbnail automation data
     """
-    def __init__(self, folder = THUMBNAIL_FOLDER, finish_message = 'Thumbnail Generation'):
-        super().__init__(folder, finish_message)
+    def __init__(self):
+        super().__init__(folder = THUMBNAIL_FOLDER, finish_message = 'Thumbnail Generation')
         self.user_workflow()
         
     def user_workflow(self):
@@ -150,7 +150,27 @@ class GenerateThumbnail(GenericWorkFlow):
             self.episode.set_thumbnail_path(i,p)
             self.episode.save()
         super().user_workflow()
+
+class ExtractAudio(GenericWorkFlow):
+    def __init__(self):
+        super().__init__(folder=AUDIO_FOLDER, finish_message='Audio extraction finished')
+        self.user_workflow()
+    def user_workflow(self):
+        for i in range(*self.rng): 
+            video_path = self.episode.get_video_path(i)
+                                
+            t1_path, t2_path = f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_track_mic.aac',f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_track_desktop.aac'
             
+            inf(f'Start extract tracks from {video_path}')
+
+            ffmpeg_run(FFMPEG_OPTIMIZED_EXTRACT,{'__IN__':video_path,'__OUT1__':t1_path, '__OUT2__':t2_path})
+
+            self.episode.set_audio_mic_path(i,t1_path)
+            self.episode.set_audio_desktop_path(i,t2_path)
+            
+            self.episode.save()
+        super().user_workflow()
+        
 def __extract_silence(filepath: str, lp: str, i: int):
     deb(f'[Analyze Silence] of ep: {i+1}')
     result = get_silence(filepath)
@@ -237,36 +257,36 @@ def get_silence(filepath: str,silence: int = -50, duration: float = 0.5) -> dict
             data.append(float(args[2]))
     return {i: (data[i] , data[i+1]) for i in range(0,len(data),2)}
 
-def __fetch_audio(episode: Episode,i: int,lp_name: str):
-    """
-    Get 2 Track from the original video file & save them & their path
-    """
-    video_path = episode.get_video_path(i)
-                                
-    t1_path, t2_path = f'{AUDIO_FOLDER}{i+1}_{lp_name}_track_mic.aac',f'{AUDIO_FOLDER}{i+1}_{lp_name}_track_desktop.aac'
-    
-    inf(f'Start extract tracks from {video_path}')
-
-    ffmpeg_run(FFMPEG_OPTIMIZED_EXTRACT,{'__IN__':video_path,'__OUT1__':t1_path, '__OUT2__':t2_path})
-
-    episode.set_audio_mic_path(i,t1_path)
-    episode.set_audio_desktop_path(i,t2_path)
-    
-    episode.save()
-
-def fetch_audio():
-    cnef(AUDIO_FOLDER)
-    letsplay = LetsPlay(LP_PATH)
-    res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
-    if res is not None:
-        lp,epr = res
-        lp_name = letsplay.get_name(lp)
-        ep_path = letsplay.get_episode_path(lp)
-        
-        episode = Episode(ep_path)
-        for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
-            __fetch_audio(episode,i,lp_name)
-    toast_finished("Fetch Audio")
+#def __fetch_audio(episode: Episode,i: int,lp_name: str):
+#    """
+#    Get 2 Track from the original video file & save them & their path
+#    """
+#    video_path = episode.get_video_path(i)
+#                                
+#    t1_path, t2_path = f'{AUDIO_FOLDER}{i+1}_{lp_name}_track_mic.aac',f'{AUDIO_FOLDER}{i+1}_{lp_name}_track_desktop.aac'
+#    
+#    inf(f'Start extract tracks from {video_path}')
+#
+#    ffmpeg_run(FFMPEG_OPTIMIZED_EXTRACT,{'__IN__':video_path,'__OUT1__':t1_path, '__OUT2__':t2_path})
+#
+#    episode.set_audio_mic_path(i,t1_path)
+#    episode.set_audio_desktop_path(i,t2_path)
+#    
+#    episode.save()
+#
+#def fetch_audio():
+#    cnef(AUDIO_FOLDER)
+#    letsplay = LetsPlay(LP_PATH)
+#    res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
+#    if res is not None:
+#        lp,epr = res
+#        lp_name = letsplay.get_name(lp)
+#        ep_path = letsplay.get_episode_path(lp)
+#        
+#        episode = Episode(ep_path)
+#        for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
+#            __fetch_audio(episode,i,lp_name)
+#    toast_finished("Fetch Audio")
     
 def __fix_audio(episode: Episode,i: int, lp_name):
     """
@@ -310,47 +330,7 @@ def fix_audio():
         for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
             __fix_audio(ep,i,lp_name)
     toast_finished("Fix Audio")        
-#def __gen_thumbnail(
-#    thumbnail_gen: ThumbnailGenerator,
-#    lp_name: str,
-#    episode: Episode,
-#    i: int,
-#    tad: dict):
-#    """
-#    Generate a thumbnail
-#    Based on the given tad elements will be placed.
-#    Saves the image & their path
-#    """
-#
-#    video_path = episode.get_video_path(i)
-#    if not tad:
-#        return
-#    p = f'{THUMBNAIL_FOLDER}{i+1}_{lp_name}_thumbnail.png'
-#    thumbnail_gen.generate(
-#        str(i+1),
-#        video_path,
-#        tad,
-#        f'{THUMBNAIL_FOLDER}{i+1}_{lp_name}_thumbnail.png'
-#        )
-#    episode.set_thumbnail_path(i,p)
-#    episode.save()
-#
-#def gen_thumbnail():
-#    letsplay = LetsPlay(LP_PATH)
-#    TG = ThumbnailGenerator()
-#    cnef(THUMBNAIL_FOLDER)
-#    res = input_episode_range(letsplay.get_episode_ammount(),letsplay.get_names())
-#    if res is not None:
-#        lp,epr = res
-#        lp_name = letsplay.get_name(lp)
-#        ep_path = letsplay.get_episode_path(lp)
-#        eps = Episode(ep_path)
-#        inf('Please answer the filedialog')
-#        #tad = aofn(filetypes=[['JSON','*.json']])
-#        tad = letsplay.get_tad_path(lp)
-#        for i in range(epr[0],epr[1]+(1 if epr[0] == epr[1] else 0)): # This is a fix for the unneccessary long approch if else bs
-#            __gen_thumbnail(TG,lp_name,eps,i,tad)
-#    toast_finished("Generate Thumbnail")
+
 def compare_audio_and_render():
     """
     CAAR
