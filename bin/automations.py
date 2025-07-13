@@ -333,11 +333,13 @@ class SendToAudacityWF(GenericWorkFlow):
         super().__init__(folder = THUMBNAIL_FOLDER, finish_message = 'Audacity Send')
         self.user_workflow()
     def user_workflow(self):
-        
-        for i in range(*self.rng): 
-            filepath = self.episode.get_audio_mic_edit1_path(i)
-            do_command(f'Import2: filename="{filepath}"')
-            #! The Noise Reduction is not automated
+        ui = binpi('Do you want to send data to Audacity?\n(1)Yes\n(2)No')
+        if ui == 1:
+            for i in range(*self.rng): 
+                filepath = self.episode.get_audio_mic_edit1_path(i)
+                do_command(f'Import2: filename="{filepath}"')
+                #! The Noise Reduction is not automated
+        toast_finished('Finished Importing')
         results_path = askdirectory() + '/'
         files = listdir(results_path)
         if self.episode.row != len(files):
@@ -346,3 +348,4 @@ class SendToAudacityWF(GenericWorkFlow):
         for file in files:
             ep = int(file.split('_-')[1].split('.')[0]) - 1
             self.episode.set_audio_mic_edit2_path(ep)
+        super().user_workflow()
