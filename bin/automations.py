@@ -199,6 +199,7 @@ class GetSilenceWF(GenericWorkFlow):
             {0: (`start`, `end`)...}
     """
     def __init__(self):
+        raise DeprecationWarning()
         super().__init__(folder=TEMP_FOLDER, finish_message='Extract Silence')
         self.user_workflow()
     def user_workflow(self):
@@ -381,8 +382,27 @@ class CompareAndRenderWF(GenericWorkFlow):
             self.episode.save()
         super().user_workflow()
 
+class SendToAudacityWF(GenericWorkFlow):
+    """
+    Generating Thumbnails based on the thumbnail automation data
+    """
+    def __init__(self):
+        super().__init__(folder = THUMBNAIL_FOLDER, finish_message = 'Audacity Send')
+        self.user_workflow()
+    def user_workflow(self):
+        
+        for i in range(*self.rng): 
+            #TODO send audio to audacity
+            
+            pass
+        #! The user must set the filenames like: {idx}.mp3
+        #! Open folder & set the edit micpath 2
+        #! If len(files) != ep_amm throw error
+        
+
 class AudioNRWF(GenericWorkFlow):
     def __init__(self):
+        raise DeprecationWarning()
         super().__init__(folder=f'{TEMP_FOLDER}noise\\', finish_message='Noise Reduction')
         self.user_workflow()
     def user_workflow(self):
