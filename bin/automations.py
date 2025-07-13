@@ -1,7 +1,7 @@
 __author__ = "Justus Decker"
 __copyright__ = "(c) 2024 - 2025 , The LPRT Project"
 __credits__ = []
-__version__ = "0.5.13"
+__version__ = "0.9.39"
 __maintainer__ = "Justus Decker"
 __email__ = "justus.d2025@gmail.com"
 __status__ = "Testing"
@@ -20,6 +20,8 @@ from bin.text_manipulation import (
     err,
     color816
 )
+
+from shutil import copyfile
 
 from bin.others import binps, input_episode_range, toast_finished, binpi
 
@@ -426,6 +428,9 @@ Select an option:
                             play_audio('cutted.mp3')
                             s_ui = input('Okay[1]\nNot Okay[2]\nNext[3]\n')
                             if s_ui == '1':
+                                copyfile('cutted.mp3',j)
+                                selected_noise_paths.append((j, self.episode.get_audio_mic_edit1_path(i),i))
+                                # if okay then: copy existing noise to temp & rewrite file with FFMPEG_CUT
                                 break
                         if s_ui == '3':
                             continue
@@ -436,10 +441,12 @@ Select an option:
             noise_path + noise # NOISE
             audio
                         
-            ffmpeg_run(SOX_CREATE_NOISE_PROFILE,{'__IN__': noise, '__OUT__': f'{TEMP_FOLDER}temp.prof'})
+            res = ffmpeg_run(SOX_CREATE_NOISE_PROFILE,{'__IN__': noise, '__OUT__': f'{TEMP_FOLDER}temp.prof'})
+            print(res)
             output = f'{FIXED_AUDIO_FOLDER}{i}_{self.lp_name}_nr.mp3'
             
-            ffmpeg_run(SOX_APPLY_NR,{'__IN__': audio, '__OUT__': output, '__PROF__': f'{TEMP_FOLDER}temp.prof'})
+            res = ffmpeg_run(SOX_APPLY_NR,{'__IN__': audio, '__OUT__': output, '__PROF__': f'{TEMP_FOLDER}temp.prof'})
+            print(res)
             self.episode.set_audio_mic_edit2_path(i,output)
         
         super().user_workflow()
