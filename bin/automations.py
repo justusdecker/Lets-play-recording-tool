@@ -34,10 +34,6 @@ from os import listdir
 
 from bin.audio_player import AudioPlayer
 
-from bin.lprtplay import play_audio, stop_audio
-
-from moviepy.audio.io.AudioFileClip import AudioFileClip
-
 from bin.audacity_pipeline import do_command
 
 def obs_connect(ep: Episode):
@@ -86,7 +82,6 @@ def create_new_ep_file(filepath: str):
         csv_write(filepath,[[binps(f'{key}: ') for key in EP_KEYS]])
     else:
         err(ERROR_002)
-
 
 class GenericWorkFlow:
     def __init__(self, folder: str, finish_message: str):
@@ -186,64 +181,6 @@ class FixAudioWF(GenericWorkFlow):
             
             self.episode.set_audio_mic_edit1_path(i,dest)
             self.episode.save()
-        super().user_workflow()
-
-class GetSilenceWF(GenericWorkFlow):
-    """
-    Get the silence from a audiotrack
-    
-    Noise is considered:
-        Silence below `silence`dB & the length of the silence must be at least `duration`.
-    
-    .. args::
-        silence : threshold in decibel
-            
-        duration : time in seconds
-
-    .. returns::
-        dict[int, tuple[float, float]]
-            {0: (`start`, `end`)...}
-    """
-    def __init__(self):
-        raise DeprecationWarning()
-        super().__init__(folder=TEMP_FOLDER, finish_message='Extract Silence')
-        self.user_workflow()
-    def user_workflow(self):
-        cnef(TEMP_FOLDER+self.lp_name)
-        for i in range(*self.rng): 
-            deb(f'[Analyze Silence] of ep: {i+1}')
-            filepath = self.episode.get_audio_mic_path(i)
-            
-            result = ffmpeg_run(FFMPEG_GET_SILENCE,{'__IN__':filepath, '__DUR__': 0.5, '__SIL__': -50})
-            data = []
-            for line in result.stderr.split('\n'):   
-                if line.startswith('[silencedetect'):
-                    args = line.split(']')[1].split(' ')
-                    data.append(float(args[2]))
-            result = {i: (data[i] , data[i+1]) for i in range(0,len(data),2)}
-
-            cnef(f'{TEMP_FOLDER}noise')
-            l = len(result)
-            if l > 100: # a bunch of samples so only take ...
-                skipper = 10
-            elif l > 50:
-                skipper = 5
-            else:
-                skipper = 0
-            deb(f'[Extract Silence] of ep: {i+1}')
-            for idx,key in enumerate(result):
-                if skipper != 0:
-                    if idx % skipper != 0: continue
-                start, end = result[key][0],result[key][1] - result[key][0]
-                if start == end: continue
-                
-                ffmpeg_run(
-                    FFMPEG_EXPORT_SILENCE,
-                    {
-                        '__IN__': filepath,
-                        '__SS__': start,
-                        '__TO__': end,
-                        '__OUT__': f'{TEMP_FOLDER}noise\\{i}_{idx}_{self.lp_name}.mp3'})
         super().user_workflow()
 
 class DeployWF(GenericWorkFlow):
@@ -409,74 +346,3 @@ class SendToAudacityWF(GenericWorkFlow):
         for file in files:
             ep = int(file.split('_-')[1].split('.')[0]) - 1
             self.episode.set_audio_mic_edit2_path(ep)
-        
-
-class AudioNRWF(GenericWorkFlow):
-    def __init__(self):
-        raise DeprecationWarning()
-        super().__init__(folder=f'{TEMP_FOLDER}noise\\', finish_message='Noise Reduction')
-        self.user_workflow()
-    def user_workflow(self):
-        # get noise profiles
-        noise_path = f'{TEMP_FOLDER}noise\\'
-        noise_audio = listdir(noise_path)
-        SCREEN = """
-(1) Okay
-(2) Not Okay
-(3) Cut
-(0) Exit (If you messed something up)
-Select an option:
-        """
-        selected_noise_paths = []
-        for i in range(*self.rng):
-            for j in noise_audio:
-                if j.split('_')[0] == str(i):
-                    current_noise_path = f'{noise_path}{j}'
-                    dur = AudioFileClip(current_noise_path).duration
-                            
-                    play_audio(current_noise_path)
-                    
-                    ui = binpi(SCREEN)
-                    if ui == 0:
-                        err('User Interrupt')
-                    elif ui == 1:
-                        selected_noise_paths.append((j, self.episode.get_audio_mic_edit1_path(i),i))
-                        break
-                    elif ui == 2:
-                        continue
-                    elif ui == 3:
-                        while 1:
-                            print(f'Length: {dur}s')
-                            start, end = binps('starttime: '), binps('endtime: ')
-                            if not start:
-                                start = '00:00:00'
-                            if not end:
-                                end = f'{dur}'
-                                
-                            ffmpeg_run(FFMPEG_CUT,{'__IN__':current_noise_path,'__START__': start,'__END__':end, '__OUT__':'cutted.mp3'})
-                            play_audio('cutted.mp3')
-                            s_ui = input('Okay[1]\nNot Okay[2]\nNext[3]\n')
-                            if s_ui == '1':
-                                copyfile('cutted.mp3',j)
-                                selected_noise_paths.append((j, self.episode.get_audio_mic_edit1_path(i),i))
-                                # if okay then: copy existing noise to temp & rewrite file with FFMPEG_CUT
-                                break
-                        if s_ui == '3':
-                            continue
-                        break
-                    else:
-                        err('User wrong input')
-        stop_audio()
-        for audio, noise, i in selected_noise_paths:
-            
-            #TODO Add Audacity Pipeline
-                        
-            res = ffmpeg_run(SOX_CREATE_NOISE_PROFILE,{'__IN__': noise, '__OUT__': f'{TEMP_FOLDER}temp.prof'})
-            print(res)
-            output = f'{FIXED_AUDIO_FOLDER}{i}_{self.lp_name}_nr.wav'
-            
-            res = ffmpeg_run(SOX_APPLY_NR,{'__IN__': noise, '__OUT__': output, '__PROF__': f'{TEMP_FOLDER}temp.prof'})
-            print(res)
-            self.episode.set_audio_mic_edit2_path(i,output)
-        
-        super().user_workflow()
