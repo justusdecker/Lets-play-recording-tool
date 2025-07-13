@@ -205,14 +205,14 @@ class GetSilenceWF(GenericWorkFlow):
             deb(f'[Analyze Silence] of ep: {i+1}')
             filepath = self.episode.get_audio_mic_path(i)
             
-            result = ffmpeg_run(FFMPEG_GET_SILENCE,{'__IN__':filepath, '__DUR__': -50, '__SIL__': 0.5})
+            result = ffmpeg_run(FFMPEG_GET_SILENCE,{'__IN__':filepath, '__DUR__': 0.5, '__SIL__': -50})
             data = []
             for line in result.stderr.split('\n'):   
                 if line.startswith('[silencedetect'):
                     args = line.split(']')[1].split(' ')
                     data.append(float(args[2]))
             result = {i: (data[i] , data[i+1]) for i in range(0,len(data),2)}
-            
+
             cnef(f'{TEMP_FOLDER}noise')
             l = len(result)
             if l > 100: # a bunch of samples so only take ...
@@ -234,7 +234,7 @@ class GetSilenceWF(GenericWorkFlow):
                         '__IN__': filepath,
                         '__SS__': start,
                         '__TO__': end,
-                        '__OUT__': f'{TEMP_FOLDER}noise\\{i}_{key}_{self.lp_name}.mp3'})
+                        '__OUT__': f'{TEMP_FOLDER}noise\\{i}_{idx}_{self.lp_name}.mp3'})
         super().user_workflow()
 
 class DeployWF(GenericWorkFlow):
@@ -380,8 +380,8 @@ class CompareAndRenderWF(GenericWorkFlow):
         super().user_workflow()
 
 class AudioNRWF(GenericWorkFlow):
-    def __init__(self, folder, finish_message):
-        super().__init__(folder=TEMP_FOLDER, finish_message='Noise Profiling')
+    def __init__(self):
+        super().__init__(folder=f'{TEMP_FOLDER}noise\\', finish_message='Noise Reduction')
         self.user_workflow()
     def user_workflow(self):
         # get noise profiles
