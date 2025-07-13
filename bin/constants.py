@@ -115,12 +115,7 @@ ERROR_007 = f'[E007] file does not exist. {ewf}'
 from subprocess import run, CREATE_NO_WINDOW
 
 ## FFMPEG COMMANDS
-
-"""
-
-FFMPEG_CONVERT_AUDIO_TYPE:
-
-"""
+# View documentation > FFMPEG
 
 FFMPEG_DEFAULT = ['ffmpeg', '-v', 'quiet', '-stats' , '-loglevel', 'error', '-y']
 
@@ -131,30 +126,24 @@ FFMPEG_EXTRACT = [*FFMPEG_DEFAULT, '-i', '__IN__', '-map', '0:a:0', '-c:a', 'cop
 
 FFMPEG_OPTIMIZED_EXTRACT = [*FFMPEG_DEFAULT, '-i', '__IN__', '-map', '0:a:0', '-c:a', 'copy', '__OUT1__', '-map',  '0:a:1', '-c:a', 'copy', '__OUT2__']
 
-FFMPEG_AUDIO_COMBINE = [*FFMPEG_DEFAULT, '-i', "__IN1__", '-i', "__IN2__", '-filter_complex', '[0:0]volume=__VOLUME1__[a];[1:0]volume=__VOLUME2__[b];[a][b]amix=inputs=2:duration=longest', "__OUT__"]# '-ac', '2', amerge=inputs=2
+FFMPEG_AUDIO_COMBINE = [*FFMPEG_DEFAULT, '-i', "__IN1__", '-i', "__IN2__", '-filter_complex', '[0:0]volume=__VOLUME1__[a];[1:0]volume=__VOLUME2__[b];[a][b]amix=inputs=2:duration=longest', "__OUT__"]
 
-# Combine two audio tracks
-#? Need an input path & output path
 FFMPEG_AUDIO_COMBINE_TRUNCATED = [*FFMPEG_DEFAULT, '-ss' ,'00:00:00', '-to', '00:02:00', '-i', "__IN1__", '-ss' ,'00:00:00', '-to', '00:02:00', '-i', "__IN2__", '-filter_complex', '[0:0]volume=__VOLUME1__[a];[1:0]volume=__VOLUME2__[b];[a][b]amix=inputs=2:duration=longest', "__OUT__"] # '-ac', '2', amerge=inputs=2
-
-#FFMPEG_AUDIO_NOISE_REDUCTION = [*FFMPEG_DEFAULT, '-i', '__IN__', '-af', 'anlmdn', '__OUT__']
 
 FFMPEG_AUDIO_PF_LN_L = [*FFMPEG_DEFAULT, '-i', '__IN__', '-af','highpass=f=175, lowpass=f=13000, loudnorm=-15, compand=0|0:1|1:0/-3|10/-3|20/-3:0.1:0:0:0', '__OUT__']
 
-SOX_CREATE_NOISE_PROFILE = ['sox', '__IN__', '-n', 'noiseprof', '__OUT__']
-
-SOX_APPLY_NR = ['sox', '__IN__', '__OUT__', 'noisered', '__PROF__', '0.1']
-
-#sox noiseaud.wav -n noiseprof noise.prof
-
 FFMPEG_VIDEO_RENDER = [*FFMPEG_DEFAULT, '-an', '-i', '__VIDEO__', '-i', '__AUDIO__', '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'copy', '__OUTPUT__']
 
-FFMPEG_GET_SILENCE = ['ffmpeg', '-i',  '__IN__', '-af', 'silencedetect=n=__SIL__dB:d=__DUR__' ,'-f', 'null', '2>data.txt']
-
-FFMPEG_EXPORT_SILENCE = ['ffmpeg','-y', '-ss', '__SS__', '-t', '__TO__', '-i', '__IN__', '__OUT__']
-#-ss 00:15:20 -t 00:00:02 -showmode 1 -loop 0 C:\Users\Justus\jri_data\temp\wfr1.mp3
-
 FFMPEG_CUT = [*FFMPEG_DEFAULT, '-ss' ,'__START__', '-to', '__END__', '-i', "__IN__", '-c', 'copy', "__OUT__"] # '-ac', '2', amerge=inputs=2
+
+
+#- Currently total broken. Will be worked later on
+#SOX_CREATE_NOISE_PROFILE = ['sox', '__IN__', '-n', 'noiseprof', '__OUT__']
+#SOX_APPLY_NR = ['sox', '__IN__', '__OUT__', 'noisered', '__PROF__', '0.1']
+#FFMPEG_GET_SILENCE = ['ffmpeg', '-i',  '__IN__', '-af', 'silencedetect=n=__SIL__dB:d=__DUR__' ,'-f', 'null', '2>data.txt']
+#FFMPEG_EXPORT_SILENCE = ['ffmpeg','-y', '-ss', '__SS__', '-t', '__TO__', '-i', '__IN__', '__OUT__']
+
+
 
 
 #!A quick non pro explanation about the map argument

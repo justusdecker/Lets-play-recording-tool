@@ -276,3 +276,33 @@ Combine two audio tracks & apply volume changes
 |VOLUME1|`float`|Volume for Mic|
 |VOLUME2|`float`|Volume for Desktop|
 |OUT|`str`|Output Filepath|
+
+### FFMPEG_AUDIO_COMBINE_TRUNCATED
+
+Combine two audio tracks & apply volume changes.
+Cutted from `00:00:00` to `00:02:00`.
+
+|key|type|desc|
+|---|---|---|
+|IN1|`str`|Input Filepath Mic|
+|IN2|`str`|Input Filepath Desktop|
+|VOLUME1|`float`|Volume for Mic|
+|VOLUME2|`float`|Volume for Desktop|
+|OUT|`str`|Output Filepath|
+
+### FFMPEG_AUDIO_PF_LN_L
+
+Uses:
+- Highpass Filter : **13000**
+- Lowpass Filter : **175**
+- Loudness Normalization: **-15dB**
+- Limiter : **0|0:1|1:0/-3|10/-3|20/-3:0.1:0:0:0** (Don't ask. I dont know what this means but it works)
+
+to fix the Mic Audio Track
+
+|key|type|desc|
+|---|---|---|
+|IN|`str`|Input Filepath|
+|OUT|`str`|Output Filepath|
+
+### FFMPEG_VIDEO_RENDER
