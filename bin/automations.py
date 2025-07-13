@@ -38,6 +38,8 @@ from bin.lprtplay import play_audio, stop_audio
 
 from moviepy.audio.io.AudioFileClip import AudioFileClip
 
+from bin.audacity_pipeline import do_command
+
 def obs_connect(ep: Episode):
     """
     Connects to the obs_ws API
@@ -392,9 +394,10 @@ class SendToAudacityWF(GenericWorkFlow):
     def user_workflow(self):
         
         for i in range(*self.rng): 
-            #TODO send audio to audacity
-            
-            pass
+            filepath = self.episode.get_audio_mic_edit1_path(i)
+            do_command(f'Import2: {filepath}')
+            #! The Noise Reduction is not automated
+        
         #! The user must set the filenames like: {idx}.mp3
         #! Open folder & set the edit micpath 2
         #! If len(files) != ep_amm throw error
