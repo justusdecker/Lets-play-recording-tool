@@ -34,6 +34,8 @@ from bin.audio_player import AudioPlayer
 
 from bin.lprtplay import play_audio
 
+from moviepy.audio.io.AudioFileClip import AudioFileClip
+
 def obs_connect(ep: Episode):
     """
     Connects to the obs_ws API
@@ -398,8 +400,10 @@ Select an option:
             for j in noise_audio:
                 if j.split('_')[0] == str(i):
                     current_noise_path = f'{noise_path}{j}'
-                    md = play_audio(current_noise_path)
-                    print(md)
+                    dur = AudioFileClip(current_noise_path).duration
+                            
+                    play_audio(current_noise_path)
+                    print(dur)
                     ui = binpi(SCREEN)
                     if ui == 0:
                         err('User Interrupt')
@@ -408,6 +412,16 @@ Select an option:
                         break
                     elif ui == 2:
                         continue
+                    elif ui == 3:
+                        while 1:
+                            
+                            start, end = binps('starttime: '), binps('endtime: ')
+                            if not start:
+                                start = '00:00:00'
+                            if not end:
+                                end = '00:00:00'
+                                
+                            ffmpeg_run(FFMPEG_CUT,{'__IN__':current_noise_path,'__START__': start,'__END__':end})
                     else:
                         err('User wrong input')
         for audio, noise, i in selected_noise_paths:

@@ -8,7 +8,6 @@ def play_audio(filepath: str):
     
     music.load(filepath)
     music.play(loops=-1)
-    return music.get_metadata(filepath)
 
 
 
