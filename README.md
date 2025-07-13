@@ -47,37 +47,6 @@ Windows 10 64bit [R9 5900X, 32GB 3200Mhz, GTX 1660 6GB]
 [![OBS](https://img.shields.io/badge/obsstudio-302E31?style=flat-square&logo=obsstudio&logoColor=ffffff)](https://obsproject.com/de)
 Audacity
 
-### How2
-
-#### Connecting LPRT to the Audacity Pipeline
-
-1. To enable the Audacity pipeline:
-2. Open Audacity
-3. Edit > Settings > Module > enable mod-script-pipe
-4. Reopen Audacity & Reopen LPRT(If open)
-
-#### Connecting LPRT to OBS
-
-1. Open OBS
-2. Click on the `tools` dropdown
-3. Click on `Websocket Server-Settings`
-4. Activate `Websocket Server`
-5. Set your `port`
-6. Activate `authentification`!
-7. Generate a new password
-8. Click on show `Connection information`
-9. Copy `ip`, `port` & `password`
-10. Create a file named `settings.json` in `root`, copy & paste the lines below & replace your information with the placeholders!
-    ```json
-    {
-        "ip": "{your ip}",
-        "port": "{your port}",
-        "pw": "{your password}",
-        "timeout": 1
-    }
-    ```
-11. Now you are ready to go!
-
 ## Workflow (Production)
 
 ### Record
@@ -98,8 +67,6 @@ To record you need connection to the OBS Webserver!
 ### Audio Fetch
 
 ### Audio Fix
-
-
 
 ### Audio Compare
 
