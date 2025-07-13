@@ -172,13 +172,11 @@ class FixAudioWF(GenericWorkFlow):
         for i in range(*self.rng): 
             audio_mic_path = self.episode.get_audio_mic_path(i)
             
-            dest = f'{FIXED_AUDIO_FOLDER}{i+1}_{self.lp_name}_track_desktop_fixed.mp3'
+            dest = f'{FIXED_AUDIO_FOLDER}{i+1}_{self.lp_name}_track_desktop_fixed.wav'
             
             cnef(TEMP_FOLDER)
             
-            ffmpeg_run(FFMPEG_AUDIO_PF_LN_L,{'__IN__': audio_mic_path,'__OUT__':f'{TEMP_FOLDER}wfr1.mp3'})
-            
-            #! ADD NEW Noise Reduction method
+            ffmpeg_run(FFMPEG_AUDIO_PF_LN_L,{'__IN__': audio_mic_path,'__OUT__':dest})
             
             self.episode.set_audio_mic_edit1_path(i,dest)
             self.episode.save()
@@ -443,9 +441,9 @@ Select an option:
                         
             res = ffmpeg_run(SOX_CREATE_NOISE_PROFILE,{'__IN__': noise, '__OUT__': f'{TEMP_FOLDER}temp.prof'})
             print(res)
-            output = f'{FIXED_AUDIO_FOLDER}{i}_{self.lp_name}_nr.mp3'
+            output = f'{FIXED_AUDIO_FOLDER}{i}_{self.lp_name}_nr.wav'
             
-            res = ffmpeg_run(SOX_APPLY_NR,{'__IN__': audio, '__OUT__': output, '__PROF__': f'{TEMP_FOLDER}temp.prof'})
+            res = ffmpeg_run(SOX_APPLY_NR,{'__IN__': noise, '__OUT__': output, '__PROF__': f'{TEMP_FOLDER}temp.prof'})
             print(res)
             self.episode.set_audio_mic_edit2_path(i,output)
         

@@ -9,7 +9,9 @@ def play_audio(filepath: str):
     music.load(filepath)
     music.play(loops=-1)
 
-
+def stop_audio():
+    if music.get_busy():
+        music.stop()
 
 """
 Pseudo code:
