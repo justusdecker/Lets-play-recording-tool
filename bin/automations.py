@@ -34,7 +34,7 @@ from os import listdir
 
 from bin.audio_player import AudioPlayer
 
-from bin.lprtplay import play_audio
+from bin.lprtplay import play_audio, stop_audio
 
 from moviepy.audio.io.AudioFileClip import AudioFileClip
 
@@ -435,9 +435,10 @@ Select an option:
                         break
                     else:
                         err('User wrong input')
+        stop_audio()
         for audio, noise, i in selected_noise_paths:
-            noise_path + noise # NOISE
-            audio
+            
+            #TODO Add Audacity Pipeline
                         
             res = ffmpeg_run(SOX_CREATE_NOISE_PROFILE,{'__IN__': noise, '__OUT__': f'{TEMP_FOLDER}temp.prof'})
             print(res)

@@ -116,26 +116,17 @@ from subprocess import run, CREATE_NO_WINDOW
 
 ## FFMPEG COMMANDS
 
+"""
+
+FFMPEG_CONVERT_AUDIO_TYPE:
+
+"""
+
 FFMPEG_DEFAULT = ['ffmpeg', '-v', 'quiet', '-stats' , '-loglevel', 'error', '-y']
 
-# Simply change the ending of a file to convert it. So .mp3 -> .wav
-#? Need an input path & output path
 FFMPEG_CONVERT_AUDIO_TYPE = [*FFMPEG_DEFAULT, '-i', '__IN__', '__OUT__']
 
-# A simple way to get rid of some unnesseccary frequencys & some noises.
-# Works in most cases with default settings.
-#! Must be enhanced in the future
-#? Need an input path & output path
-
-limiter = 'compand=0|0:1|1:0/-3|10/-3|20/-3:0.1:0:0:0'
-#FFMPEG_LIMITER = [*FFMPEG_DEFAULT, '-i', '__IN__', '-af', limiter, '__OUT__']
-
-# Normalizes audio to -15 decibel
-#? Need an input path & output path
-#FFMPEG_LOUDNESS_NORMALIZATION = [*FFMPEG_DEFAULT, '-i', '__IN__', '-af', 'loudnorm=-15', '__OUT__']
-
 # Extract audio from a video file
-#! Will be optimized in the futere by splitting the output to two output streams
 #? Need an input path, output path & a mapping id <- this is the track you want(starts by 1)
 FFMPEG_EXTRACT = [*FFMPEG_DEFAULT, '-i', '__IN__', '-map', '0:a:0', '-c:a', 'copy', '__OUT1__', '-map', '0:a:1', '-c:a', 'copy','__OUT2__']
 
@@ -156,13 +147,13 @@ FFMPEG_AUDIO_PF_LN_L = [*FFMPEG_DEFAULT, '-i', '__IN__', '-af','highpass=f=175, 
 
 SOX_CREATE_NOISE_PROFILE = ['sox', '__IN__', '-n', 'noiseprof', '__OUT__']
 
-SOX_APPLY_NR = ['sox', '__IN__', '__OUT__', 'noisered', '__PROF__', '0.15']
+SOX_APPLY_NR = ['sox', '__IN__', '__OUT__', 'noisered', '__PROF__', '0.1']
 
 #sox noiseaud.wav -n noiseprof noise.prof
 
 FFMPEG_VIDEO_RENDER = [*FFMPEG_DEFAULT, '-an', '-i', '__VIDEO__', '-i', '__AUDIO__', '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'copy', '__OUTPUT__']
 
-FFMPEG_GET_SILENCE = ['ffmpeg', '-i', '__IN__', '-af', 'silencedetect=n=__SIL__dB:d=__DUR__' ,'-f', 'null', '2>data.txt']
+FFMPEG_GET_SILENCE = ['ffmpeg', '-i',  '__IN__', '-af', 'silencedetect=n=__SIL__dB:d=__DUR__' ,'-f', 'null', '2>data.txt']
 
 FFMPEG_EXPORT_SILENCE = ['ffmpeg','-y', '-ss', '__SS__', '-t', '__TO__', '-i', '__IN__', '__OUT__']
 #-ss 00:15:20 -t 00:00:02 -showmode 1 -loop 0 C:\Users\Justus\jri_data\temp\wfr1.mp3

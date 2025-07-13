@@ -232,3 +232,35 @@ The text is the third index. You can define:
 |ol_color|`tuple` or `list` cont. **4** `int`|
 |size|`int`|
 
+## FFMPEG & SOX
+
+replacers are named like: __ `value` __
+
+### FFMPEG_DEFAULT
+
+comes before the most commands
+- Contains 'ffmpeg'
+- This will be reduce terminal output
+- Overwrites Files by default
+- Has no replacers
+
+### FFMPEG_CONVERT_AUDIO_TYPE
+
+Converts Audio based on suffix like: 
+`test.mp3` to `test.wav`
+
+|key|type|desc|
+|---|---|---|
+|IN|`str`|Input Filepath|
+|OUT|`str`|Output Filepath|
+
+### FFMPEG_EXTRACT
+An extremly fast ffmpeg command to extract 2 audio track from a video.
+> [!NOTE]
+> This Method is only ultra fast when you have the right type: `aac`, `mp3` etc.
+
+|key|type|desc|
+|---|---|---|
+|IN|`str`|Input Filepath|
+|OUT1|`str`|Output Filepath|
+|OUT2|`str`|Output Filepath|
