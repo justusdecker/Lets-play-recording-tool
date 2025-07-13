@@ -15,6 +15,8 @@ Easy access & edit your data using a text-editor or Excel-like apps
 
 Work in progress(pre alpha)
 
+
+
 - [x] Terminal Stuff(No practical usage! Only command inputs etc.)
 - [x] Recording(Saving Data etc.)
 - [x] Automation(Thumbnails)
@@ -32,3 +34,9 @@ Work in progress(pre alpha)
 > 
 > Some bugs can lead to data loss. **BE CAREFUL!**
 
+The 0.10 update will be the first "Official" one.
+
+This update contains all stuff to make this tool run on any pc
+- Bug fixes
+- Path problems
+- etc.
