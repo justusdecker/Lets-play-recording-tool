@@ -306,3 +306,11 @@ to fix the Mic Audio Track
 |OUT|`str`|Output Filepath|
 
 ### FFMPEG_VIDEO_RENDER
+
+A ultra fast command to combine: mic, desktop & video.
+
+|key|type|desc|
+|---|---|---|
+|VIDEO|`str`|Input Filepath|
+|AUDIO|`str`|Input Filepath combined audio|
+|OUTPUT|`str`|Output Filepath|

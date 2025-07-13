@@ -123,7 +123,6 @@ FFMPEG_CONVERT_AUDIO_TYPE = [*FFMPEG_DEFAULT, '-i', '__IN__', '__OUT__']
 
 FFMPEG_EXTRACT = [*FFMPEG_DEFAULT, '-i', '__IN__', '-map', '0:a:0', '-c:a', 'copy', '__OUT1__', '-map', '0:a:1', '-c:a', 'copy','__OUT2__']
 
-
 FFMPEG_OPTIMIZED_EXTRACT = [*FFMPEG_DEFAULT, '-i', '__IN__', '-map', '0:a:0', '-c:a', 'copy', '__OUT1__', '-map',  '0:a:1', '-c:a', 'copy', '__OUT2__']
 
 FFMPEG_AUDIO_COMBINE = [*FFMPEG_DEFAULT, '-i', "__IN1__", '-i', "__IN2__", '-filter_complex', '[0:0]volume=__VOLUME1__[a];[1:0]volume=__VOLUME2__[b];[a][b]amix=inputs=2:duration=longest', "__OUT__"]
@@ -134,7 +133,7 @@ FFMPEG_AUDIO_PF_LN_L = [*FFMPEG_DEFAULT, '-i', '__IN__', '-af','highpass=f=175, 
 
 FFMPEG_VIDEO_RENDER = [*FFMPEG_DEFAULT, '-an', '-i', '__VIDEO__', '-i', '__AUDIO__', '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'copy', '__OUTPUT__']
 
-FFMPEG_CUT = [*FFMPEG_DEFAULT, '-ss' ,'__START__', '-to', '__END__', '-i', "__IN__", '-c', 'copy', "__OUT__"] # '-ac', '2', amerge=inputs=2
+
 
 
 #- Currently total broken. Will be worked later on
@@ -142,21 +141,7 @@ FFMPEG_CUT = [*FFMPEG_DEFAULT, '-ss' ,'__START__', '-to', '__END__', '-i', "__IN
 #SOX_APPLY_NR = ['sox', '__IN__', '__OUT__', 'noisered', '__PROF__', '0.1']
 #FFMPEG_GET_SILENCE = ['ffmpeg', '-i',  '__IN__', '-af', 'silencedetect=n=__SIL__dB:d=__DUR__' ,'-f', 'null', '2>data.txt']
 #FFMPEG_EXPORT_SILENCE = ['ffmpeg','-y', '-ss', '__SS__', '-t', '__TO__', '-i', '__IN__', '__OUT__']
-
-
-
-
-#!A quick non pro explanation about the map argument
-#
-#? when you split the argument by ':' you get two values:
-#
-#. the first one is the file identifier ( so if have two files input you can map 0:? and 1:? to the output)
-#. the second is the stream identifier:
-#+      here you can use:
-#+          a       audio stream
-#+          v       video stream
-#+          0-1234  the stream you want(audio and video i guess?)
-
+#FFMPEG_CUT = [*FFMPEG_DEFAULT, '-ss' ,'__START__', '-to', '__END__', '-i', "__IN__", '-c', 'copy', "__OUT__"] # '-ac', '2', amerge=inputs=2
 
 def ffmpeg_build(cmd: list[str], replacer: dict[str,str]):
     """
