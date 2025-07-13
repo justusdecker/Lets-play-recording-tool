@@ -165,5 +165,5 @@ def ffmpeg_run(cmd: list[list], replacer: dict[str,str]):
     
     shell= True is compatible with limiter compand
     """
-    
-    return run(ffmpeg_build(cmd,replacer), CREATE_NO_WINDOW, capture_output=True, text=True)
+    run(ffmpeg_build(cmd,replacer), CREATE_NO_WINDOW,)
+    #return run(ffmpeg_build(cmd,replacer), CREATE_NO_WINDOW, capture_output=True, text=True)

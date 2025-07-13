@@ -164,7 +164,6 @@ class FixAudioWF(GenericWorkFlow):
     - Highpass
     - Loudness Normalize
     - Limiter
-    - & later noise reduction
     """
     def __init__(self):
         super().__init__(folder = FIXED_AUDIO_FOLDER, finish_message = 'Audio Fix')
