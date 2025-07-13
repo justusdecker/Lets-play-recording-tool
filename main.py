@@ -93,13 +93,11 @@ class App:
                     GenerateThumbnailWF()
                 case 2: #. (2) Audio Extraction
                     ExtractAudioWF()
-                case 3: #. (3) Get Silence
-                     GetSilenceWF()
-                case 4: #. (4) Create Noise profiles
-                    AudioNRWF()
-                case 5: #. (5) Audio: Limiter , Loudness Normalization & Noise Reduction
+                case 3: #. Audio: Limiter , Loudness Normalization & Noise Reduction
                     FixAudioWF()
-                case 6: #. (6) User compare audio & rendering
+                case 4: #. Audacity
+                    pass
+                case 5: #. (6) User compare audio & rendering
                     CompareAndRenderWF()
                 case 0:
                     return
