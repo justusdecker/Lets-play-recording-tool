@@ -14,17 +14,10 @@ from bin.others import binpi
 from bin.automations import (
     obs_connect,
     create_new_lp_file,
-    #fetch_audio,
-    #fix_audio,
-    #gen_thumbnail,
-    #compare_audio_and_render,
-    #extract_silence,
-    GetSilenceWF,
     GenerateThumbnailWF,
     ExtractAudioWF,
     FixAudioWF,
     CompareAndRenderWF,
-    AudioNRWF,
     SendToAudacityWF,
     LP_PATH
 )
