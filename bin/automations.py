@@ -398,7 +398,8 @@ Select an option:
             for j in noise_audio:
                 if j.split('_')[0] == str(i):
                     current_noise_path = f'{noise_path}{j}'
-                    play_audio(current_noise_path)
+                    md = play_audio(current_noise_path)
+                    print(md)
                     ui = binpi(SCREEN)
                     if ui == 0:
                         err('User Interrupt')
