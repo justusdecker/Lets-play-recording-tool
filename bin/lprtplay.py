@@ -12,18 +12,3 @@ def play_audio(filepath: str):
 def stop_audio():
     if music.get_busy():
         music.stop()
-
-"""
-Pseudo code:
-
-For noise in episode_noises:
-    play_audio noise
-    user input:
-        ok  -> set the noise_file -> next episode
-        not okay -> next audio noise -> Break Workflow if no audio existing anymore (later)
-At the end:
-
-For noise in okay_noise:
-    sox create noise_profile with noise
-    sox apply noise_profile
-"""

@@ -47,6 +47,9 @@ def obs_connect(ep: Episode):
     Runs until the connection breaks up or a keyboard interrupt happens
     """
     OBSO = OBSObserver()
+    if OBSO.failed:
+        err('Settings File must exist!')
+        return
     if not OBSO.isconnected:
         err(ERROR_004)
     while OBSO.isconnected:
@@ -56,6 +59,8 @@ def obs_connect(ep: Episode):
         except KeyboardInterrupt:
             err(ERROR_005)
             break
+        except:
+            err('Unexpected Error happened')
 
 def create_new_lp_file():
     """
