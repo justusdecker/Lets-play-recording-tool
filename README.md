@@ -20,7 +20,7 @@ Work in progress(pre alpha)
 - [x] Automation(Audio Fix)
   - [x] Volume Comare & Set
   - [x] Loudness Normalization
-  - [x] Noise Reduction
+  - [ ] Noise Reduction
 - [x] Automation(Combine Video & Audio)
 - [ ] Deploy
 - [ ] Distribute(COMING SOON!)
@@ -35,9 +35,48 @@ Work in progress(pre alpha)
 > [!NOTE]
 > I tested this app only on my own computer.
 >
-> More testing comes in the 0.9 update
+> More testing comes in the 0.10 update
 
 Windows 10 64bit [R9 5900X, 32GB 3200Mhz, GTX 1660 6GB]
+
+> [!IMPORTANT]
+> All of the programs are needed to fully function!
+
+
+[![FFMPEG](https://img.shields.io/badge/FFMPEG-007808?style=flat-square&logo=ffmpeg&logoColor=ffffff)](https://ffmpeg.org/)
+[![OBS](https://img.shields.io/badge/obsstudio-302E31?style=flat-square&logo=obsstudio&logoColor=ffffff)](https://obsproject.com/de)
+Audacity
+
+### How2
+
+#### Connecting LPRT to the Audacity Pipeline
+
+1. To enable the Audacity pipeline:
+2. Open Audacity
+3. Edit > Settings > Module > enable mod-script-pipe
+4. Reopen Audacity & Reopen LPRT(If open)
+
+#### Connecting LPRT to OBS
+
+1. Open OBS
+2. Click on the `tools` dropdown
+3. Click on `Websocket Server-Settings`
+4. Activate `Websocket Server`
+5. Set your `port`
+6. Activate `authentification`!
+7. Generate a new password
+8. Click on show `Connection information`
+9. Copy `ip`, `port` & `password`
+10. Create a file named `settings.json` in `root`, copy & paste the lines below & replace your information with the placeholders!
+    ```json
+    {
+        "ip": "{your ip}",
+        "port": "{your port}",
+        "pw": "{your password}",
+        "timeout": 1
+    }
+    ```
+11. Now you are ready to go!
 
 ## Workflow (Production)
 
@@ -60,12 +99,7 @@ To record you need connection to the OBS Webserver!
 
 ### Audio Fix
 
-### Audacity
 
-1. To enable the Audacity pipeline:
-2. Open Audacity
-3. Edit > Settings > Module > enable mod-script-pipe
-4. Reopen Audacity & Reopen LPRT(If open)
 
 ### Audio Compare
 
@@ -81,38 +115,6 @@ You only need to:
 > Rendering is currently not avaiable because some features like peak normalization cannot be automated without a significant performance impact.
 
 Rendering will moved to resolve again.
-
-## Programs you need
-
-> [!IMPORTANT]
-> All of the programs are needed to fully function!
-https://ffmpeg.org/
-
-
-[![FFMPEG](https://img.shields.io/badge/FFMPEG-007808?style=flat-square&logo=ffmpeg&logoColor=ffffff)](https://ffmpeg.org/)
-[![OBS](https://img.shields.io/badge/obsstudio-302E31?style=flat-square&logo=obsstudio&logoColor=ffffff)](https://obsproject.com/de)
-
-#### Connecting LPRT to OBS
-
-1. Open OBS
-2. Click on the `tools` dropdown
-3. Click on `Websocket Server-Settings`
-4. Activate `Websocket Server`
-5. Set your `port`
-6. Activate `authentification`!
-7. Generate a new password
-8. Click on show `Connection information`
-9. Copy `ip`, `port` & `password`
-10. Create a file named `settings.json` in `root`, copy & paste the lines below & replace your information with the placeholders!
-    ```json
-    {
-        "ip": "{your ip}",
-        "port": {your port},
-        "pw": "{your password}",
-        "timeout": 1
-    }
-    ```
-11. Now you are ready to go!
 
 #### Troubleshooting
 
