@@ -174,7 +174,7 @@ class FixAudioWF(GenericWorkFlow):
         for i in range(*self.rng): 
             audio_mic_path = self.episode.get_audio_mic_path(i)
             
-            dest = f'{FIXED_AUDIO_FOLDER}{i+1}_{self.lp_name}_track_desktop_fixed.wav'
+            dest = f'{FIXED_AUDIO_FOLDER}{i+1}_{self.lp_name}_track_mic_fixed.aac'
             
             cnef(TEMP_FOLDER)
             
@@ -182,7 +182,7 @@ class FixAudioWF(GenericWorkFlow):
             
             self.episode.set_audio_mic_edit1_path(i,dest)
             self.episode.save()
-            super().user_workflow()
+        super().user_workflow()
 
 class GetSilenceWF(GenericWorkFlow):
     """
@@ -395,7 +395,7 @@ class SendToAudacityWF(GenericWorkFlow):
         
         for i in range(*self.rng): 
             filepath = self.episode.get_audio_mic_edit1_path(i)
-            do_command(f'Import2: {filepath}')
+            do_command(f'Import2: filename="{filepath}"')
             #! The Noise Reduction is not automated
         results_path = askdirectory() + '/'
         files = listdir(results_path)
