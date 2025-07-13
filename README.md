@@ -60,6 +60,13 @@ To record you need connection to the OBS Webserver!
 
 ### Audio Fix
 
+### Audacity
+
+1. To enable the Audacity pipeline:
+2. Open Audacity
+3. Edit > Settings > Module > enable mod-script-pipe
+4. Reopen Audacity & Reopen LPRT(If open)
+
 ### Audio Compare
 
 Audio comparing is mostly automated. 
@@ -74,22 +81,6 @@ You only need to:
 > Rendering is currently not avaiable because some features like peak normalization cannot be automated without a significant performance impact.
 
 Rendering will moved to resolve again.
-
-### In Resolve
-
-Import all needed videos LPRT will automatically create a new timeline for each episode.
-
-For each Episode you need todo:
-
-1. Select a timeline
-2. Select the audio track
-3. Press H + ENTER (This will normalize your audio to -1db)
-4. Go to the "Deliver" page
-5. Set the location(You only need to select the complete filepath one time, after that your only need to increase the episode number) My preset is {episode_number}_{letsplay_name}.mp4
-6. Restrict bitrate to 15000 - 20000.
-7. Add to render queue
-
-If you appended all videos click "Render all"
 
 ## Programs you need
 

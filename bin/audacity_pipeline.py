@@ -6,6 +6,14 @@ __maintainer__ = "Justus Decker"
 __email__ = "justus.d2025@gmail.com"
 __status__ = "Production"
 
+"""
+To enable the Audacity pipeline:
+Open Audacity
+Edit > Settings > Module > enable mod-script-pipe
+Reopen Audacity & Reopen LPRT(If open)
+"""
+
+
 from os.path import exists
 class AudacityPipelineError(Exception):
     pass

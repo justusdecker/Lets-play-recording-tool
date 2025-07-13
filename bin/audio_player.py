@@ -43,8 +43,6 @@ from pygame import (
 
 from os.path import isfile
 
-from subprocess import run, CREATE_NO_WINDOW
-
 from bin.constants import ffmpeg_run,FFMPEG_AUDIO_COMBINE_TRUNCATED
 
 
