@@ -232,7 +232,7 @@ The text is the third index. You can define:
 |ol_color|`tuple` or `list` cont. **4** `int`|
 |size|`int`|
 
-## FFMPEG & SOX
+## FFMPEG
 
 replacers are named like: __ `value` __
 
@@ -257,10 +257,22 @@ Converts Audio based on suffix like:
 ### FFMPEG_EXTRACT
 An extremly fast ffmpeg command to extract 2 audio track from a video.
 > [!NOTE]
-> This Method is only ultra fast when you have the right type: `aac`, `mp3` etc.
+> This Method is only ultra fast when you have the right audio type: `aac`, `mp3` etc.
 
 |key|type|desc|
 |---|---|---|
 |IN|`str`|Input Filepath|
-|OUT1|`str`|Output Filepath|
-|OUT2|`str`|Output Filepath|
+|OUT1|`str`|Output Filepath Mic|
+|OUT2|`str`|Output Filepath Desktop|
+
+### FFMPEG_AUDIO_COMBINE
+
+Combine two audio tracks & apply volume changes
+
+|key|type|desc|
+|---|---|---|
+|IN1|`str`|Input Filepath Mic|
+|IN2|`str`|Input Filepath Desktop|
+|VOLUME1|`float`|Volume for Mic|
+|VOLUME2|`float`|Volume for Desktop|
+|OUT|`str`|Output Filepath|
