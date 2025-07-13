@@ -19,7 +19,6 @@ class OBSObserver:
     def __init__(self):
         self.failed = False
         if not isfile('settings.json'):
-            
             self.failed = True
             return
         
