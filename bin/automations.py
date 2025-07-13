@@ -392,6 +392,7 @@ class AudioNRWF(GenericWorkFlow):
         SCREEN = """
 (1) Okay
 (2) Not Okay
+(3) Cut
 (0) Exit (If you messed something up)
 Select an option:
         """
@@ -403,7 +404,7 @@ Select an option:
                     dur = AudioFileClip(current_noise_path).duration
                             
                     play_audio(current_noise_path)
-                    print(dur)
+                    
                     ui = binpi(SCREEN)
                     if ui == 0:
                         err('User Interrupt')
@@ -414,14 +415,21 @@ Select an option:
                         continue
                     elif ui == 3:
                         while 1:
-                            
+                            print(f'Length: {dur}s')
                             start, end = binps('starttime: '), binps('endtime: ')
                             if not start:
                                 start = '00:00:00'
                             if not end:
-                                end = '00:00:00'
+                                end = f'{dur}'
                                 
-                            ffmpeg_run(FFMPEG_CUT,{'__IN__':current_noise_path,'__START__': start,'__END__':end})
+                            ffmpeg_run(FFMPEG_CUT,{'__IN__':current_noise_path,'__START__': start,'__END__':end, '__OUT__':'cutted.mp3'})
+                            play_audio('cutted.mp3')
+                            s_ui = input('Okay[1]\nNot Okay[2]\nNext[3]\n')
+                            if s_ui == '1':
+                                break
+                        if s_ui == '3':
+                            continue
+                        break
                     else:
                         err('User wrong input')
         for audio, noise, i in selected_noise_paths:
