@@ -234,7 +234,18 @@ The text is the third index. You can define:
 
 ## FFMPEG
 
+### Replacers
 replacers are named like: __ `value` __
+
+This keys will be replaced(in `ffmpeg_build`):
+
+```json
+{
+    "__IN__" : video_path,
+    "__OUT1__" : audio_mic_path,
+    "__OUT2__" : audio_desk_path
+}
+```
 
 ### FFMPEG_DEFAULT
 
