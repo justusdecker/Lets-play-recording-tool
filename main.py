@@ -25,6 +25,7 @@ from bin.automations import (
     FixAudioWF,
     CompareAndRenderWF,
     AudioNRWF,
+    SendToAudacityWF,
     LP_PATH
 )
 
@@ -96,7 +97,7 @@ class App:
                 case 3: #. Audio: Limiter , Loudness Normalization & Noise Reduction
                     FixAudioWF()
                 case 4: #. Audacity
-                    pass
+                    SendToAudacityWF()
                 case 5: #. (6) User compare audio & rendering
                     CompareAndRenderWF()
                 case 0:

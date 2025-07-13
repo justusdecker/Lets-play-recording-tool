@@ -397,10 +397,14 @@ class SendToAudacityWF(GenericWorkFlow):
             filepath = self.episode.get_audio_mic_edit1_path(i)
             do_command(f'Import2: {filepath}')
             #! The Noise Reduction is not automated
-        
-        #! The user must set the filenames like: {idx}.mp3
-        #! Open folder & set the edit micpath 2
-        #! If len(files) != ep_amm throw error
+        results_path = askdirectory() + '/'
+        files = listdir(results_path)
+        if self.episode.row != len(files):
+            err('Did you miss some episodes?')
+            return
+        for file in files:
+            ep = int(file.split('_-')[1].split('.')[0]) - 1
+            self.episode.set_audio_mic_edit2_path(ep)
         
 
 class AudioNRWF(GenericWorkFlow):

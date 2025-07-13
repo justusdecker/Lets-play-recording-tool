@@ -1,5 +1,4 @@
 from os.path import exists
-
 class AudacityPipelineError(Exception):
     pass
 
