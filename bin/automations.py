@@ -125,16 +125,30 @@ class GenerateThumbnailWF(GenericWorkFlow):
                 return
             p = f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
             if ui == 1:
-                while 1:
-                    TG.generate(
-                        str(i+1),
-                        video_path,
-                        tad,
-                        f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
-                        )
-                    ok = binpi('Did you want to check each thumbnail\n[1]Yes\n[2]No\n')
-                    if ok == 1:
-                        break
+                if isfile(f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'):
+                    ifs = binpi(f'Did you want to overwrite thumbnail[{i+1}]?\n[1]Yes\n[2]No\n')
+                    if ifs == 1:
+                        while 1:
+                            TG.generate(
+                                str(i+1),
+                                video_path,
+                                tad,
+                                f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
+                                )
+                            ok = binpi('Okay\n[1]Yes\n[2]No\n')
+                            if ok == 1:
+                                break
+                else:
+                    while 1:
+                            TG.generate(
+                                str(i+1),
+                                video_path,
+                                tad,
+                                f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
+                                )
+                            ok = binpi('Okay\n[1]Yes\n[2]No\n')
+                            if ok == 1:
+                                break
             else:
                 TG.generate(
                         str(i+1),
