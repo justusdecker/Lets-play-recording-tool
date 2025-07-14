@@ -34,7 +34,7 @@ from os import listdir
 
 from bin.audio_player import AudioPlayer
 
-from bin.audacity_pipeline import do_command
+from bin.audacity_pipeline import do_command, create_pipe
 
 def obs_connect(ep: Episode):
     """
@@ -335,6 +335,7 @@ class SendToAudacityWF(GenericWorkFlow):
     def user_workflow(self):
         ui = binpi('Do you want to send data to Audacity?\n(1)Yes\n(2)No')
         if ui == 1:
+            create_pipe()
             for i in range(*self.rng): 
                 filepath = self.episode.get_audio_mic_edit1_path(i)
                 do_command(f'Import2: filename="{filepath}"')
@@ -347,5 +348,10 @@ class SendToAudacityWF(GenericWorkFlow):
             return
         for file in files:
             ep = int(file.split('_-')[1].split('.')[0]) - 1
-            self.episode.set_audio_mic_edit2_path(ep)
+            old = results_path + file
+            new = old.split('.')[0] + '.aac'
+            ffmpeg_run(FFMPEG_CONVERT_AUDIO_TYPE,{'__IN__': old, '__OUT__': new})
+            #remove()
+            self.episode.set_audio_mic_edit2_path(ep, new)
+            self.episode.save()
         super().user_workflow()
