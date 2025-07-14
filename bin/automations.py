@@ -280,10 +280,19 @@ class CompareAndRenderWF(GenericWorkFlow):
         rendering_queue = []
 
         paths = [[i, self.episode.get_audio_mic_edit2_path(i), self.episode.get_audio_desktop_path(i), self.episode.get_video_path(i)] for i in range(*self.rng)]
-        AP = AudioPlayer(paths)
-        AP.run()
-        result = AP.audio_list
-        del AP
+        ui = binpi('Set volume for each?\n[1]Yes\n[2]No\n')
+        if ui == 1:
+            AP = AudioPlayer(paths)
+            AP.run()
+            result = AP.audio_list
+            del AP
+        else:
+            vol = binpi('Set volume: ') / 100
+            result = [[*i,vol] for i in paths]
+        
+        
+        
+        
         for i, mic, desk, vid, vol in result:
             tmp_audio_path = f'{TEMP_FOLDER}temp_{i+1}_audio_final.mp3'
             inf(f'[{i}]({vol}) - {tmp_audio_path}')
