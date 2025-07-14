@@ -117,17 +117,31 @@ class GenerateThumbnailWF(GenericWorkFlow):
     def user_workflow(self):
         TG = ThumbnailGenerator()
         tad = self.letsplay.get_tad_path(self.lpid)
+        ui = binpi('Did you want to check each thumbnail\n[1]Yes\n[2]No\n')
+        
         for i in range(*self.rng): 
             video_path = self.episode.get_video_path(i)
             if not tad:
                 return
             p = f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
-            TG.generate(
-                str(i+1),
-                video_path,
-                tad,
-                f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
-                )
+            if ui == 1:
+                while 1:
+                    TG.generate(
+                        str(i+1),
+                        video_path,
+                        tad,
+                        f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
+                        )
+                    ok = binpi('Did you want to check each thumbnail\n[1]Yes\n[2]No\n')
+                    if ok == 1:
+                        break
+            else:
+                TG.generate(
+                        str(i+1),
+                        video_path,
+                        tad,
+                        f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
+                        )
             self.episode.set_thumbnail_path(i,p)
             self.episode.save()
         super().user_workflow()
