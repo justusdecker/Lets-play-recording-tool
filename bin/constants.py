@@ -86,6 +86,38 @@ DEFAULT_TAD = [
     }
 ]
 
+"""
+AAA
+OLD
+[
+    {
+        "pos": [0,0],
+        "r_pos": [[0,0],[0,0]],
+        "r_scale": [-0.05,0.05],
+        "r_rot": [-8,8],
+        "center": true,
+        "scale": 1.35,
+        "rot": 0
+    },
+    {
+        "path": "E:\\scheduleone.png",
+        "scale": 0.2,
+        "rot": 0,
+        "pos": [650,200],
+        "center": true
+    },
+    {
+        "path": "",
+        "scale": 1,
+        "rot": 0,
+        "color": [234,232,184,255],
+        "ol_color": [57,72,45,255],
+        "size": 120,
+        "pos": [550,450]
+    }
+]
+"""
+
 
 #! PATHS
 

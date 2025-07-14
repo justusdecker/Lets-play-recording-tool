@@ -59,6 +59,9 @@ class ThumbnailGenerator:
             (1280//2) - (bg[0].get_width() // 2), 
             (720//2) - (bg[0].get_height() // 2)
             )
+        logo = self.__render_logo(_logo)
+        if _logo['center']:
+            logo = logo[0], ((1280//2) - logo[0].get_width() + logo[1][0],(720//2) - logo[0].get_height() + logo[1][1]) 
         print(bg_pos, bg[0].get_size())
         img = self.__comp_render(
             [(bg[0],bg_pos) if _bg['center'] else bg,
