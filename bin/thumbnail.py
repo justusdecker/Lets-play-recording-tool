@@ -61,12 +61,23 @@ class ThumbnailGenerator:
             )
         logo = self.__render_logo(_logo)
         if _logo['center']:
-            logo = logo[0], ((1280//2) - logo[0].get_width() + logo[1][0],(720//2) - logo[0].get_height() + logo[1][1]) 
-        print(bg_pos, bg[0].get_size())
+            x = (1280//2) - (logo[0].get_width() // 2) + _logo['pos'][0]
+            y = _logo['pos'][1]
+            print(x,y)
+            logo = logo[0], (x,y)
+        
+        text_r = self.__render_text(_text,text)
+        if _text['center']:
+            x = (1280//2) - (text_r[0].get_width() // 2) + _text['pos'][0]
+            y = _text['pos'][1]
+            print(x,y)
+            text_r = text_r[0], (x,y)
+            
+        print(_logo)
         img = self.__comp_render(
             [(bg[0],bg_pos) if _bg['center'] else bg,
-            self.__render_logo(_logo),
-            self.__render_text(_text,text)]
+            logo,
+            text_r]
             )
         
         self.__save(save_to_path,img)
