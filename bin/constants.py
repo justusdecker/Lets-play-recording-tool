@@ -168,7 +168,7 @@ FFMPEG_VIDEO_RENDER = [*FFMPEG_DEFAULT, '-an', '-i', '__VIDEO__', '-i', '__AUDIO
 
 FFMPEG_GET_FRAME = [*FFMPEG_DEFAULT, '-ss', '__TIME__', '-i', '__IN__', '-frames:v', '1', 'temp.png']
 
-FFMPEG_GET_LENGTH = ['ffprobe', '-v', 'error', '-select_streams', 'stream=duration', '-of', 'default=noprint_warpper=1:nokey=1', '__IN__']
+FFMPEG_GET_LENGTH = ['ffprobe', '-v', 'error', '-select_streams', 'v:0','-show_entries', 'stream=duration', '-of', 'default=noprint_wrappers=1:nokey=1', '__IN__']
 
 
 #- Currently total broken. Will be worked later on
@@ -190,7 +190,7 @@ def ffmpeg_build(cmd: list[str], replacer: dict[str,str]):
         cmd = [arg.replace(key,str(replacer[key])) if key in arg else arg for arg in cmd]
     return cmd
 
-def ffmpeg_run(cmd: list[list], replacer: dict[str,str]):
+def ffmpeg_run(cmd: list[list], replacer: dict[str,str],nr: bool = False):
     """
     This function runs your FFMPEG command. Before this happens this function calls ffmpeg_build to replace some essential variables.
     
@@ -200,5 +200,7 @@ def ffmpeg_run(cmd: list[list], replacer: dict[str,str]):
     
     shell= True is compatible with limiter compand
     """
-    run(ffmpeg_build(cmd,replacer), CREATE_NO_WINDOW,)
-    #return run(ffmpeg_build(cmd,replacer), CREATE_NO_WINDOW, capture_output=True, text=True)
+    if nr:
+        return run(ffmpeg_build(cmd,replacer), CREATE_NO_WINDOW, capture_output=True, text=True)
+    else:
+        run(ffmpeg_build(cmd,replacer), CREATE_NO_WINDOW,)
