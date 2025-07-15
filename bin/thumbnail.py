@@ -30,13 +30,14 @@ def get_time_va(filepath: str):
     except :
         return None
 
-def get_thumbnail(filepath: str,frame: str | float) -> Surface:
-    
+def get_thumbnail(filepath: str,frame: str | float) -> Surface | None:
     if isinstance(frame, str):
-        t = get_time_va(filepath)
+        t = rnd() * get_time_va(filepath)
     else:
         pass # Manually Frame set <- currently not needed
+        raise Exception('How did we get here?')
     ffmpeg_run(FFMPEG_GET_FRAME,{'__IN__': filepath, '__TIME__': t})
+    return img_load('temp.png')
 
 
 def outlining(image: Surface,color: tuple[int]=(0,0,0,255)) -> Surface:
@@ -133,17 +134,10 @@ class ThumbnailGenerator:
             
 
             # Create a new Video Source to get images from
-            self.video_src = VideoFileClip(file,audio=False)
-
-            if frame == -1: 
-                # Frame is not valid so take a random value from 0 to video.duration
-                frame = rnd()*(self.video_src.duration)
+            self.image = get_thumbnail(file)
+            # TODO -> old code: frame if frame >= 0 and frame  <= self.video_src.duration else 0 
             
-            # Sets the index for the last image. Use: Pick the last Thumbnail
-            self.idx = frame if frame >= 0 and frame  <= self.video_src.duration else 0 
-
-            _returnImage: Surface = make_surface(rot90(self.video_src.get_frame(self.idx)))
-            _returnImage: Surface = scale(_returnImage,DEFAULT_THUMBNAIL_SIZE)
+            _returnImage: Surface = scale(self.image,DEFAULT_THUMBNAIL_SIZE)
             _returnImage: Surface = flip(_returnImage,True,False)
             
             return _returnImage
