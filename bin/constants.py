@@ -24,7 +24,7 @@ def feedback(key: str) -> None:
         Beep(f,d)
 
 from bin.text_manipulation import *
-from bin.data_access import cnef
+from bin.data_access import cnef, json_write, csv_write, isfile
 from bin.version import VERSION
 
 COPYRIGHT = f"{bold('LPRT')} {italic(VERSION)} - (c) Justus Decker 2024 - 2025"
@@ -140,6 +140,10 @@ def on_start():
     cnef(TEMP_FOLDER)
     cnef(THUMBNAIL_FOLDER)
     cnef(FIXED_AUDIO_FOLDER)
+    if not isfile('settings.json'):
+        json_write('settings.json',DEFAULT_OBS_SETTINGS)
+    if not isfile('lets_play.csv'):
+        csv_write('lets_play.csv')
     
 #! ERRORS
 ewf = 'Exit current workflow.'
