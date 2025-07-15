@@ -8,7 +8,7 @@ __status__ = "Testing"
 
 from bin.constants import *
 
-from bin.data_access import LetsPlay, isfile, json_write
+from bin.data_access import LetsPlay, isfile, json_write,check_lp_ep, isepisode_empty
 from bin.others import binpi
 
 from bin.automations import (
@@ -19,9 +19,10 @@ from bin.automations import (
     FixAudioWF,
     CompareAndRenderWF,
     SendToAudacityWF,
-    LP_PATH
+    LP_PATH,
+    ffmpeg_exists
 )
-
+isepisode_empty('eps_test.csv')
 class App:
     def __init__(self):
         self.isrunning = True
@@ -70,7 +71,12 @@ class App:
                 ep = LetsPlay(LP_PATH).get_episodes(self.current_letsplay_id)
                 obs_connect(ep)
             case 2: #. (2) Select the automation submenu
-                self.automation_sub_menu()
+                ep = LetsPlay(LP_PATH).get_episodes(self.current_letsplay_id)
+                if ffmpeg_exists():
+                    
+                    self.automation_sub_menu()
+                else:
+                    war('You need to have FFMPEG installed!')
             case 3: #. (3) Deploy
                 nimp()
             case 4: #. (4) Select the options submenu
@@ -103,5 +109,8 @@ class App:
             self.main_menu()
             
 if __name__ == "__main__":
-    APP = App()
-    APP.loop()
+    if check_lp_ep():
+        APP = App()
+        APP.loop()
+    else:
+        err('A CSV File is empty. This will cause big problems. So delete it!')

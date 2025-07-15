@@ -24,7 +24,7 @@ def feedback(key: str) -> None:
         Beep(f,d)
 
 from bin.text_manipulation import *
-
+from bin.data_access import cnef, json_write, csv_write, isfile
 from bin.version import VERSION
 
 COPYRIGHT = f"{bold('LPRT')} {italic(VERSION)} - (c) Justus Decker 2024 - 2025"
@@ -126,7 +126,7 @@ from os import getlogin
 USERNAME = getlogin()
 del getlogin
 
-ROOT = f'C:\\Users\\{USERNAME}\\jri_data\\'
+ROOT = f'C:\\Users\\{USERNAME}\\lprt\\'
 
 AUDIO_FOLDER = f'{ROOT}audio\\'
 VIDEO_FOLDER = f'{ROOT}video\\'
@@ -134,6 +134,17 @@ TEMP_FOLDER = f'{ROOT}temp\\'
 THUMBNAIL_FOLDER = f'{ROOT}thumbnails\\'
 FIXED_AUDIO_FOLDER = f'{ROOT}audio_fixed\\'
 
+def on_start():
+    cnef(AUDIO_FOLDER)
+    cnef(VIDEO_FOLDER)
+    cnef(TEMP_FOLDER)
+    cnef(THUMBNAIL_FOLDER)
+    cnef(FIXED_AUDIO_FOLDER)
+    if not isfile('settings.json'):
+        json_write('settings.json',DEFAULT_OBS_SETTINGS)
+    if not isfile('lets_play.csv'):
+        csv_write('lets_play.csv')
+    
 #! ERRORS
 ewf = 'Exit current workflow.'
 ERROR_001 = f'[E001] User input is not in range. {ewf}'
@@ -177,6 +188,11 @@ FFMPEG_GET_LENGTH = ['ffprobe', '-v', 'error', '-select_streams', 'v:0','-show_e
 #FFMPEG_GET_SILENCE = ['ffmpeg', '-i',  '__IN__', '-af', 'silencedetect=n=__SIL__dB:d=__DUR__' ,'-f', 'null', '2>data.txt']
 #FFMPEG_EXPORT_SILENCE = ['ffmpeg','-y', '-ss', '__SS__', '-t', '__TO__', '-i', '__IN__', '__OUT__']
 #FFMPEG_CUT = [*FFMPEG_DEFAULT, '-ss' ,'__START__', '-to', '__END__', '-i', "__IN__", '-c', 'copy', "__OUT__"] # '-ac', '2', amerge=inputs=2
+
+def ffmpeg_exists() -> bool:
+    _ret = run('ffmpeg', CREATE_NO_WINDOW, capture_output=True, text=True).stdout
+    return '\"ffmpeg\"' not in _ret
+        
 
 def ffmpeg_build(cmd: list[str], replacer: dict[str,str]):
     """

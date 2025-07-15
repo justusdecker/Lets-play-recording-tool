@@ -18,11 +18,23 @@ from random import random as rnd, randint as ri
 from os.path import isfile
 
 from bin.data_access import json_read
-from moviepy.video.io.VideoFileClip import VideoFileClip
 from pygame.image import save as img_save, load as img_load
-from bin.constants import DEFAULT_THUMBNAIL_SIZE
+from bin.constants import DEFAULT_THUMBNAIL_SIZE, ffmpeg_run, FFMPEG_GET_FRAME, FFMPEG_GET_LENGTH
 from pygame.font import Font, init, get_default_font
 init()
+
+def get_time_va(filepath: str):
+    time_or_error = ffmpeg_run(FFMPEG_GET_LENGTH,{'__IN__':filepath},True)
+    try:
+        return float(time_or_error.replace('\n',''))
+    except :
+        return None
+
+def get_thumbnail(filepath: str) -> Surface:
+    t = rnd() * get_time_va(filepath)
+    ffmpeg_run(FFMPEG_GET_FRAME,{'__IN__': filepath, '__TIME__': t})
+    return img_load('temp.png')
+
 
 def outlining(image: Surface,color: tuple[int]=(0,0,0,255)) -> Surface:
     shade = mask.from_surface(image).to_surface()
@@ -118,17 +130,10 @@ class ThumbnailGenerator:
             
 
             # Create a new Video Source to get images from
-            self.video_src = VideoFileClip(file,audio=False)
-
-            if frame == -1: 
-                # Frame is not valid so take a random value from 0 to video.duration
-                frame = rnd()*(self.video_src.duration)
+            self.image = get_thumbnail(file)
+            # TODO -> old code: frame if frame >= 0 and frame  <= self.video_src.duration else 0 
             
-            # Sets the index for the last image. Use: Pick the last Thumbnail
-            self.idx = frame if frame >= 0 and frame  <= self.video_src.duration else 0 
-
-            _returnImage: Surface = make_surface(rot90(self.video_src.get_frame(self.idx)))
-            _returnImage: Surface = scale(_returnImage,DEFAULT_THUMBNAIL_SIZE)
+            _returnImage: Surface = scale(self.image,DEFAULT_THUMBNAIL_SIZE)
             _returnImage: Surface = flip(_returnImage,True,False)
             
             return _returnImage
