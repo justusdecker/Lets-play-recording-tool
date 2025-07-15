@@ -19,3 +19,11 @@
 |`root`/settings.json|
 |`root`/letsplays.csv|
 |`root`/logo.ico|
+
+# Something that cannot happen
+
+# LP File is empty
+
+User cannot enter any automation menu! -> with a appropiate warning
+# Selected EP File is empty
+User cannot enter any automation menu! -> with a appropiate warning
