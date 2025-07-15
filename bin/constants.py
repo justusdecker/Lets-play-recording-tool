@@ -178,6 +178,11 @@ FFMPEG_GET_LENGTH = ['ffprobe', '-v', 'error', '-select_streams', 'v:0','-show_e
 #FFMPEG_EXPORT_SILENCE = ['ffmpeg','-y', '-ss', '__SS__', '-t', '__TO__', '-i', '__IN__', '__OUT__']
 #FFMPEG_CUT = [*FFMPEG_DEFAULT, '-ss' ,'__START__', '-to', '__END__', '-i', "__IN__", '-c', 'copy', "__OUT__"] # '-ac', '2', amerge=inputs=2
 
+def ffmpeg_exists() -> bool:
+    _ret = run('ffmpeg', CREATE_NO_WINDOW, capture_output=True, text=True).stdout
+    return '\"ffmpeg\"' not in _ret
+        
+
 def ffmpeg_build(cmd: list[str], replacer: dict[str,str]):
     """
     This function takes the FFMPEG command and replaces all of the keys that can be found in the command!
