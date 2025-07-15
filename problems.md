@@ -84,3 +84,13 @@ currently you can input every number 0 - inf
 - The new binpi function can take the legal argument: list[int]
 - The function checks user_input in legal
 
+# Remove Moviepy
+- This blows up exe size
+- instead we use ffmpeg to extract the thumbnail like this:
+  ```batch
+  ffmpeg -ss 00:15:00.00 -i test.mp4 -frames:v 1 result.png
+  ```
+- We get the video_length by using `ffprobe`
+  ```batch
+  ffprobe -v error -select_streams v:0 -show_entries stream=duration -of default=noprint_wrappers=1:nokey=1 test.mp4
+  ```
