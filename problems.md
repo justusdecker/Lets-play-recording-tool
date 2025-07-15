@@ -29,4 +29,58 @@
 |LP File is broken -> Wrong `row` or `col` count|Program will safeclose!|
 |EP File is broken -> Wrong `row` or `col` count|Program will safeclose!|
 
+
 all of the above: -> with an appropiate warning message
+
+# The Submenu -> Automation System is crap
+
+The submenus currently:
+
+```python
+ifs = binpi(f'Did you want to overwrite thumbnail[{i+1}]?\n[1]Yes\n[2]No\n')
+if ifs == 1:
+    while 1:
+        TG.generate(
+            str(i+1),
+            video_path,
+            tad,
+            f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
+            )
+        ok = binpi('Okay\n[1]Yes\n[2]No\n')
+        if ok == 1:
+            break
+else:
+    while 1:
+        TG.generate(
+            str(i+1),
+            video_path,
+            tad,
+            f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
+            )
+        ok = binpi('Okay\n[1]Yes\n[2]No\n')
+        if ok == 1:
+            break
+```
+will be changed to pseudo code:
+```python
+ifs = binpi(f'Did you want to overwrite thumbnail[{i+1}]?\n[1]Yes\n[2]No\n')
+while 1:
+    if ifs == 1: break
+    TG.generate(
+        str(i+1),
+        video_path,
+        tad,
+        f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
+        )
+    ok = binpi('Okay\n[1]Yes\n[2]No\n')
+    if ok == 1:
+        break
+```
+# Binpi
+
+Dont forget that the binpi function will be enhanced!
+currently you can input every number 0 - inf
+
+- The new binpi function can take the legal argument: list[int]
+- The function checks user_input in legal
+
