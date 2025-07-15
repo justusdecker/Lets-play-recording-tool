@@ -30,12 +30,8 @@ def get_time_va(filepath: str):
     except :
         return None
 
-def get_thumbnail(filepath: str,frame: str | float) -> Surface | None:
-    if isinstance(frame, str):
-        t = rnd() * get_time_va(filepath)
-    else:
-        pass # Manually Frame set <- currently not needed
-        raise Exception('How did we get here?')
+def get_thumbnail(filepath: str) -> Surface:
+    t = rnd() * get_time_va(filepath)
     ffmpeg_run(FFMPEG_GET_FRAME,{'__IN__': filepath, '__TIME__': t})
     return img_load('temp.png')
 
