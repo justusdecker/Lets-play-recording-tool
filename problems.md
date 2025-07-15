@@ -20,10 +20,13 @@
 |`root`/letsplays.csv|
 |`root`/logo.ico|
 
-# Something that cannot happen
+# Edgees
 
-# LP File is empty
+|Condition|result|
+|---|---|
+|LP File is empty|User cannot enter any automation menu!|
+|Selected EP File is empty|User cannot enter any automation menu!|
+|LP File is broken -> Wrong `row` or `col` count|Program will safeclose!|
+|EP File is broken -> Wrong `row` or `col` count|Program will safeclose!|
 
-User cannot enter any automation menu! -> with a appropiate warning
-# Selected EP File is empty
-User cannot enter any automation menu! -> with a appropiate warning
+all of the above: -> with an appropiate warning message
