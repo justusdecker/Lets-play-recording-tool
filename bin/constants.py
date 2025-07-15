@@ -24,7 +24,7 @@ def feedback(key: str) -> None:
         Beep(f,d)
 
 from bin.text_manipulation import *
-
+from bin.data_access import cnef
 from bin.version import VERSION
 
 COPYRIGHT = f"{bold('LPRT')} {italic(VERSION)} - (c) Justus Decker 2024 - 2025"
@@ -126,7 +126,7 @@ from os import getlogin
 USERNAME = getlogin()
 del getlogin
 
-ROOT = f'C:\\Users\\{USERNAME}\\jri_data\\'
+ROOT = f'C:\\Users\\{USERNAME}\\lprt\\'
 
 AUDIO_FOLDER = f'{ROOT}audio\\'
 VIDEO_FOLDER = f'{ROOT}video\\'
@@ -134,6 +134,13 @@ TEMP_FOLDER = f'{ROOT}temp\\'
 THUMBNAIL_FOLDER = f'{ROOT}thumbnails\\'
 FIXED_AUDIO_FOLDER = f'{ROOT}audio_fixed\\'
 
+def on_start():
+    cnef(AUDIO_FOLDER)
+    cnef(VIDEO_FOLDER)
+    cnef(TEMP_FOLDER)
+    cnef(THUMBNAIL_FOLDER)
+    cnef(FIXED_AUDIO_FOLDER)
+    
 #! ERRORS
 ewf = 'Exit current workflow.'
 ERROR_001 = f'[E001] User input is not in range. {ewf}'
