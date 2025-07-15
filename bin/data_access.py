@@ -53,6 +53,13 @@ def csv_write(filepath : str,data : list) -> None:
         writer = csv.writer(f, delimiter='|')
         writer.writerows(data)
 
+def isepisode_empty(filepath: str):
+    try:
+        e = Episode(filepath)
+        return True
+    except:
+        return False
+
 def file_read(filepath : str) -> str:
     with open(filepath, 'r') as f:
         return f.read()
@@ -247,3 +254,12 @@ class Episode(CSVObj):
         self.read(id)[3] = data
     def set_final_video_path(self,id: int, data: str):
         self.read(id)[13] = data
+        
+def check_lp_ep():
+    lp = LetsPlay('lets_plays.csv')
+    try:
+        for i in range(lp.row):
+            lp.get_episodes(i)
+        return True
+    except:
+        return False
