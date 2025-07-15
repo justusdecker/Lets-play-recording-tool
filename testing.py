@@ -6,4 +6,10 @@ ffmpeg_run(FFMPEG_GET_FRAME,{'__IN__': 'C:/Users/Justus/Videos/requiem.mov', '__
 
 time = ffmpeg_run(FFMPEG_GET_LENGTH,{'__IN__':'C:/Users/Justus/Videos/requiem.mov'},True)
 
-print(time)
+def get_time_va(filepath: str):
+    time_or_error = ffmpeg_run(FFMPEG_GET_LENGTH,{'__IN__':filepath},True)
+    try:
+        return float(time_or_error.replace('\n',''))
+    except :
+        return None
+print(get_time_va('C:/Users/Justus/Videos/requiem.mov'))
