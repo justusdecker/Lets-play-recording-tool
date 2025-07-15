@@ -18,11 +18,26 @@ from random import random as rnd, randint as ri
 from os.path import isfile
 
 from bin.data_access import json_read
-from moviepy.video.io.VideoFileClip import VideoFileClip
 from pygame.image import save as img_save, load as img_load
-from bin.constants import DEFAULT_THUMBNAIL_SIZE
+from bin.constants import DEFAULT_THUMBNAIL_SIZE, ffmpeg_run, FFMPEG_GET_FRAME, FFMPEG_GET_LENGTH
 from pygame.font import Font, init, get_default_font
 init()
+
+def get_time_va(filepath: str):
+    time_or_error = ffmpeg_run(FFMPEG_GET_LENGTH,{'__IN__':filepath},True)
+    try:
+        return float(time_or_error.replace('\n',''))
+    except :
+        return None
+
+def get_thumbnail(filepath: str,frame: str | float) -> Surface:
+    
+    if isinstance(frame, str):
+        t = get_time_va(filepath)
+    else:
+        pass # Manually Frame set <- currently not needed
+    ffmpeg_run(FFMPEG_GET_FRAME,{'__IN__': filepath, '__TIME__': t})
+
 
 def outlining(image: Surface,color: tuple[int]=(0,0,0,255)) -> Surface:
     shade = mask.from_surface(image).to_surface()
