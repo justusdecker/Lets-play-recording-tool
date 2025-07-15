@@ -166,7 +166,9 @@ FFMPEG_AUDIO_PF_LN_L = [*FFMPEG_DEFAULT, '-i', '__IN__', '-af','highpass=f=175, 
 
 FFMPEG_VIDEO_RENDER = [*FFMPEG_DEFAULT, '-an', '-i', '__VIDEO__', '-i', '__AUDIO__', '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'copy', '__OUTPUT__']
 
+FFMPEG_GET_FRAME = [*FFMPEG_DEFAULT, '-ss', '__TIME__', '-i', '__IN__', '-frames:v', '1', 'temp.png']
 
+FFMPEG_GET_LENGTH = ['ffprobe', '-v', 'error', '-select_streams', 'stream=duration', '-of', 'default=noprint_warpper=1:nokey=1', '__IN__']
 
 
 #- Currently total broken. Will be worked later on
