@@ -2,5 +2,4 @@ obs_ws
 pygame
 shutil
 tkinter
-moviepy
 winotify
