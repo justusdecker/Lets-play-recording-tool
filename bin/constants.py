@@ -19,6 +19,7 @@ def feedback(key: str) -> None:
     """
     Gives user sound feedback
     """
+    return #! Currently disabled
     f,d,i = key
     for it in range(i):
         Beep(f,d)
