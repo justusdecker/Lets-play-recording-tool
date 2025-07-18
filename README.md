@@ -8,7 +8,7 @@ This is a terminal application so you need some terminal experience.
 
 All the data is stored in `csv` & `json`.
 Easy access & edit your data using a text-editor or Excel-like apps
-
+![1](pp/1.png)
 [More Info](https://github.com/justusdecker/Lets-play-recording-tool/wiki/)
 
 ## Current Development State
