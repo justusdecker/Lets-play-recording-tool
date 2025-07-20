@@ -135,8 +135,6 @@ class Recording(tk.Frame):
         self.btn_connect.grid(row = 0, column=2)
         
         #TODO
-        #! Connect & Disconnect OBS Button
-        #! Show Time
         #! Show selected Lets Play
         #! Show current Episode
         
@@ -158,8 +156,7 @@ class Recording(tk.Frame):
         change_states(self.menu,'!disabled') # Reactivating
         self.btn_connect.configure(text='Error occured! Try again')
         self.thread = None
-        
-        
+            
 class ThumbnailGenerate(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
@@ -177,6 +174,8 @@ class FetchAudio(tk.Frame):
 
         label.grid(row = 0, column = 1, padx = 10, pady = 10) 
 
+        
+        
         get_menu(self, controller)
         
 class FixAudio(tk.Frame):
