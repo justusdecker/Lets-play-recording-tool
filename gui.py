@@ -151,7 +151,7 @@ class Recording(tk.Frame):
         ep = LetsPlay(LP_PATH).get_episodes(0)
         self.btn_connect.state(["disabled"])
         self.btn_connect.configure(text='Try connection to OBS...')
-        
+        #! Currently Disconnecting only works by closing OBS <- mainly for safety reasons!
         obs_connect(ep,self)
 
         self.btn_connect.state(["!disabled"])

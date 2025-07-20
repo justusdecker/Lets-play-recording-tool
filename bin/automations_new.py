@@ -1,6 +1,5 @@
 from bin.obs import OBSObserver
-from bin.data_access import *
-from tkinter.ttk import Label
+from bin.data_access import Episode
 
 def obs_connect(ep: Episode,el):
     """
