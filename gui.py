@@ -37,6 +37,8 @@ from tkinter import ttk
 
 LARGEFONT =("Verdana", 35)
 
+MENU_FORBIDDEN = False
+
 class TkinterApp(tk.Tk):
     def __init__(self, *args, **kwargs): 
         
@@ -57,8 +59,12 @@ class TkinterApp(tk.Tk):
  
         self.show_frame(StartPage)
     def show_frame(self, cont):
-        frame = self.frames[cont]
-        frame.tkraise()
+        if not MENU_FORBIDDEN:
+            frame = self.frames[cont]
+            frame.tkraise()
+        else:
+            #! ERROR MSG to User
+            pass
  
 def get_menu(parent,controller) -> ttk.Frame:
     
@@ -84,9 +90,8 @@ class StartPage(tk.Frame):
         # putting the grid in its place by using
         # grid
         label.grid(row = 0, column = 1, padx = 10, pady = 10) 
- 
- 
-        MENU = get_menu(self, controller)
+
+        get_menu(self, controller)
         
  
          
