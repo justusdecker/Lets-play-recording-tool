@@ -49,7 +49,7 @@ class TkinterApp(tk.Tk):
         # initializing frames to an empty array
         self.frames = {}
         
-        for F in (StartPage, Page1, Page2):
+        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender, Settings):
  
             frame = F(container, self)
             
@@ -57,7 +57,7 @@ class TkinterApp(tk.Tk):
  
             frame.grid(row = 0, column = 0, sticky ="nsew")
  
-        self.show_frame(StartPage)
+        self.show_frame(Main)
     def show_frame(self, cont):
         if not MENU_FORBIDDEN:
             frame = self.frames[cont]
@@ -69,91 +69,120 @@ class TkinterApp(tk.Tk):
 def get_menu(parent,controller) -> ttk.Frame:
     
     MENU = ttk.Frame(parent)
+    
+    OPTIONS = {'padx': 10, 'column': 0,'sticky':'W'}
 
-    button1 = ttk.Button(MENU, text ="Page 1", command = lambda : controller.show_frame(Page1))
+    button1 = ttk.Button(MENU, text ="Main", command = lambda : controller.show_frame(Main))
 
-    button1.grid(row = 0, column = 0, padx = 10)
+    button1.grid(row = 0, **OPTIONS)
 
-    button2 = ttk.Button(MENU, text ="Page 2",command = lambda : controller.show_frame(Page2))
+    button2 = ttk.Button(MENU, text ="Recording",command = lambda : controller.show_frame(Recording))
 
-    button2.grid(row = 1, column = 0, padx = 10)
+    button2.grid(row = 1, **OPTIONS)
+    
+    button3 = ttk.Button(MENU, text ="ThumbnailGenerate",command = lambda : controller.show_frame(ThumbnailGenerate))
+
+    button3.grid(row = 2, **OPTIONS)
+    
+    button4 = ttk.Button(MENU, text ="FetchAudio",command = lambda : controller.show_frame(FetchAudio))
+
+    button4.grid(row = 3, **OPTIONS)
+    
+    butto5 = ttk.Button(MENU, text ="FixAudio",command = lambda : controller.show_frame(FixAudio))
+
+    butto5.grid(row = 4, **OPTIONS)
+    
+    button6 = ttk.Button(MENU, text ="Send2Audacity",command = lambda : controller.show_frame(Send2Audacity))
+
+    button6.grid(row = 5, **OPTIONS)
+    
+    button7 = ttk.Button(MENU, text ="CompAndRender",command = lambda : controller.show_frame(CompAndRender))
+
+    button7.grid(row = 6, **OPTIONS)
+    
+    button8 = ttk.Button(MENU, text ="Settings",command = lambda : controller.show_frame(Settings))
+
+    button8.grid(row = 7, **OPTIONS)
     
     MENU.grid(column=0,row=0)
     
-class StartPage(tk.Frame):
+class Main(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
         
-        # label of frame Layout 2
         label = ttk.Label(self, text ="Startpage", font = LARGEFONT)
+
+        label.grid(row = 0, column = 1, padx = 10, pady = 10) 
+
+        get_menu(self, controller)
+
+class Recording(tk.Frame):
+    def __init__(self, parent, controller): 
+        tk.Frame.__init__(self, parent)
         
-        # putting the grid in its place by using
-        # grid
+        label = ttk.Label(self, text ="Recording", font = LARGEFONT)
+
         label.grid(row = 0, column = 1, padx = 10, pady = 10) 
 
         get_menu(self, controller)
         
- 
-         
- 
- 
-# second window frame page1 
-class Page1(tk.Frame):
-    
-    def __init__(self, parent, controller):
+class ThumbnailGenerate(tk.Frame):
+    def __init__(self, parent, controller): 
+        tk.Frame.__init__(self, parent)
         
+        label = ttk.Label(self, text ="ThumbnailGenerate", font = LARGEFONT)
+
+        label.grid(row = 0, column = 1, padx = 10, pady = 10) 
+
+        get_menu(self, controller)
+class FetchAudio(tk.Frame):
+    def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
-        label = ttk.Label(self, text ="Page 1", font = LARGEFONT)
-        label.grid(row = 0, column = 4, padx = 10, pady = 10)
- 
-        # button to show frame 2 with text
-        # layout2
-        button1 = ttk.Button(self, text ="StartPage",
-                            command = lambda : controller.show_frame(StartPage))
-    
-        # putting the button in its place 
-        # by using grid
-        button1.grid(row = 1, column = 1, padx = 10, pady = 10)
- 
-        # button to show frame 2 with text
-        # layout2
-        button2 = ttk.Button(self, text ="Page 2",
-                            command = lambda : controller.show_frame(Page2))
-    
-        # putting the button in its place by 
-        # using grid
-        button2.grid(row = 2, column = 1, padx = 10, pady = 10)
- 
- 
- 
- 
-# third window frame page2
-class Page2(tk.Frame): 
-    def __init__(self, parent, controller):
+        
+        label = ttk.Label(self, text ="FetchAudio", font = LARGEFONT)
+
+        label.grid(row = 0, column = 1, padx = 10, pady = 10) 
+
+        get_menu(self, controller)
+        
+class FixAudio(tk.Frame):
+    def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
-        label = ttk.Label(self, text ="Page 2", font = LARGEFONT)
-        label.grid(row = 0, column = 4, padx = 10, pady = 10)
- 
-        # button to show frame 2 with text
-        # layout2
-        button1 = ttk.Button(self, text ="Page 1",
-                            command = lambda : controller.show_frame(Page1))
-    
-        # putting the button in its place by 
-        # using grid
-        button1.grid(row = 1, column = 1, padx = 10, pady = 10)
- 
-        # button to show frame 3 with text
-        # layout3
-        button2 = ttk.Button(self, text ="Startpage",
-                            command = lambda : controller.show_frame(StartPage))
-    
-        # putting the button in its place by
-        # using grid
-        button2.grid(row = 2, column = 1, padx = 10, pady = 10)
- 
- 
-# Driver Code
+        
+        label = ttk.Label(self, text ="FixAudio", font = LARGEFONT)
+
+        label.grid(row = 0, column = 1, padx = 10, pady = 10) 
+
+        get_menu(self, controller)
+class Send2Audacity(tk.Frame):
+    def __init__(self, parent, controller): 
+        tk.Frame.__init__(self, parent)
+        
+        label = ttk.Label(self, text ="Send2Audacity", font = LARGEFONT)
+
+        label.grid(row = 0, column = 1, padx = 10, pady = 10) 
+
+        get_menu(self, controller)
+
+class CompAndRender(tk.Frame):
+    def __init__(self, parent, controller): 
+        tk.Frame.__init__(self, parent)
+        
+        label = ttk.Label(self, text ="CompAndRender", font = LARGEFONT)
+
+        label.grid(row = 0, column = 1, padx = 10, pady = 10) 
+
+        get_menu(self, controller)
+
+class Settings(tk.Frame):
+    def __init__(self, parent, controller): 
+        tk.Frame.__init__(self, parent)
+        
+        label = ttk.Label(self, text ="Settings", font = LARGEFONT)
+
+        label.grid(row = 0, column = 1, padx = 10, pady = 10) 
+
+        get_menu(self, controller)
 app = TkinterApp()
 app.mainloop()
 
