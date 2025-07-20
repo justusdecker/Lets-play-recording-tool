@@ -32,7 +32,7 @@ T.mainloop()
 # FRAME RIGHT
 """
 
-
+from bin.automations_new import obs_connect
 from bin.data_access import LetsPlay
 from threading import Thread
 LP_PATH = 'lets_plays.csv'
@@ -161,9 +161,12 @@ class Recording(tk.Frame):
     def __get_connection(self):
         LOCKS.OBS_CONNECTED = True
         ep = LetsPlay(LP_PATH).get_episodes(0)
+        self.btn_connect.state(["disabled"])
+        self.btn_connect.configure(text='Try connection to OBS...')
         obs_connect(ep)
         LOCKS.OBS_CONNECTED = False
-        self.btn_connect.state(["disabled"])
+        self.btn_connect.state(["!disabled"])
+        self.btn_connect.configure(text='Error occured! Try again')
         self.thread = None
         
         
