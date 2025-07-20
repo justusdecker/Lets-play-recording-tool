@@ -213,10 +213,7 @@ class FetchAudio(tk.Frame):
         
         self.ep_end.grid(row = 0, column = 4) 
         #TODO
-        #! Get Lets Play
-        #! Get Episode Range
-        #! Run Workflow
-        #! Add run button <- deactivate if something went wrong!
+        #! Add Text Info
         
         self.menu = get_menu(self, controller)
     def run(self):
