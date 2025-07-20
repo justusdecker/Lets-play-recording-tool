@@ -39,6 +39,16 @@ LARGEFONT =("Verdana", 35)
 
 MENU_FORBIDDEN = False
 
+DISCLAIMER = """
+Welcome to LPRT
+
+This Tool is currently Work in Progress!
+Some features might not work as expected & can cause data loss! Be careful!
+"""
+
+
+
+
 class TkinterApp(tk.Tk):
     def __init__(self, *args, **kwargs): 
         
@@ -110,7 +120,7 @@ class Main(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
         
-        label = ttk.Label(self, text ="Startpage", font = LARGEFONT)
+        label = ttk.Label(self, text =DISCLAIMER)
 
         label.grid(row = 0, column = 1, padx = 10, pady = 10) 
 
@@ -122,9 +132,27 @@ class Recording(tk.Frame):
         
         label = ttk.Label(self, text ="Recording", font = LARGEFONT)
 
-        label.grid(row = 0, column = 1, padx = 10, pady = 10) 
+        label.grid(row = 0, column = 1, padx = 10, pady = 10)
+        
+        self.obs_running = False
+        
+        self.btn_connect = ttk.Button(self, text ="Connect to obs",command=self.get_connection)
 
+        self.btn_connect.grid(row = 0, column=2)
+        
+        #TODO
+        #! Connect & Disconnect OBS Button
+        #! Show Time
+        #! Show selected Lets Play
+        #! Show current Episode
+        
         get_menu(self, controller)
+    def get_connection(self):
+        self.obs_running = True
+        
+        self.btn_connect.state(["disabled"])
+        print("Whatever")
+        
         
 class ThumbnailGenerate(tk.Frame):
     def __init__(self, parent, controller): 
