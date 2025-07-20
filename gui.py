@@ -78,55 +78,39 @@ class TkinterApp(tk.Tk):
  
         self.show_frame(Main)
     def show_frame(self, cont):
-        if not LOCKS.MENU_FORBIDDEN:
-            frame = self.frames[cont]
-            frame.tkraise()
-        else:
-            #! ERROR MSG to User
-            pass
+
+        frame = self.frames[cont]
+        frame.tkraise()
+
  
 def get_menu(parent,controller) -> ttk.Frame:
     
     MENU = ttk.Frame(parent)
     
     OPTIONS = {'padx': 10, 'column': 0,'sticky':'W'}
-
-    button1 = ttk.Button(MENU, text ="Main", command = lambda : controller.show_frame(Main))
-
-    button1.grid(row = 0, **OPTIONS)
-
-    button2 = ttk.Button(MENU, text ="Recording",command = lambda : controller.show_frame(Recording))
-
-    button2.grid(row = 1, **OPTIONS)
     
-    button3 = ttk.Button(MENU, text ="ThumbnailGenerate",command = lambda : controller.show_frame(ThumbnailGenerate))
-
-    button3.grid(row = 2, **OPTIONS)
+    BUILDER: list[str, function] = [
+        ("Main", lambda : controller.show_frame(Main)),
+        ("Recording", lambda : controller.show_frame(Recording)),
+        ("ThumbnailGenerate", lambda : controller.show_frame(ThumbnailGenerate)),
+        ("FetchAudio", lambda : controller.show_frame(FetchAudio)),
+        ("FixAudio", lambda : controller.show_frame(FixAudio)),
+        ("Send2Audacity", lambda : controller.show_frame(Send2Audacity)),
+        ("CompAndRender", lambda : controller.show_frame(CompAndRender)),
+        ("Settings", lambda : controller.show_frame(Settings))
+    ]
     
-    button4 = ttk.Button(MENU, text ="FetchAudio",command = lambda : controller.show_frame(FetchAudio))
-
-    button4.grid(row = 3, **OPTIONS)
+    _ret = [ttk.Button(MENU, text =obj[0], command = obj[1]) for obj in BUILDER]# create btns based on BUILDER
     
-    butto5 = ttk.Button(MENU, text ="FixAudio",command = lambda : controller.show_frame(FixAudio))
-
-    butto5.grid(row = 4, **OPTIONS)
-    
-    button6 = ttk.Button(MENU, text ="Send2Audacity",command = lambda : controller.show_frame(Send2Audacity))
-
-    button6.grid(row = 5, **OPTIONS)
-    
-    button7 = ttk.Button(MENU, text ="CompAndRender",command = lambda : controller.show_frame(CompAndRender))
-
-    button7.grid(row = 6, **OPTIONS)
-    
-    button8 = ttk.Button(MENU, text ="Settings",command = lambda : controller.show_frame(Settings))
-
-    button8.grid(row = 7, **OPTIONS)
+    [obj.grid(row = i, **OPTIONS) for i, obj in enumerate(_ret)]# Sets the position on frame for all btns
     
     MENU.grid(column=0,row=0)
-    MENU.state(["disabled"])
     
-
+    return _ret
+    
+def change_states(elements: list[ttk.Button],state: str):
+    for element in elements:
+        element.state([state])
 
 class Main(tk.Frame):
     def __init__(self, parent, controller): 
@@ -156,20 +140,22 @@ class Recording(tk.Frame):
         #! Show selected Lets Play
         #! Show current Episode
         
-        get_menu(self, controller)
+        self.menu = get_menu(self, controller)
     def get_connection(self):
         if self.thread is None:
             self.thread = Thread(target=self.__get_connection)
             self.thread.start()
     def __get_connection(self):
-        LOCKS.OBS_CONNECTED = True
+        
+        change_states(self.menu,'disabled') # Deactivates all menu buttons for safety reasons
         ep = LetsPlay(LP_PATH).get_episodes(0)
         self.btn_connect.state(["disabled"])
         self.btn_connect.configure(text='Try connection to OBS...')
         
-        obs_connect(ep,self.label)
-        LOCKS.OBS_CONNECTED = False
+        obs_connect(ep,self)
+
         self.btn_connect.state(["!disabled"])
+        change_states(self.menu,'!disabled') # Reactivating
         self.btn_connect.configure(text='Error occured! Try again')
         self.thread = None
         

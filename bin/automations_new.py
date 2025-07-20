@@ -2,7 +2,7 @@ from bin.obs import OBSObserver
 from bin.data_access import *
 from tkinter.ttk import Label
 
-def obs_connect(ep: Episode,el: Label):
+def obs_connect(ep: Episode,el):
     """
     Connects to the obs_ws API
     
@@ -10,17 +10,16 @@ def obs_connect(ep: Episode,el: Label):
     """
     OBSO = OBSObserver()
     if OBSO.failed:
-        print('Settings File must exist!')
+        el.btn_connect.configure(text= 'Settings File does not exist!')
         return
     if not OBSO.isconnected:
-        print('no cn')
+        el.btn_connect.configure(text= 'No Connection!')
         return
     while OBSO.isconnected:
+        el.btn_connect.configure(text= 'Connection established')
         try:
-            el.configure(text= OBSO.timecode)
+            el.label.configure(text= OBSO.timecode)
             OBSO.update(ep)
-        except KeyboardInterrupt:
-            print('kbi')
-            break
         except:
+            el.btn_connect.configure(text= 'Unexpected Error happened')
             print('Unexpected Error happened')
