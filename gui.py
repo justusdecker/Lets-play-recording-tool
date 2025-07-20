@@ -33,7 +33,7 @@ T.mainloop()
 """
 
 from bin.automations_new import obs_connect
-from bin.data_access import LetsPlay
+from bin.data_access import LetsPlay, Episode
 from threading import Thread
 LP_PATH = 'lets_plays.csv'
 
@@ -184,23 +184,51 @@ class FetchAudio(tk.Frame):
         
         self.lp_option_var = tk.StringVar(self)
         
-        LPS = LetsPlay('lets_plays.csv')
-        self.names = LPS.get_names()
-        lpid = ttk.OptionMenu(self,self.lp_option_var,'None',*self.names,command=self.option_changed)
+        self.lps = LetsPlay('lets_plays.csv')
+        self.names = self.lps.get_names()
+        lpid = ttk.OptionMenu(self,self.lp_option_var,'None',*self.names,command=self.lp_changed)
         
         lpid.grid(row = 0, column = 2)
         
-        ep_start = ttk.OptionMenu(self,self.lp_option_var,'None',[],command=self.option_changed)
+        self.epstart_option_var = tk.StringVar(self)
         
-        ep_start.grid(row = 0, column = 4) 
+        self.ep_start = ttk.OptionMenu(self,self.epstart_option_var,'None',[])
+        
+        self.ep_start.grid(row = 0, column = 4) 
+        
+        
+        self.epend_option_var = tk.StringVar(self)
+        
+        self.ep_end = ttk.OptionMenu(self,self.epend_option_var,'None',[],command=self.check_last_id)
+        
+        self.ep_end.grid(row = 0, column = 4) 
         #TODO
         #! Get Lets Play
         #! Get Episode Range
         #! Run Workflow
         
         get_menu(self, controller)
-    def option_changed(self, *args):
-        self.label3['text'] = f'You selected: {self.names.index(self.lp_option_var.get())}'
+    def lp_changed(self,*args):
+        
+        ep_path = self.lps.get_episode_path(self.names.index(self.lp_option_var.get()))
+        
+        epnums = [i+1 for i in range(Episode(ep_path).row)]
+        
+        ft = epnums[0],epnums[-1] if epnums else (0,0)
+        
+        self.ep_start.destroy()
+        self.ep_start = ttk.OptionMenu(self,self.epstart_option_var,str(ft[0]),*epnums)
+        
+        self.ep_start.grid(row = 0, column = 4) 
+        
+        self.ep_end.destroy()
+        self.ep_end = ttk.OptionMenu(self,self.epend_option_var,str(ft[1]),*epnums,command=self.check_last_id)
+        
+        self.ep_end.grid(row = 0, column = 6)
+    def check_last_id(self,*args):
+        if int(self.epend_option_var.get()) < int(self.epstart_option_var.get()):
+            print('NIO')
+            self.epend_option_var.set('None')
 class FixAudio(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
