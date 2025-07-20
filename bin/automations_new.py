@@ -59,21 +59,21 @@ class ExtractAudioWF(GenericWorkFlow):#! bin.constants throws an exception bold 
     """
     def __init__(self,lpid,epr,app):
         super().__init__(folder=AUDIO_FOLDER, finish_message='Audio extraction finished',lpid=lpid,epr=epr)
-        self.user_workflow(self)
+        self.user_workflow(app)
     def user_workflow(self,app):
         for i in range(*self.rng): 
             video_path = self.episode.get_video_path(i)
-            
-            app.pb.set(i / self.rng[1] if i and self.rng[1] else 0)           
+                       
             t1_path, t2_path = f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_track_mic.aac',f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_track_desktop.aac'
             
             #inf(f'Start extract tracks from {video_path}')
 
             ffmpeg_run(FFMPEG_OPTIMIZED_EXTRACT,{'__IN__':video_path,'__OUT1__':t1_path, '__OUT2__':t2_path})
-
+            app.pb.step((1 / (self.rng[1] + 1))*100)
             self.episode.set_audio_mic_path(i,t1_path)
             self.episode.set_audio_desktop_path(i,t2_path)
             
             self.episode.save()
+
         app.start_btn.state(['!disabled'])
         super().user_workflow()
