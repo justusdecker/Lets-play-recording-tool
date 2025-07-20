@@ -170,14 +170,37 @@ class FetchAudio(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
         
-        label = ttk.Label(self, text ="FetchAudio", font = LARGEFONT)
+        self.label1 = ttk.Label(self, text ="Lets Play")
 
-        label.grid(row = 0, column = 1, padx = 10, pady = 10) 
-
+        self.label1.grid(row = 0, column = 1) 
         
+        self.label2 = ttk.Label(self, text ="Episode start")
+
+        self.label2.grid(row = 0, column = 3) 
+        
+        self.label2 = ttk.Label(self, text ="Episode end")
+
+        self.label2.grid(row = 0, column = 5) 
+        
+        self.lp_option_var = tk.StringVar(self)
+        
+        LPS = LetsPlay('lets_plays.csv')
+        self.names = LPS.get_names()
+        lpid = ttk.OptionMenu(self,self.lp_option_var,'None',*self.names,command=self.option_changed)
+        
+        lpid.grid(row = 0, column = 2)
+        
+        ep_start = ttk.OptionMenu(self,self.lp_option_var,'None',[],command=self.option_changed)
+        
+        ep_start.grid(row = 0, column = 4) 
+        #TODO
+        #! Get Lets Play
+        #! Get Episode Range
+        #! Run Workflow
         
         get_menu(self, controller)
-        
+    def option_changed(self, *args):
+        self.label3['text'] = f'You selected: {self.names.index(self.lp_option_var.get())}'
 class FixAudio(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
