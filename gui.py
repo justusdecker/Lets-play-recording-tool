@@ -32,8 +32,8 @@ T.mainloop()
 # FRAME RIGHT
 """
 
-from bin.automations_new import obs_connect
-from bin.data_access import LetsPlay
+from bin.automations_new import *
+from bin.data_access import LetsPlay, Episode
 from threading import Thread
 LP_PATH = 'lets_plays.csv'
 
@@ -135,8 +135,6 @@ class Recording(tk.Frame):
         self.btn_connect.grid(row = 0, column=2)
         
         #TODO
-        #! Connect & Disconnect OBS Button
-        #! Show Time
         #! Show selected Lets Play
         #! Show current Episode
         
@@ -158,8 +156,7 @@ class Recording(tk.Frame):
         change_states(self.menu,'!disabled') # Reactivating
         self.btn_connect.configure(text='Error occured! Try again')
         self.thread = None
-        
-        
+            
 class ThumbnailGenerate(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
@@ -169,16 +166,96 @@ class ThumbnailGenerate(tk.Frame):
         label.grid(row = 0, column = 1, padx = 10, pady = 10) 
 
         get_menu(self, controller)
+
 class FetchAudio(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
+        self.thread = None
         
-        label = ttk.Label(self, text ="FetchAudio", font = LARGEFONT)
-
-        label.grid(row = 0, column = 1, padx = 10, pady = 10) 
-
-        get_menu(self, controller)
         
+        self.pb = ttk.Progressbar(self)
+        self.pb.grid(sticky='N',row = 0, column = 2)
+        
+        self.label1 = ttk.Label(self, text ="Lets Play")
+
+        self.label1.grid(row = 0, column = 1) 
+        
+        self.label2 = ttk.Label(self, text ="Episode start")
+
+        self.label2.grid(row = 0, column = 3) 
+        
+        self.label2 = ttk.Label(self, text ="Episode end")
+
+        self.label2.grid(row = 0, column = 5) 
+        
+        self.start_btn = ttk.Button(self, text ="Extract",command=self.run)
+        self.start_btn.state(['disabled'])
+
+        self.start_btn.grid(row = 0, column = 7) 
+        
+        self.lp_option_var = tk.StringVar(self)
+        
+        self.lps = LetsPlay('lets_plays.csv')
+        self.names = self.lps.get_names()
+        lpid = ttk.OptionMenu(self,self.lp_option_var,'None',*self.names,command=self.lp_changed)
+        
+        lpid.grid(row = 0, column = 2)
+        
+        self.epstart_option_var = tk.StringVar(self)
+        
+        self.ep_start = ttk.OptionMenu(self,self.epstart_option_var,'None',[])
+        
+        self.ep_start.grid(row = 0, column = 4) 
+        
+        self.epend_option_var = tk.StringVar(self)
+        
+        self.ep_end = ttk.OptionMenu(self,self.epend_option_var,'None',[],command=self.check_last_id)
+        
+        self.ep_end.grid(row = 0, column = 4) 
+        #TODO
+        #! Add Text Info
+        
+        self.menu = get_menu(self, controller)
+    def run(self):
+        if self.thread is None:
+            self.thread = Thread(target=self.__run)
+            self.thread.start()
+    def __run(self):
+        self.start_btn.state(['disabled'])
+        change_states(self.menu,'disabled')
+        a, b = int(self.epstart_option_var.get()) , int(self.epend_option_var.get())
+        lp = self.names.index(self.lp_option_var.get())
+        self.thread = ExtractAudioWF(lp,[a-1,b-1],self)
+        
+        change_states(self.menu,'!disabled')
+        self.thread = None
+    def lp_changed(self,*args):
+        
+        ep_path = self.lps.get_episode_path(self.names.index(self.lp_option_var.get()))
+        
+        epnums = [i+1 for i in range(Episode(ep_path).row)]
+        
+        ft = epnums[0],epnums[-1] if epnums else ('None','None')
+        
+        if not epnums:
+            self.start_btn.state(['disabled'])
+        else:
+            self.start_btn.state(['!disabled'])
+        
+        self.ep_start.destroy()
+        self.ep_start = ttk.OptionMenu(self,self.epstart_option_var,str(ft[0]),*epnums)
+        
+        self.ep_start.grid(row = 0, column = 4) 
+        
+        self.ep_end.destroy()
+        self.ep_end = ttk.OptionMenu(self,self.epend_option_var,str(ft[1]),*epnums,command=self.check_last_id)
+        
+        self.ep_end.grid(row = 0, column = 6)
+    def check_last_id(self,*args):
+        if int(self.epend_option_var.get()) < int(self.epstart_option_var.get()):
+            self.start_btn.state(['disabled'])
+        else:
+            self.start_btn.state(['!disabled'])
 class FixAudio(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
