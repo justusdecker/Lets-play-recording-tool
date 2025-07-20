@@ -124,7 +124,10 @@ def get_menu(parent,controller) -> ttk.Frame:
     button8.grid(row = 7, **OPTIONS)
     
     MENU.grid(column=0,row=0)
+    MENU.state(["disabled"])
     
+
+
 class Main(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
@@ -139,9 +142,9 @@ class Recording(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
         self.thread = None
-        label = ttk.Label(self, text ="Recording", font = LARGEFONT)
+        self.label = ttk.Label(self, text ="No Connection", font = LARGEFONT)
 
-        label.grid(row = 0, column = 1, padx = 10, pady = 10)
+        self.label.grid(row = 0, column = 1, padx = 10, pady = 10)
         
         self.btn_connect = ttk.Button(self, text ="Connect to obs",command=self.get_connection)
 
@@ -163,7 +166,8 @@ class Recording(tk.Frame):
         ep = LetsPlay(LP_PATH).get_episodes(0)
         self.btn_connect.state(["disabled"])
         self.btn_connect.configure(text='Try connection to OBS...')
-        obs_connect(ep)
+        
+        obs_connect(ep,self.label)
         LOCKS.OBS_CONNECTED = False
         self.btn_connect.state(["!disabled"])
         self.btn_connect.configure(text='Error occured! Try again')

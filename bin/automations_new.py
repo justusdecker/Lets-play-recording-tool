@@ -1,7 +1,8 @@
 from bin.obs import OBSObserver
 from bin.data_access import *
+from tkinter.ttk import Label
 
-def obs_connect(ep: Episode):
+def obs_connect(ep: Episode,el: Label):
     """
     Connects to the obs_ws API
     
@@ -16,7 +17,7 @@ def obs_connect(ep: Episode):
         return
     while OBSO.isconnected:
         try:
-            print(OBSO.timecode) #! Will be changed to a one line print by using esc seqs
+            el.configure(text= OBSO.timecode)
             OBSO.update(ep)
         except KeyboardInterrupt:
             print('kbi')
