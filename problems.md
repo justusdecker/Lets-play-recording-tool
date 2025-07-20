@@ -1,8 +1,5 @@
 
 
-
-
-
 # Switching to sqlite
 
 It will be easier to manage new entrys in sqlite than csv.
