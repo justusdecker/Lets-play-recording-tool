@@ -166,6 +166,7 @@ class ThumbnailGenerate(tk.Frame):
         label.grid(row = 0, column = 1, padx = 10, pady = 10) 
 
         get_menu(self, controller)
+
 class FetchAudio(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
@@ -187,7 +188,7 @@ class FetchAudio(tk.Frame):
 
         self.label2.grid(row = 0, column = 5) 
         
-        self.start_btn = ttk.Button(self, text ="Extract")
+        self.start_btn = ttk.Button(self, text ="Extract",command=self.run)
         self.start_btn.state(['disabled'])
 
         self.start_btn.grid(row = 0, column = 7) 
@@ -217,13 +218,20 @@ class FetchAudio(tk.Frame):
         #! Run Workflow
         #! Add run button <- deactivate if something went wrong!
         
-        get_menu(self, controller)
+        self.menu = get_menu(self, controller)
     def run(self):
+        if self.thread is None:
+            self.thread = Thread(target=self.__run)
+            self.thread.start()
+    def __run(self):
+        self.start_btn.state(['disabled'])
+        change_states(self.menu,'disabled')
         a, b = int(self.epstart_option_var.get()) , int(self.epend_option_var.get())
         lp = self.names.index(self.lp_option_var.get())
-        self.thread = Thread(target=ExtractAudioWF().run,args=[lp,[a,b]])
-    def __run(self):
-        self.run()
+        self.thread = ExtractAudioWF(lp,[a-1,b-1],self)
+        
+        change_states(self.menu,'!disabled')
+        self.thread = None
     def lp_changed(self,*args):
         
         ep_path = self.lps.get_episode_path(self.names.index(self.lp_option_var.get()))
