@@ -32,12 +32,21 @@ T.mainloop()
 # FRAME RIGHT
 """
 
+
+from bin.data_access import LetsPlay
+from threading import Thread
+LP_PATH = 'lets_plays.csv'
+
 import tkinter as tk
 from tkinter import ttk
 
 LARGEFONT =("Verdana", 35)
 
-MENU_FORBIDDEN = False
+class Locks:
+    MENU_FORBIDDEN = False
+    OBS_RECORD = False
+    OBS_CONNECTED = False
+LOCKS = Locks()
 
 DISCLAIMER = """
 Welcome to LPRT
@@ -69,7 +78,7 @@ class TkinterApp(tk.Tk):
  
         self.show_frame(Main)
     def show_frame(self, cont):
-        if not MENU_FORBIDDEN:
+        if not LOCKS.MENU_FORBIDDEN:
             frame = self.frames[cont]
             frame.tkraise()
         else:
@@ -129,12 +138,10 @@ class Main(tk.Frame):
 class Recording(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
-        
+        self.thread = None
         label = ttk.Label(self, text ="Recording", font = LARGEFONT)
 
         label.grid(row = 0, column = 1, padx = 10, pady = 10)
-        
-        self.obs_running = False
         
         self.btn_connect = ttk.Button(self, text ="Connect to obs",command=self.get_connection)
 
@@ -148,10 +155,16 @@ class Recording(tk.Frame):
         
         get_menu(self, controller)
     def get_connection(self):
-        self.obs_running = True
-        
+        if self.thread is None:
+            self.thread = Thread(target=self.__get_connection)
+            self.thread.start()
+    def __get_connection(self):
+        LOCKS.OBS_CONNECTED = True
+        ep = LetsPlay(LP_PATH).get_episodes(0)
+        obs_connect(ep)
+        LOCKS.OBS_CONNECTED = False
         self.btn_connect.state(["disabled"])
-        print("Whatever")
+        self.thread = None
         
         
 class ThumbnailGenerate(tk.Frame):
