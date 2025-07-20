@@ -1,5 +1,7 @@
 from bin.obs import OBSObserver
-from bin.data_access import Episode
+from bin.data_access import Episode, LetsPlay, cnef
+from bin.wintoasty import toast_finished
+LP_PATH = 'lets_plays.csv'
 
 def obs_connect(ep: Episode,el):
     """
