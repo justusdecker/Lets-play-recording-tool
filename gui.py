@@ -268,6 +268,7 @@ class CompAndRender(AutomationFrame):
     def __init__(self, parent, controller):
         super().__init__(parent, controller)
         self.automation_callback = CompareAndRenderWF
+    
 
 class Settings(tk.Frame):
     def __init__(self, parent, controller): 

@@ -202,7 +202,6 @@ class FixAudioWF(GenericWorkFlow):
         app.start_btn.state(['!disabled'])
         super().user_workflow()
 
-
 class SendToAudacityWF(GenericWorkFlow):
     """
     Generating Thumbnails based on the thumbnail automation data
@@ -272,14 +271,12 @@ class CompareAndRenderWF(GenericWorkFlow):
         paths = [[i, self.episode.get_audio_mic_edit1_path(i), self.episode.get_audio_desktop_path(i), self.episode.get_video_path(i),1.0] for i in range(*self.rng)]
 
         volap = IntegerInput(paths)
+        app
         result = volap.audio_list
-        
-        
-        
         
         for i, mic, desk, vid, vol in result:
             tmp_audio_path = f'{TEMP_FOLDER}temp_{i+1}_audio_final.mp3'
-            #inf(f'[{i}]({vol}) - {tmp_audio_path}')
+
             ffmpeg_run(
                 FFMPEG_AUDIO_COMBINE,
                 {
@@ -296,14 +293,8 @@ class CompareAndRenderWF(GenericWorkFlow):
         path_ending = f'_{self.letsplay.get_game_name(self.lpid)}_final.mp4'
         cnef(VIDEO_FOLDER)
         for video, audio, index in rendering_queue:
-            # Here: rendering my lord :D
             final_path = f'{VIDEO_FOLDER}{index+1}{path_ending}'
-            #inf(f'{video}\n{audio}\n{index}')
-            #inf(str({
-            #        '__VIDEO__': video,
-            #        '__AUDIO__': audio,
-            #        '__OUTPUT__': final_path
-            #    }))
+
             ffmpeg_run(
                 FFMPEG_VIDEO_RENDER,
                 {
@@ -312,8 +303,7 @@ class CompareAndRenderWF(GenericWorkFlow):
                     '__OUTPUT__': final_path
                 }
             )
-
-            # writes the final_video_path in episodes so the user can get this video by deploy
+            app.pb.step((1 / (self.rng[1] + 1))*100)
             self.episode.set_final_video_path(index,final_path)
             self.episode.save()
         super().user_workflow()
