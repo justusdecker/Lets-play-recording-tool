@@ -57,9 +57,12 @@ def get_response():
 
 def do_command(command):
     """Send one command, and return the response."""
-    send_command(command)
-    response = get_response()
-    print("Rcvd: <<< \n" + response)
+    response = None
+    try:
+        send_command(command)
+        response = get_response()
+        print("Rcvd: <<< \n" + response)
+    except: pass
     return response
 
 #do_command('Help: Command=Help')
