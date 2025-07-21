@@ -31,7 +31,7 @@ cnef(VIDEO_FOLDER)
 cnef(TAD_FOLDER)
 cnef(TEMP_FOLDER)
 from tkinter import Toplevel
-from tkinter.ttk import Button, LabeledScale
+from tkinter.ttk import Button, LabeledScale, Label
 class IntegerInput(Toplevel):
     def __init__(self,paths):
         self.audio_list = paths
@@ -52,8 +52,11 @@ class IntegerInput(Toplevel):
         self.down_button = Button(self,text='Down')
         self.down_button.grid(row=3,column=0)
         
+        self.curr_ep_label = Label(self,text='')
+        self.curr_ep_label.grid(row=3,column=1)
+        
         self.up_button = Button(self,text='Up',command=self.episode_up)
-        self.up_button.grid(row=3,column=0)
+        self.up_button.grid(row=3,column=1)
         
         self.finished_button = Button(self,text='Finished')
         self.finished_button.grid(row=4,column=0)
@@ -65,6 +68,7 @@ class IntegerInput(Toplevel):
             self.current_episode = 0
         else:
             self.current_episode = new_location
+        self.curr_ep_label.configure(text=f'{self.current_episode}')
             
     def episode_up(self,*args):
         new_location = self.current_episode + 1
@@ -77,6 +81,7 @@ class IntegerInput(Toplevel):
 
         else:
             self.current_episode = new_location
+        self.curr_ep_label.configure(text=f'{self.current_episode}')
         
 
 

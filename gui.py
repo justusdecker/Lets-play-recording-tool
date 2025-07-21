@@ -81,19 +81,6 @@ class TkinterApp(tk.Tk):
         frame = self.frames[cont]
         frame.tkraise()
 
-class IntegerInput(tk.Toplevel):
-    def __init__(self):
-        super().__init__()
-        self.title('Test')
-        self.geometry('300x400')
-        self.volume_slider = ttk.LabeledScale(self)
-        self.volume_slider.pack()
-        self.play_button = ttk.Button(self,text='Play')
-        self.play_button.pack()
-        self.stop_button = ttk.Button(self,text='Stop')
-        self.stop_button.pack()
-        self.stop_button.state(['disabled'])
- 
 def get_menu(parent,controller) -> ttk.Frame:
     
     MENU = ttk.Frame(parent)
