@@ -33,17 +33,46 @@ cnef(TEMP_FOLDER)
 from tkinter import Toplevel
 from tkinter.ttk import Button, LabeledScale
 class IntegerInput(Toplevel):
-    def __init__(self):
+    def __init__(self,paths):
+        self.audio_list = paths
+        self.current_episode = 0
         super().__init__()
         self.title('Test')
-        self.geometry('300x400')
+        self.geometry('300x200')
         self.volume_slider = LabeledScale(self)
         self.volume_slider.pack()
+        
         self.play_button = Button(self,text='Play')
         self.play_button.pack()
+        
         self.stop_button = Button(self,text='Stop')
         self.stop_button.pack()
         self.stop_button.state(['disabled'])
+        
+        self.finished_button = Button(self,text='Finished')
+        self.finished_button.pack()
+        
+    def episode_down(self,direction: int):
+        new_location = self.current_episode + direction
+
+        if new_location < 0:
+            self.current_episode = 0
+        else:
+            self.current_episode = new_location
+            
+    def episode_up(self,direction: int):
+        new_location = self.current_episode + direction
+        
+        l = len(self.audio_list)
+        
+        if new_location >= l:
+            self.current_episode = l - 1
+            
+
+        else:
+            self.current_episode = new_location
+        
+
 
 def obs_connect(ep: Episode,el):
     """
@@ -200,23 +229,26 @@ class CompareAndRenderWF(GenericWorkFlow):
     .. result_file_path::
         **AUDIO_FOLDER/**{`ep_index` + `1`}_{`name`}_final.mp3
     """
-    def __init__(self):
-        super().__init__(folder=TEMP_FOLDER, finish_message="CAAR")
-        self.user_workflow()
-    def user_workflow(self):
+    def __init__(self,lpid, epr,app):
+        super().__init__(folder=TEMP_FOLDER, finish_message="CAAR",lpid=lpid, epr=epr)
+        self.user_workflow(app)
+    def user_workflow(self,app):
         
         rendering_queue = []
 
-        paths = [[i, self.episode.get_audio_mic_edit2_path(i), self.episode.get_audio_desktop_path(i), self.episode.get_video_path(i)] for i in range(*self.rng)]
+        paths = [[i, self.episode.get_audio_mic_edit2_path(i), self.episode.get_audio_desktop_path(i), self.episode.get_video_path(i),1.0] for i in range(*self.rng)]
 
         ui = msgbox.askyesno('LPRT - Compare','Set volume for each?')
+        
         if ui:
+            volap = IntegerInput(paths)
             AP = AudioPlayer(paths)
             AP.run()
             result = AP.audio_list
             del AP
         else:
-            vol = binpi('Set volume: ') / 100 #! For this we need another solution: We will create a toplevel
+            volap = IntegerInput()
+            vol = ('Set volume: ') / 100 #! For this we need another solution: We will create a toplevel
             result = [[*i,vol] for i in paths]
         
         
