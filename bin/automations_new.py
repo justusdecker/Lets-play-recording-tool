@@ -73,6 +73,7 @@ class IntegerInput(Toplevel):
             self.current_episode = 0
         else:
             self.current_episode = new_location
+        self.audio_list[self.current_episode][4] = self.get_volume()
         self.curr_ep_label.configure(text=f'{self.current_episode}')
             
     def episode_up(self,*args):
@@ -86,6 +87,7 @@ class IntegerInput(Toplevel):
 
         else:
             self.current_episode = new_location
+        self.audio_list[self.current_episode][4] = self.get_volume()
         self.curr_ep_label.configure(text=f'{self.current_episode}')
         
 
