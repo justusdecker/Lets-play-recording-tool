@@ -40,7 +40,7 @@ class IntegerInput(Toplevel):
         self.title('Test')
         self.geometry('300x200')
         self.volume_slider = LabeledScale(self)
-        self.volume_slider.pack()
+        self.volume_slider.gir()
         
         self.play_button = Button(self,text='Play')
         self.play_button.pack()
