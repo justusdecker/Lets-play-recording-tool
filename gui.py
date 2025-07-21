@@ -87,6 +87,7 @@ class IntegerInput(tk.Toplevel):
         super().__init__()
         self.title('Test')
         self.geometry('300x400')
+        ttk.LabeledScale(self)
  
 def get_menu(parent,controller) -> ttk.Frame:
     
@@ -308,6 +309,7 @@ class Send2Audacity(AutomationFrame):
 class CompAndRender(AutomationFrame):
     def __init__(self, parent, controller):
         super().__init__(parent, controller)
+        IntegerInput()
         self.automation_callback = CompareAndRenderWF
 
 class Settings(tk.Frame):
