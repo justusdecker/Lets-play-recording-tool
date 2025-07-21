@@ -123,7 +123,13 @@ def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,
     
     return label, options, lp_option_var, lps
 def get_episode_range(parent):
-    pass
+    label1 = ttk.Label(parent, text ="Episode start")
+
+    label1.grid(row = 0, column = 3) 
+    
+    label2 = ttk.Label(parent, text ="Episode end")
+
+    label2.grid(row = 0, column = 5) 
 
 def change_states(elements: list[ttk.Button],state: str):
     for element in elements:
