@@ -107,7 +107,66 @@ def get_menu(parent,controller) -> ttk.Frame:
     MENU.grid(column=0,row=0)
     
     return _ret
+
+def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,tk.StringVar, LetsPlay]:
+    """
+    Creates and configures Tkinter UI elements for selecting a "Let's Play" item.
+
+    This function sets up a label and an option menu (dropdown) for users
+    to select from a list of "Let's Play" names. The names are sourced
+    from a `LetsPlay` object which conceptually reads from 'lets_plays.csv'.
+    When a selection is made, the provided `callback` function is executed.
+    """
+    label = ttk.Label(parent, text ="Lets Play")
+
+    label.grid(row = 0, column = 1) 
     
+    lp_option_var = tk.StringVar(parent)
+        
+    lps = LetsPlay('lets_plays.csv')
+    names = lps.get_names()
+    options = ttk.OptionMenu(parent,lp_option_var,'None',*names,command=callback)
+    
+    options.grid(row = 0, column = 2)
+    
+    return label, options, lp_option_var, lps
+
+def get_episode_range(parent, run_callback: callable, check_callback: callable,ft) -> tuple[ttk.Label, ttk.Label, ttk.Button, ttk.OptionMenu, ttk.OptionMenu, tk.StringVar, tk.StringVar]:
+    """
+    Creates and configures Tkinter UI elements for selecting an episode range.
+
+    This function sets up two labels ("Episode start", "Episode end"),
+    two option menus for selecting start and end episode numbers, and an
+    "Extract" button. The button is initially disabled(if ft is none <- No data exists) and its state
+    can be managed by the `check_callback`. The `run_callback` is
+    executed when the "Extract" button is clicked.
+    """
+    label1 = ttk.Label(parent, text ="Episode start")
+
+    label1.grid(row = 0, column = 3) 
+    
+    label2 = ttk.Label(parent, text ="Episode end")
+
+    label2.grid(row = 0, column = 5) 
+
+    start_btn = ttk.Button(parent, text ="Extract",command=run_callback)
+    if not ft:
+        start_btn.state(['disabled'])
+
+    start_btn.grid(row = 0, column = 7) 
+    
+    epstart_option_var = tk.StringVar(parent)
+    epend_option_var = tk.StringVar(parent)
+    
+    ep_start = ttk.OptionMenu(parent,epstart_option_var,str(ft[0] if ft else 'None'),*ft,command=check_callback)
+    
+    ep_start.grid(row = 0, column = 4) 
+    
+    ep_end = ttk.OptionMenu(parent,epend_option_var,str(ft[-1] if ft else 'None'),*ft,command=check_callback)
+    
+    ep_end.grid(row = 0, column = 6) 
+    return label1, label2, start_btn, ep_start, ep_end, epstart_option_var, epend_option_var
+
 def change_states(elements: list[ttk.Button],state: str):
     for element in elements:
         element.state([state])
@@ -121,6 +180,67 @@ class Main(tk.Frame):
         label.grid(row = 0, column = 1, padx = 10, pady = 10) 
 
         get_menu(self, controller)
+
+class AutomationFrame(tk.Frame):
+    def __init__(self, parent, controller): 
+        tk.Frame.__init__(self, parent)
+        self.thread = None
+        self.automation_callback = None
+        
+        self.pb = ttk.Progressbar(self)
+        self.pb.grid(sticky='N',row = 0, column = 2)
+
+        self.label, self.lp_options, self.lp_option_var, self.lps= get_lets_play(self, self.lp_changed)
+        
+        self.update_ui()
+        
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,self.epnums)
+        
+        self.menu = get_menu(self, controller)
+    def update_ui(self):
+        lp = self.lp_option_var.get()
+        if lp != 'None':
+            ep_path = self.lps.get_episode_path(self.lps.get_names().index(self.lp_option_var.get()))
+            self.epnums = [i+1 for i in range(Episode(ep_path).row)]
+        else:
+            self.epnums = []
+    def run(self,*args):
+        if self.thread is None:
+            self.thread = Thread(target=self.__run)
+            self.thread.start()
+    def __run(self):
+        self.start_btn.state(['disabled'])
+        change_states(self.menu,'disabled')
+        a, b = int(self.epstart_option_var.get()) , int(self.epend_option_var.get())
+        lp = self.lps.get_names().index(self.lp_option_var.get())
+        self.thread = self.automation_callback(lp,[a-1,b-1],self)
+        
+        change_states(self.menu,'!disabled')
+        self.thread = None
+    def lp_changed(self,*args):
+        
+        self.update_ui()
+        
+        if not self.epnums:
+            self.start_btn.state(['disabled'])
+        else:
+            self.start_btn.state(['!disabled'])
+        
+        self.ep_start.destroy()
+        self.ep_end.destroy()
+        self.label2.destroy()
+        self.label3.destroy()
+        self.start_btn.destroy()
+        del self.epstart_option_var
+        del self.epend_option_var
+        
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,self.epnums)
+        
+    def check_last_id(self,*args):
+        if int(self.epend_option_var.get()) < int(self.epstart_option_var.get()):
+            self.start_btn.state(['disabled'])
+        else:
+            self.start_btn.state(['!disabled'])
 
 class Recording(tk.Frame):
     def __init__(self, parent, controller): 
@@ -166,114 +286,19 @@ class ThumbnailGenerate(tk.Frame):
         label.grid(row = 0, column = 1, padx = 10, pady = 10) 
 
         get_menu(self, controller)
-
-class FetchAudio(tk.Frame):
-    def __init__(self, parent, controller): 
-        tk.Frame.__init__(self, parent)
-        self.thread = None
-        
-        
-        self.pb = ttk.Progressbar(self)
-        self.pb.grid(sticky='N',row = 0, column = 2)
-        
-        self.label1 = ttk.Label(self, text ="Lets Play")
-
-        self.label1.grid(row = 0, column = 1) 
-        
-        self.label2 = ttk.Label(self, text ="Episode start")
-
-        self.label2.grid(row = 0, column = 3) 
-        
-        self.label2 = ttk.Label(self, text ="Episode end")
-
-        self.label2.grid(row = 0, column = 5) 
-        
-        self.start_btn = ttk.Button(self, text ="Extract",command=self.run)
-        self.start_btn.state(['disabled'])
-
-        self.start_btn.grid(row = 0, column = 7) 
-        
-        self.lp_option_var = tk.StringVar(self)
-        
-        self.lps = LetsPlay('lets_plays.csv')
-        self.names = self.lps.get_names()
-        lpid = ttk.OptionMenu(self,self.lp_option_var,'None',*self.names,command=self.lp_changed)
-        
-        lpid.grid(row = 0, column = 2)
-        
-        self.epstart_option_var = tk.StringVar(self)
-        
-        self.ep_start = ttk.OptionMenu(self,self.epstart_option_var,'None',[])
-        
-        self.ep_start.grid(row = 0, column = 4) 
-        
-        self.epend_option_var = tk.StringVar(self)
-        
-        self.ep_end = ttk.OptionMenu(self,self.epend_option_var,'None',[],command=self.check_last_id)
-        
-        self.ep_end.grid(row = 0, column = 4) 
-        #TODO
-        #! Add Text Info
-        
-        self.menu = get_menu(self, controller)
-    def run(self):
-        if self.thread is None:
-            self.thread = Thread(target=self.__run)
-            self.thread.start()
-    def __run(self):
-        self.start_btn.state(['disabled'])
-        change_states(self.menu,'disabled')
-        a, b = int(self.epstart_option_var.get()) , int(self.epend_option_var.get())
-        lp = self.names.index(self.lp_option_var.get())
-        self.thread = ExtractAudioWF(lp,[a-1,b-1],self)
-        
-        change_states(self.menu,'!disabled')
-        self.thread = None
-    def lp_changed(self,*args):
-        
-        ep_path = self.lps.get_episode_path(self.names.index(self.lp_option_var.get()))
-        
-        epnums = [i+1 for i in range(Episode(ep_path).row)]
-        
-        ft = epnums[0],epnums[-1] if epnums else ('None','None')
-        
-        if not epnums:
-            self.start_btn.state(['disabled'])
-        else:
-            self.start_btn.state(['!disabled'])
-        
-        self.ep_start.destroy()
-        self.ep_start = ttk.OptionMenu(self,self.epstart_option_var,str(ft[0]),*epnums)
-        
-        self.ep_start.grid(row = 0, column = 4) 
-        
-        self.ep_end.destroy()
-        self.ep_end = ttk.OptionMenu(self,self.epend_option_var,str(ft[1]),*epnums,command=self.check_last_id)
-        
-        self.ep_end.grid(row = 0, column = 6)
-    def check_last_id(self,*args):
-        if int(self.epend_option_var.get()) < int(self.epstart_option_var.get()):
-            self.start_btn.state(['disabled'])
-        else:
-            self.start_btn.state(['!disabled'])
-class FixAudio(tk.Frame):
-    def __init__(self, parent, controller): 
-        tk.Frame.__init__(self, parent)
-        
-        label = ttk.Label(self, text ="FixAudio", font = LARGEFONT)
-
-        label.grid(row = 0, column = 1, padx = 10, pady = 10) 
-
-        get_menu(self, controller)
-class Send2Audacity(tk.Frame):
-    def __init__(self, parent, controller): 
-        tk.Frame.__init__(self, parent)
-        
-        label = ttk.Label(self, text ="Send2Audacity", font = LARGEFONT)
-
-        label.grid(row = 0, column = 1, padx = 10, pady = 10) 
-
-        get_menu(self, controller)
+    
+class FetchAudio(AutomationFrame):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller)
+        self.automation_callback = ExtractAudioWF
+class FixAudio(AutomationFrame):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller)
+        self.automation_callback = FixAudioWF
+class Send2Audacity(AutomationFrame):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller)
+        self.automation_callback = SendToAudacityWF
 
 class CompAndRender(tk.Frame):
     def __init__(self, parent, controller): 
@@ -294,6 +319,8 @@ class Settings(tk.Frame):
         label.grid(row = 0, column = 1, padx = 10, pady = 10) 
 
         get_menu(self, controller)
+        
+
 app = TkinterApp()
 app.mainloop()
 
