@@ -107,7 +107,12 @@ def get_menu(parent,controller) -> ttk.Frame:
     MENU.grid(column=0,row=0)
     
     return _ret
-    
+
+def get_lets_play(parent):
+    pass
+def get_episode_range(parent):
+    pass
+
 def change_states(elements: list[ttk.Button],state: str):
     for element in elements:
         element.state([state])
@@ -166,6 +171,8 @@ class ThumbnailGenerate(tk.Frame):
         label.grid(row = 0, column = 1, padx = 10, pady = 10) 
 
         get_menu(self, controller)
+
+
 
 class FetchAudio(tk.Frame):
     def __init__(self, parent, controller): 
