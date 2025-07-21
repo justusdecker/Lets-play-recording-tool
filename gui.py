@@ -122,7 +122,7 @@ def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,
     options.grid(row = 0, column = 2)
     
     return label, options, lp_option_var, lps
-def get_episode_range(parent):
+def get_episode_range(parent, run_callback: callable, check_callback: callable):
     label1 = ttk.Label(parent, text ="Episode start")
 
     label1.grid(row = 0, column = 3) 
@@ -131,6 +131,23 @@ def get_episode_range(parent):
 
     label2.grid(row = 0, column = 5) 
 
+    
+    start_btn = ttk.Button(parent, text ="Extract",command=callable)
+    start_btn.state(['disabled'])
+
+    start_btn.grid(row = 0, column = 7) 
+    
+    epstart_option_var = tk.StringVar(parent)
+    
+    ep_start = ttk.OptionMenu(parent,epstart_option_var,'None',[])
+    
+    ep_start.grid(row = 0, column = 4) 
+    
+    epend_option_var = tk.StringVar(parent)
+    
+    ep_end = ttk.OptionMenu(parent,epend_option_var,'None',[],command=check_callback)
+    
+    ep_end.grid(row = 0, column = 4) 
 def change_states(elements: list[ttk.Button],state: str):
     for element in elements:
         element.state([state])
