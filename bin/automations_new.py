@@ -3,6 +3,10 @@ from bin.data_access import Episode, LetsPlay, cnef
 from bin.wintoasty import toast_finished
 
 from bin.ffmpeg import *
+from bin.audacity_pipeline import *
+from tkinter.filedialog import askdirectory
+import tkinter.messagebox as msgbox
+from os import listdir
 LP_PATH = 'lets_plays.csv'
 
 from os import getlogin
@@ -111,6 +115,42 @@ class FixAudioWF(GenericWorkFlow):
             ffmpeg_run(FFMPEG_AUDIO_PF_LN_L,{'__IN__': audio_mic_path,'__OUT__':dest})
             app.pb.step((1 / (self.rng[1] + 1))*100)
             self.episode.set_audio_mic_edit1_path(i,dest)
+            self.episode.save()
+        app.start_btn.state(['!disabled'])
+        super().user_workflow()
+
+
+class SendToAudacityWF(GenericWorkFlow):
+    """
+    Generating Thumbnails based on the thumbnail automation data
+    """
+    def __init__(self,lpid, epr,app):
+        super().__init__(folder = THUMBNAIL_FOLDER, finish_message = 'Audacity Send',lpid=lpid, epr=epr)
+        self.user_workflow(app)
+    def user_workflow(self, app):
+        ui = msgbox.askyesno('LPRT to AC','Do you want to send data to Audacity?')
+        
+        if ui:
+            create_pipe()
+            for i in range(*self.rng): 
+                filepath = self.episode.get_audio_mic_edit1_path(i)
+                do_command(f'Import2: filename="{filepath}"')
+                app.pb.step((1 / (self.rng[1] + 1))*100)
+                #! The Noise Reduction is not automated
+        toast_finished('Finished Importing')
+        results_path = askdirectory() + '/'
+        files = listdir(results_path)
+        if self.episode.row != len(files):
+            msgbox.showerror('ERROR','Did you miss some episodes?')
+            app.start_btn.state(['!disabled'])
+            return
+        for file in files:
+            ep = int(file.split('_-')[1].split('.')[0]) - 1
+            old = results_path + file
+            new = old.split('.')[0] + '.aac'
+            ffmpeg_run(FFMPEG_CONVERT_AUDIO_TYPE,{'__IN__': old, '__OUT__': new})
+            #remove()
+            self.episode.set_audio_mic_edit2_path(ep, new)
             self.episode.save()
         app.start_btn.state(['!disabled'])
         super().user_workflow()
