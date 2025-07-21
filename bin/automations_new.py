@@ -271,18 +271,8 @@ class CompareAndRenderWF(GenericWorkFlow):
 
         paths = [[i, self.episode.get_audio_mic_edit1_path(i), self.episode.get_audio_desktop_path(i), self.episode.get_video_path(i),1.0] for i in range(*self.rng)]
 
-        ui = msgbox.askyesno('LPRT - Compare','Set volume for each?')
-        
-        if ui:
-            volap = IntegerInput(paths)
-            AP = AudioPlayer(paths)
-            AP.run()
-            result = AP.audio_list
-            del AP
-        else:
-            volap = IntegerInput()
-            vol = ('Set volume: ') / 100 #! For this we need another solution: We will create a toplevel
-            result = [[*i,vol] for i in paths]
+        volap = IntegerInput(paths)
+        result = volap.audio_list
         
         
         

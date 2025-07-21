@@ -1,37 +1,3 @@
-"""
-from tkinter import Tk
-import tkinter
-import tkinter.ttk
-tkinter.HIDDEN
-T = Tk('Test')
-MENU = tkinter.ttk.Frame(T)
-for i in range(5):
-    btn = tkinter.ttk.Button(MENU,text = f'{i}')
-    btn.grid(column=1)
-frame = tkinter.ttk.Frame(T)
-    
-btn = tkinter.ttk.Button(T,text = 'Some functionality here!')
-
-
-btn.grid(column=2,row=0)
-
-#slr = tkinter.ttk.LabeledScale(frame)
-#slr.grid(column=3,row=0)
-
-#nb = tkinter.ttk.Label(frame)
-#nb.grid(column=4,row=0)
-
-#slr = tkinter.ttk.LabeledScale(frame,)
-#slr.grid()
-
-MENU.grid(column=1,row=0)
-frame.grid(column=2)
-
-T.mainloop()
-# MENU LEFT
-# FRAME RIGHT
-"""
-
 from bin.automations_new import *
 from bin.data_access import LetsPlay, Episode
 from threading import Thread
