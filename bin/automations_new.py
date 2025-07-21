@@ -40,6 +40,7 @@ class IntegerInput(Toplevel):
         print(len(paths))
         self.current_episode = 0
         super().__init__()
+        self.isfinished = False
         self.title('Test')
         self.geometry('300x200')
         self.vol = DoubleVar(self,1.0)
@@ -78,6 +79,7 @@ class IntegerInput(Toplevel):
         
     def byebye(self, *args):
         self.destroy()
+        self.isfinished = True
     def get_volume(self) -> float:
         return float(f'{self.vol.get():.2f}')
     
@@ -271,7 +273,8 @@ class CompareAndRenderWF(GenericWorkFlow):
         paths = [[i, self.episode.get_audio_mic_edit1_path(i), self.episode.get_audio_desktop_path(i), self.episode.get_video_path(i),1.0] for i in range(*self.rng)]
 
         volap = IntegerInput(paths)
-        app
+        while volap.isfinished:
+            pass
         result = volap.audio_list
         
         for i, mic, desk, vid, vol in result:
