@@ -134,7 +134,10 @@ class SendToAudacityWF(GenericWorkFlow):
             create_pipe()
             for i in range(*self.rng): 
                 filepath = self.episode.get_audio_mic_edit1_path(i)
-                do_command(f'Import2: filename="{filepath}"')
+                if do_command(f'Import2: filename="{filepath}"') is None:
+                    msgbox.showerror('ERROR','Did you open Audacity & enabled the mod-pipe?')
+                    app.start_btn.state(['!disabled'])
+                    return
                 app.pb.step((1 / (self.rng[1] + 1))*100)
                 #! The Noise Reduction is not automated
         toast_finished('Finished Importing')
