@@ -82,6 +82,11 @@ class TkinterApp(tk.Tk):
         frame = self.frames[cont]
         frame.tkraise()
 
+class IntegerInput(tk.Toplevel):
+    def __init__(self):
+        super().__init__()
+        self.title('Test')
+        self.geometry('300x400')
  
 def get_menu(parent,controller) -> ttk.Frame:
     
