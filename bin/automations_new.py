@@ -70,6 +70,7 @@ class IntegerInput(Toplevel):
         stop_audio()
         
     def play(self, *args):
+        print(self.audio_list[self.current_episode])
         self.stop_button.state(['!disabled'])
         self.play_button.state(['disabled'])
         ffmpeg_run(FFMPEG_AUDIO_COMBINE_TRUNCATED,{'__IN1__':self.audio_list[self.current_episode][1],'__IN2__': self.audio_list[self.current_episode][2],'__VOLUME1__': str(1.0),'__VOLUME2__': str(self.audio_list[self.current_episode][4]),'__OUT__':'temp.mp3'})
@@ -268,7 +269,7 @@ class CompareAndRenderWF(GenericWorkFlow):
         
         rendering_queue = []
 
-        paths = [[i, self.episode.get_audio_mic_edit2_path(i), self.episode.get_audio_desktop_path(i), self.episode.get_video_path(i),1.0] for i in range(*self.rng)]
+        paths = [[i, self.episode.get_audio_mic_edit1_path(i), self.episode.get_audio_desktop_path(i), self.episode.get_video_path(i),1.0] for i in range(*self.rng)]
 
         ui = msgbox.askyesno('LPRT - Compare','Set volume for each?')
         
