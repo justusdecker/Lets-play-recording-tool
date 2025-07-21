@@ -140,7 +140,7 @@ def get_episode_range(parent, run_callback: callable, check_callback: callable):
 
     label2.grid(row = 0, column = 5) 
 
-    start_btn = ttk.Button(parent, text ="Extract",command=callable)
+    start_btn = ttk.Button(parent, text ="Extract",command=run_callback)
     start_btn.state(['disabled'])
 
     start_btn.grid(row = 0, column = 7) 
@@ -156,6 +156,7 @@ def get_episode_range(parent, run_callback: callable, check_callback: callable):
     
     ep_end.grid(row = 0, column = 4) 
     return label1, label2, start_btn, ep_start, ep_end, epstart_option_var, epend_option_var
+
 def change_states(elements: list[ttk.Button],state: str):
     for element in elements:
         element.state([state])
@@ -227,38 +228,19 @@ class FetchAudio(tk.Frame):
         self.pb.grid(sticky='N',row = 0, column = 2)
         
         
+        
+        
         self.label, self.lp_options, self.lp_option_var, self.lps= get_lets_play(self, self.lp_changed)
+        
         self.lps: LetsPlay
 
-        self.label2 = ttk.Label(self, text ="Episode start")
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id)
 
-        self.label2.grid(row = 0, column = 3) 
-        
-        self.label2 = ttk.Label(self, text ="Episode end")
-
-        self.label2.grid(row = 0, column = 5) 
-        
-        self.start_btn = ttk.Button(self, text ="Extract",command=self.run)
-        self.start_btn.state(['disabled'])
-
-        self.start_btn.grid(row = 0, column = 7) 
-        
-        self.epstart_option_var = tk.StringVar(self)
-        
-        self.ep_start = ttk.OptionMenu(self,self.epstart_option_var,'None',[])
-        
-        self.ep_start.grid(row = 0, column = 4) 
-        
-        self.epend_option_var = tk.StringVar(self)
-        
-        self.ep_end = ttk.OptionMenu(self,self.epend_option_var,'None',[],command=self.check_last_id)
-        
-        self.ep_end.grid(row = 0, column = 4) 
         #TODO
         #! Add Text Info
         
         self.menu = get_menu(self, controller)
-    def run(self):
+    def run(self,*args):
         if self.thread is None:
             self.thread = Thread(target=self.__run)
             self.thread.start()
