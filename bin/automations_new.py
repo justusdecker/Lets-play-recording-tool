@@ -194,8 +194,9 @@ class CompareAndRenderWF(GenericWorkFlow):
         rendering_queue = []
 
         paths = [[i, self.episode.get_audio_mic_edit2_path(i), self.episode.get_audio_desktop_path(i), self.episode.get_video_path(i)] for i in range(*self.rng)]
-        ui = binpi('Set volume for each?\n[1]Yes\n[2]No\n')
-        if ui == 1:
+
+        ui = msgbox.askyesno('LPRT - Compare','Set volume for each?')
+        if ui:
             AP = AudioPlayer(paths)
             AP.run()
             result = AP.audio_list
@@ -209,7 +210,7 @@ class CompareAndRenderWF(GenericWorkFlow):
         
         for i, mic, desk, vid, vol in result:
             tmp_audio_path = f'{TEMP_FOLDER}temp_{i+1}_audio_final.mp3'
-            inf(f'[{i}]({vol}) - {tmp_audio_path}')
+            #inf(f'[{i}]({vol}) - {tmp_audio_path}')
             ffmpeg_run(
                 FFMPEG_AUDIO_COMBINE,
                 {
@@ -228,12 +229,12 @@ class CompareAndRenderWF(GenericWorkFlow):
         for video, audio, index in rendering_queue:
             # Here: rendering my lord :D
             final_path = f'{VIDEO_FOLDER}{index+1}{path_ending}'
-            inf(f'{video}\n{audio}\n{index}')
-            inf(str({
-                    '__VIDEO__': video,
-                    '__AUDIO__': audio,
-                    '__OUTPUT__': final_path
-                }))
+            #inf(f'{video}\n{audio}\n{index}')
+            #inf(str({
+            #        '__VIDEO__': video,
+            #        '__AUDIO__': audio,
+            #        '__OUTPUT__': final_path
+            #    }))
             ffmpeg_run(
                 FFMPEG_VIDEO_RENDER,
                 {
