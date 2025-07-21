@@ -74,8 +74,6 @@ class ExtractAudioWF(GenericWorkFlow):#! bin.constants throws an exception bold 
                        
             t1_path, t2_path = f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_track_mic.aac',f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_track_desktop.aac'
             
-            #inf(f'Start extract tracks from {video_path}')
-
             ffmpeg_run(FFMPEG_OPTIMIZED_EXTRACT,{'__IN__':video_path,'__OUT1__':t1_path, '__OUT2__':t2_path})
             app.pb.step((1 / (self.rng[1] + 1))*100)
             self.episode.set_audio_mic_path(i,t1_path)
@@ -101,7 +99,7 @@ class FixAudioWF(GenericWorkFlow):
         super().__init__(FIXED_AUDIO_FOLDER, 'Audio Fix', lpid, epr)
         self.user_workflow(app)
         
-    def user_workflow(self):
+    def user_workflow(self,app):
         
         for i in range(*self.rng): 
             audio_mic_path = self.episode.get_audio_mic_path(i)
@@ -111,7 +109,8 @@ class FixAudioWF(GenericWorkFlow):
             cnef(TEMP_FOLDER)
             
             ffmpeg_run(FFMPEG_AUDIO_PF_LN_L,{'__IN__': audio_mic_path,'__OUT__':dest})
-            
+            app.pb.step((1 / (self.rng[1] + 1))*100)
             self.episode.set_audio_mic_edit1_path(i,dest)
             self.episode.save()
+        app.start_btn.state(['!disabled'])
         super().user_workflow()
