@@ -226,8 +226,6 @@ class ThumbnailGenerate(tk.Frame):
 
         get_menu(self, controller)
 
-
-
 class FetchAudio(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
@@ -242,21 +240,22 @@ class FetchAudio(tk.Frame):
         
         self.label, self.lp_options, self.lp_option_var, self.lps= get_lets_play(self, self.lp_changed)
         
-        self.lps: LetsPlay
-        lp = self.lp_option_var.get()
-        if lp != 'None':
-            ep_path = self.lps.get_episode_path(self.lps.get_names().index(self.lp_option_var.get()))
-            epnums = [i+1 for i in range(Episode(ep_path).row)]
-            ft = epnums[0],epnums[-1] if epnums else ('None','None')
-        else:
-            epnums = []
-            ft = ('None','None')
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,epnums)
+        self.update_ui()
+        
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,self.epnums)
 
         #TODO
         #! Add Text Info
         
         self.menu = get_menu(self, controller)
+    def update_ui(self):
+        lp = self.lp_option_var.get()
+        if lp != 'None':
+            ep_path = self.lps.get_episode_path(self.lps.get_names().index(self.lp_option_var.get()))
+            self.epnums = [i+1 for i in range(Episode(ep_path).row)]
+        else:
+            self.epnums = []
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,self.epnums)
     def run(self,*args):
         if self.thread is None:
             self.thread = Thread(target=self.__run)
@@ -272,16 +271,9 @@ class FetchAudio(tk.Frame):
         self.thread = None
     def lp_changed(self,*args):
         
-        lp = self.lp_option_var.get()
-        if lp != 'None':
-            ep_path = self.lps.get_episode_path(self.lps.get_names().index(self.lp_option_var.get()))
-            epnums = [i+1 for i in range(Episode(ep_path).row)]
-            ft = epnums[0],epnums[-1] if epnums else ('None','None')
-        else:
-            epnums = []
-            ft = ('None','None')
+        self.update_ui()
         
-        if not epnums:
+        if not self.epnums:
             self.start_btn.state(['disabled'])
         else:
             self.start_btn.state(['!disabled'])
@@ -294,7 +286,7 @@ class FetchAudio(tk.Frame):
         del self.epstart_option_var
         del self.epend_option_var
         
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,epnums)
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,self.epnums)
         
     def check_last_id(self,*args):
         if int(self.epend_option_var.get()) < int(self.epstart_option_var.get()):
