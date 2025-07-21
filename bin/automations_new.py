@@ -30,6 +30,20 @@ cnef(THUMBNAIL_FOLDER)
 cnef(VIDEO_FOLDER)
 cnef(TAD_FOLDER)
 cnef(TEMP_FOLDER)
+from tkinter import Toplevel
+from tkinter.ttk import Button, LabeledScale
+class IntegerInput(Toplevel):
+    def __init__(self):
+        super().__init__()
+        self.title('Test')
+        self.geometry('300x400')
+        self.volume_slider = LabeledScale(self)
+        self.volume_slider.pack()
+        self.play_button = Button(self,text='Play')
+        self.play_button.pack()
+        self.stop_button = Button(self,text='Stop')
+        self.stop_button.pack()
+        self.stop_button.state(['disabled'])
 
 def obs_connect(ep: Episode,el):
     """

@@ -67,7 +67,6 @@ class TkinterApp(tk.Tk):
         container.pack()
         # initializing frames to an empty array
         self.frames = {}
-        
         for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender, Settings):
  
             frame = F(container, self)
@@ -87,7 +86,13 @@ class IntegerInput(tk.Toplevel):
         super().__init__()
         self.title('Test')
         self.geometry('300x400')
-        ttk.LabeledScale(self)
+        self.volume_slider = ttk.LabeledScale(self)
+        self.volume_slider.pack()
+        self.play_button = ttk.Button(self,text='Play')
+        self.play_button.pack()
+        self.stop_button = ttk.Button(self,text='Stop')
+        self.stop_button.pack()
+        self.stop_button.state(['disabled'])
  
 def get_menu(parent,controller) -> ttk.Frame:
     
@@ -309,7 +314,6 @@ class Send2Audacity(AutomationFrame):
 class CompAndRender(AutomationFrame):
     def __init__(self, parent, controller):
         super().__init__(parent, controller)
-        IntegerInput()
         self.automation_callback = CompareAndRenderWF
 
 class Settings(tk.Frame):
