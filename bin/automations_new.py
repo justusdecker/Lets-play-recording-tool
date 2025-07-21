@@ -1,11 +1,13 @@
 from bin.obs import OBSObserver
 from bin.data_access import Episode, LetsPlay, cnef
 from bin.wintoasty import toast_finished
+from bin.audio_player import AudioPlayer
 
 from bin.ffmpeg import *
 from bin.audacity_pipeline import *
 from tkinter.filedialog import askdirectory
 import tkinter.messagebox as msgbox
+
 from os import listdir
 LP_PATH = 'lets_plays.csv'
 
@@ -13,16 +15,21 @@ from os import getlogin
 USERNAME = getlogin()
 del getlogin
 ROOT = f'C:\\Users\\{USERNAME}\\lprt\\'
+
 AUDIO_FOLDER = f'{ROOT}audio\\'
+VIDEO_FOLDER = f'{ROOT}video\\'
+TAD_FOLDER = f'{ROOT}tad\\'
 TEMP_FOLDER = f'{ROOT}temp\\'
 THUMBNAIL_FOLDER = f'{ROOT}thumbnails\\'
 FIXED_AUDIO_FOLDER = f'{ROOT}audio_fixed\\'
 
-#This is the start of a fix for issue #78
+# fix for issue #78
 cnef(AUDIO_FOLDER)
 cnef(FIXED_AUDIO_FOLDER)
-cnef(TEMP_FOLDER)
 cnef(THUMBNAIL_FOLDER)
+cnef(VIDEO_FOLDER)
+cnef(TAD_FOLDER)
+cnef(TEMP_FOLDER)
 
 def obs_connect(ep: Episode,el):
     """
@@ -162,4 +169,81 @@ class SendToAudacityWF(GenericWorkFlow):
             self.episode.set_audio_mic_edit2_path(ep, new)
             self.episode.save()
         app.start_btn.state(['!disabled'])
+        super().user_workflow()
+
+class CompareAndRenderWF(GenericWorkFlow):
+    """
+    CAAR
+    ---
+    Audio Compare & render the results at the end
+    
+    Uses FFMPEG to edit audio & render video in bulk.
+    
+    
+    .. render_queue::
+        Because rendering takes a long time the paths will be stored temporary in this list. Formatted like: (video, audio, index)
+    
+    .. result_file_path::
+        **AUDIO_FOLDER/**{`ep_index` + `1`}_{`name`}_final.mp3
+    """
+    def __init__(self):
+        super().__init__(folder=TEMP_FOLDER, finish_message="CAAR")
+        self.user_workflow()
+    def user_workflow(self):
+        
+        rendering_queue = []
+
+        paths = [[i, self.episode.get_audio_mic_edit2_path(i), self.episode.get_audio_desktop_path(i), self.episode.get_video_path(i)] for i in range(*self.rng)]
+        ui = binpi('Set volume for each?\n[1]Yes\n[2]No\n')
+        if ui == 1:
+            AP = AudioPlayer(paths)
+            AP.run()
+            result = AP.audio_list
+            del AP
+        else:
+            vol = binpi('Set volume: ') / 100 #! For this we need another solution: We will create a toplevel
+            result = [[*i,vol] for i in paths]
+        
+        
+        
+        
+        for i, mic, desk, vid, vol in result:
+            tmp_audio_path = f'{TEMP_FOLDER}temp_{i+1}_audio_final.mp3'
+            inf(f'[{i}]({vol}) - {tmp_audio_path}')
+            ffmpeg_run(
+                FFMPEG_AUDIO_COMBINE,
+                {
+                    '__IN1__':mic,
+                    '__IN2__': desk,
+                    '__VOLUME1__': str(1.0),
+                    '__VOLUME2__': str(vol),
+                    '__OUT__':tmp_audio_path
+                    }
+                )
+            rendering_queue.append((vid, tmp_audio_path, i))
+        toast_finished("[1/2] Audio combine")   
+
+        path_ending = f'_{self.letsplay.get_game_name(self.lpid)}_final.mp4'
+        cnef(VIDEO_FOLDER)
+        for video, audio, index in rendering_queue:
+            # Here: rendering my lord :D
+            final_path = f'{VIDEO_FOLDER}{index+1}{path_ending}'
+            inf(f'{video}\n{audio}\n{index}')
+            inf(str({
+                    '__VIDEO__': video,
+                    '__AUDIO__': audio,
+                    '__OUTPUT__': final_path
+                }))
+            ffmpeg_run(
+                FFMPEG_VIDEO_RENDER,
+                {
+                    '__VIDEO__': video,
+                    '__AUDIO__': audio,
+                    '__OUTPUT__': final_path
+                }
+            )
+
+            # writes the final_video_path in episodes so the user can get this video by deploy
+            self.episode.set_final_video_path(index,final_path)
+            self.episode.save()
         super().user_workflow()

@@ -300,15 +300,10 @@ class Send2Audacity(AutomationFrame):
         super().__init__(parent, controller)
         self.automation_callback = SendToAudacityWF
 
-class CompAndRender(tk.Frame):
-    def __init__(self, parent, controller): 
-        tk.Frame.__init__(self, parent)
-        
-        label = ttk.Label(self, text ="CompAndRender", font = LARGEFONT)
-
-        label.grid(row = 0, column = 1, padx = 10, pady = 10) 
-
-        get_menu(self, controller)
+class CompAndRender(AutomationFrame):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller)
+        self.automation_callback = 
 
 class Settings(tk.Frame):
     def __init__(self, parent, controller): 
