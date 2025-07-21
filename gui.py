@@ -181,6 +181,67 @@ class Main(tk.Frame):
 
         get_menu(self, controller)
 
+class AutomationFrame(tk.Frame):
+    def __init__(self, parent, controller): 
+        tk.Frame.__init__(self, parent)
+        self.thread = None
+        self.automation_callback = None
+        
+        self.pb = ttk.Progressbar(self)
+        self.pb.grid(sticky='N',row = 0, column = 2)
+
+        self.label, self.lp_options, self.lp_option_var, self.lps= get_lets_play(self, self.lp_changed)
+        
+        self.update_ui()
+        
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,self.epnums)
+        
+        self.menu = get_menu(self, controller)
+    def update_ui(self):
+        lp = self.lp_option_var.get()
+        if lp != 'None':
+            ep_path = self.lps.get_episode_path(self.lps.get_names().index(self.lp_option_var.get()))
+            self.epnums = [i+1 for i in range(Episode(ep_path).row)]
+        else:
+            self.epnums = []
+    def run(self,*args):
+        if self.thread is None:
+            self.thread = Thread(target=self.__run)
+            self.thread.start()
+    def __run(self):
+        self.start_btn.state(['disabled'])
+        change_states(self.menu,'disabled')
+        a, b = int(self.epstart_option_var.get()) , int(self.epend_option_var.get())
+        lp = self.lps.get_names().index(self.lp_option_var.get())
+        self.thread = self.automation_callback(lp,[a-1,b-1],self)
+        
+        change_states(self.menu,'!disabled')
+        self.thread = None
+    def lp_changed(self,*args):
+        
+        self.update_ui()
+        
+        if not self.epnums:
+            self.start_btn.state(['disabled'])
+        else:
+            self.start_btn.state(['!disabled'])
+        
+        self.ep_start.destroy()
+        self.ep_end.destroy()
+        self.label2.destroy()
+        self.label3.destroy()
+        self.start_btn.destroy()
+        del self.epstart_option_var
+        del self.epend_option_var
+        
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,self.epnums)
+        
+    def check_last_id(self,*args):
+        if int(self.epend_option_var.get()) < int(self.epstart_option_var.get()):
+            self.start_btn.state(['disabled'])
+        else:
+            self.start_btn.state(['!disabled'])
+
 class Recording(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
@@ -225,83 +286,15 @@ class ThumbnailGenerate(tk.Frame):
         label.grid(row = 0, column = 1, padx = 10, pady = 10) 
 
         get_menu(self, controller)
-
-class FetchAudio(tk.Frame):
-    def __init__(self, parent, controller): 
-        tk.Frame.__init__(self, parent)
-        self.thread = None
-        
-        
-        self.pb = ttk.Progressbar(self)
-        self.pb.grid(sticky='N',row = 0, column = 2)
-        
-        
-        
-        
-        self.label, self.lp_options, self.lp_option_var, self.lps= get_lets_play(self, self.lp_changed)
-        
-        self.update_ui()
-        
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,self.epnums)
-
-        #TODO
-        #! Add Text Info
-        
-        self.menu = get_menu(self, controller)
-    def update_ui(self):
-        lp = self.lp_option_var.get()
-        if lp != 'None':
-            ep_path = self.lps.get_episode_path(self.lps.get_names().index(self.lp_option_var.get()))
-            self.epnums = [i+1 for i in range(Episode(ep_path).row)]
-        else:
-            self.epnums = []
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,self.epnums)
-    def run(self,*args):
-        if self.thread is None:
-            self.thread = Thread(target=self.__run)
-            self.thread.start()
-    def __run(self):
-        self.start_btn.state(['disabled'])
-        change_states(self.menu,'disabled')
-        a, b = int(self.epstart_option_var.get()) , int(self.epend_option_var.get())
-        lp = self.lps.get_names().index(self.lp_option_var.get())
-        self.thread = ExtractAudioWF(lp,[a-1,b-1],self)
-        
-        change_states(self.menu,'!disabled')
-        self.thread = None
-    def lp_changed(self,*args):
-        
-        self.update_ui()
-        
-        if not self.epnums:
-            self.start_btn.state(['disabled'])
-        else:
-            self.start_btn.state(['!disabled'])
-        
-        self.ep_start.destroy()
-        self.ep_end.destroy()
-        self.label2.destroy()
-        self.label3.destroy()
-        self.start_btn.destroy()
-        del self.epstart_option_var
-        del self.epend_option_var
-        
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,self.epnums)
-        
-    def check_last_id(self,*args):
-        if int(self.epend_option_var.get()) < int(self.epstart_option_var.get()):
-            self.start_btn.state(['disabled'])
-        else:
-            self.start_btn.state(['!disabled'])
-class FixAudio(tk.Frame):
-    def __init__(self, parent, controller): 
-        tk.Frame.__init__(self, parent)
-        
-        label = ttk.Label(self, text ="FixAudio", font = LARGEFONT)
-
-        label.grid(row = 0, column = 1, padx = 10, pady = 10) 
-
-        get_menu(self, controller)
+    
+class FetchAudio(AutomationFrame):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller)
+        self.automation_callback = ExtractAudioWF
+class FixAudio(AutomationFrame):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller)
+        self.automation_callback = FixAudioWF
 class Send2Audacity(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)

@@ -10,7 +10,15 @@ USERNAME = getlogin()
 del getlogin
 ROOT = f'C:\\Users\\{USERNAME}\\lprt\\'
 AUDIO_FOLDER = f'{ROOT}audio\\'
+TEMP_FOLDER = f'{ROOT}temp\\'
+THUMBNAIL_FOLDER = f'{ROOT}thumbnails\\'
+FIXED_AUDIO_FOLDER = f'{ROOT}audio_fixed\\'
+
+#This is the start of a fix for issue #78
 cnef(AUDIO_FOLDER)
+cnef(FIXED_AUDIO_FOLDER)
+cnef(TEMP_FOLDER)
+cnef(THUMBNAIL_FOLDER)
 
 def obs_connect(ep: Episode,el):
     """
@@ -76,4 +84,34 @@ class ExtractAudioWF(GenericWorkFlow):#! bin.constants throws an exception bold 
             self.episode.save()
 
         app.start_btn.state(['!disabled'])
+        super().user_workflow()
+
+
+class FixAudioWF(GenericWorkFlow):
+    """
+    Fixes your mic recording
+    
+    Uses filters:
+    - Lowpass
+    - Highpass
+    - Loudness Normalize
+    - Limiter
+    """
+    def __init__(self,lpid, epr,app):
+        super().__init__(FIXED_AUDIO_FOLDER, 'Audio Fix', lpid, epr)
+        self.user_workflow(app)
+        
+    def user_workflow(self):
+        
+        for i in range(*self.rng): 
+            audio_mic_path = self.episode.get_audio_mic_path(i)
+            
+            dest = f'{FIXED_AUDIO_FOLDER}{i+1}_{self.lp_name}_track_mic_fixed.aac'
+            
+            cnef(TEMP_FOLDER)
+            
+            ffmpeg_run(FFMPEG_AUDIO_PF_LN_L,{'__IN__': audio_mic_path,'__OUT__':dest})
+            
+            self.episode.set_audio_mic_edit1_path(i,dest)
+            self.episode.save()
         super().user_workflow()
