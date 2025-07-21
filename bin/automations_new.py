@@ -32,10 +32,12 @@ cnef(TAD_FOLDER)
 cnef(TEMP_FOLDER)
 from tkinter import Toplevel
 from tkinter.ttk import Button, LabeledScale, Label
+from bin.lprtplay import play_audio, stop_audio
 from tkinter import DoubleVar
 class IntegerInput(Toplevel):
     def __init__(self,paths):
         self.audio_list = paths
+        print(len(paths))
         self.current_episode = 0
         super().__init__()
         self.title('Test')
@@ -44,10 +46,10 @@ class IntegerInput(Toplevel):
         self.volume_slider = LabeledScale(self,self.vol,from_=0.0,to=1.0)
         self.volume_slider.grid(row=0,column=0)
         
-        self.play_button = Button(self,text='Play')
+        self.play_button = Button(self,text='Play',command=self.play)
         self.play_button.grid(row=1,column=0)
         
-        self.stop_button = Button(self,text='Stop')
+        self.stop_button = Button(self,text='Stop',command=self.stop)
         self.stop_button.grid(row=2,column=0)
         self.stop_button.state(['disabled'])
         
@@ -60,9 +62,21 @@ class IntegerInput(Toplevel):
         self.up_button = Button(self,text='Up',command=self.episode_up)
         self.up_button.grid(row=3,column=2)
         
-        self.finished_button = Button(self,text='Finished')
+        self.finished_button = Button(self,text='Finished', command=self.byebye)
         self.finished_button.grid(row=4,column=0)
-    
+    def stop(self,*args):
+        self.stop_button.state(['disabled'])
+        self.play_button.state(['!disabled'])
+        stop_audio()
+        
+    def play(self, *args):
+        self.stop_button.state(['!disabled'])
+        self.play_button.state(['disabled'])
+        ffmpeg_run(FFMPEG_AUDIO_COMBINE_TRUNCATED,{'__IN1__':self.audio_list[self.current_episode][1],'__IN2__': self.audio_list[self.current_episode][2],'__VOLUME1__': str(1.0),'__VOLUME2__': str(self.audio_list[self.current_episode][4]),'__OUT__':'temp.mp3'})
+        play_audio('temp.mp3')
+        
+    def byebye(self, *args):
+        self.destroy()
     def get_volume(self) -> float:
         return float(f'{self.vol.get():.2f}')
     
