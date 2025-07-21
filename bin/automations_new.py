@@ -132,6 +132,7 @@ class SendToAudacityWF(GenericWorkFlow):
             create_pipe()
         except:
             msgbox.showerror('ERROR','Did you open Audacity & enabled the mod-pipe?')
+            app.start_btn.state(['!disabled'])
             return
         ui = msgbox.askyesno('LPRT to AC','Do you want to send data to Audacity?')
         
