@@ -64,7 +64,7 @@ class IntegerInput(Toplevel):
         self.finished_button.grid(row=4,column=0)
     
     def get_volume(self) -> float:
-        return float(f'{self.vol:.2f}')
+        return float(f'{self.vol.get():.2f}')
     
     def episode_down(self,*args):
         new_location = self.current_episode - 1
@@ -81,8 +81,8 @@ class IntegerInput(Toplevel):
         
         l = len(self.audio_list)
         
-        if new_location > l:#? BUG?
-            self.current_episode = l#? BUG?
+        if new_location > l - 1:
+            self.current_episode = l - 1
             
 
         else:
