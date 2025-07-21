@@ -137,7 +137,7 @@ def get_episode_range(parent, run_callback: callable, check_callback: callable,f
 
     This function sets up two labels ("Episode start", "Episode end"),
     two option menus for selecting start and end episode numbers, and an
-    "Extract" button. The button is initially enabled and its state
+    "Extract" button. The button is initially disabled(if ft is none <- No data exists) and its state
     can be managed by the `check_callback`. The `run_callback` is
     executed when the "Extract" button is clicked.
     """
