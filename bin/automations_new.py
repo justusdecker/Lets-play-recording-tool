@@ -1,11 +1,13 @@
 from bin.obs import OBSObserver
 from bin.data_access import Episode, LetsPlay, cnef
 from bin.wintoasty import toast_finished
+from bin.audio_player import AudioPlayer
 
 from bin.ffmpeg import *
 from bin.audacity_pipeline import *
 from tkinter.filedialog import askdirectory
 import tkinter.messagebox as msgbox
+
 from os import listdir
 LP_PATH = 'lets_plays.csv'
 
@@ -13,16 +15,97 @@ from os import getlogin
 USERNAME = getlogin()
 del getlogin
 ROOT = f'C:\\Users\\{USERNAME}\\lprt\\'
+
 AUDIO_FOLDER = f'{ROOT}audio\\'
+VIDEO_FOLDER = f'{ROOT}video\\'
+TAD_FOLDER = f'{ROOT}tad\\'
 TEMP_FOLDER = f'{ROOT}temp\\'
 THUMBNAIL_FOLDER = f'{ROOT}thumbnails\\'
 FIXED_AUDIO_FOLDER = f'{ROOT}audio_fixed\\'
 
-#This is the start of a fix for issue #78
+# fix for issue #78
 cnef(AUDIO_FOLDER)
 cnef(FIXED_AUDIO_FOLDER)
-cnef(TEMP_FOLDER)
 cnef(THUMBNAIL_FOLDER)
+cnef(VIDEO_FOLDER)
+cnef(TAD_FOLDER)
+cnef(TEMP_FOLDER)
+from tkinter import Toplevel
+from tkinter.ttk import Button, LabeledScale, Label
+from bin.lprtplay import play_audio, stop_audio
+from tkinter import DoubleVar
+class IntegerInput(Toplevel):
+    def __init__(self,paths):
+        self.audio_list = paths
+        print(len(paths))
+        self.current_episode = 0
+        super().__init__()
+        self.title('Test')
+        self.geometry('300x200')
+        self.vol = DoubleVar(self,1.0)
+        self.volume_slider = LabeledScale(self,self.vol,from_=0.0,to=1.0)
+        self.volume_slider.grid(row=0,column=0)
+        
+        self.play_button = Button(self,text='Play',command=self.play)
+        self.play_button.grid(row=1,column=0)
+        
+        self.stop_button = Button(self,text='Stop',command=self.stop)
+        self.stop_button.grid(row=2,column=0)
+        self.stop_button.state(['disabled'])
+        
+        self.down_button = Button(self,text='Down',command=self.episode_down)
+        self.down_button.grid(row=3,column=0)
+        
+        self.curr_ep_label = Label(self,text='')
+        self.curr_ep_label.grid(row=3,column=1)
+        
+        self.up_button = Button(self,text='Up',command=self.episode_up)
+        self.up_button.grid(row=3,column=2)
+        
+        self.finished_button = Button(self,text='Finished', command=self.byebye)
+        self.finished_button.grid(row=4,column=0)
+    def stop(self,*args):
+        self.stop_button.state(['disabled'])
+        self.play_button.state(['!disabled'])
+        stop_audio()
+        
+    def play(self, *args):
+        print(self.audio_list[self.current_episode])
+        self.stop_button.state(['!disabled'])
+        self.play_button.state(['disabled'])
+        ffmpeg_run(FFMPEG_AUDIO_COMBINE_TRUNCATED,{'__IN1__':self.audio_list[self.current_episode][1],'__IN2__': self.audio_list[self.current_episode][2],'__VOLUME1__': str(1.0),'__VOLUME2__': str(self.audio_list[self.current_episode][4]),'__OUT__':'temp.mp3'})
+        play_audio('temp.mp3')
+        
+    def byebye(self, *args):
+        self.destroy()
+    def get_volume(self) -> float:
+        return float(f'{self.vol.get():.2f}')
+    
+    def episode_down(self,*args):
+        new_location = self.current_episode - 1
+
+        if new_location < 0:
+            self.current_episode = 0
+        else:
+            self.current_episode = new_location
+        self.audio_list[self.current_episode][4] = self.get_volume()
+        self.curr_ep_label.configure(text=f'{self.current_episode}')
+            
+    def episode_up(self,*args):
+        new_location = self.current_episode + 1
+        
+        l = len(self.audio_list)
+        
+        if new_location > l - 1:
+            self.current_episode = l - 1
+            
+
+        else:
+            self.current_episode = new_location
+        self.audio_list[self.current_episode][4] = self.get_volume()
+        self.curr_ep_label.configure(text=f'{self.current_episode}')
+        
+
 
 def obs_connect(ep: Episode,el):
     """
@@ -119,7 +202,6 @@ class FixAudioWF(GenericWorkFlow):
         app.start_btn.state(['!disabled'])
         super().user_workflow()
 
-
 class SendToAudacityWF(GenericWorkFlow):
     """
     Generating Thumbnails based on the thumbnail automation data
@@ -162,4 +244,66 @@ class SendToAudacityWF(GenericWorkFlow):
             self.episode.set_audio_mic_edit2_path(ep, new)
             self.episode.save()
         app.start_btn.state(['!disabled'])
+        super().user_workflow()
+
+class CompareAndRenderWF(GenericWorkFlow):
+    """
+    CAAR
+    ---
+    Audio Compare & render the results at the end
+    
+    Uses FFMPEG to edit audio & render video in bulk.
+    
+    
+    .. render_queue::
+        Because rendering takes a long time the paths will be stored temporary in this list. Formatted like: (video, audio, index)
+    
+    .. result_file_path::
+        **AUDIO_FOLDER/**{`ep_index` + `1`}_{`name`}_final.mp3
+    """
+    def __init__(self,lpid, epr,app):
+        super().__init__(folder=TEMP_FOLDER, finish_message="CAAR",lpid=lpid, epr=epr)
+        self.user_workflow(app)
+    def user_workflow(self,app):
+        
+        rendering_queue = []
+
+        paths = [[i, self.episode.get_audio_mic_edit1_path(i), self.episode.get_audio_desktop_path(i), self.episode.get_video_path(i),1.0] for i in range(*self.rng)]
+
+        volap = IntegerInput(paths)
+        app
+        result = volap.audio_list
+        
+        for i, mic, desk, vid, vol in result:
+            tmp_audio_path = f'{TEMP_FOLDER}temp_{i+1}_audio_final.mp3'
+
+            ffmpeg_run(
+                FFMPEG_AUDIO_COMBINE,
+                {
+                    '__IN1__':mic,
+                    '__IN2__': desk,
+                    '__VOLUME1__': str(1.0),
+                    '__VOLUME2__': str(vol),
+                    '__OUT__':tmp_audio_path
+                    }
+                )
+            rendering_queue.append((vid, tmp_audio_path, i))
+        toast_finished("[1/2] Audio combine")   
+
+        path_ending = f'_{self.letsplay.get_game_name(self.lpid)}_final.mp4'
+        cnef(VIDEO_FOLDER)
+        for video, audio, index in rendering_queue:
+            final_path = f'{VIDEO_FOLDER}{index+1}{path_ending}'
+
+            ffmpeg_run(
+                FFMPEG_VIDEO_RENDER,
+                {
+                    '__VIDEO__': video,
+                    '__AUDIO__': audio,
+                    '__OUTPUT__': final_path
+                }
+            )
+            app.pb.step((1 / (self.rng[1] + 1))*100)
+            self.episode.set_final_video_path(index,final_path)
+            self.episode.save()
         super().user_workflow()

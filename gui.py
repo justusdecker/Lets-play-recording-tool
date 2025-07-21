@@ -1,37 +1,3 @@
-"""
-from tkinter import Tk
-import tkinter
-import tkinter.ttk
-tkinter.HIDDEN
-T = Tk('Test')
-MENU = tkinter.ttk.Frame(T)
-for i in range(5):
-    btn = tkinter.ttk.Button(MENU,text = f'{i}')
-    btn.grid(column=1)
-frame = tkinter.ttk.Frame(T)
-    
-btn = tkinter.ttk.Button(T,text = 'Some functionality here!')
-
-
-btn.grid(column=2,row=0)
-
-#slr = tkinter.ttk.LabeledScale(frame)
-#slr.grid(column=3,row=0)
-
-#nb = tkinter.ttk.Label(frame)
-#nb.grid(column=4,row=0)
-
-#slr = tkinter.ttk.LabeledScale(frame,)
-#slr.grid()
-
-MENU.grid(column=1,row=0)
-frame.grid(column=2)
-
-T.mainloop()
-# MENU LEFT
-# FRAME RIGHT
-"""
-
 from bin.automations_new import *
 from bin.data_access import LetsPlay, Episode
 from threading import Thread
@@ -67,7 +33,6 @@ class TkinterApp(tk.Tk):
         container.pack()
         # initializing frames to an empty array
         self.frames = {}
-        
         for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender, Settings):
  
             frame = F(container, self)
@@ -82,7 +47,6 @@ class TkinterApp(tk.Tk):
         frame = self.frames[cont]
         frame.tkraise()
 
- 
 def get_menu(parent,controller) -> ttk.Frame:
     
     MENU = ttk.Frame(parent)
@@ -300,15 +264,11 @@ class Send2Audacity(AutomationFrame):
         super().__init__(parent, controller)
         self.automation_callback = SendToAudacityWF
 
-class CompAndRender(tk.Frame):
-    def __init__(self, parent, controller): 
-        tk.Frame.__init__(self, parent)
-        
-        label = ttk.Label(self, text ="CompAndRender", font = LARGEFONT)
-
-        label.grid(row = 0, column = 1, padx = 10, pady = 10) 
-
-        get_menu(self, controller)
+class CompAndRender(AutomationFrame):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller)
+        self.automation_callback = CompareAndRenderWF
+    
 
 class Settings(tk.Frame):
     def __init__(self, parent, controller): 
