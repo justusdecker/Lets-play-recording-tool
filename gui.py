@@ -131,7 +131,16 @@ def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,
     
     return label, options, lp_option_var, lps
 
-def get_episode_range(parent, run_callback: callable, check_callback: callable):
+def get_episode_range(parent, run_callback: callable, check_callback: callable,ft) -> tuple[ttk.Label, ttk.Label, ttk.Button, ttk.OptionMenu, ttk.OptionMenu, tk.StringVar, tk.StringVar]:
+    """
+    Creates and configures Tkinter UI elements for selecting an episode range.
+
+    This function sets up two labels ("Episode start", "Episode end"),
+    two option menus for selecting start and end episode numbers, and an
+    "Extract" button. The button is initially disabled and its state
+    can be managed by the `check_callback`. The `run_callback` is
+    executed when the "Extract" button is clicked.
+    """
     label1 = ttk.Label(parent, text ="Episode start")
 
     label1.grid(row = 0, column = 3) 
@@ -148,13 +157,13 @@ def get_episode_range(parent, run_callback: callable, check_callback: callable):
     epstart_option_var = tk.StringVar(parent)
     epend_option_var = tk.StringVar(parent)
     
-    ep_start = ttk.OptionMenu(parent,epstart_option_var,'None',[])
+    ep_start = ttk.OptionMenu(parent,epstart_option_var,str(ft[0] if ft else 'None'),*ft,command=check_callback)
     
     ep_start.grid(row = 0, column = 4) 
     
-    ep_end = ttk.OptionMenu(parent,epend_option_var,'None',[],command=check_callback)
+    ep_end = ttk.OptionMenu(parent,epend_option_var,str(ft[-1] if ft else 'None'),*ft,command=check_callback)
     
-    ep_end.grid(row = 0, column = 4) 
+    ep_end.grid(row = 0, column = 6) 
     return label1, label2, start_btn, ep_start, ep_end, epstart_option_var, epend_option_var
 
 def change_states(elements: list[ttk.Button],state: str):
@@ -233,8 +242,15 @@ class FetchAudio(tk.Frame):
         self.label, self.lp_options, self.lp_option_var, self.lps= get_lets_play(self, self.lp_changed)
         
         self.lps: LetsPlay
-
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id)
+        lp = self.lp_option_var.get()
+        if lp != 'None':
+            ep_path = self.lps.get_episode_path(self.lps.get_names().index(self.lp_option_var.get()))
+            epnums = [i+1 for i in range(Episode(ep_path).row)]
+            ft = epnums[0],epnums[-1] if epnums else ('None','None')
+        else:
+            epnums = []
+            ft = ('None','None')
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,epnums)
 
         #TODO
         #! Add Text Info
@@ -255,11 +271,14 @@ class FetchAudio(tk.Frame):
         self.thread = None
     def lp_changed(self,*args):
         
-        ep_path = self.lps.get_episode_path(self.lps.get_names().index(self.lp_option_var.get()))
-        
-        epnums = [i+1 for i in range(Episode(ep_path).row)]
-        
-        ft = epnums[0],epnums[-1] if epnums else ('None','None')
+        lp = self.lp_option_var.get()
+        if lp != 'None':
+            ep_path = self.lps.get_episode_path(self.lps.get_names().index(self.lp_option_var.get()))
+            epnums = [i+1 for i in range(Episode(ep_path).row)]
+            ft = epnums[0],epnums[-1] if epnums else ('None','None')
+        else:
+            epnums = []
+            ft = ('None','None')
         
         if not epnums:
             self.start_btn.state(['disabled'])
@@ -267,14 +286,15 @@ class FetchAudio(tk.Frame):
             self.start_btn.state(['!disabled'])
         
         self.ep_start.destroy()
-        self.ep_start = ttk.OptionMenu(self,self.epstart_option_var,str(ft[0]),*epnums)
-        
-        self.ep_start.grid(row = 0, column = 4) 
-        
         self.ep_end.destroy()
-        self.ep_end = ttk.OptionMenu(self,self.epend_option_var,str(ft[1]),*epnums,command=self.check_last_id)
+        self.label2.destroy()
+        self.label3.destroy()
+        self.start_btn.destroy()
+        del self.epstart_option_var
+        del self.epend_option_var
         
-        self.ep_end.grid(row = 0, column = 6)
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,epnums)
+        
     def check_last_id(self,*args):
         if int(self.epend_option_var.get()) < int(self.epstart_option_var.get()):
             self.start_btn.state(['disabled'])
