@@ -108,7 +108,7 @@ def get_menu(parent,controller) -> ttk.Frame:
     
     return _ret
 
-def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu, LetsPlay]:
+def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,tk.StringVar, LetsPlay]:
     label = ttk.Label(parent, text ="Lets Play")
 
     label.grid(row = 0, column = 1) 
@@ -121,7 +121,7 @@ def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,
     
     options.grid(row = 0, column = 2)
     
-    return label, options, lps
+    return label, options, lp_option_var, lps
 def get_episode_range(parent):
     pass
 
@@ -196,7 +196,7 @@ class FetchAudio(tk.Frame):
         self.pb.grid(sticky='N',row = 0, column = 2)
         
         
-        self.label, self.lp_options, self.lps= get_lets_play()
+        self.label, self.lp_options, self.lp_option_var, self.lps= get_lets_play(self, self.lp_changed)
         self.lps: LetsPlay
 
         self.label2 = ttk.Label(self, text ="Episode start")
@@ -211,8 +211,6 @@ class FetchAudio(tk.Frame):
         self.start_btn.state(['disabled'])
 
         self.start_btn.grid(row = 0, column = 7) 
-        
-        self.lp_option_var = tk.StringVar(self)
         
         self.epstart_option_var = tk.StringVar(self)
         
@@ -307,6 +305,8 @@ class Settings(tk.Frame):
         label.grid(row = 0, column = 1, padx = 10, pady = 10) 
 
         get_menu(self, controller)
+        
+
 app = TkinterApp()
 app.mainloop()
 
