@@ -108,8 +108,20 @@ def get_menu(parent,controller) -> ttk.Frame:
     
     return _ret
 
-def get_lets_play(parent):
-    pass
+def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu, LetsPlay]:
+    label = ttk.Label(parent, text ="Lets Play")
+
+    label.grid(row = 0, column = 1) 
+    
+    lp_option_var = tk.StringVar(parent)
+        
+    lps = LetsPlay('lets_plays.csv')
+    names = lps.get_names()
+    options = ttk.OptionMenu(parent,lp_option_var,'None',*names,command=callback)
+    
+    options.grid(row = 0, column = 2)
+    
+    return label, options, lps
 def get_episode_range(parent):
     pass
 
@@ -183,10 +195,10 @@ class FetchAudio(tk.Frame):
         self.pb = ttk.Progressbar(self)
         self.pb.grid(sticky='N',row = 0, column = 2)
         
-        self.label1 = ttk.Label(self, text ="Lets Play")
-
-        self.label1.grid(row = 0, column = 1) 
         
+        self.label, self.lp_options, self.lps= get_lets_play()
+        self.lps: LetsPlay
+
         self.label2 = ttk.Label(self, text ="Episode start")
 
         self.label2.grid(row = 0, column = 3) 
@@ -201,12 +213,6 @@ class FetchAudio(tk.Frame):
         self.start_btn.grid(row = 0, column = 7) 
         
         self.lp_option_var = tk.StringVar(self)
-        
-        self.lps = LetsPlay('lets_plays.csv')
-        self.names = self.lps.get_names()
-        lpid = ttk.OptionMenu(self,self.lp_option_var,'None',*self.names,command=self.lp_changed)
-        
-        lpid.grid(row = 0, column = 2)
         
         self.epstart_option_var = tk.StringVar(self)
         
@@ -231,14 +237,14 @@ class FetchAudio(tk.Frame):
         self.start_btn.state(['disabled'])
         change_states(self.menu,'disabled')
         a, b = int(self.epstart_option_var.get()) , int(self.epend_option_var.get())
-        lp = self.names.index(self.lp_option_var.get())
+        lp = self.lps.get_names().index(self.lp_option_var.get())
         self.thread = ExtractAudioWF(lp,[a-1,b-1],self)
         
         change_states(self.menu,'!disabled')
         self.thread = None
     def lp_changed(self,*args):
         
-        ep_path = self.lps.get_episode_path(self.names.index(self.lp_option_var.get()))
+        ep_path = self.lps.get_episode_path(self.lps.get_names().index(self.lp_option_var.get()))
         
         epnums = [i+1 for i in range(Episode(ep_path).row)]
         
