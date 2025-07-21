@@ -40,28 +40,34 @@ class IntegerInput(Toplevel):
         self.title('Test')
         self.geometry('300x200')
         self.volume_slider = LabeledScale(self)
-        self.volume_slider.gir()
+        self.volume_slider.grid(row=0,column=0)
         
         self.play_button = Button(self,text='Play')
-        self.play_button.pack()
+        self.play_button.grid(row=1,column=0)
         
         self.stop_button = Button(self,text='Stop')
-        self.stop_button.pack()
+        self.stop_button.grid(row=2,column=0)
         self.stop_button.state(['disabled'])
         
-        self.finished_button = Button(self,text='Finished')
-        self.finished_button.pack()
+        self.down_button = Button(self,text='Down')
+        self.down_button.grid(row=3,column=0)
         
-    def episode_down(self,direction: int):
-        new_location = self.current_episode + direction
+        self.up_button = Button(self,text='Up',command=self.episode_up)
+        self.up_button.grid(row=3,column=0)
+        
+        self.finished_button = Button(self,text='Finished')
+        self.finished_button.grid(row=4,column=0)
+        
+    def episode_down(self,*args):
+        new_location = self.current_episode - 1
 
         if new_location < 0:
             self.current_episode = 0
         else:
             self.current_episode = new_location
             
-    def episode_up(self,direction: int):
-        new_location = self.current_episode + direction
+    def episode_up(self,*args):
+        new_location = self.current_episode + 1
         
         l = len(self.audio_list)
         
