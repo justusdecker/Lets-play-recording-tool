@@ -49,14 +49,14 @@ class IntegerInput(Toplevel):
         self.stop_button.grid(row=2,column=0)
         self.stop_button.state(['disabled'])
         
-        self.down_button = Button(self,text='Down')
+        self.down_button = Button(self,text='Down',command=self.episode_down)
         self.down_button.grid(row=3,column=0)
         
         self.curr_ep_label = Label(self,text='')
         self.curr_ep_label.grid(row=3,column=1)
         
         self.up_button = Button(self,text='Up',command=self.episode_up)
-        self.up_button.grid(row=3,column=1)
+        self.up_button.grid(row=3,column=2)
         
         self.finished_button = Button(self,text='Finished')
         self.finished_button.grid(row=4,column=0)
