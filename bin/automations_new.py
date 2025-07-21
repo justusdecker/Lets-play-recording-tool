@@ -32,6 +32,7 @@ cnef(TAD_FOLDER)
 cnef(TEMP_FOLDER)
 from tkinter import Toplevel
 from tkinter.ttk import Button, LabeledScale, Label
+from tkinter import DoubleVar
 class IntegerInput(Toplevel):
     def __init__(self,paths):
         self.audio_list = paths
@@ -39,7 +40,8 @@ class IntegerInput(Toplevel):
         super().__init__()
         self.title('Test')
         self.geometry('300x200')
-        self.volume_slider = LabeledScale(self)
+        self.vol = DoubleVar(self,1.0)
+        self.volume_slider = LabeledScale(self,self.vol,from_=0.0,to=1.0)
         self.volume_slider.grid(row=0,column=0)
         
         self.play_button = Button(self,text='Play')
@@ -60,7 +62,10 @@ class IntegerInput(Toplevel):
         
         self.finished_button = Button(self,text='Finished')
         self.finished_button.grid(row=4,column=0)
-        
+    
+    def get_volume(self) -> float:
+        return float(f'{self.vol:.2f}')
+    
     def episode_down(self,*args):
         new_location = self.current_episode - 1
 
@@ -75,8 +80,8 @@ class IntegerInput(Toplevel):
         
         l = len(self.audio_list)
         
-        if new_location >= l:
-            self.current_episode = l - 1
+        if new_location > l:#? BUG?
+            self.current_episode = l#? BUG?
             
 
         else:
