@@ -18,42 +18,6 @@ import tkinter.messagebox as msgbox
 from os import listdir
 LP_PATH = 'lets_plays.csv'
 
-from os import getlogin
-from os.path import isfile
-USERNAME = getlogin()
-del getlogin
-ROOT = f'C:\\Users\\{USERNAME}\\lprt\\'
-
-AUDIO_FOLDER = f'{ROOT}audio\\'
-VIDEO_FOLDER = f'{ROOT}video\\'
-TAD_FOLDER = f'{ROOT}tad\\'
-TEMP_FOLDER = f'{ROOT}temp\\'
-THUMBNAIL_FOLDER = f'{ROOT}thumbnails\\'
-FIXED_AUDIO_FOLDER = f'{ROOT}audio_fixed\\'
-
-LETS_PLAY_FILE = f'{ROOT}lets_plays.csv'
-
-# fix for issue #78
-cnef(AUDIO_FOLDER)
-cnef(FIXED_AUDIO_FOLDER)
-cnef(THUMBNAIL_FOLDER)
-cnef(VIDEO_FOLDER)
-cnef(TAD_FOLDER)
-cnef(TEMP_FOLDER)
-
-DEFAULT_OBS_SETTINGS = {
-    "ip": "",
-    "port": 1234,
-    "pw": "",
-    "timeout": 1
-}
-
-if not isfile('obs_settings.json'):
-    json_write('obs_settings.json',DEFAULT_OBS_SETTINGS)
-
-
-
-
 from tkinter import Toplevel
 from tkinter.ttk import Button, LabeledScale, Label
 from bin.lprtplay import play_audio, stop_audio

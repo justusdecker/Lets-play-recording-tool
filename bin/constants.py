@@ -52,6 +52,7 @@ DEFAULT_TAD = [
 #! PATHS
 
 from os import getlogin
+from os.path import isfile
 USERNAME = getlogin()
 del getlogin
 
@@ -59,20 +60,25 @@ ROOT = f'C:\\Users\\{USERNAME}\\lprt\\'
 
 AUDIO_FOLDER = f'{ROOT}audio\\'
 VIDEO_FOLDER = f'{ROOT}video\\'
+TAD_FOLDER = f'{ROOT}tad\\'
 TEMP_FOLDER = f'{ROOT}temp\\'
 THUMBNAIL_FOLDER = f'{ROOT}thumbnails\\'
 FIXED_AUDIO_FOLDER = f'{ROOT}audio_fixed\\'
 
-def on_start():
-    cnef(AUDIO_FOLDER)
-    cnef(VIDEO_FOLDER)
-    cnef(TEMP_FOLDER)
-    cnef(THUMBNAIL_FOLDER)
-    cnef(FIXED_AUDIO_FOLDER)
-    if not isfile('settings.json'):
-        json_write('settings.json',DEFAULT_OBS_SETTINGS)
-    if not isfile('lets_play.csv'):
-        csv_write('lets_play.csv')
+LETS_PLAY_FILE = f'{ROOT}lets_plays.csv'
+
+cnef(AUDIO_FOLDER)
+cnef(FIXED_AUDIO_FOLDER)
+cnef(THUMBNAIL_FOLDER)
+cnef(VIDEO_FOLDER)
+cnef(TAD_FOLDER)
+cnef(TEMP_FOLDER)
+
+
+if not isfile('obs_settings.json'):
+    json_write('obs_settings.json',DEFAULT_OBS_SETTINGS)
+if not isfile('lets_play.csv'):
+    csv_write('lets_play.csv')
     
 #! ERRORS
 ewf = 'Exit current workflow.'
