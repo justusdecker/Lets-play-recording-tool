@@ -22,7 +22,7 @@ class OBSObserver:
             self.failed = True
             return
         
-        self.settings = json_read('settings.json') #! UNSAFE: Check exist if not return error
+        self.settings = json_read('obs_settings.json') #! UNSAFE: Check exist if not return error
         self.connect()
         self.recording_flag = False #used for one_time operations like on_start
     def update(self,ep):

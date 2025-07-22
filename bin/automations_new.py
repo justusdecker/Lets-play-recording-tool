@@ -46,10 +46,10 @@ DEFAULT_OBS_SETTINGS = {
     "timeout": 1
 }
 
-if not isfile('settings.json'):
+if not isfile('obs_settings.json'):
         
     
-    json_write('settings.json',DEFAULT_OBS_SETTINGS)
+    json_write('obs_settings.json',DEFAULT_OBS_SETTINGS)
 
 
 
