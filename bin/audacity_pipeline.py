@@ -1,16 +1,22 @@
 __author__ = "Justus Decker"
 __copyright__ = "(c) 2024 - 2025 , The LPRT Project"
 __credits__ = []
-__version__ = "0.9.54"
+__version__ = "0.10.73"
 __maintainer__ = "Justus Decker"
 __email__ = "justus.d2025@gmail.com"
 __status__ = "Production"
-
 """
-To enable the Audacity pipeline:
+This Module contains everything you need to connect to the Audacity in a safe way.
+
+Contains:
+- Sending Commands
+- Receiving Results from Audacity
+- Errorhandling
+
+How to enable the Audacity pipeline?
 Open Audacity
-Edit > Settings > Module > enable mod-script-pipe
-Reopen Audacity & Reopen LPRT(If open)
+Go to: Edit > Settings > Module > enable mod-script-pipe
+Reopen Audacity & Reopen LPRT(When open)
 """
 
 from io import TextIOWrapper
@@ -42,8 +48,6 @@ def create_pipe():
     Establish the connection between LPRT & Audacity.
     
         Will raise an `AudacityPipelineError` when the pipe can't be accessed.
-        
-        
     """
     print("Write to  \"" + AFA.TO_NAME +"\"")
     if not exists(AFA.TO_NAME):
@@ -86,5 +90,3 @@ def do_command(command):
         print("Rcvd: <<< \n" + response)
     except: pass
     return response
-
-#do_command('Help: Command=Help')
