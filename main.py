@@ -1,5 +1,5 @@
 from bin.automations_new import *
-from bin.data_access import LetsPlay, Episode
+from bin.data_access import LetsPlay, Episode, on_start
 from threading import Thread
 LP_PATH = 'lets_plays.csv'
 
@@ -14,6 +14,8 @@ Welcome to LPRT
 This Tool is currently Work in Progress!
 Some features might not work as expected & can cause data loss! Be careful!
 """
+
+on_start()
 
 class TkinterApp(tk.Tk):
     def __init__(self, *args, **kwargs): 

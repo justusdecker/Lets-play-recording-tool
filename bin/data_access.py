@@ -363,8 +363,6 @@ def check_lp_ep():
     
     
 def on_start():
-    
-    
     cnef(AUDIO_FOLDER)
     cnef(FIXED_AUDIO_FOLDER)
     cnef(THUMBNAIL_FOLDER)
@@ -375,4 +373,4 @@ def on_start():
     if not isfile('obs_settings.json'):
         json_write('obs_settings.json',DEFAULT_OBS_SETTINGS)
     if not isfile(LETS_PLAY_FILE_PATH):
-        csv_write(LETS_PLAY_FILE_PATH,)
+        csv_write(LETS_PLAY_FILE_PATH,EP_KEYS)
