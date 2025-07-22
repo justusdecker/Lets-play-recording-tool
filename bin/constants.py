@@ -100,6 +100,7 @@ THUMBNAIL_FOLDER = f'{ROOT}thumbnails\\'
 FIXED_AUDIO_FOLDER = f'{ROOT}audio_fixed\\'
 
 LETS_PLAY_FILE_PATH = f'{ROOT}lets_plays.csv'
+OBS_SETTINGS_PATH = f'{ROOT}obs_settings.json'
     
 #! ERRORS
 ewf = 'Exit current workflow.'
