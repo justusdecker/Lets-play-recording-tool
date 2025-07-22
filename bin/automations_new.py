@@ -4,7 +4,7 @@ __credits__ = []
 __version__ = "0.10.80"
 __maintainer__ = "Justus Decker"
 __email__ = "justus.d2025@gmail.com"
-__status__ = "Testing - Missing Documentation"
+__status__ = "Testing"
 
 from bin.obs import OBSObserver
 from bin.data_access import Episode, LetsPlay, cnef
