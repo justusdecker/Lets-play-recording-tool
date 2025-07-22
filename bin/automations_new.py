@@ -1,7 +1,20 @@
+"""
+This Module does generate on start all essential paths & contains all automations e.g. FetchAudioWF
+
+
+Contains:
+- GenericWorkFlow
+- ThumbnailGenerator
+- FetchAudio
+- FixAudio
+- Send2Audacity
+- CompAndRender
+"""
+
+
 from bin.obs import OBSObserver
 from bin.data_access import Episode, LetsPlay, cnef
 from bin.wintoasty import toast_finished
-from bin.audio_player import AudioPlayer
 
 from bin.ffmpeg import *
 from bin.audacity_pipeline import *
@@ -30,11 +43,13 @@ cnef(THUMBNAIL_FOLDER)
 cnef(VIDEO_FOLDER)
 cnef(TAD_FOLDER)
 cnef(TEMP_FOLDER)
+
 from tkinter import Toplevel
 from tkinter.ttk import Button, LabeledScale, Label
 from bin.lprtplay import play_audio, stop_audio
 from tkinter import DoubleVar
-class IntegerInput(Toplevel):
+
+class AudioPlayer(Toplevel):
     def __init__(self,paths):
         self.audio_list = paths
         print(len(paths))
@@ -273,7 +288,7 @@ class CompareAndRenderWF(GenericWorkFlow):
 
         paths = [[i, self.episode.get_audio_mic_edit1_path(i), self.episode.get_audio_desktop_path(i), self.episode.get_video_path(i),1.0] for i in range(*self.rng)]
 
-        volap = IntegerInput(paths)
+        volap = AudioPlayer(paths)
         while not volap.isfinished:
             pass
         result = volap.audio_list
