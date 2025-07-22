@@ -7,7 +7,7 @@ __email__ = "justus.d2025@gmail.com"
 __status__ = "Testing"
 
 from bin.obs import OBSObserver
-from bin.data_access import Episode, LetsPlay, cnef
+from bin.data_access import Episode, LetsPlay, cnef, json_write
 from bin.wintoasty import toast_finished
 
 from bin.ffmpeg import *
@@ -19,6 +19,7 @@ from os import listdir
 LP_PATH = 'lets_plays.csv'
 
 from os import getlogin
+from os.path import isfile
 USERNAME = getlogin()
 del getlogin
 ROOT = f'C:\\Users\\{USERNAME}\\lprt\\'
@@ -37,6 +38,21 @@ cnef(THUMBNAIL_FOLDER)
 cnef(VIDEO_FOLDER)
 cnef(TAD_FOLDER)
 cnef(TEMP_FOLDER)
+
+DEFAULT_OBS_SETTINGS = {
+    "ip": "",
+    "port": 1234,
+    "pw": "",
+    "timeout": 1
+}
+
+if not isfile('settings.json'):
+        
+    
+    json_write('settings.json',DEFAULT_OBS_SETTINGS)
+
+
+
 
 from tkinter import Toplevel
 from tkinter.ttk import Button, LabeledScale, Label
