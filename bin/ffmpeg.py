@@ -1,5 +1,5 @@
 from subprocess import run, CREATE_NO_WINDOW
-
+from bin.constants import TEMP_FOLDER
 # FFMPEG Command Definitions
 
 # FFMPEG_DEFAULT: Base command list for FFmpeg operations.
@@ -78,7 +78,7 @@ FFMPEG_VIDEO_RENDER = [*FFMPEG_DEFAULT, '-an', '-i', '__VIDEO__', '-i', '__AUDIO
 # - '__IN__': Placeholder for the input video file path.
 # - '-frames:v 1': Extracts only one video frame.
 # - 'temp.png': The output file name for the extracted frame.
-FFMPEG_GET_FRAME = [*FFMPEG_DEFAULT, '-ss', '__TIME__', '-i', '__IN__', '-frames:v', '1', 'temp.png']
+FFMPEG_GET_FRAME = [*FFMPEG_DEFAULT, '-ss', '__TIME__', '-i', '__IN__', '-frames:v', '1', f'{TEMP_FOLDER}temp.png']
 
 # FFMPEG_GET_LENGTH: Command (using ffprobe) to get the duration of a video stream.
 # - 'ffprobe': The FFprobe executable (part of the FFmpeg suite).
