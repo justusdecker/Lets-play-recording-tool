@@ -6,7 +6,7 @@ __maintainer__ = "Justus Decker"
 __email__ = "justus.d2025@gmail.com"
 __status__ = "Testing"
 
-from bin.data_access import cnef, json_write, csv_write, isfile
+
 from bin.version import VERSION
 
 COPYRIGHT = f"LPRT {VERSION} - (c) Justus Decker 2024 - 2025"
@@ -92,18 +92,6 @@ THUMBNAIL_FOLDER = f'{ROOT}thumbnails\\'
 FIXED_AUDIO_FOLDER = f'{ROOT}audio_fixed\\'
 
 LETS_PLAY_FILE_PATH = f'{ROOT}lets_plays.csv'
-
-cnef(AUDIO_FOLDER)
-cnef(FIXED_AUDIO_FOLDER)
-cnef(THUMBNAIL_FOLDER)
-cnef(VIDEO_FOLDER)
-cnef(TAD_FOLDER)
-cnef(TEMP_FOLDER)
-
-if not isfile('obs_settings.json'):
-    json_write('obs_settings.json',DEFAULT_OBS_SETTINGS)
-if not isfile(LETS_PLAY_FILE_PATH):
-    csv_write(LETS_PLAY_FILE_PATH,)
     
 #! ERRORS
 ewf = 'Exit current workflow.'
