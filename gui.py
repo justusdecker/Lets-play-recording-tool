@@ -274,11 +274,12 @@ class Settings(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
         
+        
         label = ttk.Label(self, text ="Settings", font = LARGEFONT)
 
         label.grid(row = 0, column = 1, padx = 10, pady = 10) 
 
-        get_menu(self, controller)
+        self.menu = get_menu(self, controller)
         
 
 app = TkinterApp()
