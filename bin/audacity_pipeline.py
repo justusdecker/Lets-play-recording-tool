@@ -21,14 +21,21 @@ class AudacityPipelineError(Exception):
 class AudacityFileAccess:
     """
     A Dataclass to easy access the Audacity mod-pipe
+    
+    Includes:
+        - TO_NAME
+        - FROM_NAME
+        - TO_FILE
+        - FROM_FILE
     """
+    TO_NAME = '\\\\.\\pipe\\ToSrvPipe'
+    FROM_NAME = '\\\\.\\pipe\\FromSrvPipe'
+    
     TO_FILE: None | TextIOWrapper = None
     FROM_FILE: None | TextIOWrapper = None
 
 AFA = AudacityFileAccess()
 
-TO_NAME = '\\\\.\\pipe\\ToSrvPipe'
-FROM_NAME = '\\\\.\\pipe\\FromSrvPipe'
 EOL = '\r\n\0'
 def create_pipe():
     """
@@ -38,20 +45,20 @@ def create_pipe():
         
         
     """
-    print("Write to  \"" + TO_NAME +"\"")
-    if not exists(TO_NAME):
-        raise AudacityPipelineError(f"{TO_NAME} ..does not exist. Ensure Audacity is running with mod-script-pipe.")
+    print("Write to  \"" + AFA.TO_NAME +"\"")
+    if not exists(AFA.TO_NAME):
+        raise AudacityPipelineError(f"{AFA.TO_NAME} ..does not exist. Ensure Audacity is running with mod-script-pipe.")
 
-    print("Read from \"" + FROM_NAME +"\"")
-    if not exists(FROM_NAME):
-        raise AudacityPipelineError(f"{FROM_NAME} ..does not exist. Ensure Audacity is running with mod-script-pipe.")
+    print("Read from \"" + AFA.FROM_NAME +"\"")
+    if not exists(AFA.FROM_NAME):
+        raise AudacityPipelineError(f"{AFA.FROM_NAME} ..does not exist. Ensure Audacity is running with mod-script-pipe.")
 
     print("-- Both pipes exist.  Good.")
 
-    AFA.TO_FILE = open(TO_NAME, 'w')
+    AFA.TO_FILE = open(AFA.TO_NAME, 'w')
     print("-- File to write to has been opened")
-    AFA.FROM_FILE = open(FROM_NAME, 'rt')
-    print(f"-- Opened {FROM_NAME}")
+    AFA.FROM_FILE = open(AFA.FROM_NAME, 'rt')
+    print(f"-- Opened {AFA.FROM_NAME}")
 
 def send_command(command):
     """Send a single command."""
@@ -65,7 +72,7 @@ def get_response():
     line = ''
     while True:
         result += line
-        line = FROM_FILE.readline()
+        line = AFA.FROM_FILE.readline()
         if line == '\n' and len(result) > 0:
             break
     return result
