@@ -242,14 +242,9 @@ class Recording(tk.Frame):
         self.thread = None
             
 class ThumbnailGenerate(tk.Frame):
-    def __init__(self, parent, controller): 
-        tk.Frame.__init__(self, parent)
-        
-        label = ttk.Label(self, text ="ThumbnailGenerate", font = LARGEFONT)
-
-        label.grid(row = 0, column = 1, padx = 10, pady = 10) 
-
-        get_menu(self, controller)
+     def __init__(self, parent, controller):
+        super().__init__(parent, controller)
+        self.automation_callback = ThumbnailGenerateWF
     
 class FetchAudio(AutomationFrame):
     def __init__(self, parent, controller):
