@@ -1,17 +1,3 @@
-"""
-This Module does generate on start all essential paths & contains all automations e.g. FetchAudioWF
-
-
-Contains:
-- GenericWorkFlow
-- ThumbnailGenerator
-- FetchAudio
-- FixAudio
-- Send2Audacity
-- CompAndRender
-"""
-
-
 from bin.obs import OBSObserver
 from bin.data_access import Episode, LetsPlay, cnef
 from bin.wintoasty import toast_finished
@@ -172,7 +158,6 @@ def obs_connect(ep: Episode,el):
             el.btn_connect.configure(text= 'Unexpected Error happened')
             print('Unexpected Error happened')
 
-
 class GenericWorkFlow:
     def __init__(self, folder: str, finish_message: str,lpid,epr):
         """
@@ -215,15 +200,43 @@ class GenericWorkFlow:
         """
         toast_finished(self.finish_message)
     
-
-class ExtractAudioWF(GenericWorkFlow):#! bin.constants throws an exception bold NameError
+class ExtractAudioWF(GenericWorkFlow):
     """
-    Audio Extraction from Video
+    A workflow class designed to extract audio tracks from video files for a
+    given "LetsPlay" episode range.
+
+    This class extends `GenericWorkFlow` and specializes in automating the
+    process of extracting microphone and desktop audio tracks from video files,
+    saving them to a specified audio folder, and updating the episode's
+    metadata with the paths to the extracted audio files. It also provides
+    progress updates via an application's progress bar.
     """
     def __init__(self,lpid,epr,app):
+        """
+        This constructor calls the parent `GenericWorkFlow`'s constructor,
+        setting up the audio extraction folder and a finish message.
+        It then immediately initiates the audio extraction process by calling
+        its own `user_workflow` method, passing the application instance for
+        progress updates.
+        """
         super().__init__(folder=AUDIO_FOLDER, finish_message='Audio extraction finished',lpid=lpid,epr=epr)
         self.user_workflow(app)
     def user_workflow(self,app):
+        """
+        Executes the audio extraction process for each episode within the
+        defined range.
+
+        For each episode:
+        1. Retrieves the video path.
+        2. Defines output paths for microphone and desktop audio tracks.
+        3. Uses `ffmpeg_run` to extract both audio tracks from the video.
+        4. Updates the application's progress bar.
+        5. Stores the paths of the extracted audio files in the episode's metadata.
+        6. Saves the updated episode metadata.
+
+        After processing all episodes, it re-enables the application's start button
+        and calls the parent `user_workflow` to display the completion message.
+        """
         for i in range(*self.rng): 
             video_path = self.episode.get_video_path(i)
                        
@@ -239,18 +252,26 @@ class ExtractAudioWF(GenericWorkFlow):#! bin.constants throws an exception bold 
         app.start_btn.state(['!disabled'])
         super().user_workflow()
 
-
 class FixAudioWF(GenericWorkFlow):
     """
-    Fixes your mic recording
-    
-    Uses filters:
-    - Lowpass
-    - Highpass
-    - Loudness Normalize
-    - Limiter
+    A workflow class designed to apply various audio processing filters to
+    microphone audio tracks extracted from "LetsPlay" videos.
+
+    This class extends `GenericWorkFlow` and specializes in automating the
+    process of enhancing microphone audio quality by applying a sequence of
+    filters (Lowpass, Highpass, Loudness Normalize, Limiter). It saves the
+    processed audio to the `FIXED_AUDIO_FOLDER`, updates the episode's metadata
+    with the path to the fixed audio file, and provides progress updates
+    via an application's progress bar.
     """
     def __init__(self,lpid, epr,app):
+        """
+        This constructor calls the parent `GenericWorkFlow`'s constructor,
+        setting up the fixed audio folder and a finish message.
+        It then immediately initiates the audio fixing process by calling
+        its own `user_workflow` method, passing the application instance for
+        progress updates.
+        """
         super().__init__(FIXED_AUDIO_FOLDER, 'Audio Fix', lpid, epr)
         self.user_workflow(app)
         
@@ -258,7 +279,11 @@ class FixAudioWF(GenericWorkFlow):
         
         for i in range(*self.rng): 
             audio_mic_path = self.episode.get_audio_mic_path(i)
-            
+            # Filters
+            # - Lowpass
+            # - Highpass
+            # - Loudness Normalize
+            # - Limiter
             dest = f'{FIXED_AUDIO_FOLDER}{i+1}_{self.lp_name}_track_mic_fixed.aac'
             
             cnef(TEMP_FOLDER)
