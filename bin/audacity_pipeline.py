@@ -13,16 +13,31 @@ Edit > Settings > Module > enable mod-script-pipe
 Reopen Audacity & Reopen LPRT(If open)
 """
 
-
+from io import TextIOWrapper
 from os.path import exists
 class AudacityPipelineError(Exception):
     pass
+
+class AudacityFileAccess:
+    """
+    A Dataclass to easy access the Audacity mod-pipe
+    """
+    TO_FILE: None | TextIOWrapper = None
+    FROM_FILE: None | TextIOWrapper = None
+
+AFA = AudacityFileAccess()
 
 TO_NAME = '\\\\.\\pipe\\ToSrvPipe'
 FROM_NAME = '\\\\.\\pipe\\FromSrvPipe'
 EOL = '\r\n\0'
 def create_pipe():
-    global TO_FILE, FROM_FILE
+    """
+    Establish the connection between LPRT & Audacity.
+    
+        Will raise an `AudacityPipelineError` when the pipe can't be accessed.
+        
+        
+    """
     print("Write to  \"" + TO_NAME +"\"")
     if not exists(TO_NAME):
         raise AudacityPipelineError(f"{TO_NAME} ..does not exist. Ensure Audacity is running with mod-script-pipe.")
@@ -33,16 +48,16 @@ def create_pipe():
 
     print("-- Both pipes exist.  Good.")
 
-    TO_FILE = open(TO_NAME, 'w')
+    AFA.TO_FILE = open(TO_NAME, 'w')
     print("-- File to write to has been opened")
-    FROM_FILE = open(FROM_NAME, 'rt')
+    AFA.FROM_FILE = open(FROM_NAME, 'rt')
     print(f"-- Opened {FROM_NAME}")
 
 def send_command(command):
     """Send a single command."""
     print("Send: >>> \n"+command)
-    TO_FILE.write(command + EOL)
-    TO_FILE.flush()
+    AFA.TO_FILE.write(command + EOL)
+    AFA.TO_FILE.flush()
 
 def get_response():
     """Return the command response."""
