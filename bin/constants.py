@@ -13,6 +13,32 @@ COPYRIGHT = f"LPRT {VERSION} - (c) Justus Decker 2024 - 2025"
 
 DEFAULT_THUMBNAIL_SIZE = (1280,720)
 
+LP_KEYS = [
+    'version',
+    'episode_path',
+    'tad_path',
+    'name',
+    'game_name',
+    'episode_length',
+    'description_path'] 
+
+EP_KEYS = [
+    'video_path',
+    'audio_mic_path',
+    'audio_desktop_path',
+    'thumbnail_path',
+    'thumbnail_frame',
+    'has_problem',
+    'audio_mic_edit1_path',
+    'audio_mic_edit2_path',
+    'audio_desktop_edit1_path',
+    'audio_desktop_edit2_path',
+    'title',
+    'episode_number',
+    'upload_at',
+    'final_audio'
+]
+
 DEFAULT_OBS_SETTINGS = {
     "ip": "",
     "port": 1234,
