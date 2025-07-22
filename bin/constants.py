@@ -6,34 +6,10 @@ __maintainer__ = "Justus Decker"
 __email__ = "justus.d2025@gmail.com"
 __status__ = "Testing"
 
-from bin.text_manipulation import *
 from bin.data_access import cnef, json_write, csv_write, isfile
 from bin.version import VERSION
 
-COPYRIGHT = f"{bold('LPRT')} {italic(VERSION)} - (c) Justus Decker 2024 - 2025"
-
-SUBS = { 'main': ['Main'],'automations': ['Main','Automations'],'options': ['Main','Options'], 'tg':['Main', 'Automations', 'Thumbnail']}
-
-MENU_OPTIONS = ['Record', 'Automation', color816(strikethrough('Deploy'),31), 'Options'] # main
-
-MENU_AUTOMATION_OPTIONS = ['Thumbnail Generate', 'Fetch Audio', 'Fix Audio', 'Send to Audacity', 'Compare Audio & render'] # automations
-
-MENU_SETTINGS_OPTIONS = [f"Create {bold('options.json')} - OBS", 'Set current lets play id', f"Create {bold('default_tad.json')}", f"Create {bold('lets_plays.csv')}"] # options
-
-def header(key_sub: str,subs: list[str]) -> str:
-    tmp = bold(" > ").join(SUBS[key_sub]+subs) + ' >'
-    return f'{COPYRIGHT}\n\n{tmp}\n\nSelect your option:\n'
-
-def menu(options: list[str], key: str, subs: list[str] = [], exit_name: str = 'Exit'):
-    """
-    Returns the menu
-    """
-    _ret = header(key,subs) + '\n'
-    
-    for index, option in enumerate(options):
-        _ret += f'({index + 1}) {option}\n'
-    _ret += f'(0) {exit_name}\n'
-    return _ret
+COPYRIGHT = f"LPRT {VERSION} - (c) Justus Decker 2024 - 2025"
 
 DEFAULT_THUMBNAIL_SIZE = (1280,720)
 
