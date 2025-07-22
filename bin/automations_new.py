@@ -113,8 +113,7 @@ class AudioPlayer(Toplevel):
         self.stop_button.state(['!disabled'])
         self.play_button.state(['disabled'])
         stop_audio()
-        from os import remove
-        remove('temp.mp3')
+        
         ffmpeg_run(FFMPEG_AUDIO_COMBINE_TRUNCATED,{'__IN1__':self.audio_list[self.current_episode][1],'__IN2__': self.audio_list[self.current_episode][2],'__VOLUME1__': str(1.0),'__VOLUME2__': str(self.audio_list[self.current_episode][4]),'__OUT__':'temp.mp3'})
         play_audio('temp.mp3')
         

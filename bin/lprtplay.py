@@ -3,8 +3,7 @@ from pygame.mixer import init, music
 init()
 
 def play_audio(filepath: str):
-    if music.get_busy():
-        music.stop()
+    stop_audio()
     
     music.load(filepath)
     music.play(loops=-1)
@@ -12,3 +11,4 @@ def play_audio(filepath: str):
 def stop_audio():
     if music.get_busy():
         music.stop()
+        music.unload()
