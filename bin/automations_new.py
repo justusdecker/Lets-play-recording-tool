@@ -61,6 +61,8 @@ from tkinter import DoubleVar
 
 from bin.thumbnail import ThumbnailGenerator
 
+from PIL import ImageTk, Image
+
 class AudioPlayer(Toplevel):
     """
     A Tkinter Toplevel window that functions as a simple audio player.
@@ -161,7 +163,30 @@ class AudioPlayer(Toplevel):
             self.current_episode = new_location
         self.audio_list[self.current_episode][4] = self.get_volume()
         self.curr_ep_label.configure(text=f'{self.current_episode}')
+     
+
+class ThumbnailPreview(Toplevel):
+    def __init__(self):
+        super().__init__()
+        self.isfinished = False
+        self.geometry('640x400')
+        self.label = Label(self)
+        self.label.pack(pady=20)
         
+        self.update_image('logo.ico',-1)
+        
+        
+    def update_image(self,path: str,i:int):
+        self.title(f'Thumbnail Preview: {i+1}')
+        self.image = Image.open(path).resize((640,360))
+        self.image = ImageTk.PhotoImage(self.image)
+        self.label.configure(image=self.image,border=2,relief="raised")
+        
+    def byebye(self, *args):
+        """Closes the ThumbnailPreview window."""
+        self.destroy()
+   
+   
 def obs_connect(ep: Episode,el):
     """
     Connects to the obs_ws API
@@ -238,8 +263,9 @@ class GenerateThumbnailWF(GenericWorkFlow):
         
     def user_workflow(self, app):
         TG = ThumbnailGenerator()
+        TP = ThumbnailPreview()
         tad = self.letsplay.get_tad_path(self.lpid)
-
+        #msgbox check every
         for i in range(*self.rng): 
             video_path = self.episode.get_video_path(i)
             if not tad:
@@ -253,10 +279,12 @@ class GenerateThumbnailWF(GenericWorkFlow):
                         str(i+1),
                         video_path,
                         tad,
-                        f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
+                        p
                         )
+            TP.update_image(p,i)
             self.episode.set_thumbnail_path(i,p)
             self.episode.save()
+        app.start_btn.state(['!disabled'])
         super().user_workflow()
 
 class ExtractAudioWF(GenericWorkFlow):
