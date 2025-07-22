@@ -59,6 +59,8 @@ from tkinter.ttk import Button, LabeledScale, Label
 from bin.lprtplay import play_audio, stop_audio
 from tkinter import DoubleVar
 
+from bin.thumbnail import ThumbnailGenerator
+
 class AudioPlayer(Toplevel):
     """
     A Tkinter Toplevel window that functions as a simple audio player.
@@ -224,6 +226,39 @@ class GenericWorkFlow:
         """
         toast_finished(self.finish_message)
     
+
+
+class GenerateThumbnailWF(GenericWorkFlow):
+    """
+    Generating Thumbnails based on the thumbnail automation data
+    """
+    def __init__(self,lpid,epr,app):
+        super().__init__(folder = THUMBNAIL_FOLDER, finish_message = 'Thumbnail Generation',lpid=lpid,epr=epr)
+        self.user_workflow(app)
+        
+    def user_workflow(self, app):
+        TG = ThumbnailGenerator()
+        tad = self.letsplay.get_tad_path(self.lpid)
+
+        for i in range(*self.rng): 
+            video_path = self.episode.get_video_path(i)
+            if not tad:
+                app.start_btn.state(['!disabled'])
+                print('Something went wrong. No TAD found')
+                return
+            p = f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
+            #? This generates all images in batch.
+            #! If you want to overwrite a single image goto the Fix Image Tab
+            TG.generate(
+                        str(i+1),
+                        video_path,
+                        tad,
+                        f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
+                        )
+            self.episode.set_thumbnail_path(i,p)
+            self.episode.save()
+        super().user_workflow()
+
 class ExtractAudioWF(GenericWorkFlow):
     """
     A workflow class designed to extract audio tracks from video files for a

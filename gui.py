@@ -8,21 +8,12 @@ from tkinter import ttk
 
 LARGEFONT =("Verdana", 35)
 
-class Locks:
-    MENU_FORBIDDEN = False
-    OBS_RECORD = False
-    OBS_CONNECTED = False
-LOCKS = Locks()
-
 DISCLAIMER = """
 Welcome to LPRT
 
 This Tool is currently Work in Progress!
 Some features might not work as expected & can cause data loss! Be careful!
 """
-
-
-
 
 class TkinterApp(tk.Tk):
     def __init__(self, *args, **kwargs): 
@@ -43,7 +34,7 @@ class TkinterApp(tk.Tk):
  
         self.show_frame(Main)
     def show_frame(self, cont):
-
+        self.title(str(self.frames[cont]._name[1:]).capitalize())
         frame = self.frames[cont]
         frame.tkraise()
 
@@ -241,15 +232,10 @@ class Recording(tk.Frame):
         self.btn_connect.configure(text='Error occured! Try again')
         self.thread = None
             
-class ThumbnailGenerate(tk.Frame):
-    def __init__(self, parent, controller): 
-        tk.Frame.__init__(self, parent)
-        
-        label = ttk.Label(self, text ="ThumbnailGenerate", font = LARGEFONT)
-
-        label.grid(row = 0, column = 1, padx = 10, pady = 10) 
-
-        get_menu(self, controller)
+class ThumbnailGenerate(AutomationFrame):
+     def __init__(self, parent, controller):
+        super().__init__(parent, controller)
+        self.automation_callback = GenerateThumbnailWF
     
 class FetchAudio(AutomationFrame):
     def __init__(self, parent, controller):
@@ -274,15 +260,14 @@ class Settings(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
         
-        
-        label = ttk.Label(self, text ="Settings", font = LARGEFONT)
+        label = ttk.Label(self, text ="Nothing here currently", font = LARGEFONT)
 
         label.grid(row = 0, column = 1, padx = 10, pady = 10) 
 
         self.menu = get_menu(self, controller)
         
 
-app = TkinterApp()
-app.mainloop()
+APP = TkinterApp()
+APP.mainloop()
 
 
