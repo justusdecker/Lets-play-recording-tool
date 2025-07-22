@@ -169,7 +169,7 @@ class ThumbnailPreview(Toplevel):
     def __init__(self):
         super().__init__()
         self.isfinished = False
-        self.title('Thumbnail Preview')
+        self.title('Thumbnail Preview: NONE')
         self.geometry('640x400')
         self.label = Label(self)
         self.label.pack(pady=20)
@@ -177,7 +177,8 @@ class ThumbnailPreview(Toplevel):
         self.update_image('logo.ico')
         
         
-    def update_image(self,path: str):
+    def update_image(self,path: str,i:int):
+        self.title(f'Thumbnail Preview: {i+1}')
         self.image = Image.open(path).resize((640,360))
         self.image = ImageTk.PhotoImage(self.image)
         self.label.configure(image=self.image,border=2,relief="raised")
@@ -281,10 +282,10 @@ class GenerateThumbnailWF(GenericWorkFlow):
                         tad,
                         p
                         )
-            TP.update_image(p)
+            TP.update_image(p,i)
             self.episode.set_thumbnail_path(i,p)
             self.episode.save()
-        TP.byebye()
+
         super().user_workflow()
 
 class ExtractAudioWF(GenericWorkFlow):
@@ -562,6 +563,7 @@ class CompareAndRenderWF(GenericWorkFlow):
         while not volap.isfinished:
             pass
         result = volap.audio_list
+        
         for i, mic, desk, vid, vol in result:
             tmp_audio_path = f'{TEMP_FOLDER}temp_{i+1}_audio_final.mp3'
 
