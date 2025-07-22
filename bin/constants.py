@@ -11,6 +11,14 @@ from bin.version import VERSION
 
 COPYRIGHT = f"LPRT {VERSION} - (c) Justus Decker 2024 - 2025"
 
+DISCLAIMER = f"""
+{COPYRIGHT}
+Welcome to LPRT
+
+This Tool is currently Work in Progress!
+Some features might not work as expected & can cause data loss! Be careful!
+"""
+
 DEFAULT_THUMBNAIL_SIZE = (1280,720)
 
 LP_KEYS = [
