@@ -59,7 +59,7 @@ def isepisode_empty(filepath: str):
     it catches the exception and returns False.
     """
     try:
-        e = Episode(filepath)
+        e = Episode(ROOT + filepath)
         return True
     except:
         return False
@@ -276,9 +276,9 @@ class LetsPlay(CSVObj):
         return [i[4] for i in self.data]
     
     def get_episode_ammount(self) -> list[int]:
-        return [Episode(i[1]).row for i in self.data]
+        return [Episode(ROOT + i[1]).row for i in self.data]
     def get_episodes(self,id) -> list:
-        return Episode(self.read(id)[1])
+        return Episode(ROOT + self.read(id)[1])
     def get_tad_path(self,id) -> list:
         return self.read(id)[2]
 

@@ -151,7 +151,7 @@ class AutomationFrame(tk.Frame):
         lp = self.lp_option_var.get()
         if lp != 'None':
             ep_path = self.lps.get_episode_path(self.lps.get_names().index(self.lp_option_var.get()))
-            self.epnums = [i+1 for i in range(Episode(ep_path).row)]
+            self.epnums = [i+1 for i in range(Episode(ROOT + ep_path).row)]
         else:
             self.epnums = []
     def run(self,*args):

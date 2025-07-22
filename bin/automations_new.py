@@ -190,7 +190,7 @@ class GenericWorkFlow:
         self.lpid,self.epr = lpid,epr
         self.lp_name = self.letsplay.get_name(self.lpid)
         self.ep_path = self.letsplay.get_episode_path(self.lpid)
-        self.episode = Episode(self.ep_path)
+        self.episode = Episode(ROOT + self.ep_path)
     @property
     def rng(self) -> tuple[int,int]:
         """
