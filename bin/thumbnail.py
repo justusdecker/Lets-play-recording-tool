@@ -9,7 +9,7 @@ __status__ = "Production"
 from pygame.surfarray import make_surface
 from pygame.transform import scale, flip, rotate, scale_by
 from pygame import Surface,SRCALPHA,Color,mask
-from bin.text_manipulation import color816
+
 
 from numpy import rot90
 
@@ -64,7 +64,7 @@ class ThumbnailGenerator:
                  frame: float = -1,
                  
                  ):
-        print(color816(f'[Thumbnail Generate]: {video_path}',94))
+        print((f'[Thumbnail Generate]: {video_path}',94))
         _bg, _logo, _text = json_read(tad_path)
         bg = self.__render_background(video_path,frame,_bg)
         bg_pos = (

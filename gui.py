@@ -241,10 +241,10 @@ class Recording(tk.Frame):
         self.btn_connect.configure(text='Error occured! Try again')
         self.thread = None
             
-class ThumbnailGenerate(tk.Frame):
+class ThumbnailGenerate(AutomationFrame):
      def __init__(self, parent, controller):
         super().__init__(parent, controller)
-        self.automation_callback = ThumbnailGenerateWF
+        self.automation_callback = GenerateThumbnailWF
     
 class FetchAudio(AutomationFrame):
     def __init__(self, parent, controller):
