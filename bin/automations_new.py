@@ -416,24 +416,65 @@ class SendToAudacityWF(GenericWorkFlow):
 
 class CompareAndRenderWF(GenericWorkFlow):
     """
-    CAAR
-    ---
-    Audio Compare & render the results at the end
+    A workflow class responsible for allowing the user to compare and adjust audio
+    levels for episodes, then combining these adjusted audio tracks with
+    their respective video files to produce final rendered videos.
     
-    Uses FFMPEG to edit audio & render video in bulk.
-    
-    
-    .. render_queue::
-        Because rendering takes a long time the paths will be stored temporary in this list. Formatted like: (video, audio, index)
-    
-    .. result_file_path::
-        **AUDIO_FOLDER/**{`ep_index` + `1`}_{`name`}_final.mp3
+    This class extends `GenericWorkFlow` and orchestrates the following:
+    1. Interactive audio volume adjustment using an `AudioPlayer` GUI.
+    2. Combining microphone and desktop audio tracks based on user-adjusted volumes.
+    3. Rendering the combined audio with the original video to create final video files.
+    4. Updating episode metadata with the paths to the final rendered videos.
+    It provides progress updates via an application's progress bar.
     """
     def __init__(self,lpid, epr,app):
+        """
+        This constructor calls the parent `GenericWorkFlow`'s constructor,
+        setting up a temporary folder (`TEMP_FOLDER`) for intermediate files
+        and a finish message.
+        It then immediately initiates the comparison and rendering process by
+        calling its own `user_workflow` method, passing the application instance
+        for UI and progress updates.
+        """
         super().__init__(folder=TEMP_FOLDER, finish_message="CAAR",lpid=lpid, epr=epr)
         self.user_workflow(app)
     def user_workflow(self,app):
-        
+        """
+        Executes the main logic for audio comparison, combination, and video rendering.
+
+        The workflow performs the following steps:
+        1.  **Audio Player Initialization:**
+            -   Prepares a list of audio and video paths for the `AudioPlayer`.
+            -   Launches an `AudioPlayer` instance, allowing the user to interactively
+                adjust the volume levels for each episode's desktop audio track relative
+                to the microphone track.
+            -   Pauses execution until the `AudioPlayer` window is closed by the user.
+            -   Retrieves the user-adjusted volume settings from the `AudioPlayer`.
+        2.  **Audio Combination:**
+            -   Initializes an empty `rendering_queue`.
+            -   Iterates through the results obtained from the `AudioPlayer` (episode index,
+                microphone path, desktop path, video path, adjusted desktop volume).
+            -   For each episode, it combines the microphone and desktop audio tracks
+                using `ffmpeg_run` and `FFMPEG_AUDIO_COMBINE`,
+                applying the user-adjusted desktop volume.
+            -   Saves the combined audio to a temporary MP3 file.
+            -   Adds the video path, temporary combined audio path, and episode index
+                to the `rendering_queue`.
+            -   Displays a toast message indicating audio combination is complete.
+        3.  **Video Rendering:**
+            -   Constructs a dynamic path ending for the final video files, incorporating
+                the game name from the "LetsPlay" ID.
+            -   Ensures the `VIDEO_FOLDER` exists (`cnef` to create/ensure folder).
+            -   Iterates through the `rendering_queue`.
+            -   For each item, it defines the `final_path` for the rendered video.
+            -   Uses `ffmpeg_run` and `FFMPEG_VIDEO_RENDER`
+                to combine the original video with the newly combined audio track.
+            -   Updates the application's progress bar.
+            -   Sets the path to the final rendered video in the episode's metadata.
+            -   Saves the updated episode metadata.
+        4.  **Finalization:** Calls the parent `user_workflow` to display the overall
+            completion message.
+        """
         rendering_queue = []
 
         paths = [[i, self.episode.get_audio_mic_edit1_path(i), self.episode.get_audio_desktop_path(i), self.episode.get_video_path(i),1.0] for i in range(*self.rng)]
