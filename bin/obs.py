@@ -9,6 +9,7 @@ __status__ = "Production"
 import obsws_python as obsws
 from websocket import _exceptions
 from bin.data_access import json_read
+from bin.constants import OBS_SETTINGS_PATH
 from os.path import isfile
 
 OUTPUT_TYPE = 'adv_file_output'
@@ -18,11 +19,11 @@ class OBSObserver:
     """
     def __init__(self):
         self.failed = False
-        if not isfile('obs_settings.json'):
+        if not isfile(OBS_SETTINGS_PATH):
             self.failed = True
             return
         
-        self.settings = json_read('obs_settings.json') #! UNSAFE: Check exist if not return error
+        self.settings = json_read(OBS_SETTINGS_PATH) #! UNSAFE: Check exist if not return error
         self.connect()
         self.recording_flag = False #used for one_time operations like on_start
     def update(self,ep):
