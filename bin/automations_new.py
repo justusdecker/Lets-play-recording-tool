@@ -205,9 +205,9 @@ def obs_connect(ep: Episode,el):
             el.label.configure(text= OBSO.timecode)
             el.title(f'Recording - {ep.row} Episodes')
             OBSO.update(ep)
-        except:
+        except Exception as E:
             el.btn_connect.configure(text= 'Unexpected Error happened')
-            print('Unexpected Error happened')
+            print(f'Unexpected Error happened [{E}]')
 
 class GenericWorkFlow:
     def __init__(self, folder: str, finish_message: str,lpid,epr):
