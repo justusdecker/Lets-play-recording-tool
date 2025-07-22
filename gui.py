@@ -8,21 +8,12 @@ from tkinter import ttk
 
 LARGEFONT =("Verdana", 35)
 
-class Locks:
-    MENU_FORBIDDEN = False
-    OBS_RECORD = False
-    OBS_CONNECTED = False
-LOCKS = Locks()
-
 DISCLAIMER = """
 Welcome to LPRT
 
 This Tool is currently Work in Progress!
 Some features might not work as expected & can cause data loss! Be careful!
 """
-
-
-
 
 class TkinterApp(tk.Tk):
     def __init__(self, *args, **kwargs): 
