@@ -129,7 +129,7 @@ def obs_connect(ep: Episode,el):
     """
     Connects to the obs_ws API
     
-    Runs until the connection breaks up or a keyboard interrupt happens
+    Runs until the connection breaks up
     """
     OBSO = OBSObserver()
     if OBSO.failed:
@@ -160,9 +160,26 @@ class GenericWorkFlow:
         self.episode = Episode(self.ep_path)
     @property
     def rng(self) -> tuple[int,int]:
+        """
+        Returns the effective episode range as a tuple (start, end).
+
+        The end of the range is inclusive. If the start and end episodes
+        in `epr` are the same, the end of the returned range is incremented by 1
+        to ensure a valid range for iteration (e.g., (5,5) becomes (5,6)).
+
+        Returns:
+            tuple[int, int]: A tuple representing the (start_episode, end_episode)
+                             for the workflow.
+        """
         return self.epr[0],self.epr[1]+(1 if self.epr[0] == self.epr[1] else 0)
         
     def user_workflow(self):
+        """
+        Executes the primary user-facing part of the workflow.
+
+        This method currently triggers a 'toast' notification indicating
+        the workflow has finished, using the provided `finish_message`
+        """
         toast_finished(self.finish_message)
     
 
