@@ -166,7 +166,17 @@ class CSVObj:
             if len(row) != len(KEYS):
                 raise IndexError()
     def __check_list(self,cl:list[str],**kwargs):
+        """
+        Internal helper method to validate a list of keys against provided keyword arguments.
 
+        Ensures that:
+        1. The number of elements in `cl` (checklist) matches the number of
+           keyword arguments provided.
+        2. Every element in `cl` exists as a key in `kwargs`.
+
+        This is used to validate input for `create` and `update` methods,
+        ensuring that all required fields are present and correctly named.
+        """
         if len(cl) != len(kwargs):
             raise IndexError(f'Length of a != b')
         for e in cl:
@@ -174,35 +184,82 @@ class CSVObj:
                 raise KeyError(f'cannot find: {e} in {kwargs}')
     
     def __check_id(self,id: int):
+        """
+        Internal helper method to validate a row ID.
+
+        Ensures that:
+        1. The `id` is an integer.
+        2. The `id` is within the valid range of existing data rows.
+        """
         if id >= len(self.data):
             raise IndexError()
         if not isinstance(id,int):
             raise TypeError()
     
     def save(self):
+        """
+        Saves the current in-memory data (`self.data`) back to the CSV file.
+
+        This function overwrites the entire content of the file specified
+        during initialization (`self.filepath`) with the current state of
+        the `self.data` list.
+        """
         csv_write(self.filepath, self.data)
     
     def create(self,checklist: list[str], **kwargs) -> None:
+        """
+        Appends a new row to the in-memory data.
+
+        Validates the provided `kwargs` against `checklist` to ensure all
+        required fields are present and correctly named. The values from
+        `kwargs` are then appended as a new row to `self.data` in the order
+        they appear in `kwargs`.
+        """
         self.__check_list(cl=checklist, **kwargs)
         self.data.append([kwargs[arg] for arg in kwargs])
         
     def read(self,id: int):
+        """
+        Reads and returns a specific row from the in-memory data by its ID (index).
+
+        Performs validation to ensure the ID is an integer and within valid bounds.
+        """
         self.__check_id(id)
         return self.data[id]
     
     def update(self,id: int,checklist: list[str],**kwargs):
+        """
+        Updates a specific row in the in-memory data.
+
+        Validates the provided `kwargs` against `checklist` and the `id`.
+        The row at the given `id` is completely replaced by the values from `kwargs`.
+        """
         self.__check_list(cl=checklist, **kwargs)
         self.__check_id(id)
         self.data[id] = kwargs
         
     def delete(self,id: int):
+        """
+        Deletes a specific row from the in-memory data.
+
+        Performs validation to ensure the ID is an integer and within valid bounds.
+        """
         self.__check_id(id)
         self.data.pop(id)
+        
     @property
     def row(self) -> int:
+        """Returns the number of rows (records) currently in the in-memory data."""
         return len(self.data)
+    
     @property
     def col(self) -> int:
+        """
+        Returns the number of columns (fields) in the CSV data.
+
+        If the data is empty, it returns 0. Otherwise, it returns the length
+        of the first row, assuming all rows have a consistent number of columns.
+        """
         if not self.data:
             return 0
         return len(self.data[0])
