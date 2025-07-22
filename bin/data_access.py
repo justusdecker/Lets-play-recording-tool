@@ -11,32 +11,7 @@ import csv
 from os.path import isfile, isdir
 from os import mkdir
 
-
-LP_KEYS = [
-    'version',
-    'episode_path',
-    'tad_path',
-    'name',
-    'game_name',
-    'episode_length',
-    'description_path'] 
-
-EP_KEYS = [
-    'video_path',
-    'audio_mic_path',
-    'audio_desktop_path',
-    'thumbnail_path',
-    'thumbnail_frame',
-    'has_problem',
-    'audio_mic_edit1_path',
-    'audio_mic_edit2_path',
-    'audio_desktop_edit1_path',
-    'audio_desktop_edit2_path',
-    'title',
-    'episode_number',
-    'upload_at',
-    'final_audio'
-]
+from bin.constants import *
 
 def csv_rw(filepath: str, new_data):
     """
@@ -84,7 +59,7 @@ def isepisode_empty(filepath: str):
     it catches the exception and returns False.
     """
     try:
-        e = Episode(filepath)
+        e = Episode(ROOT + filepath)
         return True
     except:
         return False
@@ -301,9 +276,9 @@ class LetsPlay(CSVObj):
         return [i[4] for i in self.data]
     
     def get_episode_ammount(self) -> list[int]:
-        return [Episode(i[1]).row for i in self.data]
+        return [Episode(ROOT + i[1]).row for i in self.data]
     def get_episodes(self,id) -> list:
-        return Episode(self.read(id)[1])
+        return Episode(ROOT + self.read(id)[1])
     def get_tad_path(self,id) -> list:
         return self.read(id)[2]
 
@@ -378,10 +353,24 @@ class Episode(CSVObj):
         self.read(id)[13] = data
         
 def check_lp_ep():
-    lp = LetsPlay('lets_plays.csv')
+    lp = LetsPlay(LETS_PLAY_FILE_PATH)
     try:
         for i in range(lp.row):
             lp.get_episodes(i)
         return True
     except:
         return False
+    
+    
+def on_start():
+    cnef(AUDIO_FOLDER)
+    cnef(FIXED_AUDIO_FOLDER)
+    cnef(THUMBNAIL_FOLDER)
+    cnef(VIDEO_FOLDER)
+    cnef(TAD_FOLDER)
+    cnef(TEMP_FOLDER)
+
+    if not isfile(OBS_SETTINGS_PATH):
+        json_write(OBS_SETTINGS_PATH,DEFAULT_OBS_SETTINGS)
+    if not isfile(LETS_PLAY_FILE_PATH):
+        csv_write(LETS_PLAY_FILE_PATH,[LP_KEYS])

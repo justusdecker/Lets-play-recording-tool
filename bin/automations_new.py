@@ -16,43 +16,7 @@ from tkinter.filedialog import askdirectory
 import tkinter.messagebox as msgbox
 
 from os import listdir
-LP_PATH = 'lets_plays.csv'
-
-from os import getlogin
-from os.path import isfile
-USERNAME = getlogin()
-del getlogin
-ROOT = f'C:\\Users\\{USERNAME}\\lprt\\'
-
-AUDIO_FOLDER = f'{ROOT}audio\\'
-VIDEO_FOLDER = f'{ROOT}video\\'
-TAD_FOLDER = f'{ROOT}tad\\'
-TEMP_FOLDER = f'{ROOT}temp\\'
-THUMBNAIL_FOLDER = f'{ROOT}thumbnails\\'
-FIXED_AUDIO_FOLDER = f'{ROOT}audio_fixed\\'
-
-LETS_PLAY_FILE = f'{ROOT}lets_plays.csv'
-
-# fix for issue #78
-cnef(AUDIO_FOLDER)
-cnef(FIXED_AUDIO_FOLDER)
-cnef(THUMBNAIL_FOLDER)
-cnef(VIDEO_FOLDER)
-cnef(TAD_FOLDER)
-cnef(TEMP_FOLDER)
-
-DEFAULT_OBS_SETTINGS = {
-    "ip": "",
-    "port": 1234,
-    "pw": "",
-    "timeout": 1
-}
-
-if not isfile('obs_settings.json'):
-    json_write('obs_settings.json',DEFAULT_OBS_SETTINGS)
-
-
-
+from bin.constants import *
 
 from tkinter import Toplevel
 from tkinter.ttk import Button, LabeledScale, Label
@@ -116,8 +80,8 @@ class AudioPlayer(Toplevel):
         self.play_button.state(['disabled'])
         stop_audio()
         
-        ffmpeg_run(FFMPEG_AUDIO_COMBINE_TRUNCATED,{'__IN1__':self.audio_list[self.current_episode][1],'__IN2__': self.audio_list[self.current_episode][2],'__VOLUME1__': str(1.0),'__VOLUME2__': str(self.audio_list[self.current_episode][4]),'__OUT__':'temp.mp3'})
-        play_audio('temp.mp3')
+        ffmpeg_run(FFMPEG_AUDIO_COMBINE_TRUNCATED,{'__IN1__':self.audio_list[self.current_episode][1],'__IN2__': self.audio_list[self.current_episode][2],'__VOLUME1__': str(1.0),'__VOLUME2__': str(self.audio_list[self.current_episode][4]),'__OUT__':f'{TEMP_FOLDER}temp.mp3'})
+        play_audio(f'{TEMP_FOLDER}temp.mp3')
         
     def byebye(self, *args):
         """Closes the AudioPlayer window and sets the `isfinished` flag to True."""
@@ -165,7 +129,6 @@ class AudioPlayer(Toplevel):
         self.audio_list[self.current_episode][4] = self.get_volume()
         self.curr_ep_label.configure(text=f'{self.current_episode}')
      
-
 class ThumbnailPreview(Toplevel):
     def __init__(self):
         super().__init__()
@@ -174,7 +137,7 @@ class ThumbnailPreview(Toplevel):
         self.label = Label(self)
         self.label.pack(pady=20)
         
-        self.update_image('logo.ico',-1)
+        self.update_image(f'bin\\data\\img\\logo.ico',-1)
         
         
     def update_image(self,path: str,i:int):
@@ -223,11 +186,11 @@ class GenericWorkFlow:
         self.auto_create_folder_path = folder
         self.finish_message = finish_message
         
-        self.letsplay = LetsPlay(LP_PATH)
+        self.letsplay = LetsPlay(LETS_PLAY_FILE_PATH)
         self.lpid,self.epr = lpid,epr
         self.lp_name = self.letsplay.get_name(self.lpid)
         self.ep_path = self.letsplay.get_episode_path(self.lpid)
-        self.episode = Episode(self.ep_path)
+        self.episode = Episode(ROOT + self.ep_path)
     @property
     def rng(self) -> tuple[int,int]:
         """
