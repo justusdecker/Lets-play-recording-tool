@@ -61,6 +61,8 @@ from tkinter import DoubleVar
 
 from bin.thumbnail import ThumbnailGenerator
 
+from PIL import ImageTk, Image
+
 class AudioPlayer(Toplevel):
     """
     A Tkinter Toplevel window that functions as a simple audio player.
@@ -161,7 +163,30 @@ class AudioPlayer(Toplevel):
             self.current_episode = new_location
         self.audio_list[self.current_episode][4] = self.get_volume()
         self.curr_ep_label.configure(text=f'{self.current_episode}')
+     
+
+class ThumbnailPreview(Toplevel):
+    def __init__(self):
+        super().__init__()
+        self.isfinished = False
+        self.title('Thumbnail Preview')
+        self.geometry('640x400')
+        self.label = Label(self)
+        self.label.pack(pady=20)
         
+        self.update_image('logo.ico')
+        
+        
+    def update_image(self,path: str):
+        self.image = Image.open(path).resize((640,360))
+        self.image = ImageTk.PhotoImage(self.image)
+        self.label.configure(image=self.image,border=2,relief="raised")
+        
+    def byebye(self, *args):
+        """Closes the ThumbnailPreview window."""
+        self.destroy()
+   
+   
 def obs_connect(ep: Episode,el):
     """
     Connects to the obs_ws API
@@ -238,6 +263,7 @@ class GenerateThumbnailWF(GenericWorkFlow):
         
     def user_workflow(self, app):
         TG = ThumbnailGenerator()
+        TP = ThumbnailPreview()
         tad = self.letsplay.get_tad_path(self.lpid)
 
         for i in range(*self.rng): 
@@ -253,10 +279,12 @@ class GenerateThumbnailWF(GenericWorkFlow):
                         str(i+1),
                         video_path,
                         tad,
-                        f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
+                        p
                         )
+            TP.update_image(p)
             self.episode.set_thumbnail_path(i,p)
             self.episode.save()
+        TP.byebye()
         super().user_workflow()
 
 class ExtractAudioWF(GenericWorkFlow):
@@ -534,7 +562,6 @@ class CompareAndRenderWF(GenericWorkFlow):
         while not volap.isfinished:
             pass
         result = volap.audio_list
-        
         for i, mic, desk, vid, vol in result:
             tmp_audio_path = f'{TEMP_FOLDER}temp_{i+1}_audio_final.mp3'
 
