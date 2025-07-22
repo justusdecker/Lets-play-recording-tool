@@ -64,13 +64,20 @@ DEFAULT_OBS_SETTINGS = {
 
 DEFAULT_TAD = [
     {
-        "pos": [0,0]
+        "pos": [0,0],
+        "r_pos": [[0,0],[0,0]],
+        "r_scale": [0,0],
+        "r_rot": [0,0],
+        "center": True,
+        "scale": 1.35,
+        "rot": 0
     },
     {
         "path": "test_logo.png",
         "scale": 1,
         "rot": 0,
-        "pos": [0,0]
+        "pos": [0,0],
+        "center": True
     },
     {
         "path": "",
@@ -80,9 +87,6 @@ DEFAULT_TAD = [
         "ol_color": [1,1,1,255],
         "size": 40,
         "pos": [0,0],
-        "r_pos": [[0,0],[0,0]],
-        "r_scale": [1,1],
-        "r_rot": [0,0],
         "center": True
     }
 ]
