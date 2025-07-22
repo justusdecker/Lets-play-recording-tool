@@ -86,7 +86,6 @@ DEFAULT_TAD = [
 #! PATHS
 
 from os import getlogin
-from os.path import isfile
 USERNAME = getlogin()
 del getlogin
 
