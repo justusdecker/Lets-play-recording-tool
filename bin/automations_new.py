@@ -265,7 +265,7 @@ class GenerateThumbnailWF(GenericWorkFlow):
         TG = ThumbnailGenerator()
         TP = ThumbnailPreview()
         tad = self.letsplay.get_tad_path(self.lpid)
-        #msgbox check every
+        check_all = msgbox.askyesno('LPRT Thumbnail Check','Do you want to check every image?')
         for i in range(*self.rng): 
             video_path = self.episode.get_video_path(i)
             if not tad:
@@ -273,14 +273,18 @@ class GenerateThumbnailWF(GenericWorkFlow):
                 print('Something went wrong. No TAD found')
                 return
             p = f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
-            #? This generates all images in batch.
-            #! If you want to overwrite a single image goto the Fix Image Tab
-            TG.generate(
-                        str(i+1),
-                        video_path,
-                        tad,
-                        p
-                        )
+            ok = False
+            while not ok:
+                TG.generate(
+                            str(i+1),
+                            video_path,
+                            tad,
+                            p
+                            )
+                if check_all:
+                    ok = msgbox.askyesno('LPRT Result Check','Thumbnail Result Okay?')
+                else:
+                    ok = True
             TP.update_image(p,i)
             self.episode.set_thumbnail_path(i,p)
             self.episode.save()
