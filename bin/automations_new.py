@@ -16,7 +16,7 @@ from tkinter.filedialog import askdirectory
 import tkinter.messagebox as msgbox
 
 from os import listdir
-LP_PATH = 'lets_plays.csv'
+from bin.constants import *
 
 from tkinter import Toplevel
 from tkinter.ttk import Button, LabeledScale, Label
@@ -187,7 +187,7 @@ class GenericWorkFlow:
         self.auto_create_folder_path = folder
         self.finish_message = finish_message
         
-        self.letsplay = LetsPlay(LP_PATH)
+        self.letsplay = LetsPlay(LETS_PLAY_FILE_PATH)
         self.lpid,self.epr = lpid,epr
         self.lp_name = self.letsplay.get_name(self.lpid)
         self.ep_path = self.letsplay.get_episode_path(self.lpid)

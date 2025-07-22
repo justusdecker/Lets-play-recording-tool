@@ -65,7 +65,7 @@ TEMP_FOLDER = f'{ROOT}temp\\'
 THUMBNAIL_FOLDER = f'{ROOT}thumbnails\\'
 FIXED_AUDIO_FOLDER = f'{ROOT}audio_fixed\\'
 
-LETS_PLAY_FILE = f'{ROOT}lets_plays.csv'
+LETS_PLAY_FILE_PATH = f'{ROOT}lets_plays.csv'
 
 cnef(AUDIO_FOLDER)
 cnef(FIXED_AUDIO_FOLDER)
@@ -74,11 +74,10 @@ cnef(VIDEO_FOLDER)
 cnef(TAD_FOLDER)
 cnef(TEMP_FOLDER)
 
-
 if not isfile('obs_settings.json'):
     json_write('obs_settings.json',DEFAULT_OBS_SETTINGS)
-if not isfile('lets_play.csv'):
-    csv_write('lets_play.csv')
+if not isfile(LETS_PLAY_FILE_PATH):
+    csv_write(LETS_PLAY_FILE_PATH)
     
 #! ERRORS
 ewf = 'Exit current workflow.'
