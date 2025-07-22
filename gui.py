@@ -43,7 +43,7 @@ class TkinterApp(tk.Tk):
  
         self.show_frame(Main)
     def show_frame(self, cont):
-
+        self.title(self.frames[cont]._name)
         frame = self.frames[cont]
         frame.tkraise()
 
@@ -273,7 +273,6 @@ class CompAndRender(AutomationFrame):
 class Settings(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
-        print(parent, controller)
         
         label = ttk.Label(self, text ="Nothing here currently", font = LARGEFONT)
 
@@ -282,7 +281,7 @@ class Settings(tk.Frame):
         self.menu = get_menu(self, controller)
         
 
-app = TkinterApp()
-app.mainloop()
+APP = TkinterApp()
+APP.mainloop()
 
 
