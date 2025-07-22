@@ -236,13 +236,15 @@ class GenerateThumbnailWF(GenericWorkFlow):
         super().__init__(folder = THUMBNAIL_FOLDER, finish_message = 'Thumbnail Generation',lpid=lpid,epr=epr)
         self.user_workflow(app)
         
-    def user_workflow(self):
+    def user_workflow(self, app):
         TG = ThumbnailGenerator()
         tad = self.letsplay.get_tad_path(self.lpid)
 
         for i in range(*self.rng): 
             video_path = self.episode.get_video_path(i)
             if not tad:
+                app.start_btn.state(['!disabled'])
+                print('Something went wrong. No TAD found')
                 return
             p = f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
             #? This generates all images in batch.
