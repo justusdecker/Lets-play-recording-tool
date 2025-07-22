@@ -77,7 +77,7 @@ cnef(TEMP_FOLDER)
 if not isfile('obs_settings.json'):
     json_write('obs_settings.json',DEFAULT_OBS_SETTINGS)
 if not isfile(LETS_PLAY_FILE_PATH):
-    csv_write(LETS_PLAY_FILE_PATH)
+    csv_write(LETS_PLAY_FILE_PATH,)
     
 #! ERRORS
 ewf = 'Exit current workflow.'

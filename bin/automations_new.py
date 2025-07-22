@@ -129,7 +129,6 @@ class AudioPlayer(Toplevel):
         self.audio_list[self.current_episode][4] = self.get_volume()
         self.curr_ep_label.configure(text=f'{self.current_episode}')
      
-
 class ThumbnailPreview(Toplevel):
     def __init__(self):
         super().__init__()
