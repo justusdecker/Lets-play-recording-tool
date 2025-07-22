@@ -150,6 +150,14 @@ def obs_connect(ep: Episode,el):
 
 class GenericWorkFlow:
     def __init__(self, folder: str, finish_message: str,lpid,epr):
+        """
+        Initializes a GenericWorkFlow instance, setting up paths, messages,
+        and "LetsPlay" episode-related attributes.
+
+        This class serves as a base for workflows that interact with the `LetsPlay` class, 
+        managing episode-specific data and providing a windows toast message
+        to signal workflow completion.
+        """
         self.auto_create_folder_path = folder
         self.finish_message = finish_message
         
