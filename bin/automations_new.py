@@ -281,11 +281,12 @@ class GenerateThumbnailWF(GenericWorkFlow):
                             tad,
                             p
                             )
+                TP.update_image(p,i)
                 if check_all:
                     ok = msgbox.askyesno('LPRT Result Check','Thumbnail Result Okay?')
                 else:
                     ok = True
-            TP.update_image(p,i)
+            
             self.episode.set_thumbnail_path(i,p)
             self.episode.save()
         app.start_btn.state(['!disabled'])
