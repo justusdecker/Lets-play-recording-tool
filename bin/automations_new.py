@@ -31,6 +31,8 @@ TEMP_FOLDER = f'{ROOT}temp\\'
 THUMBNAIL_FOLDER = f'{ROOT}thumbnails\\'
 FIXED_AUDIO_FOLDER = f'{ROOT}audio_fixed\\'
 
+LETS_PLAY_FILE = f'{ROOT}lets_plays.csv'
+
 # fix for issue #78
 cnef(AUDIO_FOLDER)
 cnef(FIXED_AUDIO_FOLDER)
