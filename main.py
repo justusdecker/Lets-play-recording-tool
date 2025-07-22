@@ -1,4 +1,5 @@
 from bin.automations_new import *
+from bin.constants import DISCLAIMER
 from bin.data_access import LetsPlay, Episode, on_start
 from threading import Thread
 LP_PATH = 'lets_plays.csv'
@@ -7,13 +8,6 @@ import tkinter as tk
 from tkinter import ttk
 
 LARGEFONT =("Verdana", 35)
-
-DISCLAIMER = """
-Welcome to LPRT
-
-This Tool is currently Work in Progress!
-Some features might not work as expected & can cause data loss! Be careful!
-"""
 
 on_start()
 
