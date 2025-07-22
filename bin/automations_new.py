@@ -169,12 +169,11 @@ class ThumbnailPreview(Toplevel):
     def __init__(self):
         super().__init__()
         self.isfinished = False
-        self.title('Thumbnail Preview: NONE')
         self.geometry('640x400')
         self.label = Label(self)
         self.label.pack(pady=20)
         
-        self.update_image('logo.ico')
+        self.update_image('logo.ico',-1)
         
         
     def update_image(self,path: str,i:int):
@@ -266,7 +265,7 @@ class GenerateThumbnailWF(GenericWorkFlow):
         TG = ThumbnailGenerator()
         TP = ThumbnailPreview()
         tad = self.letsplay.get_tad_path(self.lpid)
-
+        #msgbox check every
         for i in range(*self.rng): 
             video_path = self.episode.get_video_path(i)
             if not tad:
@@ -285,7 +284,7 @@ class GenerateThumbnailWF(GenericWorkFlow):
             TP.update_image(p,i)
             self.episode.set_thumbnail_path(i,p)
             self.episode.save()
-
+        app.start_btn.state(['!disabled'])
         super().user_workflow()
 
 class ExtractAudioWF(GenericWorkFlow):
