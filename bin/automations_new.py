@@ -80,8 +80,8 @@ class AudioPlayer(Toplevel):
         self.play_button.state(['disabled'])
         stop_audio()
         
-        ffmpeg_run(FFMPEG_AUDIO_COMBINE_TRUNCATED,{'__IN1__':self.audio_list[self.current_episode][1],'__IN2__': self.audio_list[self.current_episode][2],'__VOLUME1__': str(1.0),'__VOLUME2__': str(self.audio_list[self.current_episode][4]),'__OUT__':'temp.mp3'})
-        play_audio('temp.mp3')
+        ffmpeg_run(FFMPEG_AUDIO_COMBINE_TRUNCATED,{'__IN1__':self.audio_list[self.current_episode][1],'__IN2__': self.audio_list[self.current_episode][2],'__VOLUME1__': str(1.0),'__VOLUME2__': str(self.audio_list[self.current_episode][4]),'__OUT__':f'{TEMP_FOLDER}temp.mp3'})
+        play_audio(f'{TEMP_FOLDER}temp.mp3')
         
     def byebye(self, *args):
         """Closes the AudioPlayer window and sets the `isfinished` flag to True."""
@@ -137,7 +137,7 @@ class ThumbnailPreview(Toplevel):
         self.label = Label(self)
         self.label.pack(pady=20)
         
-        self.update_image('logo.ico',-1)
+        self.update_image(f'bin\\data\\img\\logo.ico',-1)
         
         
     def update_image(self,path: str,i:int):
