@@ -353,7 +353,7 @@ class Episode(CSVObj):
         self.read(id)[13] = data
         
 def check_lp_ep():
-    lp = LetsPlay('lets_plays.csv')
+    lp = LetsPlay(LETS_PLAY_FILE_PATH)
     try:
         for i in range(lp.row):
             lp.get_episodes(i)

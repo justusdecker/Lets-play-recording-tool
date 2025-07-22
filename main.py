@@ -2,7 +2,6 @@ from bin.automations_new import *
 from bin.constants import DISCLAIMER
 from bin.data_access import LetsPlay, Episode, on_start
 from threading import Thread
-LP_PATH = 'lets_plays.csv'
 
 import tkinter as tk
 from tkinter import ttk
@@ -65,7 +64,7 @@ def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,
 
     This function sets up a label and an option menu (dropdown) for users
     to select from a list of "Let's Play" names. The names are sourced
-    from a `LetsPlay` object which conceptually reads from 'lets_plays.csv'.
+    from a `LetsPlay` object which conceptually reads from ROOT/'lets_plays.csv'.
     When a selection is made, the provided `callback` function is executed.
     """
     label = ttk.Label(parent, text ="Lets Play")
@@ -74,7 +73,7 @@ def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,
     
     lp_option_var = tk.StringVar(parent)
         
-    lps = LetsPlay('lets_plays.csv')
+    lps = LetsPlay(LETS_PLAY_FILE_PATH)
     names = lps.get_names()
     options = ttk.OptionMenu(parent,lp_option_var,'None',*names,command=callback)
     
@@ -224,7 +223,7 @@ class Recording(tk.Frame):
     def __get_connection(self):
         
         change_states(self.menu,'disabled') # Deactivates all menu buttons for safety reasons
-        ep = LetsPlay(LP_PATH).get_episodes(self.lps.get_names().index(self.lp_option_var.get()))
+        ep = LetsPlay(LETS_PLAY_FILE_PATH).get_episodes(self.lps.get_names().index(self.lp_option_var.get()))
         self.btn_connect.state(["disabled"])
         self.btn_connect.configure(text='Try connection to OBS...')
         #! Currently Disconnecting only works by closing OBS <- mainly for safety reasons!
