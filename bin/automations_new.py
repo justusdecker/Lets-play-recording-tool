@@ -1,3 +1,11 @@
+__author__ = "Justus Decker"
+__copyright__ = "(c) 2024 - 2025 , The LPRT Project"
+__credits__ = []
+__version__ = "0.10.80"
+__maintainer__ = "Justus Decker"
+__email__ = "justus.d2025@gmail.com"
+__status__ = "Testing - Missing Documentation"
+
 from bin.obs import OBSObserver
 from bin.data_access import Episode, LetsPlay, cnef
 from bin.wintoasty import toast_finished
@@ -315,12 +323,60 @@ class FixAudioWF(GenericWorkFlow):
 
 class SendToAudacityWF(GenericWorkFlow):
     """
-    Generating Thumbnails based on the thumbnail automation data
+    A workflow class designed to integrate with Audacity for further audio
+    processing, specifically for importing fixed microphone audio tracks and
+    then handling the exported results.
+
+    This class extends `GenericWorkFlow` and automates the process of:
+    1. Establishing a connection with Audacity via its mod-pipe.
+    2. Importing processed microphone audio tracks into Audacity.
+    3. Guiding the user through the export process in Audacity (manual step for Noise Reduction).
+    4. Converting the exported audio files to AAC format.
+    5. Updating the episode's metadata with the paths to the final processed audio files.
+    It also provides error handling and progress updates via an application's progress bar.
     """
     def __init__(self,lpid, epr,app):
-        super().__init__(folder = THUMBNAIL_FOLDER, finish_message = 'Audacity Send',lpid=lpid, epr=epr)
+        """
+        This constructor calls the parent `GenericWorkFlow`'s constructor,
+        setting up a folder and a finish message. It then immediately initiates the Audacity
+        integration process by calling its own `user_workflow` method,
+        passing the application instance for UI and progress updates.
+        """
+        super().__init__(folder = FIXED_AUDIO_FOLDER, finish_message = 'Audacity Send',lpid=lpid, epr=epr)
         self.user_workflow(app)
     def user_workflow(self, app):
+        """
+        Executes the process of sending audio to Audacity, handling user interaction,
+        and processing exported results.
+        
+        The workflow performs the following steps:
+        1. **Pipe Creation:** Attempts to create a pipe connection to Audacity. If it fails
+           (e.g., Audacity is not open or mod-pipe is not enabled), it displays an error
+           message and re-enables the start button.
+        2. **User Confirmation:** Prompts the user to confirm if they want to send data to Audacity.
+        3. **Audio Import (if confirmed):**
+           - Iterates through each episode in the defined range.
+           - Retrieves the path to the previously fixed microphone audio track (`audio_mic_edit1_path`).
+           - Sends an "Import2" command to Audacity to import the audio file.
+           - Handles errors if Audacity is not reachable during import.
+           - Updates the application's progress bar.
+           - **Note:** The Noise Reduction step is explicitly mentioned as not automated
+             and requires manual intervention in Audacity.
+        4. **Import Completion Toast:** Displays a "Finished Importing" toast message.
+        5. **Exported Results Handling:**
+           - Prompts the user to select a directory where Audacity's exported files are located.
+           - Validates if the number of exported files matches the number of episodes. If not,
+             it displays an error.
+           - Iterates through the exported files:
+             - Extracts the episode number from the filename.
+             - Converts the exported audio file to AAC format using `ffmpeg_run`
+               (`FFMPEG_CONVERT_AUDIO_TYPE` is assumed external).
+             - Updates the episode's metadata with the path to the newly converted AAC file
+               as `audio_mic_edit2_path`.
+             - Saves the updated episode metadata.
+        6. **Finalization:** Re-enables the application's start button and calls the
+           parent `user_workflow` to display the overall completion message.
+        """
         try:
             create_pipe()
         except:
@@ -339,6 +395,7 @@ class SendToAudacityWF(GenericWorkFlow):
                     return
                 app.pb.step((1 / (self.rng[1] + 1))*100)
                 #! The Noise Reduction is not automated
+                # do_command from the audacity pipeline
         toast_finished('Finished Importing')
         results_path = askdirectory() + '/'
         files = listdir(results_path)
