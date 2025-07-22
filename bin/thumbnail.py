@@ -19,7 +19,7 @@ from os.path import isfile
 
 from bin.data_access import json_read
 from pygame.image import save as img_save, load as img_load
-from bin.constants import DEFAULT_THUMBNAIL_SIZE
+from bin.constants import DEFAULT_THUMBNAIL_SIZE, TAD_FOLDER
 from bin.ffmpeg import ffmpeg_run, FFMPEG_GET_FRAME, FFMPEG_GET_LENGTH
 from pygame.font import Font, init, get_default_font
 init()
@@ -66,7 +66,7 @@ class ThumbnailGenerator:
                  
                  ):
         print((f'[Thumbnail Generate]: {video_path}',94))
-        _bg, _logo, _text = json_read(tad_path)
+        _bg, _logo, _text = json_read(TAD_FOLDER + tad_path)
         bg = self.__render_background(video_path,frame,_bg)
         bg_pos = (
             (1280//2) - (bg[0].get_width() // 2), 
