@@ -43,7 +43,7 @@ class TkinterApp(tk.Tk):
  
         self.show_frame(Main)
     def show_frame(self, cont):
-        self.title(self.frames[cont]._name)
+        self.title(str(self.frames[cont]._name[1:]).capitalize())
         frame = self.frames[cont]
         frame.tkraise()
 
