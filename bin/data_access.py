@@ -39,21 +39,50 @@ EP_KEYS = [
 ]
 
 def csv_rw(filepath: str, new_data):
+    """
+    Reads existing data from a CSV file, appends new data to it, and then
+    writes the combined data back to the same CSV file.
+
+    This function effectively appends `new_data` to the end of the CSV file,
+    preserving existing content. The CSV file is expected to use '|' as a delimiter.
+    """
     old_data = csv_read(filepath)
     csv_write(filepath, old_data + new_data)
 
 def csv_read(filepath : str) -> list[list[str]]:
+    """
+    Reads all data from a CSV file into a list of lists.
+
+    Each inner list represents a row, and each element in the inner list
+    is a string representing a cell value. The CSV file is expected to use
+    '|' as a delimiter. If the file does not exist, an empty list is returned.
+    """
     if not isfile(filepath): return []
     with open(filepath,newline='') as f:
         reader = csv.reader(f, delimiter='|')
         return [row for row in reader]
 
 def csv_write(filepath : str,data : list) -> None:
+    """
+    Writes a list of lists to a CSV file.
+
+    Each inner list in `data` is written as a row in the CSV file.
+    The CSV file will use '|' as a delimiter. This function overwrites
+    the file if it already exists.
+    """
     with open(filepath,'w',newline='') as f:
         writer = csv.writer(f, delimiter='|')
         writer.writerows(data)
 
 def isepisode_empty(filepath: str):
+    """
+    Checks if an 'Episode' object can be successfully instantiated from a given filepath.
+
+    This function attempts to create an `Episode` object. If the instantiation
+    succeeds (meaning the file contains valid episode data), it returns True.
+    If any error occurs during instantiation (e.g., file not found, invalid format),
+    it catches the exception and returns False.
+    """
     try:
         e = Episode(filepath)
         return True
@@ -61,26 +90,52 @@ def isepisode_empty(filepath: str):
         return False
 
 def file_read(filepath : str) -> str:
+    """Reads the entire content of a text file into a single string."""
     with open(filepath, 'r') as f:
         return f.read()
 
 def file_write(filepath : str, data : str):
+    """
+    Writes a string to a text file.
+
+    This function overwrites the file if it already exists.
+    """
     with open(filepath, 'w') as f:
         f.write(data)
         
 def file_append(filepath : str, data : str):
+    """
+    Appends a string to the end of a text file.
+
+    If the file does not exist, it will be created.
+    """
     with open(filepath, 'a') as f:
         f.write(data)
 
 def json_read(filepath : str) -> dict | list:
+    """Reads JSON data from a file and parses it into a Python dictionary or list."""
     with open(filepath, 'r') as f:
         return json.load(f)
+    
 def json_write(filepath : str, data : dict | list):
+    """
+    Writes a Python dictionary or list to a file in JSON format.
+
+    This function overwrites the file if it already exists.
+    """
     with open(filepath, 'w') as f:
         f.write(json.dumps(data))
    
 
 def cnef(path: str):
+    """
+    Checks if a directory path exists, and if not, creates all necessary
+    intermediate directories to ensure the full path exists.
+
+    This function iterates through the components of the given path and
+    creates each subdirectory if it doesn't already exist, effectively
+    creating a nested directory structure.
+    """
     if not isdir(path):
         sp = path.split('\\')
         for idx in range(len(sp)):
@@ -90,18 +145,28 @@ def cnef(path: str):
                 mkdir(cp)
 class CSVObj:
     """
-    The default csv object to inherit from.
+    A class for managing data stored in a CSV file, providing methods for
+    reading, creating, updating, and deleting rows, with basic validation.
+
+    This class treats the CSV file as a simple table where each row is a record.
+    It enforces a strict column structure based on the provided `KEYS` dictionary
+    during initialization. Data is loaded into memory upon instantiation and
+    can be saved back to the file.
     """
     def __init__(self, filepath: str,KEYS: dict):
+        """
+        Reads existing data from the specified CSV file and performs an initial
+        validation to ensure that each existing row has the same number of columns
+        as defined by the `KEYS` dictionary. If a row's length does not match
+        the expected number of keys, an `IndexError` is raised.
+        """
         self.filepath = filepath
         self.data = csv_read(filepath)
         for row in self.data:
             if len(row) != len(KEYS):
                 raise IndexError()
     def __check_list(self,cl:list[str],**kwargs):
-        """
-        checks list with a check list :o
-        """
+
         if len(cl) != len(kwargs):
             raise IndexError(f'Length of a != b')
         for e in cl:
