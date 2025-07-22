@@ -210,7 +210,7 @@ class Recording(tk.Frame):
         self.btn_connect.grid(row = 0, column=4)
         
         self.label, self.lp_options, self.lp_option_var, self.lps= get_lets_play(self, self.lp_changed)
-        
+        self.btn_connect.state(["disabled"])
         
         #TODO
         #! Show selected Lets Play
@@ -218,7 +218,8 @@ class Recording(tk.Frame):
         
         self.menu = get_menu(self, controller)
     def lp_changed(self,*args):
-        pass
+        print(self.lps.get_names().index(self.lp_option_var.get()))
+        self.btn_connect.state(["!disabled"])
     def get_connection(self):
         self.lp_options.state(['disabled'])
         if self.thread is None:
@@ -227,7 +228,7 @@ class Recording(tk.Frame):
     def __get_connection(self):
         
         change_states(self.menu,'disabled') # Deactivates all menu buttons for safety reasons
-        ep = LetsPlay(LP_PATH).get_episodes(0)
+        ep = LetsPlay(LP_PATH).get_episodes(self.lps.get_names().index(self.lp_option_var.get()))
         self.btn_connect.state(["disabled"])
         self.btn_connect.configure(text='Try connection to OBS...')
         #! Currently Disconnecting only works by closing OBS <- mainly for safety reasons!
