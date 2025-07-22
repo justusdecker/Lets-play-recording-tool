@@ -203,11 +203,13 @@ class Recording(tk.Frame):
         self.thread = None
         self.label = ttk.Label(self, text ="No Connection", font = LARGEFONT)
 
-        self.label.grid(row = 0, column = 1, padx = 10, pady = 10)
+        self.label.grid(row = 0, column = 3)
         
         self.btn_connect = ttk.Button(self, text ="Connect to obs",command=self.get_connection)
 
-        self.btn_connect.grid(row = 0, column=2)
+        self.btn_connect.grid(row = 0, column=4)
+        
+        get_lets_play(parent,lambda: None)
         
         #TODO
         #! Show selected Lets Play
