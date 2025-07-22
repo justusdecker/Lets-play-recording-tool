@@ -19,7 +19,8 @@ from os.path import isfile
 
 from bin.data_access import json_read
 from pygame.image import save as img_save, load as img_load
-from bin.constants import DEFAULT_THUMBNAIL_SIZE, ffmpeg_run, FFMPEG_GET_FRAME, FFMPEG_GET_LENGTH
+from bin.constants import DEFAULT_THUMBNAIL_SIZE
+from bin.ffmpeg import ffmpeg_run, FFMPEG_GET_FRAME, FFMPEG_GET_LENGTH
 from pygame.font import Font, init, get_default_font
 init()
 
