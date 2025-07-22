@@ -50,7 +50,16 @@ from bin.lprtplay import play_audio, stop_audio
 from tkinter import DoubleVar
 
 class AudioPlayer(Toplevel):
+    """
+    A Tkinter Toplevel window that functions as a simple audio player.
+
+    This player allows users to play, stop, and navigate through a list of audio
+    files. It also provides a volume control and displays the current episode
+    number. The audio playback functionality relies on external functions
+    `stop_audio`, `ffmpeg_run`, and `play_audio`.
+    """
     def __init__(self,paths):
+        
         self.audio_list = paths
         print(len(paths))
         self.current_episode = 0
@@ -81,11 +90,13 @@ class AudioPlayer(Toplevel):
         self.finished_button = Button(self,text='Finished', command=self.byebye)
         self.finished_button.grid(row=4,column=0)
     def stop(self,*args):
+        """Stops the currently playing audio and updates button states."""
         self.stop_button.state(['disabled'])
         self.play_button.state(['!disabled'])
         stop_audio()
         
     def play(self, *args):
+        """Plays the audio for the current episode."""
         print(self.audio_list[self.current_episode])
         self.stop_button.state(['!disabled'])
         self.play_button.state(['disabled'])
@@ -94,12 +105,21 @@ class AudioPlayer(Toplevel):
         play_audio('temp.mp3')
         
     def byebye(self, *args):
+        """Closes the AudioPlayer window and sets the `isfinished` flag to True."""
         self.destroy()
         self.isfinished = True
     def get_volume(self) -> float:
+        """Retrieves the current volume level from the volume slider."""
         return float(f'{self.vol.get():.2f}')
     
     def episode_down(self,*args):
+        """
+        Navigates to the previous audio episode in the list.
+
+        If the current episode is already the first one, it stays at index 0.
+        It updates the current episode index, saves the current volume for the
+        new episode, and updates the episode label.
+        """
         new_location = self.current_episode - 1
 
         if new_location < 0:
@@ -110,6 +130,13 @@ class AudioPlayer(Toplevel):
         self.curr_ep_label.configure(text=f'{self.current_episode}')
             
     def episode_up(self,*args):
+        """
+        Navigates to the next audio episode in the list.
+
+        If the current episode is already the last one, it stays at the last index.
+        It updates the current episode index, saves the current volume for the
+        new episode, and updates the episode label.
+        """
         new_location = self.current_episode + 1
         
         l = len(self.audio_list)
@@ -123,8 +150,6 @@ class AudioPlayer(Toplevel):
         self.audio_list[self.current_episode][4] = self.get_volume()
         self.curr_ep_label.configure(text=f'{self.current_episode}')
         
-
-
 def obs_connect(ep: Episode,el):
     """
     Connects to the obs_ws API
