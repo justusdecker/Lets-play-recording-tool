@@ -276,7 +276,25 @@ class FixAudioWF(GenericWorkFlow):
         self.user_workflow(app)
         
     def user_workflow(self,app):
-        
+        """
+        Executes the audio fixing process for each microphone audio track
+        within the defined episode range.
+
+        For each episode:
+        1. Retrieves the path to the original microphone audio track.
+        2. Defines the destination path for the fixed audio file.
+        3. Ensures a temporary folder exists (`cnef` to create/ensure folder).
+        4. Uses `ffmpeg_run` to apply a predefined set of audio filters
+           (Lowpass, Highpass, Loudness Normalize, Limiter) to the microphone track.
+           (`FFMPEG_AUDIO_PF_LN_L` and `ffmpeg_run` are assumed external).
+        5. Updates the application's progress bar.
+        6. Stores the path of the fixed audio file in the episode's metadata
+           as `audio_mic_edit1_path`.
+        7. Saves the updated episode metadata.
+
+        After processing all episodes, it re-enables the application's start button
+        and calls the parent `user_workflow` to display the completion message.
+        """
         for i in range(*self.rng): 
             audio_mic_path = self.episode.get_audio_mic_path(i)
             # Filters
