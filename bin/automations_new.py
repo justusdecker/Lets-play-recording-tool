@@ -203,6 +203,7 @@ def obs_connect(ep: Episode,el):
         el.btn_connect.configure(text= 'Connection established')
         try:
             el.label.configure(text= OBSO.timecode)
+            el.title(f'Recording - {ep.row} Episodes')
             OBSO.update(ep)
         except:
             el.btn_connect.configure(text= 'Unexpected Error happened')

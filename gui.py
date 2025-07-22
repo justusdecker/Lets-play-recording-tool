@@ -209,14 +209,18 @@ class Recording(tk.Frame):
 
         self.btn_connect.grid(row = 0, column=4)
         
-        get_lets_play(parent,lambda: None)
+        self.label, self.lp_options, self.lp_option_var, self.lps= get_lets_play(self, self.lp_changed)
+        
         
         #TODO
         #! Show selected Lets Play
         #! Show current Episode
         
         self.menu = get_menu(self, controller)
+    def lp_changed(self,*args):
+        pass
     def get_connection(self):
+        self.lp_options.state(['disabled'])
         if self.thread is None:
             self.thread = Thread(target=self.__get_connection)
             self.thread.start()
@@ -233,6 +237,7 @@ class Recording(tk.Frame):
         change_states(self.menu,'!disabled') # Reactivating
         self.btn_connect.configure(text='Error occured! Try again')
         self.thread = None
+        self.lp_options.state(['!disabled'])
             
 class ThumbnailGenerate(AutomationFrame):
      def __init__(self, parent, controller):
