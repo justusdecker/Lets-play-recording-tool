@@ -273,9 +273,9 @@ class CompAndRender(AutomationFrame):
 class Settings(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
+        print(parent, controller)
         
-        
-        label = ttk.Label(self, text ="Settings", font = LARGEFONT)
+        label = ttk.Label(self, text ="Nothing here currently", font = LARGEFONT)
 
         label.grid(row = 0, column = 1, padx = 10, pady = 10) 
 
