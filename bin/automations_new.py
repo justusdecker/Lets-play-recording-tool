@@ -456,6 +456,7 @@ class SendToAudacityWF(GenericWorkFlow):
                 app.pb.step((1 / (self.rng[1] + 1))*100)
                 #! The Noise Reduction is not automated
                 # do_command from the audacity pipeline
+        print('test')
         break_pipe()
         toast_finished('Finished Importing')
         results_path = askdirectory() + '/'
