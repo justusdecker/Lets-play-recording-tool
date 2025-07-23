@@ -11,7 +11,7 @@ try: #Fix for issue: #124
 except:
     from tkinter.messagebox import showerror
     from bin.constants import ERROR_008
-    showerror('ERROR', ERROR_008)
+    showerror('ERROR', ERROR_008 + '\nobs_ws')
     quit()
 
 from bin.data_access import json_read

@@ -3,7 +3,7 @@ try: #Fix for issue: #125
 except:
     from tkinter.messagebox import showerror
     from bin.constants import ERROR_008
-    showerror('ERROR', ERROR_008)
+    showerror('ERROR', ERROR_008 + '\nwinotify')
     quit()
 from os import getcwd
 
