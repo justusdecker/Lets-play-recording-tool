@@ -5,11 +5,13 @@ __version__ = "0.5.10"
 __maintainer__ = "Justus Decker"
 __email__ = "justus.d2025@gmail.com"
 __status__ = "Production"
+
 try: #Fix for issue: #126
     from numpy import rot90
 except:
     from tkinter.messagebox import showerror
     from bin.constants import ERROR_008
+    
     showerror('ERROR', ERROR_008 + '\nnumpy')
     quit()
 
@@ -70,6 +72,7 @@ class ThumbnailGenerator:
                  
                  ):
         print((f'[Thumbnail Generate]: {video_path}',94))
+
         _bg, _logo, _text = json_read(TAD_FOLDER + tad_path)
         bg = self.__render_background(video_path,frame,_bg)
         bg_pos = (
