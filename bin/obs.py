@@ -10,7 +10,10 @@ try: #Fix for issue: #124
 except:
     from tkinter.messagebox import showerror
     from bin.constants import ERROR_008
+    import sys
+    
     showerror('ERROR', ERROR_008)
+    quit()
 from websocket import _exceptions
 from bin.data_access import json_read
 from bin.constants import OBS_SETTINGS_PATH
