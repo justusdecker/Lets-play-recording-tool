@@ -57,6 +57,8 @@ class OBSObserver:
             print('WindowsError')
         except _exceptions.WebSocketTimeoutException as E:
             print('WebsocketTimeout')
+        except ValueError:
+            print('Hostname invalid!')
     @property
     def isconnected(self) -> bool:
         """
