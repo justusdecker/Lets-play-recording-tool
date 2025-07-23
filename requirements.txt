@@ -1,4 +1,4 @@
-obs_ws
+obsws-python
 pygame
 shutil
 tkinter
