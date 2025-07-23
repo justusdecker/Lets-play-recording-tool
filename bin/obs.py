@@ -5,8 +5,12 @@ __version__ = "0.3.106"
 __maintainer__ = "Justus Decker"
 __email__ = "justus.d2025@gmail.com"
 __status__ = "Production"
-
-import obsws_python as obsws
+try: #Fix for issue: #124
+    import obsws_python as obsws
+except:
+    from tkinter.messagebox import showerror
+    from bin.constants import ERROR_008
+    showerror('ERROR', ERROR_008)
 from websocket import _exceptions
 from bin.data_access import json_read
 from bin.constants import OBS_SETTINGS_PATH
