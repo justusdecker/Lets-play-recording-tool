@@ -1,6 +1,7 @@
 obsws-python
-pygame
+pygame-ce
 shutil
 tkinter
 PIL
 winotify
+numpy

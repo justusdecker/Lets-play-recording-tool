@@ -24,8 +24,14 @@ from bin.lprtplay import play_audio, stop_audio
 from tkinter import DoubleVar
 
 from bin.thumbnail import ThumbnailGenerator
+try: #Fix for issue: #127
+    from PIL import ImageTk, Image
+except:
+    from tkinter.messagebox import showerror
+    from bin.constants import ERROR_008
+    showerror('ERROR', ERROR_008 + '\nPIL')
+    quit()
 
-from PIL import ImageTk, Image
 
 class AudioPlayer(Toplevel):
     """
