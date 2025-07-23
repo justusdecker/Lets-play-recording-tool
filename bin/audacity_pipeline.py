@@ -63,6 +63,9 @@ def create_pipe():
     print("-- File to write to has been opened")
     AFA.FROM_FILE = open(AFA.FROM_NAME, 'rt')
     print(f"-- Opened {AFA.FROM_NAME}")
+def break_pipe():
+    AFA.TO_FILE.close()
+    AFA.FROM_FILE.close()
 
 def send_command(command):
     """Send a single command."""
@@ -83,10 +86,14 @@ def get_response():
 
 def do_command(command):
     """Send one command, and return the response."""
+    
     response = None
     try:
+        create_pipe()
         send_command(command)
         response = get_response()
         print("Rcvd: <<< \n" + response)
-    except: pass
+    except Exception as E:
+        print(E)
+    
     return response

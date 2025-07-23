@@ -438,7 +438,8 @@ class SendToAudacityWF(GenericWorkFlow):
         """
         try:
             create_pipe()
-        except:
+        except Exception as E:
+            print(E)
             msgbox.showerror('ERROR','Did you open Audacity & enabled the mod-pipe?')
             app.start_btn.state(['!disabled'])
             return
@@ -455,6 +456,7 @@ class SendToAudacityWF(GenericWorkFlow):
                 app.pb.step((1 / (self.rng[1] + 1))*100)
                 #! The Noise Reduction is not automated
                 # do_command from the audacity pipeline
+        break_pipe()
         toast_finished('Finished Importing')
         results_path = askdirectory() + '/'
         files = listdir(results_path)
