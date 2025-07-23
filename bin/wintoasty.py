@@ -1,4 +1,10 @@
-from winotify import Notification, audio
+try: #Fix for issue: #125
+    from winotify import Notification, audio
+except:
+    from tkinter.messagebox import showerror
+    from bin.constants import ERROR_008
+    showerror('ERROR', ERROR_008)
+    quit()
 from os import getcwd
 
 TOAST = Notification('LPRT','Welcome','Up & Running',f'{getcwd()}\\logo.ico')
