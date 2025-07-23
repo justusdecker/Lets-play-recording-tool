@@ -222,8 +222,6 @@ class GenericWorkFlow:
         """
         toast_finished(self.finish_message)
     
-
-
 class GenerateThumbnailWF(GenericWorkFlow):
     """
     Generating Thumbnails based on the thumbnail automation data
@@ -311,6 +309,7 @@ class ExtractAudioWF(GenericWorkFlow):
             t1_path, t2_path = f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_track_mic.aac',f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_track_desktop.aac'
             
             ffmpeg_run(FFMPEG_OPTIMIZED_EXTRACT,{'__IN__':video_path,'__OUT1__':t1_path, '__OUT2__':t2_path})
+            
             app.pb.step((1 / (self.rng[1] + 1))*100)
             self.episode.set_audio_mic_path(i,t1_path)
             self.episode.set_audio_desktop_path(i,t2_path)
