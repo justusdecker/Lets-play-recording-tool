@@ -6,12 +6,18 @@ __maintainer__ = "Justus Decker"
 __email__ = "justus.d2025@gmail.com"
 __status__ = "Production"
 
+try: #Fix for issue: #126
+    from numpy import rot90
+except:
+    from tkinter.messagebox import showerror
+    from bin.constants import ERROR_008
+    
+    showerror('ERROR', ERROR_008 + '\nnumpy')
+    quit()
+
 from pygame.surfarray import make_surface
 from pygame.transform import scale, flip, rotate, scale_by
 from pygame import Surface,SRCALPHA,Color,mask
-
-
-from numpy import rot90
 
 from random import random as rnd, randint as ri
 
@@ -66,6 +72,7 @@ class ThumbnailGenerator:
                  
                  ):
         print((f'[Thumbnail Generate]: {video_path}',94))
+
         _bg, _logo, _text = json_read(TAD_FOLDER + tad_path)
         bg = self.__render_background(video_path,frame,_bg)
         bg_pos = (

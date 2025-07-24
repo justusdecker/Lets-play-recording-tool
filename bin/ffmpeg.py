@@ -120,7 +120,7 @@ def ffmpeg_build(cmd: list[str], replacer: dict[str,str]):
         cmd = [arg.replace(key,str(replacer[key])) if key in arg else arg for arg in cmd]
     return cmd
 
-def ffmpeg_run(cmd: list[list], replacer: dict[str,str],nr: bool = False):
+def ffmpeg_run(cmd: list[list], replacer: dict[str,str]={},nr: bool = False):
     """
     This function runs your FFMPEG command. Before this happens this function calls ffmpeg_build to replace some essential variables.
     
@@ -133,4 +133,19 @@ def ffmpeg_run(cmd: list[list], replacer: dict[str,str],nr: bool = False):
     if nr:
         return run(ffmpeg_build(cmd,replacer), CREATE_NO_WINDOW, capture_output=True, text=True).stdout
     else:
-        run(ffmpeg_build(cmd,replacer), CREATE_NO_WINDOW,)
+        try:
+            run(ffmpeg_build(cmd,replacer), CREATE_NO_WINDOW,)
+            return True
+        except FileNotFoundError:
+            return None
+from tkinter.messagebox import showerror
+from bin.constants import ERROR_010, ERROR_011, ERROR_012     
+if ffmpeg_run(['ffmpeg']) is None:
+    showerror('ERROR', ERROR_010)
+    quit()
+if ffmpeg_run(['ffplay']) is None:
+    showerror('ERROR', ERROR_011)
+    quit()
+#if ffmpeg_run(['ffprobe']) is None: Not in use currently
+#    showerror('ERROR', ERROR_010)
+#    quit()

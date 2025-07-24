@@ -5,7 +5,7 @@ __version__ = "0.10.80"
 __maintainer__ = "Justus Decker"
 __email__ = "justus.d2025@gmail.com"
 __status__ = "Testing"
-
+from os.path import isfile
 from bin.obs import OBSObserver
 from bin.data_access import Episode, LetsPlay, cnef, json_write
 from bin.wintoasty import toast_finished
@@ -24,9 +24,16 @@ from bin.lprtplay import play_audio, stop_audio
 from tkinter import DoubleVar
 
 from bin.thumbnail import ThumbnailGenerator
+from tkinter.messagebox import showerror
+try: #Fix for issue: #127
+    from PIL import ImageTk, Image
+except:
+    from bin.constants import ERROR_008
+    showerror('ERROR', ERROR_008 + '\nPIL')
+    quit()
 
-from PIL import ImageTk, Image
 
+from bin.constants import ERROR_007
 class AudioPlayer(Toplevel):
     """
     A Tkinter Toplevel window that functions as a simple audio player.
@@ -215,8 +222,6 @@ class GenericWorkFlow:
         """
         toast_finished(self.finish_message)
     
-
-
 class GenerateThumbnailWF(GenericWorkFlow):
     """
     Generating Thumbnails based on the thumbnail automation data
@@ -229,13 +234,18 @@ class GenerateThumbnailWF(GenericWorkFlow):
         TG = ThumbnailGenerator()
         TP = ThumbnailPreview()
         tad = self.letsplay.get_tad_path(self.lpid)
+        print(tad)
+        if not tad:
+            showerror('ERROR' ,ERROR_009)
+            app.start_btn.state(['!disabled'])
+            return
+        if not isfile(TAD_FOLDER + tad):
+            showerror('ERROR' ,ERROR_007 + '\nTAD Path does not exist!')
+            app.start_btn.state(['!disabled'])
+            return
         check_all = msgbox.askyesno('LPRT Thumbnail Check','Do you want to check every image?')
         for i in range(*self.rng): 
             video_path = self.episode.get_video_path(i)
-            if not tad:
-                app.start_btn.state(['!disabled'])
-                print('Something went wrong. No TAD found')
-                return
             p = f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
             ok = False
             while not ok:
@@ -299,6 +309,7 @@ class ExtractAudioWF(GenericWorkFlow):
             t1_path, t2_path = f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_track_mic.aac',f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_track_desktop.aac'
             
             ffmpeg_run(FFMPEG_OPTIMIZED_EXTRACT,{'__IN__':video_path,'__OUT1__':t1_path, '__OUT2__':t2_path})
+            
             app.pb.step((1 / (self.rng[1] + 1))*100)
             self.episode.set_audio_mic_path(i,t1_path)
             self.episode.set_audio_desktop_path(i,t2_path)
@@ -427,7 +438,8 @@ class SendToAudacityWF(GenericWorkFlow):
         """
         try:
             create_pipe()
-        except:
+        except Exception as E:
+            print(E)
             msgbox.showerror('ERROR','Did you open Audacity & enabled the mod-pipe?')
             app.start_btn.state(['!disabled'])
             return
@@ -444,6 +456,8 @@ class SendToAudacityWF(GenericWorkFlow):
                 app.pb.step((1 / (self.rng[1] + 1))*100)
                 #! The Noise Reduction is not automated
                 # do_command from the audacity pipeline
+        print('test')
+        break_pipe()
         toast_finished('Finished Importing')
         results_path = askdirectory() + '/'
         files = listdir(results_path)

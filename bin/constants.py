@@ -103,6 +103,7 @@ OBS_SETTINGS_PATH = f'{ROOT}obs_settings.json'
     
 #! ERRORS
 ewf = 'Exit current workflow.'
+exp = 'Exiting App!'
 ERROR_001 = f'[E001] User input is not in range. {ewf}'
 ERROR_002 = f'[E002] file already exists. {ewf}'
 ERROR_003 = f'[E003] This option does not exist. {ewf}'
@@ -110,3 +111,8 @@ ERROR_004 = f'[E004] No connection to OBS! {ewf}'
 ERROR_005 = f'[E005] Keyboard interrupt! {ewf}'
 ERROR_006 = f'[E006] Destination not set. {ewf}'
 ERROR_007 = f'[E007] file does not exist. {ewf}'
+ERROR_008 = f'[E008] ModuleLoadFailure. {exp}'
+ERROR_009 = f"[E009] Something went wrong. No TAD found. {ewf}"
+ERROR_010 = f'[E010] FFMPEG is not installed. {exp}'
+ERROR_011 = f'[E011] FFPLAY is not installed. {exp}'
+ERROR_012 = f'[E012] FFPROBE is not installed. {exp}'

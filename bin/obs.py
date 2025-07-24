@@ -5,9 +5,15 @@ __version__ = "0.3.106"
 __maintainer__ = "Justus Decker"
 __email__ = "justus.d2025@gmail.com"
 __status__ = "Production"
+try: #Fix for issue: #124
+    import obsws_python as obsws
+    from websocket import _exceptions
+except:
+    from tkinter.messagebox import showerror
+    from bin.constants import ERROR_008
+    showerror('ERROR', ERROR_008 + '\nobs_ws')
+    quit()
 
-import obsws_python as obsws
-from websocket import _exceptions
 from bin.data_access import json_read
 from bin.constants import OBS_SETTINGS_PATH
 from os.path import isfile
@@ -51,6 +57,8 @@ class OBSObserver:
             print('WindowsError')
         except _exceptions.WebSocketTimeoutException as E:
             print('WebsocketTimeout')
+        except ValueError:
+            print('Hostname invalid!')
     @property
     def isconnected(self) -> bool:
         """

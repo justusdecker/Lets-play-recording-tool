@@ -18,7 +18,7 @@ Open Audacity
 Go to: Edit > Settings > Module > enable mod-script-pipe
 Reopen Audacity & Reopen LPRT(When open)
 """
-
+import win32file
 from io import TextIOWrapper
 from os.path import exists
 class AudacityPipelineError(Exception):
@@ -43,32 +43,57 @@ class AudacityFileAccess:
 AFA = AudacityFileAccess()
 
 EOL = '\r\n\0'
+
+
 def create_pipe():
     """
     Establish the connection between LPRT & Audacity.
     
         Will raise an `AudacityPipelineError` when the pipe can't be accessed.
     """
-    print("Write to  \"" + AFA.TO_NAME +"\"")
-    if not exists(AFA.TO_NAME):
-        raise AudacityPipelineError(f"{AFA.TO_NAME} ..does not exist. Ensure Audacity is running with mod-script-pipe.")
-
-    print("Read from \"" + AFA.FROM_NAME +"\"")
-    if not exists(AFA.FROM_NAME):
-        raise AudacityPipelineError(f"{AFA.FROM_NAME} ..does not exist. Ensure Audacity is running with mod-script-pipe.")
-
     print("-- Both pipes exist.  Good.")
 
-    AFA.TO_FILE = open(AFA.TO_NAME, 'w')
+    #AFA.TO_FILE = open(AFA.TO_NAME, 'w')
+    
+
+    AFA.TO_FILE = win32file.CreateFile(AFA.TO_NAME, 
+                              win32file.GENERIC_WRITE,
+                              win32file.FILE_SHARE_WRITE,
+                              None,
+                              win32file.OPEN_EXISTING,
+                              win32file.FILE_ATTRIBUTE_NORMAL,
+                              0)
     print("-- File to write to has been opened")
-    AFA.FROM_FILE = open(AFA.FROM_NAME, 'rt')
+    """
+    On the testsystem(Windows 11) the connection to the mod-pipe will be established only:
+    When The following code does its thing!
+    Make sure Audacity is running!
+    """
+    AFA.FROM_FILE = win32file.CreateFile(AFA.FROM_NAME, 
+                              win32file.GENERIC_READ,
+                              win32file.FILE_SHARE_READ,
+                              None,
+                              win32file.OPEN_EXISTING,
+                              win32file.FILE_ATTRIBUTE_NORMAL,
+                              0)
+
     print(f"-- Opened {AFA.FROM_NAME}")
+def break_pipe():
+    win32file.CloseHandle(AFA.TO_FILE)
+    win32file.CloseHandle(AFA.FROM_FILE)
+    AFA.TO_FILE.close()
+    AFA.FROM_FILE.close()
 
 def send_command(command):
     """Send a single command."""
     print("Send: >>> \n"+command)
-    AFA.TO_FILE.write(command + EOL)
-    AFA.TO_FILE.flush()
+    while 1:
+        try:
+            win32file.WriteFile(AFA.TO_FILE,str(command + EOL).encode())
+            win32file.FlushFileBuffers(AFA.TO_FILE)
+            break
+        except:
+            pass
 
 def get_response():
     """Return the command response."""
@@ -76,17 +101,24 @@ def get_response():
     line = ''
     while True:
         result += line
-        line = AFA.FROM_FILE.readline()
-        if line == '\n' and len(result) > 0:
+        try:
+            line = win32file.ReadFile(AFA.TO_FILE,10)
+            line = AFA.FROM_FILE.readline()
+            if line == '\n' and len(result) > 0:
+                break
+        except:
             break
-    return result
+    return 1
 
 def do_command(command):
     """Send one command, and return the response."""
+    
     response = None
     try:
         send_command(command)
         response = get_response()
         print("Rcvd: <<< \n" + response)
-    except: pass
+    except Exception as E:
+        print(E)
+    
     return response

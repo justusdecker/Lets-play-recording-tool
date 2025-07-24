@@ -1,4 +1,12 @@
-from pygame.mixer import init, music
+
+try: #Fix for issue: #126
+    from pygame.mixer import init, music
+except:
+    from tkinter.messagebox import showerror
+    from bin.constants import ERROR_008
+    showerror('ERROR', ERROR_008 + '\npygame')
+    quit()
+
 
 init()
 
