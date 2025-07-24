@@ -128,9 +128,54 @@ class Main(tk.Frame):
         label = ttk.Label(self, text =DISCLAIMER)
 
         label.grid(row = 0, column = 1, padx = 10, pady = 10) 
-
+        
+        VideoPlayer()
+        
         get_menu(self, controller)
+        
+        
+class VideoPlayer(Toplevel):
+    def __init__(self):
+        super().__init__()
+        self.isfinished = False
+        self.geometry('640x400')
+        import vlc
+        # Create a VLC instance and media player.
+        self.instance = vlc.Instance()
+        self.player = self.instance.media_player_new()
+        
+        # Create the video panel where the video will be displayed.
+        self.video_panel = tk.Frame(self, bg="black")
+        self.video_panel.pack(fill=tk.BOTH, expand=1)
+        
+        
+        
+        
+        media = self.instance.media_new('C:\\Users\\Justus\\Videos\\requiem.mov')
+        self.player.set_media(media)
+        self.player.set_hwnd(self.video_panel.winfo_id())
+        self.player.play()
+        
+        self.bar = ttk.Frame(self)
+        
+        self.label = ttk.Label(self.bar,text='Title: ')
+        self.label.pack(side=tk.LEFT, padx=5)
+        
+        self.title_setter = ttk.Entry(self.bar)
+        self.title_setter.pack(side=tk.LEFT, padx=5)
+        
+        self.bar.pack(side=tk.LEFT, pady=5)
+        # Set title each episode
+        # Go to last / next
+        # Volume slider
+        # progress slider
+        # 
+        
 
+        
+    def byebye(self, *args):
+        """Closes the ThumbnailPreview window."""
+        self.destroy()
 class AutomationFrame(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
