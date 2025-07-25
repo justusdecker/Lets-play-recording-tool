@@ -129,13 +129,13 @@ class Main(tk.Frame):
 
         label.grid(row = 0, column = 1, padx = 10, pady = 10) 
         
-        VideoPlayer([[1,'C:\\Users\\Justus\\Videos\\requiem.mov','title'],[2,'C:\\Users\\Justus\\Videos\\disgrace.mov','title']])
+        VideoPlayer([1],Episode(ROOT + 'eps_test.csv'))
         
         get_menu(self, controller)
    
 class VideoPlayer(Toplevel):
-    def __init__(self, data: list[int, str, str],ep:Episode):
-        self.data: list[int, str, str] = data
+    def __init__(self, data: list[int],ep:Episode):
+        self.data: list[int] = data
         self.episodes: Episode = ep
         self.current_episode = 0
         super().__init__()
@@ -213,18 +213,22 @@ class VideoPlayer(Toplevel):
 
         # Begin updating the progress slider periodically.
         self.update_progress()
-    
+    @property
+    def rel_id(self) -> int:
+        return self.data[self.current_episode] - 1
     @property
     def video_path(self) -> str:
-        return self.data[self.current_episode][1]
+        return self.episodes.get_final_video_path(self.rel_id)
     @property
     def video_title(self) -> str:
-        return self.data[self.current_episode][2]
+        return self.episodes.get_title(self.rel_id)
     @property
     def video_ep(self) -> str:
-        return self.data[self.current_episode][0]
+        return self.data[self.current_episode]
     def set_video_title(self,*args):
-        self.data[self.current_episode][2] = self.title_var.get()
+        self.episodes.set_title(self.rel_id, self.title_var.get())
+        self.episodes.save()
+
     def episode_down(self,*args):
 
         new_location = self.current_episode - 1
