@@ -334,6 +334,12 @@ class Episode(CSVObj):
     def get_audio_desktop_edit2_path(self,id: int):
         return self.read(id)[9]
     
+    def get_title(self,id: int):
+        return self.read(id)[10]
+    
+    def set_title(self,id: int, data: str):
+        self.read(id)[10] = data
+    
     def set_audio_mic_edit1_path(self,id: int, data: str):
         self.read(id)[6] = data
     def set_audio_mic_edit2_path(self,id: int, data: str):
