@@ -208,7 +208,7 @@ class VideoPlayer(Toplevel):
         self.title_setter = ttk.Entry(self.bar,textvariable=self.title_var)
         self.title_setter.pack(side=tk.LEFT, padx=5)
         
-        self.update_title_button = tk.Button(self.bar, text="Upadate", command=self.set_video_title)
+        self.update_title_button = tk.Button(self.bar, text="Update", command=self.set_video_title)
         self.update_title_button.pack(side=tk.LEFT, padx=5)
 
         # Begin updating the progress slider periodically.
