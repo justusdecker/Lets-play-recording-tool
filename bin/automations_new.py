@@ -25,6 +25,16 @@ from tkinter import DoubleVar
 
 from bin.thumbnail import ThumbnailGenerator
 from tkinter.messagebox import showerror
+
+
+
+try: #Fix for issue: #127
+    import vlc
+except:
+    from bin.constants import ERROR_008
+    showerror('ERROR', ERROR_008 + '\nvlc')
+    quit()
+
 try: #Fix for issue: #127
     from PIL import ImageTk, Image
 except:
@@ -37,7 +47,8 @@ from bin.constants import ERROR_007
 
 import tkinter as tk
 class VideoPlayer(Toplevel):
-    def __init__(self, data: list[int],ep:Episode):
+    def __init__(self, data: list[int],ep:Episode,app):
+        self.app = app
         self.data: list[int] = data
         self.episodes: Episode = ep
         self.current_episode = 0
@@ -46,7 +57,7 @@ class VideoPlayer(Toplevel):
         self.geometry('640x600')
         self.vol = 1.
         self.title_var = tk.StringVar()
-        import vlc
+        
         # Create a VLC instance and media player.
         self.instance = vlc.Instance()
         self.player = self.instance.media_player_new()
@@ -252,11 +263,12 @@ class VideoPlayer(Toplevel):
                 self.progress_slider.set(current_time)
         self.after(500, self.update_progress)
     
+    def destroy(self):
+        self.app.start_btn.state(['!disabled'])
+        return super().destroy()
 
         
-    def byebye(self, *args):
-        """Closes the ThumbnailPreview window."""
-        self.destroy()
+        
 
 
 class AudioPlayer(Toplevel):
@@ -816,6 +828,6 @@ class TitleSetWF(GenericWorkFlow):
     def user_workflow(self, app):
 
         app.start_btn.state(['disabled'])
-        VideoPlayer([i + 1 for i in range(*self.rng)], self.episode)
+        VideoPlayer([i + 1 for i in range(*self.rng)], self.episode,app)
         
-        app.start_btn.state(['!disabled'])
+        

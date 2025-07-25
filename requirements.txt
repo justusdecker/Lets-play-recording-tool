@@ -5,3 +5,4 @@ tkinter
 PIL
 winotify
 numpy
+python-vlc

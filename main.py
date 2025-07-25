@@ -19,7 +19,7 @@ class TkinterApp(tk.Tk):
         container.pack()
         # initializing frames to an empty array
         self.frames = {}
-        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender, Settings):
+        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender,SetTitle, Settings):
  
             frame = F(container, self)
             
@@ -47,6 +47,7 @@ def get_menu(parent,controller) -> ttk.Frame:
         ("FixAudio", lambda : controller.show_frame(FixAudio)),
         ("Send2Audacity", lambda : controller.show_frame(Send2Audacity)),
         ("CompAndRender", lambda : controller.show_frame(CompAndRender)),
+        ("SetTitle", lambda : controller.show_frame(SetTitle)),
         ("Settings", lambda : controller.show_frame(Settings))
     ]
     
@@ -127,233 +128,10 @@ class Main(tk.Frame):
         
         label = ttk.Label(self, text =DISCLAIMER)
 
-        label.grid(row = 0, column = 1, padx = 10, pady = 10) 
-        
-        VideoPlayer([1],Episode(ROOT + 'eps_test.csv'))
+        label.grid(row = 0, column = 1, padx = 10, pady = 10)
         
         get_menu(self, controller)
-   
-class VideoPlayer(Toplevel):
-    def __init__(self, data: list[int],ep:Episode):
-        self.data: list[int] = data
-        self.episodes: Episode = ep
-        self.current_episode = 0
-        super().__init__()
-        self.isfinished = False
-        self.geometry('640x600')
-        self.vol = 1.
-        self.title_var = tk.StringVar()
-        import vlc
-        # Create a VLC instance and media player.
-        self.instance = vlc.Instance()
-        self.player = self.instance.media_player_new()
-        
-        # Create the video panel where the video will be displayed.
-        self.video_panel = tk.Frame(self, bg="black")
-        self.video_panel.pack(fill=tk.BOTH, expand=1)
-        
-        self.open_file()
-        
-        self.bar = ttk.Frame(self)
-        
-        self.bar.pack(side=tk.LEFT, pady=5)
-        # Set title each episode
-        # Create a progress frame that holds the progress slider.
-        self.progress_frame = tk.Frame(self)
-        self.progress_frame.pack(fill=tk.X, padx=10, pady=5)
-        
-        # Create the progress slider.
-        # This slider's range will be updated dynamically to match the video's duration.
-        self.progress_slider = tk.Scale(
-            self.progress_frame, from_=0, to=100,
-            orient=tk.HORIZONTAL, showvalue=0, length=600
-        )
-        self.progress_slider.pack(fill=tk.X)
-        self.progress_slider.bind("<ButtonPress-1>", self.on_slider_press)
-        self.progress_slider.bind("<ButtonRelease-1>", self.on_slider_release)
-        self.slider_dragging = False
 
-        # Create the control panel with playback buttons and volume control.
-        self.controls = tk.Frame(self)
-        self.controls.pack(fill=tk.X, padx=10, pady=5)
-
-        # Last button.
-        self.last_button = tk.Button(self.controls, text="Last", command=self.episode_down)
-        self.last_button.pack(side=tk.LEFT, padx=5)
-
-        # Next button.
-        self.next_button = tk.Button(self.controls, text="Next", command=self.episode_up)
-        self.next_button.pack(side=tk.LEFT, padx=5)
-        
-        # Play button.
-        self.play_button = tk.Button(self.controls, text="Play", command=self.play_video)
-        self.play_button.pack(side=tk.LEFT, padx=5)
-
-        # Stop button.
-        self.stop_button = tk.Button(self.controls, text="Stop", command=self.stop_video)
-        self.stop_button.pack(side=tk.LEFT, padx=5)
-
-        # Volume control slider.
-        # This slider controls the player's volume in real time.
-        self.volume_slider = tk.Scale(
-            self.controls, from_=0, to=100,
-            orient=tk.HORIZONTAL, label="Volume",
-            command=self.set_volume
-        )
-        self.volume_slider.set(50)  # Set the default volume to 50%
-        self.volume_slider.pack(side=tk.LEFT, padx=5)
-
-        self.label = ttk.Label(self.bar,text='Title: ')
-        self.label.pack(side=tk.LEFT, padx=5)
-        self.title_setter = ttk.Entry(self.bar,textvariable=self.title_var)
-        self.title_setter.pack(side=tk.LEFT, padx=5)
-        
-        self.update_title_button = tk.Button(self.bar, text="Update", command=self.set_video_title)
-        self.update_title_button.pack(side=tk.LEFT, padx=5)
-
-        # Begin updating the progress slider periodically.
-        self.update_progress()
-    @property
-    def rel_id(self) -> int:
-        return self.data[self.current_episode] - 1
-    @property
-    def video_path(self) -> str:
-        return self.episodes.get_final_video_path(self.rel_id)
-    @property
-    def video_title(self) -> str:
-        return self.episodes.get_title(self.rel_id)
-    @property
-    def video_ep(self) -> str:
-        return self.data[self.current_episode]
-    def set_video_title(self,*args):
-        self.episodes.set_title(self.rel_id, self.title_var.get())
-        self.episodes.save()
-
-    def episode_down(self,*args):
-
-        new_location = self.current_episode - 1
-
-        if new_location < 0:
-            self.current_episode = 0
-        else:
-            self.current_episode = new_location
-
-            self.title_setter.configure(text=f'{self.current_episode}')
-            self.set_title()
-            self.open_file()
-            self.play_video()
-    def episode_up(self,*args):
-
-        new_location = self.current_episode + 1
-        
-        l = len(self.data)
-        
-        if new_location > l - 1:
-            self.current_episode = l - 1
-            
-
-        else:
-            self.current_episode = new_location
-            self.title_setter.configure(text=f'{self.current_episode}')
-            self.set_title()
-            self.open_file()
-            self.play_video()
-    def open_file(self):
-        """
-        This function opens a file dialog for the user to select a video file.
-        It then creates a new VLC media object from the selected file and sets it
-        to the VLC media player instance. Finally, it calls the method to embed
-        the VLC video output into the Tkinter video panel.
-        """
-        if self.video_path:
-            media = self.instance.media_new(self.video_path)
-            self.player.set_media(media)
-            self.set_video_panel()
-            self.title_var.set(f'{self.video_title}')
-            self.set_title()
-    def set_title(self):
-        self.episodes
-        self.title(f'[{self.video_ep}]{self.video_path} - [{self.current_episode}]')
-    def set_video_panel(self):
-        """
-        This function embeds the VLC player's video output into the Tkinter video panel.
-        It retrieves the window ID of the video panel and then assigns it to the VLC media player
-        using platform-specific method: set_hwnd.
-        """
-        self.player.set_hwnd(self.video_panel.winfo_id())
-    def play_video(self):
-        """
-        Once the media is loaded via the open_file function, clicking the Play button 
-        will trigger this function to begin playback.
-        """
-        self.player.play()
-
-    def pause_video(self):#! Not in use
-        """
-        The pause_video function toggles the current playback state. If the video is playing,
-        it pauses the playback; if it's paused, it resumes playing. 
-        """
-        self.player.pause()
-
-    def stop_video(self):
-        """
-        The stop_video function stops the video playback completely and resets the playback state.
-        """
-        self.player.stop()
-
-    def set_volume(self, value):
-        """
-        Adjusts the player's volume.
-        This function is triggered whenever the volume slider is moved.
-        """
-        self.vol = int(value)
-        self.player.audio_set_volume(self.vol)
-
-    def on_slider_press(self, event):
-        """
-        Triggered when the user begins dragging the progress slider.
-        This sets a flag indicating manual adjustment is in progress,
-        preventing automatic updates from interfering.
-        """
-        self.slider_dragging = True
-
-    def on_slider_release(self, event):
-        """
-        Triggered when the user releases the progress slider.
-        It resets the dragging flag and seeks the video to the slider's position.
-        """
-        self.slider_dragging = False
-        self.seek_video()
-
-    def seek_video(self):
-        """
-        Seeks the video to a new position based on the slider's value.
-        The slider's value represents the time in milliseconds.
-        """
-        slider_value = self.progress_slider.get()
-        self.player.set_time(int(slider_value))
-
-    def update_progress(self):
-        """
-        Updates the progress slider to reflect the current playback time.
-        If the slider is not being manually adjusted by the user,
-        this function retrieves the current playback time and the video's total length,
-        updates the slider's range if necessary, and sets the slider to the current time.
-        This function is called repeatedly every 500 milliseconds.
-        """
-        if not self.slider_dragging:
-            current_time = self.player.get_time()  # Current time in milliseconds.
-            duration = self.player.get_length()      # Total duration in milliseconds.
-            if duration > 0:
-                self.progress_slider.config(to=duration)
-                self.progress_slider.set(current_time)
-        self.after(500, self.update_progress)
-    
-
-        
-    def byebye(self, *args):
-        """Closes the ThumbnailPreview window."""
-        self.destroy()
 class AutomationFrame(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
@@ -462,6 +240,11 @@ class ThumbnailGenerate(AutomationFrame):
      def __init__(self, parent, controller):
         super().__init__(parent, controller)
         self.automation_callback = GenerateThumbnailWF
+        
+class SetTitle(AutomationFrame):
+     def __init__(self, parent, controller):
+        super().__init__(parent, controller)
+        self.automation_callback = TitleSetWF
     
 class FetchAudio(AutomationFrame):
     def __init__(self, parent, controller):
