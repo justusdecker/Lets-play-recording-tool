@@ -19,7 +19,7 @@ class TkinterApp(tk.Tk):
         container.pack()
         # initializing frames to an empty array
         self.frames = {}
-        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender, Settings):
+        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender,SetTitle, Settings):
  
             frame = F(container, self)
             
@@ -47,6 +47,7 @@ def get_menu(parent,controller) -> ttk.Frame:
         ("FixAudio", lambda : controller.show_frame(FixAudio)),
         ("Send2Audacity", lambda : controller.show_frame(Send2Audacity)),
         ("CompAndRender", lambda : controller.show_frame(CompAndRender)),
+        ("SetTitle", lambda : controller.show_frame(SetTitle)),
         ("Settings", lambda : controller.show_frame(Settings))
     ]
     
@@ -127,8 +128,8 @@ class Main(tk.Frame):
         
         label = ttk.Label(self, text =DISCLAIMER)
 
-        label.grid(row = 0, column = 1, padx = 10, pady = 10) 
-
+        label.grid(row = 0, column = 1, padx = 10, pady = 10)
+        
         get_menu(self, controller)
 
 class AutomationFrame(tk.Frame):
@@ -239,6 +240,11 @@ class ThumbnailGenerate(AutomationFrame):
      def __init__(self, parent, controller):
         super().__init__(parent, controller)
         self.automation_callback = GenerateThumbnailWF
+        
+class SetTitle(AutomationFrame):
+     def __init__(self, parent, controller):
+        super().__init__(parent, controller)
+        self.automation_callback = TitleSetWF
     
 class FetchAudio(AutomationFrame):
     def __init__(self, parent, controller):
