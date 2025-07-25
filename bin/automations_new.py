@@ -828,6 +828,7 @@ class TitleSetWF(GenericWorkFlow):
     def user_workflow(self, app):
 
         app.start_btn.state(['disabled'])
+        
         VideoPlayer([i + 1 for i in range(*self.rng)], self.episode,app)
         
         
