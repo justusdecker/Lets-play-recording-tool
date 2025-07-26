@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }}</title>
+    <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
     
@@ -13,7 +14,7 @@
         <h2>{{ episode.id + 1 }}</h2>
         <h3>{{ episode.title }}</h3>
         <h4>{{ episode.upload_at }}</h4>
-        <img src="{{episode.thumbnail_path}}" alt="">
+        <img src="{{ episode.thumbnail_path }}" alt="">
 
     </li>
     {% endfor %}
