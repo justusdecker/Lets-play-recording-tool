@@ -838,9 +838,13 @@ class DeployWF(GenericWorkFlow):
         #!Generate HTML Header
         
         from shutil import copyfile
-        for i in range(*self.rng): 
-            #!Copy the file to {destination}/dir
-            pass
-            #! 
+        from bin.jinjatest import deploy_render
+        REP = [{
+            "id": i,
+            "title": self.episode.get_title(i),
+            "thumbnail_path": self.episode.get_thumbnail_path(i)
+            } for i in range(*self.rng)]
+        deploy_render(REP)
+        
         super().user_workflow()
 
