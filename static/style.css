@@ -1,5 +1,11 @@
 body {background-color: #242424;}
 
-li,ul {list-style-type: none;}
+li{
+    list-style-type: none;
+    background-color: #363636;
+    border-radius: 16px;
+    border-color: #484848;
+    border-style:ridge;
+}
 
-h1,h2,h3,h4 {color:beige;}
+h1,h2,h3,h4 {color:beige; text-align: center;}

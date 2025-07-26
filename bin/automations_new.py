@@ -838,6 +838,14 @@ class DeployWF(GenericWorkFlow):
         #!Generate HTML Header
         
         from shutil import copyfile
+        
+        DEST = askdirectory()
+        if not DEST:
+            return
+        new_thumbnail_path = self.episode.get_thumbnail_path(i).split('\\')
+        for i in range(*self.rng):
+            copyfile()
+        
         from bin.jinjatest import deploy_render
         REP = [{
             "id": i,
