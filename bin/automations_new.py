@@ -842,11 +842,14 @@ class DeployWF(GenericWorkFlow):
         DEST = askdirectory()
         if not DEST:
             return
+        
         old_thumbnail_path = self.episode.get_thumbnail_path(i)
         new_thumbnail_path = old_thumbnail_path.replace('/','\\').split('\\')[-1]
         
         old_video_path = self.episode.get_final_video_path(i)
         new_video_path = old_thumbnail_path.replace('/','\\').split('\\')[-1]
+        
+        description = self.letsplay.get_description(self.lpid) #! This feature will be enhanced in 1.0
         
         for i in range(*self.rng):
             copyfile(old_video_path,f'{DEST}\\{new_video_path}')
@@ -856,9 +859,10 @@ class DeployWF(GenericWorkFlow):
         REP = [{
             "id": i,
             "title": self.episode.get_title(i),
-            "thumbnail_path": new_thumbnail_path
+            "thumbnail_path": new_thumbnail_path,
+            "upload_at": ''
             } for i in range(*self.rng)]
-        deploy_render(episodes=REP,title=self.lp_name)
+        deploy_render(episodes=REP,title=self.lp_name,description=description)
         
         super().user_workflow()
 
