@@ -842,15 +842,21 @@ class DeployWF(GenericWorkFlow):
         DEST = askdirectory()
         if not DEST:
             return
-        new_thumbnail_path = self.episode.get_thumbnail_path(i).split('\\')
-        for i in range(*self.rng):
-            copyfile()
+        old_thumbnail_path = self.episode.get_thumbnail_path(i)
+        new_thumbnail_path = old_thumbnail_path.replace('/','\\').split('\\')[-1]
         
+        old_video_path = self.episode.get_final_video_path(i)
+        new_video_path = old_thumbnail_path.replace('/','\\').split('\\')[-1]
+        
+        for i in range(*self.rng):
+            copyfile(old_video_path,f'{DEST}\\{new_video_path}')
+            copyfile(old_thumbnail_path,f'{DEST}\\{new_thumbnail_path}')
+            
         from bin.jinjatest import deploy_render
         REP = [{
             "id": i,
             "title": self.episode.get_title(i),
-            "thumbnail_path": self.episode.get_thumbnail_path(i)
+            "thumbnail_path": new_thumbnail_path
             } for i in range(*self.rng)]
         deploy_render(episodes=REP,title=self.lp_name)
         
