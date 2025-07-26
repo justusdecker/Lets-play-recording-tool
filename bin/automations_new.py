@@ -835,33 +835,37 @@ class DeployWF(GenericWorkFlow):
         self.user_workflow(app)
     def user_workflow(self,app):
         
-        #!Generate HTML Header
-        
         from shutil import copyfile
+        from bin.jinjatest import deploy_render
         
         DEST = askdirectory()
         if not DEST:
             return
         
-        old_thumbnail_path = self.episode.get_thumbnail_path(i)
-        new_thumbnail_path = old_thumbnail_path.replace('/','\\').split('\\')[-1]
-        
-        old_video_path = self.episode.get_final_video_path(i)
-        new_video_path = old_thumbnail_path.replace('/','\\').split('\\')[-1]
-        
-        description = self.letsplay.get_description(self.lpid) #! This feature will be enhanced in 1.0
-        
+        print(self.rng)
+        ALL = []
         for i in range(*self.rng):
-            copyfile(old_video_path,f'{DEST}\\{new_video_path}')
-            copyfile(old_thumbnail_path,f'{DEST}\\{new_thumbnail_path}')
+            old_thumbnail_path = self.episode.get_thumbnail_path(i)
+            new_thumbnail_path = old_thumbnail_path.replace('/','\\').split('\\')[-1]
             
-        from bin.jinjatest import deploy_render
-        REP = [{
-            "id": i,
-            "title": self.episode.get_title(i),
-            "thumbnail_path": new_thumbnail_path,
-            "upload_at": ''
-            } for i in range(*self.rng)]
+            old_video_path = self.episode.get_final_video_path(i)
+            new_video_path = old_thumbnail_path.replace('/','\\').split('\\')[-1]
+            
+            description = self.letsplay.get_description(self.lpid) #! This feature will be enhanced in 1.0
+            try:
+                copyfile(old_video_path,f'{DEST}\\{new_video_path}')
+                copyfile(old_thumbnail_path,f'{DEST}\\{new_thumbnail_path}')
+            except FileNotFoundError:
+                msgbox.showerror('Something went wrong!','Data does not exist')
+                return
+        
+            REP = {
+                "id": i,
+                "title": self.episode.get_title(i),
+                "thumbnail_path": new_thumbnail_path,
+                "upload_at": ''
+                }
+            ALL.append(REP)
         deploy_render(episodes=REP,title=self.lp_name,description=description)
         
         super().user_workflow()
