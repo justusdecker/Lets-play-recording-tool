@@ -446,7 +446,6 @@ class CompareAndRenderWF(GenericWorkFlow):
         cnef(VIDEO_FOLDER)
         for video, audio, index in rendering_queue:
             final_path = f'{VIDEO_FOLDER}{index+1}{path_ending}'
-
             ffmpeg_run(
                 FFMPEG_VIDEO_RENDER,
                 {
@@ -496,9 +495,10 @@ class DeployWF(GenericWorkFlow):
             new_thumbnail_path = old_thumbnail_path.replace('/','\\').split('\\')[-1]
             
             old_video_path = self.episode.get_final_video_path(i)
-            new_video_path = old_thumbnail_path.replace('/','\\').split('\\')[-1]
+            new_video_path = old_video_path.replace('/','\\').split('\\')[-1]
             
             description = self.letsplay.get_description(self.lpid) #! This feature will be enhanced in 1.0
+            print(new_thumbnail_path,new_video_path)
             try:
                 copyfile(old_video_path,f'{DEST}\\{new_video_path}')
                 copyfile(old_thumbnail_path,f'{DEST}\\{new_thumbnail_path}')
@@ -516,6 +516,7 @@ class DeployWF(GenericWorkFlow):
                 }
             ALL.append(REP)
         deploy_render(episodes=ALL,title=self.lp_name,description=description)
-        
+        copyfile('test.html',f'{DEST}\\view.html')
+        copyfile('static\\style.css',f'{DEST}\\view.html')
         super().user_workflow()
 

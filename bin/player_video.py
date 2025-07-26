@@ -1,11 +1,4 @@
-from tkinter.ttk import (
-    Frame,
-    Scale,
-    Button,
-    Entry,
-    Label
-    
-)
+import tkinter.ttk as ttk
 from tkinter import (
     Toplevel,
     StringVar,
@@ -14,6 +7,7 @@ from tkinter import (
     HORIZONTAL,
     X
 )
+import tkinter as tk
 
 from tkinter.messagebox import showerror
 
@@ -43,22 +37,22 @@ class VideoPlayer(Toplevel):
         self.player = self.instance.media_player_new()
         
         # Create the video panel where the video will be displayed.
-        self.video_panel = Frame(self, bg="black")
+        self.video_panel = tk.Frame(self, bg="black")
         self.video_panel.pack(fill=BOTH, expand=1)
         
         self.open_file()
         
-        self.bar = Frame(self)
+        self.bar = ttk.Frame(self)
         
         self.bar.pack(side=LEFT, pady=5)
         # Set title each episode
         # Create a progress frame that holds the progress slider.
-        self.progress_frame = Frame(self)
+        self.progress_frame = ttk.Frame(self)
         self.progress_frame.pack(fill=X, padx=10, pady=5)
         
         # Create the progress slider.
         # This slider's range will be updated dynamically to match the video's duration.
-        self.progress_slider = Scale(
+        self.progress_slider = tk.Scale(
             self.progress_frame, from_=0, to=100,
             orient=HORIZONTAL, showvalue=0, length=600
         )
@@ -68,28 +62,28 @@ class VideoPlayer(Toplevel):
         self.slider_dragging = False
 
         # Create the control panel with playback buttons and volume control.
-        self.controls = Frame(self)
+        self.controls = ttk.Frame(self)
         self.controls.pack(fill=X, padx=10, pady=5)
 
         # Last button.
-        self.last_button = Button(self.controls, text="Last", command=self.episode_down)
+        self.last_button = ttk.Button(self.controls, text="Last", command=self.episode_down)
         self.last_button.pack(side=LEFT, padx=5)
 
         # Next button.
-        self.next_button = Button(self.controls, text="Next", command=self.episode_up)
+        self.next_button = ttk.Button(self.controls, text="Next", command=self.episode_up)
         self.next_button.pack(side=LEFT, padx=5)
         
         # Play button.
-        self.play_button = Button(self.controls, text="Play", command=self.play_video)
+        self.play_button = ttk.Button(self.controls, text="Play", command=self.play_video)
         self.play_button.pack(side=LEFT, padx=5)
 
         # Stop button.
-        self.stop_button = Button(self.controls, text="Stop", command=self.stop_video)
+        self.stop_button = ttk.Button(self.controls, text="Stop", command=self.stop_video)
         self.stop_button.pack(side=LEFT, padx=5)
 
         # Volume control slider.
         # This slider controls the player's volume in real time.
-        self.volume_slider = Scale(
+        self.volume_slider = tk.Scale(
             self.controls, from_=0, to=100,
             orient=HORIZONTAL, label="Volume",
             command=self.set_volume
@@ -97,12 +91,12 @@ class VideoPlayer(Toplevel):
         self.volume_slider.set(50)  # Set the default volume to 50%
         self.volume_slider.pack(side=LEFT, padx=5)
 
-        self.label = Label(self.bar,text='Title: ')
+        self.label = ttk.Label(self.bar,text='Title: ')
         self.label.pack(side=LEFT, padx=5)
-        self.title_setter = Entry(self.bar,textvariable=self.title_var)
+        self.title_setter = ttk.Entry(self.bar,textvariable=self.title_var)
         self.title_setter.pack(side=LEFT, padx=5)
         
-        self.update_title_button = Button(self.bar, text="Update", command=self.set_video_title)
+        self.update_title_button = ttk.Button(self.bar, text="Update", command=self.set_video_title)
         self.update_title_button.pack(side=LEFT, padx=5)
 
         # Begin updating the progress slider periodically.
