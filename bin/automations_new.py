@@ -267,10 +267,6 @@ class VideoPlayer(Toplevel):
         self.app.start_btn.state(['!disabled'])
         return super().destroy()
 
-        
-        
-
-
 class AudioPlayer(Toplevel):
     """
     A Tkinter Toplevel window that functions as a simple audio player.
@@ -830,5 +826,21 @@ class TitleSetWF(GenericWorkFlow):
         app.start_btn.state(['disabled'])
         
         VideoPlayer([i + 1 for i in range(*self.rng)], self.episode,app)
+
+class DeployWF(GenericWorkFlow):
+
+    def __init__(self,lpid, epr,app):
+
+        super().__init__(folder=TEMP_FOLDER, finish_message="CAAR",lpid=lpid, epr=epr)
+        self.user_workflow(app)
+    def user_workflow(self,app):
         
+        #!Generate HTML Header
         
+        from shutil import copyfile
+        for i in range(*self.rng): 
+            #!Copy the file to {destination}/dir
+            pass
+            #! 
+        super().user_workflow()
+
