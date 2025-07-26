@@ -844,7 +844,7 @@ class DeployWF(GenericWorkFlow):
             "title": self.episode.get_title(i),
             "thumbnail_path": self.episode.get_thumbnail_path(i)
             } for i in range(*self.rng)]
-        deploy_render(REP)
+        deploy_render(episodes=REP)
         
         super().user_workflow()
 
