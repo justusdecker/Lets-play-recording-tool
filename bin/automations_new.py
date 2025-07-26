@@ -856,9 +856,10 @@ class DeployWF(GenericWorkFlow):
                 copyfile(old_video_path,f'{DEST}\\{new_video_path}')
                 copyfile(old_thumbnail_path,f'{DEST}\\{new_thumbnail_path}')
             except FileNotFoundError:
-                #msgbox.showerror('Something went wrong!','Data does not exist')
-                #return
-                pass
+                msgbox.showerror('Something went wrong!','Data does not exist')
+                return
+            except Exception:
+                msgbox.showerror('Something went wrong!','Unknown Error')
         
             REP = {
                 "id": i,
