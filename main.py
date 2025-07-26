@@ -17,6 +17,7 @@ class TkinterApp(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
         container = tk.Frame(self)
         container.pack()
+        self.geometry('800x600')
         # initializing frames to an empty array
         self.frames = {}
         for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender,SetTitle,Deploy, Settings):
@@ -36,8 +37,7 @@ class TkinterApp(tk.Tk):
 def get_menu(parent,controller) -> ttk.Frame:
     
     MENU = ttk.Frame(parent)
-    
-    OPTIONS = {'padx': 10, 'column': 0,'sticky':'W'}
+
     
     BUILDER: list[str, function] = [
         ("Main", lambda : controller.show_frame(Main)),
@@ -54,9 +54,9 @@ def get_menu(parent,controller) -> ttk.Frame:
     
     _ret = [ttk.Button(MENU, text =obj[0], command = obj[1]) for obj in BUILDER]# create btns based on BUILDER
     
-    [obj.grid(row = i, **OPTIONS) for i, obj in enumerate(_ret)]# Sets the position on frame for all btns
+    [obj.pack(fill="x") for i, obj in enumerate(_ret)]# Sets the position on frame for all btns
     
-    MENU.grid(column=0,row=0)
+    MENU.grid(column=0,row=0,sticky='W')
     
     return _ret
 
