@@ -860,7 +860,7 @@ class DeployWF(GenericWorkFlow):
                 return
             except Exception:
                 msgbox.showerror('Something went wrong!','Unknown Error')
-        
+                return
             REP = {
                 "id": i,
                 "title": self.episode.get_title(i),
