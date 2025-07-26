@@ -165,7 +165,7 @@ class AutomationFrame(tk.Frame):
         change_states(self.menu,'disabled')
         a, b = int(self.epstart_option_var.get()) , int(self.epend_option_var.get())
         lp = self.lps.get_names().index(self.lp_option_var.get())
-        self.thread = self.automation_callback(lp,[a-1,b-1],self)
+        self.thread = self.automation_callback(lp,[a-1,b],self)
         
         change_states(self.menu,'!disabled')
         self.thread = None

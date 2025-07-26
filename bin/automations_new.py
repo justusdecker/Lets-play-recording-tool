@@ -856,8 +856,9 @@ class DeployWF(GenericWorkFlow):
                 copyfile(old_video_path,f'{DEST}\\{new_video_path}')
                 copyfile(old_thumbnail_path,f'{DEST}\\{new_thumbnail_path}')
             except FileNotFoundError:
-                msgbox.showerror('Something went wrong!','Data does not exist')
-                return
+                #msgbox.showerror('Something went wrong!','Data does not exist')
+                #return
+                pass
         
             REP = {
                 "id": i,
@@ -866,7 +867,7 @@ class DeployWF(GenericWorkFlow):
                 "upload_at": ''
                 }
             ALL.append(REP)
-        deploy_render(episodes=REP,title=self.lp_name,description=description)
+        deploy_render(episodes=ALL,title=self.lp_name,description=description)
         
         super().user_workflow()
 
