@@ -1,3 +1,5 @@
-.body {
-    background-color: #242424;
-}
+body {background-color: #242424;}
+
+li,ul {list-style-type: none;}
+
+h1,h2,h3,h4 {color:beige;}

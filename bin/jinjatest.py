@@ -6,9 +6,7 @@ def file_write(filepath : str, data : str):
 def file_read(filepath : str) -> str:
     with open(filepath, 'r') as f:
         return f.read()
-template_values = {
-  'title': 'this is a test',   
-}
+
 JINJA_ENVIRONMENT = jinja2.Template(file_read('static\\deploy.html'))
 
 
