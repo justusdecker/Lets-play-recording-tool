@@ -517,6 +517,6 @@ class DeployWF(GenericWorkFlow):
             ALL.append(REP)
         deploy_render(episodes=ALL,title=self.lp_name,description=description)
         copyfile('test.html',f'{DEST}\\view.html')
-        copyfile('static\\style.css',f'{DEST}\\view.html')
+        copyfile('static\\style.css',f'{DEST}\\style.css')
         super().user_workflow()
 

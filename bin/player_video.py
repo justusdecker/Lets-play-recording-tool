@@ -126,7 +126,7 @@ class VideoPlayer(Toplevel):
         else:
             self.current_episode = new_location
 
-            self.title_setter.configure(text=f'{self.current_episode}')
+            self.title_var.set(f'{self.video_title}')
             self.set_title()
             self.open_file()
             self.play_video()
@@ -142,7 +142,7 @@ class VideoPlayer(Toplevel):
 
         else:
             self.current_episode = new_location
-            self.title_setter.configure(text=f'{self.current_episode}')
+            self.title_var.set(f'{self.video_title}')
             self.set_title()
             self.open_file()
             self.play_video()
@@ -160,7 +160,6 @@ class VideoPlayer(Toplevel):
             self.title_var.set(f'{self.video_title}')
             self.set_title()
     def set_title(self):
-        self.episodes
         self.title(f'[{self.video_ep}]{self.video_path} - [{self.current_episode}]')
     def set_video_panel(self):
         """
