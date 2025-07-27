@@ -89,9 +89,9 @@ def get_episode_range(parent, run_callback: callable, check_callback: callable,f
 
     This function sets up two labels ("Episode start", "Episode end"),
     two option menus for selecting start and end episode numbers, and an
-    "Extract" button. The button is initially disabled(if ft is none <- No data exists) and its state
+    "Run" button. The button is initially disabled(if ft is none <- No data exists) and its state
     can be managed by the `check_callback`. The `run_callback` is
-    executed when the "Extract" button is clicked.
+    executed when the "Run" button is clicked.
     """
     label1 = ttk.Label(parent, text ="Episode start")
 
@@ -101,7 +101,7 @@ def get_episode_range(parent, run_callback: callable, check_callback: callable,f
 
     label2.grid(row = 0, column = 5) 
 
-    start_btn = ttk.Button(parent, text ="Extract",command=run_callback)
+    start_btn = ttk.Button(parent, text ="Run",command=run_callback)
     if not ft:
         start_btn.state(['disabled'])
 
