@@ -20,6 +20,21 @@ except:
 
 from bin.data_access import Episode
 
+CHAR_TABLE = {
+        'Ä':'&Auml;',
+        'Ö':'&Ouml;',
+        'Ü':'&Uuml;',
+        'ä':'&auml;',
+        'ö':'&ouml;',
+        'ü':'&uuml;',
+        'ß':'&szlig;'
+     }
+
+def convert_char(c: str):
+    if not c in CHAR_TABLE: return c
+    return CHAR_TABLE[c]
+
+
 class VideoPlayer(Toplevel):
     def __init__(self, data: list[int],ep:Episode,app):
         self.app = app
@@ -114,7 +129,8 @@ class VideoPlayer(Toplevel):
     def video_ep(self) -> str:
         return self.data[self.current_episode]
     def set_video_title(self,*args):
-        self.episodes.set_title(self.rel_id, self.title_var.get())
+        new_title = ''.join([convert_char(c) for c in self.title_var.get()])
+        self.episodes.set_title(self.rel_id, new_title)
         self.episodes.save()
 
     def episode_down(self,*args):
