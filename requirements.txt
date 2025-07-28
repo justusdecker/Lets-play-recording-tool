@@ -6,3 +6,4 @@ PIL
 winotify
 numpy
 python-vlc
+jinja2
