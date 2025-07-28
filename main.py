@@ -17,9 +17,10 @@ class TkinterApp(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
         container = tk.Frame(self)
         container.pack()
+        self.geometry('800x600')
         # initializing frames to an empty array
         self.frames = {}
-        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender,SetTitle, Settings):
+        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender,SetTitle,Deploy, Settings):
  
             frame = F(container, self)
             
@@ -36,8 +37,7 @@ class TkinterApp(tk.Tk):
 def get_menu(parent,controller) -> ttk.Frame:
     
     MENU = ttk.Frame(parent)
-    
-    OPTIONS = {'padx': 10, 'column': 0,'sticky':'W'}
+
     
     BUILDER: list[str, function] = [
         ("Main", lambda : controller.show_frame(Main)),
@@ -48,14 +48,15 @@ def get_menu(parent,controller) -> ttk.Frame:
         ("Send2Audacity", lambda : controller.show_frame(Send2Audacity)),
         ("CompAndRender", lambda : controller.show_frame(CompAndRender)),
         ("SetTitle", lambda : controller.show_frame(SetTitle)),
+        ("Deploy", lambda : controller.show_frame(Deploy)),
         ("Settings", lambda : controller.show_frame(Settings))
     ]
     
     _ret = [ttk.Button(MENU, text =obj[0], command = obj[1]) for obj in BUILDER]# create btns based on BUILDER
     
-    [obj.grid(row = i, **OPTIONS) for i, obj in enumerate(_ret)]# Sets the position on frame for all btns
+    [obj.pack(fill="x") for i, obj in enumerate(_ret)]# Sets the position on frame for all btns
     
-    MENU.grid(column=0,row=0)
+    MENU.grid(column=0,row=0,sticky='W')
     
     return _ret
 
@@ -88,9 +89,9 @@ def get_episode_range(parent, run_callback: callable, check_callback: callable,f
 
     This function sets up two labels ("Episode start", "Episode end"),
     two option menus for selecting start and end episode numbers, and an
-    "Extract" button. The button is initially disabled(if ft is none <- No data exists) and its state
+    "Run" button. The button is initially disabled(if ft is none <- No data exists) and its state
     can be managed by the `check_callback`. The `run_callback` is
-    executed when the "Extract" button is clicked.
+    executed when the "Run" button is clicked.
     """
     label1 = ttk.Label(parent, text ="Episode start")
 
@@ -100,7 +101,7 @@ def get_episode_range(parent, run_callback: callable, check_callback: callable,f
 
     label2.grid(row = 0, column = 5) 
 
-    start_btn = ttk.Button(parent, text ="Extract",command=run_callback)
+    start_btn = ttk.Button(parent, text ="Run",command=run_callback)
     if not ft:
         start_btn.state(['disabled'])
 
@@ -164,7 +165,7 @@ class AutomationFrame(tk.Frame):
         change_states(self.menu,'disabled')
         a, b = int(self.epstart_option_var.get()) , int(self.epend_option_var.get())
         lp = self.lps.get_names().index(self.lp_option_var.get())
-        self.thread = self.automation_callback(lp,[a-1,b-1],self)
+        self.thread = self.automation_callback(lp,[a-1,b],self)
         
         change_states(self.menu,'!disabled')
         self.thread = None
@@ -264,6 +265,10 @@ class CompAndRender(AutomationFrame):
         super().__init__(parent, controller)
         self.automation_callback = CompareAndRenderWF
     
+class Deploy(AutomationFrame):
+    def __init__(self, parent, controller):
+        super().__init__(parent, controller)
+        self.automation_callback = DeployWF
 
 class Settings(tk.Frame):
     def __init__(self, parent, controller): 
