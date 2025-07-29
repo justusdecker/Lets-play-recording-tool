@@ -44,23 +44,34 @@ Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# Create Values
-eps = Episodes(video_path='123.mp4')
-session.add(eps)
-session.commit()
+class SQLAccess:
+    def get_lp_by_id(lpid:int):
+        #! get all existing lps
+        #! convert lpid to sql id
+        #! return sql id
+        pass
+    def create_episode(lpid: int, video_path: str):
+        data = Episodes(video_path=video_path, lpid=lpid)
+        session.add(data)
+        session.commit()
+        
+    def create_letsplay(name: str,game_name: str,episode_length: int):
+        data = LetsPlays(name=name,game_name=game_name,episode_length=episode_length)
+        session.add(data)
+        session.commit()
 
-# Read Values
-for episode in session.query(Episodes).all():
-    print(episode.video_path, episode.id)
-
-
-# Update Values
-for episode in session.query(Episodes).all():
-    episode.video_path = 'test'
-    print(episode.video_path, episode.id)
-session.commit()
-
-# Delete Values
-byebye = session.query(Episodes).all()[0]
-session.delete(byebye)
-session.commit()
+## Read Values
+#for episode in session.query(Episodes).all():
+#    print(episode.video_path, episode.id)
+#
+#
+## Update Values
+#for episode in session.query(Episodes).all():
+#    episode.video_path = 'test'
+#    print(episode.video_path, episode.id)
+#session.commit()
+#
+## Delete Values
+#byebye = session.query(Episodes).all()[0]
+#session.delete(byebye)
+#session.commit()
