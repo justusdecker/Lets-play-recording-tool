@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS letsplays (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    version TEXT UNIQUE NOT NULL,
+    tad_path TEXT UNIQUE NOT NULL,
+    name TEXT UNIQUE NOT NULL,
+    game_name TEXT UNIQUE NOT NULL,
+    episode_length INTEGER NOT NULL,
+    description_path TEXT UNIQUE NOT NULL
+)
