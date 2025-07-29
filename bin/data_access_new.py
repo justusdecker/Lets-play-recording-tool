@@ -53,6 +53,7 @@ class LetsPlays(Base):
 class Episodes(Base):
     __tablename__ = 'episodes'
     id = Column(Integer, primary_key=True)
+    lpid = Column(Integer,default=0)
     video_path = Column(String)
     audio_mic_path = Column(String)
     audio_desktop_path = Column(String)
@@ -76,3 +77,8 @@ Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session = Session()
     
+eps = Episodes(video_path='123.mp4')
+session.add(eps)
+session.commit()
+for episode in session.query(Episodes).all():
+    print(episode.video_path, episode.id)
