@@ -66,6 +66,17 @@ class Querys:
     """
 
 class Sql:
+    """
+    |id|key|
+    |---|---|
+    |0|id <- unused|
+    |1|version|
+    |2|tad|
+    |3|name|
+    |4|game_name|
+    |5|episode_length|
+    |6|description|
+    """
     engine = create_engine(DB_URL, echo=True) # Create the engine echo prints the sql querys
     filepath = f'{ROOT}/data.db'
     
@@ -90,45 +101,29 @@ class Sql:
             print(E)
             return None
     
+    # Episodes
+    
     def get_episodes(self,lpid: int) -> list:
         pass
     
+    # Lets Plays
+    
     def get_letsplays(self) -> list:
         return self.connect_exec_and_retr(Querys.READ_LP)
-
-class LetsPlays(Sql):
-    """
-    |id|key|
-    |---|---|
-    |0|id <- unused|
-    |1|version|
-    |2|tad|
-    |3|name|
-    |4|game_name|
-    |5|episode_length|
-    |6|description|
-    """
-    def __init__(self):
-        super().__init__()
-        
-    def create(self):
-        pass
-    def delete(self):
-        pass    
     
     def get_name(self,id: int):
-        self.get_letsplays()[id][3]
+        return self.get_letsplays()[id][3]
     def get_gamename(self,id: int):
-        self.get_letsplays()[id][4]
+        return self.get_letsplays()[id][4]
     def get_version(self,id: int):
-        self.get_letsplays()[id][1]
-    def get_tad_path(self):
-        self.get_letsplays()[id][2]
-    def get_episode_length(self):
-        self.get_letsplays()[id][5]
-    def get_description_path(self):
-        self.get_letsplays()[id][6]
-    
+        return self.get_letsplays()[id][1]
+    def get_tad_path(self,id: int):
+        return self.get_letsplays()[id][2]
+    def get_episode_length(self,id: int):
+        return self.get_letsplays()[id][5]
+    def get_description_path(self,id: int):
+        return self.get_letsplays()[id][6]
+        
     def set_tad_path(self):
         pass
     def set_episode_length(self):
@@ -136,8 +131,10 @@ class LetsPlays(Sql):
     def set_description_path(self):
         pass
     
-    
-    
+    def create_letsplay_entry(self):
+        pass
+    def delete_letsplay_entry(self):
+        pass    
 
 SQL = Sql()
 SQL.connect_exec_and_comm(Querys.CREATE_DB)

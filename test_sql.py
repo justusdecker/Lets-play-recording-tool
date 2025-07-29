@@ -1,2 +1,2 @@
 from bin.data_access_new import *
-SQL
+print(SQL.get_description_path(0))
