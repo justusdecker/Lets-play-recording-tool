@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, text
 
 from bin.constants import ROOT
 
-DB_URL = "sqlite:///movies.db" # Define the database URL
+DB_URL = f"sqlite:///{ROOT}lprt_data.db" # Define the database URL
 
 def file_read(filepath : str) -> str:
     """Reads the entire content of a text file into a single string."""
@@ -17,28 +17,24 @@ def file_write(filepath : str, data : str):
     """
     with open(filepath, 'w') as f:
         f.write(data)
-        
-SQL_CRT_LP = file_read('bin/sql/crt_letsplays.sql')
+SQPT = 'bin/data/sql/'
+SQL_CRT_LP = file_read(f'{SQPT}crt_letsplays.sql')
 
-class SQL:
+class Sql:
     engine = create_engine(DB_URL, echo=True) # Create the engine echo prints the sql querys
     filepath = f'{ROOT}/data.db'
-    def create_letsplays(self):
-        with self.engine.connect() as connection:
-            connection.execute(text(SQL_CRT_LP))
-            connection.commit()
     
-    def connect_and_commit(self,query: str,params: dict[str,int | float | str]):
+    def connect_exec_and_comm(self,query: str,params: dict[str,int | float | str] | None = None):
         try:
             with self.engine.connect() as connection:
-                connection.execute(text(query,params))
+                connection.execute(text(query),params)
                 connection.commit()
             return True
         except Exception as E:
             print(E)
             return None
             
-    def connect_and_retreive(self):
+    def connect_exec_and_retr(self):
         try:
             with self.engine.connect() as connection:
                 result = connection.execute(text("SELECT title, year, rating, poster FROM movies"))
@@ -56,4 +52,5 @@ class SQL:
     def get_letsplays(self) -> list:
         pass
     
-    
+SQL = Sql()
+SQL.connect_exec_and_comm(SQL_CRT_LP)
