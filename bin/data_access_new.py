@@ -34,124 +34,45 @@ def json_write(filepath : str, data : dict | list):
     with open(filepath, 'w') as f:
         f.write(json.dumps(data))
    
-        
-SQPT = 'bin/data/sql/'
-class Querys:
-    CREATE_DB = """
-    CREATE TABLE IF NOT EXISTS letsplays (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        version TEXT NOT NULL,
-        tad_path TEXT NOT NULL,
-        name TEXT UNIQUE NOT NULL,
-        game_name TEXT UNIQUE NOT NULL,
-        episode_length INTEGER NOT NULL,
-        description_path TEXT NOT NULL
-    )
-    """
-    READ_LP = """
-    SELECT * FROM letsplays
-    """
-    CREATE_EP = """
-    CREATE TABLE :name (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        video_path TEXT,
-        audio_mic__path TEXT,
-        audio_desktop_path TEXT,
-        thumbnail_path TEXT,
-        has_problem INTEGER,
-        audio_mic_edit1_path TEXT,
-        audio_mic_edit2_path TEXT,
-        audio_desktop_edit1_path TEXT,
-        audio_desktop_edit2_path TEXT,
-        title TEXT,
-        upload_at TEXT,
-        final_video TEXT
-    )
-    """
-    CREATE_LP = """
-    INSERT INTO letsplays ( :version , "" , :name , :game_name , :episode_length , "" )
-    """
-    READ_EP = """
-    SELECT * FROM :name
-    """
-class Sql:
-    """
-    |id|key|
-    |---|---|
-    |0|id <- unused|
-    |1|version|
-    |2|tad|
-    |3|name|
-    |4|game_name|
-    |5|episode_length|
-    |6|description|
-    """
-    engine = create_engine(DB_URL, echo=True) # Create the engine echo prints the sql querys
-    filepath = f'{ROOT}/data.db'
-    
-    def connect_exec_and_comm(self,query: str,params: dict[str,int | float | str] | None = None):
-        try:
-            with self.engine.connect() as connection:
-                connection.execute(text(query),params)
-                connection.commit()
-            return True
-        except Exception as E:
-            print(E)
-            return None
-            
-    def connect_exec_and_retr(self,query: str,params: dict[str,int | float | str] | None = None):
-        try:
-            with self.engine.connect() as connection:
-                result = connection.execute(text(query),params)
-                movies = result.fetchall()
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
-            return [row for row in movies]
-        except Exception as E:
-            print(E)
-            return None
-    
-    # Episodes
-    
-    def create_episodes(self,name):
-        self.connect_exec_and_comm(Querys.CREATE_EP,{'name': name})
-    
-    def get_episodes(self,id: int) -> list:
-        name = self.get_name(id)
-        return self.connect_exec_and_retr(Querys.READ_EP,{'name': name})
-    
-    def get_video_path(self,lpid: int, epid: int) -> str:
-        pass
-    
-    # Lets Plays
-    
-    def get_letsplays(self) -> list:
-        return self.connect_exec_and_retr(Querys.READ_LP)
-    
-    def get_name(self,id: int):
-        return self.get_letsplays()[id][3]
-    def get_gamename(self,id: int):
-        return self.get_letsplays()[id][4]
-    def get_version(self,id: int):
-        return self.get_letsplays()[id][1]
-    def get_tad_path(self,id: int):
-        return self.get_letsplays()[id][2]
-    def get_episode_length(self,id: int):
-        return self.get_letsplays()[id][5]
-    def get_description_path(self,id: int):
-        return self.get_letsplays()[id][6]
-        
-    def set_tad_path(self):
-        pass
-    def set_episode_length(self):
-        pass
-    def set_description_path(self):
-        pass
-    
-    def create_letsplay_entry(self):
-        pass
-    def delete_letsplay_entry(self):
-        pass    
+Base = declarative_base()
 
-SQL = Sql()
-SQL.connect_exec_and_comm(Querys.CREATE_DB)
-SQL.get_letsplays()
+from sqlalchemy import create_engine, Column, Integer, String, Numeric
+
+class LetsPlays(Base):
+    __tablename__ = 'letsplays'
+    id = Column(Integer, primary_key=True)
+    tad_path = Column(String)
+    name = Column(String)
+    game_name = Column(String)
+    episode_length = Column(Integer)
+    description_path = Column(String)
+
+class Episodes(Base):
+    __tablename__ = 'episodes'
+    id = Column(Integer, primary_key=True)
+    video_path = Column(String)
+    audio_mic_path = Column(String)
+    audio_desktop_path = Column(String)
+    thumbnail_path = Column(String)
+    thumbnail_frame = Column(Numeric)
+    has_problem = Column(Integer)
+    audio_mic_edit1_path = Column(String)
+    audio_mic_edit2_path = Column(String)
+    audio_desktop_edit1_path = Column(String)
+    audio_desktop_edit2_path = Column(String)
+    title = Column(String)
+    upload_at = Column(String)
+    final_video_path = Column(String)
+    
+engine = create_engine(DB_URL, echo=True) # Create the engine echo prints the sql querys
+
+# create the users table
+Base.metadata.create_all(engine)
+
+# create a session to manage the connection to the database
+Session = sessionmaker(bind=engine)
+session = Session()
+    
