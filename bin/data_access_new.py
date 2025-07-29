@@ -1,23 +1,31 @@
 from sqlalchemy import create_engine, text
 
+from bin.constants import ROOT
+
 DB_URL = "sqlite:///movies.db" # Define the database URL
+
+def file_read(filepath : str) -> str:
+    """Reads the entire content of a text file into a single string."""
+    with open(filepath, 'r') as f:
+        return f.read()
+
+def file_write(filepath : str, data : str):
+    """
+    Writes a string to a text file.
+
+    This function overwrites the file if it already exists.
+    """
+    with open(filepath, 'w') as f:
+        f.write(data)
+        
+SQL_CRT_LP = file_read('bin/sql/crt_letsplays.sql')
 
 class SQL:
     engine = create_engine(DB_URL, echo=True) # Create the engine echo prints the sql querys
-    
+    filepath = f'{ROOT}/data.db'
     def create_letsplays(self):
         with self.engine.connect() as connection:
-            connection.execute(text("""
-                CREATE TABLE IF NOT EXISTS letsplays (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    version TEXT UNIQUE NOT NULL,
-                    tad_path TEXT UNIQUE NOT NULL,
-                    name TEXT UNIQUE NOT NULL,
-                    game_name TEXT UNIQUE NOT NULL,
-                    episode_length INTEGER NOT NULL,
-                    description_path TEXT UNIQUE NOT NULL
-                )
-            """))
+            connection.execute(text(SQL_CRT_LP))
             connection.commit()
     
     def connect_and_commit(self,query: str,params: dict[str,int | float | str]):
@@ -39,54 +47,13 @@ class SQL:
             return [row for row in movies]
         except:
             return None
-            
-class CSVObj:
-
-    def __init__(self, filepath: str,KEYS: dict):
-        self.filepath = filepath
-        self.data = csv_read(filepath)
-        for row in self.data:
-            if len(row) != len(KEYS):
-                raise IndexError()
-    def __check_list(self,cl:list[str],**kwargs):
-        if len(cl) != len(kwargs):
-            raise IndexError(f'Length of a != b')
-        for e in cl:
-            if e not in kwargs:
-                raise KeyError(f'cannot find: {e} in {kwargs}')
     
-    def __check_id(self,id: int):
-        if id >= len(self.data):
-            raise IndexError()
-        if not isinstance(id,int):
-            raise TypeError()
+    def get_episodes(self,lpid: int) -> list:
+        pass
     
-    def save(self):
-        csv_write(self.filepath, self.data)
     
-    def create(self,checklist: list[str], **kwargs) -> None:
-        self.__check_list(cl=checklist, **kwargs)
-        self.data.append([kwargs[arg] for arg in kwargs])
-        
-    def read(self,id: int):
-        self.__check_id(id)
-        return self.data[id]
     
-    def update(self,id: int,checklist: list[str],**kwargs):
-        self.__check_list(cl=checklist, **kwargs)
-        self.__check_id(id)
-        self.data[id] = kwargs
-        
-    def delete(self,id: int):
-        self.__check_id(id)
-        self.data.pop(id)
-        
-    @property
-    def row(self) -> int:
-        return len(self.data)
+    def get_letsplays(self) -> list:
+        pass
     
-    @property
-    def col(self) -> int:
-        if not self.data:
-            return 0
-        return len(self.data[0])
+    
