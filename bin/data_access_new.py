@@ -54,17 +54,26 @@ class Querys:
     CREATE_EP = """
     CREATE TABLE :name (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        video_path TEXT NOT NULL,
-        audio_mic__path TEXT NOT NULL,
-        audio_desktop_path TEXT NOT NULL,
-        thumbnail_path TEXT NOT NULL,
-        has_problem TEXT NOT NULL,
+        video_path TEXT,
+        audio_mic__path TEXT,
+        audio_desktop_path TEXT,
+        thumbnail_path TEXT,
+        has_problem INTEGER,
+        audio_mic_edit1_path TEXT,
+        audio_mic_edit2_path TEXT,
+        audio_desktop_edit1_path TEXT,
+        audio_desktop_edit2_path TEXT,
+        title TEXT,
+        upload_at TEXT,
+        final_video TEXT
     )
     """
     CREATE_LP = """
     INSERT INTO letsplays ( :version , "" , :name , :game_name , :episode_length , "" )
     """
-
+    READ_EP = """
+    SELECT * FROM :name
+    """
 class Sql:
     """
     |id|key|
@@ -103,7 +112,14 @@ class Sql:
     
     # Episodes
     
-    def get_episodes(self,lpid: int) -> list:
+    def create_episodes(self,name):
+        self.connect_exec_and_comm(Querys.CREATE_EP,{'name': name})
+    
+    def get_episodes(self,id: int) -> list:
+        name = self.get_name(id)
+        return self.connect_exec_and_retr(Querys.READ_EP,{'name': name})
+    
+    def get_video_path(self,lpid: int, epid: int) -> str:
         pass
     
     # Lets Plays
