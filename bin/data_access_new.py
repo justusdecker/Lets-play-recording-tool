@@ -1,45 +1,12 @@
-from sqlalchemy import create_engine, text
-
-from bin.constants import ROOT
-
-import json
-
-DB_URL = f"sqlite:///{ROOT}lprt_data.db" # Define the database URL
-
-def file_read(filepath : str) -> str:
-    """Reads the entire content of a text file into a single string."""
-    with open(filepath, 'r') as f:
-        return f.read()
-
-def file_write(filepath : str, data : str):
-    """
-    Writes a string to a text file.
-
-    This function overwrites the file if it already exists.
-    """
-    with open(filepath, 'w') as f:
-        f.write(data)
-
-def json_read(filepath : str) -> dict | list:
-    """Reads JSON data from a file and parses it into a Python dictionary or list."""
-    with open(filepath, 'r') as f:
-        return json.load(f)
-    
-def json_write(filepath : str, data : dict | list):
-    """
-    Writes a Python dictionary or list to a file in JSON format.
-
-    This function overwrites the file if it already exists.
-    """
-    with open(filepath, 'w') as f:
-        f.write(json.dumps(data))
-   
+from sqlalchemy import create_engine, Column, Integer, String, Numeric
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-Base = declarative_base()
+from bin.constants import ROOT
 
-from sqlalchemy import create_engine, Column, Integer, String, Numeric
+DB_URL = f"sqlite:///{ROOT}lprt_data.db" # Define the database URL
+
+Base = declarative_base()
 
 class LetsPlays(Base):
     __tablename__ = 'letsplays'
@@ -76,9 +43,24 @@ Base.metadata.create_all(engine)
 # create a session to manage the connection to the database
 Session = sessionmaker(bind=engine)
 session = Session()
-    
+
+# Create Values
 eps = Episodes(video_path='123.mp4')
 session.add(eps)
 session.commit()
+
+# Read Values
 for episode in session.query(Episodes).all():
     print(episode.video_path, episode.id)
+
+
+# Update Values
+for episode in session.query(Episodes).all():
+    episode.video_path = 'test'
+    print(episode.video_path, episode.id)
+session.commit()
+
+# Delete Values
+byebye = session.query(Episodes).all()[0]
+session.delete(byebye)
+session.commit()
