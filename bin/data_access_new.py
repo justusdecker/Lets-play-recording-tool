@@ -50,7 +50,7 @@ class SQLAccess:
         return SQLAccess.read_episodes()[lpid].lpid
     
     def create_episode(lpid: int, video_path: str):
-        data = Episodes(video_path=video_path, lpid=lpid)
+        data = Episodes(video_path=video_path, lpid=SQLAccess.read_letsplays()[lpid].id)
         session.add(data)
         session.commit()
         
@@ -62,8 +62,11 @@ class SQLAccess:
     def read_letsplays() -> list[LetsPlays]:
         return [letsplay for letsplay in session.query(LetsPlays).all()]
     
-    def read_episodes(lpid: int) -> list[Episodes]:
+    def read_all_episodes() -> list[Episodes]:
         return [episodes for episodes in session.query(Episodes).all()]
+    
+    def read_episodes(lpid: int) -> list[Episodes]:
+        return [episodes for episodes in session.query(Episodes).all() if episodes.lpid == SQLAccess.read_letsplays()[lpid].id]
     
     def update_letsplay(lpid:int, episode_length: int):
         data = SQLAccess.read_letsplays()
@@ -72,11 +75,13 @@ class SQLAccess:
     
     def update_episodes(lpid: int, epid: int,
                         **kwargs):
-        data = SQLAccess.read_episodes(lpid)
+        data = SQLAccess.read_episodes(lpid)[epid]
         for key in kwargs:
             if not hasattr(data ,key):
                 raise NameError(f'The attribute: [{key}] does not exist!')
-            Episodes().__setattr__(key,kwargs[key])
+            data.__setattr__(key,kwargs[key])
+            
+        session.commit()
         
 
 ## Read Values
