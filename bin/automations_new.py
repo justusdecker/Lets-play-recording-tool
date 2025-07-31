@@ -323,9 +323,9 @@ class SendToAudacityWF(GenericWorkFlow):
         ui = msgbox.askyesno('LPRT to AC','Do you want to send data to Audacity?')
         
         if ui:
-            
+            episodes = SQLAccess.read_episodes(self.lpid)
             for i in range(*self.rng): 
-                filepath = self.episode.get_audio_mic_edit1_path(i)
+                filepath = episodes[i].audio_mic_path
                 if do_command(f'Import2: filename="{filepath}"') is None:
                     msgbox.showerror('ERROR','Audacity is not reachable!')
                     app.start_btn.state(['!disabled'])
@@ -338,7 +338,7 @@ class SendToAudacityWF(GenericWorkFlow):
         toast_finished('Finished Importing')
         results_path = askdirectory() + '/'
         files = listdir(results_path)
-        if self.episode.row != len(files):
+        if SQLAccess.get_episode_ammount(self.lpid) != len(files):
             msgbox.showerror('ERROR','Did you miss some episodes?')
             app.start_btn.state(['!disabled'])
             return
@@ -348,8 +348,7 @@ class SendToAudacityWF(GenericWorkFlow):
             new = old.split('.')[0] + '.aac'
             ffmpeg_run(FFMPEG_CONVERT_AUDIO_TYPE,{'__IN__': old, '__OUT__': new})
             #remove()
-            self.episode.set_audio_mic_edit2_path(ep, new)
-            self.episode.save()
+            SQLAccess.update_episodes(self.lpid,ep,audio_mic_edit2_path=new)
         app.start_btn.state(['!disabled'])
         super().user_workflow()
 
