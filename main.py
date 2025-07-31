@@ -155,8 +155,7 @@ class AutomationFrame(tk.Frame):
         lp = self.lp_option_var.get()
         if lp != 'None':
             SQLAccess.get_lp_names().index(self.lp_option_var.get())
-            ep_path = SQLAccess.read_episodes()
-            self.epnums = [i+1 for i in range(Episode(ROOT + ep_path).row)]
+            self.epnums = [i+1 for i in range(SQLAccess.get_episode_ammount())]
         else:
             self.epnums = []
     def run(self,*args):
