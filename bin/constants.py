@@ -24,9 +24,10 @@ from enum import Enum
 
 FLAGS = Enum('Flags',
              [
-                 'BLOCK_RECORDING',
-                 'BLOCK_AUTOMATION',
-                 'BLOCK_ALL'
+                 'TYPE_RECORDING',
+                 'TYPE_AUTOMATION',
+                 'TYPE_ALL',
+                 'TYPE_OTHER'
                  ]
              )
 
