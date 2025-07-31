@@ -35,7 +35,7 @@ except:
     showerror('ERROR', ERROR_008 + '\nPIL')
     quit()
 
-from bin.data_access_new import SQLAccess
+from bin.data_access_new import SQLAccess, cnef
 
 from bin.constants import ERROR_007
    
@@ -123,8 +123,9 @@ class GenerateThumbnailWF(GenericWorkFlow):
             app.start_btn.state(['!disabled'])
             return
         check_all = msgbox.askyesno('LPRT Thumbnail Check','Do you want to check every image?')
+        episodes = SQLAccess.read_episodes(self.lpid)
         for i in range(*self.rng): 
-            video_path = self.episode.get_video_path(i)
+            video_path = episodes[i].video_path
             p = f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
             ok = False
             while not ok:
@@ -139,9 +140,7 @@ class GenerateThumbnailWF(GenericWorkFlow):
                     ok = msgbox.askyesno('LPRT Result Check','Thumbnail Result Okay?')
                 else:
                     ok = True
-            
-            self.episode.set_thumbnail_path(i,p)
-            self.episode.save()
+            SQLAccess.update_episodes(self.lpid, i,thumbnail_path=p)
         app.start_btn.state(['!disabled'])
         super().user_workflow()
 
@@ -182,18 +181,16 @@ class ExtractAudioWF(GenericWorkFlow):
         After processing all episodes, it re-enables the application's start button
         and calls the parent `user_workflow` to display the completion message.
         """
+        episodes = SQLAccess.read_episodes(self.lpid)
         for i in range(*self.rng): 
-            video_path = self.episode.get_video_path(i)
+            video_path = episodes[i].video_path
                        
             t1_path, t2_path = f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_track_mic.aac',f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_track_desktop.aac'
             
             ffmpeg_run(FFMPEG_OPTIMIZED_EXTRACT,{'__IN__':video_path,'__OUT1__':t1_path, '__OUT2__':t2_path})
             
             app.pb.step((1 / (self.rng[1] + 1))*100)
-            self.episode.set_audio_mic_path(i,t1_path)
-            self.episode.set_audio_desktop_path(i,t2_path)
-            
-            self.episode.save()
+            SQLAccess.update_episodes(self.lpid,i, audio_mic_path=t1_path, audio_desktop_path=t2_path)
 
         app.start_btn.state(['!disabled'])
         super().user_workflow()
@@ -241,8 +238,9 @@ class FixAudioWF(GenericWorkFlow):
         After processing all episodes, it re-enables the application's start button
         and calls the parent `user_workflow` to display the completion message.
         """
+        episodes = SQLAccess.read_episodes(self.lpid)
         for i in range(*self.rng): 
-            audio_mic_path = self.episode.get_audio_mic_path(i)
+            audio_mic_path = episodes[i].audio_mic_path
             # Filters
             # - Lowpass
             # - Highpass
@@ -254,8 +252,8 @@ class FixAudioWF(GenericWorkFlow):
             
             ffmpeg_run(FFMPEG_AUDIO_PF_LN_L,{'__IN__': audio_mic_path,'__OUT__':dest})
             app.pb.step((1 / (self.rng[1] + 1))*100)
-            self.episode.set_audio_mic_edit1_path(i,dest)
-            self.episode.save()
+            SQLAccess.update_episodes(self.lpid, i, audio_mic_path=dest)
+
         app.start_btn.state(['!disabled'])
         super().user_workflow()
 
