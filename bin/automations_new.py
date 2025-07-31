@@ -517,4 +517,3 @@ class DeployWF(GenericWorkFlow):
         deploy_render(f'{DEST}\\view.html', episodes=ALL,title=self.lp_name,description=description)
         copyfile('static\\style.css',f'{DEST}\\style.css')
         super().user_workflow()
-
