@@ -1,5 +1,4 @@
 from bin.automations_new import *
-del LetsPlay
 from bin.constants import DISCLAIMER
 from bin.data_access_new import on_start, LetsPlays, SQLAccess
 from threading import Thread
@@ -63,7 +62,7 @@ def get_menu(parent,controller) -> ttk.Frame:
     
     return _ret
 
-def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,tk.StringVar, LetsPlays]:
+def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,tk.StringVar]:
     """
     Creates and configures Tkinter UI elements for selecting a "Let's Play" item.
 
@@ -78,13 +77,13 @@ def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,
     
     lp_option_var = tk.StringVar(parent)
         
-    lps = LetsPlays
+    #lps = LetsPlays
     names = SQLAccess.get_lp_names()
     options = ttk.OptionMenu(parent,lp_option_var,'None',*names,command=callback)
     
     options.grid(row = 0, column = 2)
     
-    return label, options, lp_option_var, lps
+    return label, options, lp_option_var
 
 def get_episode_range(parent, run_callback: callable, check_callback: callable,ft) -> tuple[ttk.Label, ttk.Label, ttk.Button, ttk.OptionMenu, ttk.OptionMenu, tk.StringVar, tk.StringVar]:
     """
@@ -145,7 +144,7 @@ class AutomationFrame(tk.Frame):
         self.pb = ttk.Progressbar(self)
         self.pb.grid(sticky='N',row = 0, column = 2)
 
-        self.label, self.lp_options, self.lp_option_var, self.lps= get_lets_play(self, self.lp_changed)
+        self.label, self.lp_options, self.lp_option_var= get_lets_play(self, self.lp_changed)
         
         self.update_ui()
         
@@ -155,7 +154,8 @@ class AutomationFrame(tk.Frame):
     def update_ui(self):
         lp = self.lp_option_var.get()
         if lp != 'None':
-            ep_path = self.lps.get_episode_path(self.lps.get_names().index(self.lp_option_var.get()))
+            SQLAccess.get_lp_names().index(self.lp_option_var.get())
+            ep_path = SQLAccess.read_episodes()
             self.epnums = [i+1 for i in range(Episode(ROOT + ep_path).row)]
         else:
             self.epnums = []
@@ -209,7 +209,7 @@ class Recording(tk.Frame):
 
         self.btn_connect.grid(row = 0, column=4)
         
-        self.label, self.lp_options, self.lp_option_var, self.lps= get_lets_play(self, self.lp_changed)
+        self.label, self.lp_options, self.lp_option_var= get_lets_play(self, self.lp_changed)
         self.btn_connect.state(["disabled"])
         
         #TODO
@@ -218,7 +218,6 @@ class Recording(tk.Frame):
         
         self.menu = get_menu(self, controller)
     def lp_changed(self,*args):
-        print(self.lps.get_names().index(self.lp_option_var.get()))
         self.btn_connect.state(["!disabled"])
     def get_connection(self):
         self.lp_options.state(['disabled'])
@@ -228,7 +227,8 @@ class Recording(tk.Frame):
     def __get_connection(self):
         
         change_states(self.menu,'disabled') # Deactivates all menu buttons for safety reasons
-        ep = LetsPlay(LETS_PLAY_FILE_PATH).get_episodes(self.lps.get_names().index(self.lp_option_var.get()))
+        
+        ep = SQLAccess.read_episodes(SQLAccess.get_lp_names().index(self.lp_option_var.get()))
         self.btn_connect.state(["disabled"])
         self.btn_connect.configure(text='Try connection to OBS...')
         #! Currently Disconnecting only works by closing OBS <- mainly for safety reasons!

@@ -7,7 +7,7 @@ __email__ = "justus.d2025@gmail.com"
 __status__ = "Testing"
 from os.path import isfile
 from bin.obs import OBSObserver
-from bin.data_access import Episode, LetsPlay, cnef, json_write
+
 from bin.wintoasty import toast_finished
 
 from bin.ffmpeg import *
@@ -35,10 +35,11 @@ except:
     showerror('ERROR', ERROR_008 + '\nPIL')
     quit()
 
+from bin.data_access_new import SQLAccess
 
 from bin.constants import ERROR_007
    
-def obs_connect(ep: Episode,el):
+def obs_connect(el):
     """
     Connects to the obs_ws API
     
@@ -54,7 +55,7 @@ def obs_connect(ep: Episode,el):
     while OBSO.isconnected:
         el.btn_connect.configure(text= 'Connection established')
         try:
-            el.label1.configure(text= f'Recording - {ep.row} Episodes\n{OBSO.timecode}')
+            el.label1.configure(text= f'Recording - {SQLAccess.get_episode_ammount()} Episodes\n{OBSO.timecode}')
             OBSO.update(ep)
         except Exception as E:
             el.btn_connect.configure(text= 'Unexpected Error happened')

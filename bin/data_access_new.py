@@ -179,4 +179,7 @@ class SQLAccess:
         return [entry.id for entry in session.query(LetsPlays).all()]
     
     def get_video_path(lpid: int, epid: int):
-        return [entry.name for entry in session.query(LetsPlays).all()]
+        return [entry.video_path for entry in session.query(Episodes).all() if entry.lpid == SQLAccess.__cvtid(lpid)][epid]
+    
+    def get_episode_ammount(lpid: int):
+        return len([entry for entry in session.query(Episodes).all() if entry.lpid == SQLAccess.__cvtid(lpid)])

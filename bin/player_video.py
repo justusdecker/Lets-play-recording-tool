@@ -18,7 +18,7 @@ except:
     showerror('ERROR', ERROR_008 + '\nvlc')
     quit()
 
-from bin.data_access import Episode
+
 
 CHAR_TABLE = {
         'Ä':'&Auml;',
@@ -36,7 +36,7 @@ def convert_char(c: str):
 
 
 class VideoPlayer(Toplevel):
-    def __init__(self, data: list[int],ep:Episode,app):
+    def __init__(self, data: list[int],ep,app):
         self.app = app
         self.data: list[int] = data
         self.episodes: Episode = ep

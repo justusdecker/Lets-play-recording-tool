@@ -13,7 +13,7 @@ from os import mkdir
 
 from bin.constants import *
 
-def csv_rw(filepath: str, new_data):
+def __REMOVED__csv_rw(filepath: str, new_data):
     """
     Reads existing data from a CSV file, appends new data to it, and then
     writes the combined data back to the same CSV file.
@@ -24,7 +24,7 @@ def csv_rw(filepath: str, new_data):
     old_data = csv_read(filepath)
     csv_write(filepath, old_data + new_data)
 
-def csv_read(filepath : str) -> list[list[str]]:
+def __REMOVED__csv_read(filepath : str) -> list[list[str]]:
     """
     Reads all data from a CSV file into a list of lists.
 
@@ -37,7 +37,7 @@ def csv_read(filepath : str) -> list[list[str]]:
         reader = csv.reader(f, delimiter='|')
         return [row for row in reader]
 
-def csv_write(filepath : str,data : list) -> None:
+def __REMOVED__csv_write(filepath : str,data : list) -> None:
     """
     Writes a list of lists to a CSV file.
 
@@ -49,7 +49,7 @@ def csv_write(filepath : str,data : list) -> None:
         writer = csv.writer(f, delimiter='|')
         writer.writerows(data)
 
-def isepisode_empty(filepath: str):
+def __REMOVED__isepisode_empty(filepath: str):
     """
     Checks if an 'Episode' object can be successfully instantiated from a given filepath.
 
@@ -64,12 +64,12 @@ def isepisode_empty(filepath: str):
     except:
         return False
 
-def file_read(filepath : str) -> str:
+def __REMOVED__file_read(filepath : str) -> str:
     """Reads the entire content of a text file into a single string."""
     with open(filepath, 'r') as f:
         return f.read()
 
-def file_write(filepath : str, data : str):
+def __REMOVED__file_write(filepath : str, data : str):
     """
     Writes a string to a text file.
 
@@ -78,7 +78,7 @@ def file_write(filepath : str, data : str):
     with open(filepath, 'w') as f:
         f.write(data)
         
-def file_append(filepath : str, data : str):
+def __REMOVED__file_append(filepath : str, data : str):
     """
     Appends a string to the end of a text file.
 
@@ -87,12 +87,12 @@ def file_append(filepath : str, data : str):
     with open(filepath, 'a') as f:
         f.write(data)
 
-def json_read(filepath : str) -> dict | list:
+def __REMOVED__json_read(filepath : str) -> dict | list:
     """Reads JSON data from a file and parses it into a Python dictionary or list."""
     with open(filepath, 'r') as f:
         return json.load(f)
     
-def json_write(filepath : str, data : dict | list):
+def __REMOVED__json_write(filepath : str, data : dict | list):
     """
     Writes a Python dictionary or list to a file in JSON format.
 
@@ -102,7 +102,7 @@ def json_write(filepath : str, data : dict | list):
         f.write(json.dumps(data))
    
 
-def cnef(path: str):
+def __REMOVED__cnef(path: str):
     """
     Checks if a directory path exists, and if not, creates all necessary
     intermediate directories to ensure the full path exists.
@@ -118,7 +118,7 @@ def cnef(path: str):
             cp = "\\".join(sp[0:idx+1]) + '\\'
             if not isdir(cp):
                 mkdir(cp)
-class CSVObj:
+class __REMOVED__CSVObj:
     """
     A class for managing data stored in a CSV file, providing methods for
     reading, creating, updating, and deleting rows, with basic validation.
@@ -239,7 +239,7 @@ class CSVObj:
             return 0
         return len(self.data[0])
 
-class LetsPlay(CSVObj):
+class __REMOVED__LetsPlay(__REMOVED__CSVObj):
     """
     
     |KEY|Type|
@@ -282,7 +282,7 @@ class LetsPlay(CSVObj):
     def get_tad_path(self,id) -> list:
         return self.read(id)[2]
 
-class Episode(CSVObj):
+class __REMOVED__Episode(__REMOVED__CSVObj):
     """
     
     |id|key|type|
@@ -358,7 +358,7 @@ class Episode(CSVObj):
     def set_final_video_path(self,id: int, data: str):
         self.read(id)[13] = data
         
-def check_lp_ep():
+def __REMOVED__check_lp_ep():
     lp = LetsPlay(LETS_PLAY_FILE_PATH)
     try:
         for i in range(lp.row):
@@ -368,7 +368,7 @@ def check_lp_ep():
         return False
     
     
-def on_start():
+def __REMOVED__on_start():
     cnef(AUDIO_FOLDER)
     cnef(FIXED_AUDIO_FOLDER)
     cnef(THUMBNAIL_FOLDER)

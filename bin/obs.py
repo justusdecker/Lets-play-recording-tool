@@ -14,7 +14,7 @@ except:
     showerror('ERROR', ERROR_008 + '\nobs_ws')
     quit()
 
-from bin.data_access import json_read
+from bin.data_access_new import json_read
 from bin.constants import OBS_SETTINGS_PATH
 from os.path import isfile
 
