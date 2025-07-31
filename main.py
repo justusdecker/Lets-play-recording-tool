@@ -87,7 +87,7 @@ def get_episode_range(parent, run_callback: callable, check_callback: callable,f
     """
     Creates and configures Tkinter UI elements for selecting an episode range.
 
-    This function sets up two labels ("Episode start", "Episode end"),
+    This function sets up two lab els ("Episode start", "Episode end"),
     two option menus for selecting start and end episode numbers, and an
     "Run" button. The button is initially disabled(if ft is none <- No data exists) and its state
     can be managed by the `check_callback`. The `run_callback` is

@@ -46,7 +46,10 @@ session = Session()
 
 class SQLAccess:
     def get_lp_by_id(lpid:int):
-        return SQLAccess.read_letsplay()[lpid].lpid
+        return SQLAccess.read_letsplays()[lpid]
+    
+    def get_ep_by_id(lpid:int):
+        return SQLAccess.read_episodes()[lpid].lpid
     
     def create_episode(lpid: int, video_path: str):
         data = Episodes(video_path=video_path, lpid=SQLAccess.get_lp_by_id(lpid))
@@ -58,8 +61,12 @@ class SQLAccess:
         session.add(data)
         session.commit()
     
-    def read_letsplay() -> list[Episodes]:
-        return [letsplay for letsplay in session.query(Episodes).all()]
+    def read_letsplays() -> list[LetsPlays]:
+        return [letsplay for letsplay in session.query(LetsPlays).all()]
+    
+    def read_episodes(lpid: int) -> list[Episodes]:
+        return [episodes for episodes in session.query(Episodes).all()]
+    
 
 ## Read Values
 #for episode in session.query(Episodes).all():
