@@ -74,12 +74,9 @@ class GenericWorkFlow:
         """
         self.auto_create_folder_path = folder
         self.finish_message = finish_message
-        
-        self.letsplay = LetsPlay(LETS_PLAY_FILE_PATH)
         self.lpid,self.epr = lpid,epr
-        self.lp_name = self.letsplay.get_name(self.lpid)
-        self.ep_path = self.letsplay.get_episode_path(self.lpid)
-        self.episode = Episode(ROOT + self.ep_path)
+        self.lp_name = SQLAccess.get_lp_name(self.lpid)
+
     @property
     def rng(self) -> tuple[int,int]:
         """
@@ -115,7 +112,7 @@ class GenerateThumbnailWF(GenericWorkFlow):
     def user_workflow(self, app):
         TG = ThumbnailGenerator()
         TP = ThumbnailPreview()
-        tad = self.letsplay.get_tad_path(self.lpid)
+        tad = SQLAccess.get_tad_path(self.lpid)
         print(tad)
         if not tad:
             showerror('ERROR' ,ERROR_009)

@@ -167,7 +167,8 @@ class AutomationFrame(tk.Frame):
         self.start_btn.state(['disabled'])
         change_states(self.menu,'disabled')
         a, b = int(self.epstart_option_var.get()) , int(self.epend_option_var.get())
-        lp = self.lps.get_names().index(self.lp_option_var.get())
+        
+        lp = SQLAccess.get_lp_opvar(self)
         self.thread = self.automation_callback(lp,[a-1,b],self)
         
         change_states(self.menu,'!disabled')

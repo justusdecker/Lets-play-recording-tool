@@ -172,6 +172,12 @@ class SQLAccess:
     def get_lp_names():
         return [entry.name for entry in session.query(LetsPlays).all()]
     
+    def get_tad_path(lpid: int):
+        return [entry.tad_path for entry in session.query(LetsPlays).all()][lpid]
+    
+    def get_lp_name(lpid: int):
+        return [entry.name for entry in session.query(LetsPlays).all()][lpid]
+    
     def get_lp_game_names():
         return [entry.game_name for entry in session.query(LetsPlays).all()]
     
