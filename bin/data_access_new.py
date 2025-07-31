@@ -86,29 +86,17 @@ class SQLAccess:
     def delete_letsplay(lpid:int):
         data = session.query(LetsPlays).all()[lpid]
         session.delete(data)
-        l = len(SQLAccess.read_episodes(lpid))
-        print(l)
-        for i in range(l):
-            SQLAccess.delete_episode(lpid,i)
+
+        while SQLAccess.read_episodes(lpid):
+
+            SQLAccess.delete_episode(lpid,0)
+
+
         session.commit()
     
     def delete_episode(lpid: int, epid: int):
-        data = session.query(Episodes).filter(SQLAccess.read_letsplays()[lpid].id == Episodes.lpid).all()[epid]
+        id = SQLAccess.read_letsplays()[lpid].id
+        print(f'id:{id}')
+        data = session.query(Episodes).filter(id == Episodes.lpid).all()[epid]
         session.delete(data)
         session.commit()
-
-## Read Values
-#for episode in session.query(Episodes).all():
-#    print(episode.video_path, episode.id)
-#
-#
-## Update Values
-#for episode in session.query(Episodes).all():
-#    episode.video_path = 'test'
-#    print(episode.video_path, episode.id)
-#session.commit()
-#
-## Delete Values
-#byebye = session.query(Episodes).all()[0]
-#session.delete(byebye)
-#session.commit()
