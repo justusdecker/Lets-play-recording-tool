@@ -1,12 +1,79 @@
 from sqlalchemy import create_engine, Column, Integer, String, Numeric
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-
-from bin.constants import ROOT
+import json
+from bin.constants import *
+from os.path import isfile, isdir
+from os import mkdir
 
 DB_URL = f"sqlite:///{ROOT}lprt_data.db" # Define the database URL
 
 Base = declarative_base()
+
+def file_read(filepath : str) -> str:
+    """Reads the entire content of a text file into a single string."""
+    with open(filepath, 'r') as f:
+        return f.read()
+
+def file_write(filepath : str, data : str):
+    """
+    Writes a string to a text file.
+
+    This function overwrites the file if it already exists.
+    """
+    with open(filepath, 'w') as f:
+        f.write(data)
+        
+def file_append(filepath : str, data : str):
+    """
+    Appends a string to the end of a text file.
+
+    If the file does not exist, it will be created.
+    """
+    with open(filepath, 'a') as f:
+        f.write(data)
+
+def json_read(filepath : str) -> dict | list:
+    """Reads JSON data from a file and parses it into a Python dictionary or list."""
+    with open(filepath, 'r') as f:
+        return json.load(f)
+    
+def json_write(filepath : str, data : dict | list):
+    """
+    Writes a Python dictionary or list to a file in JSON format.
+
+    This function overwrites the file if it already exists.
+    """
+    with open(filepath, 'w') as f:
+        f.write(json.dumps(data))
+
+def on_start():
+    cnef(AUDIO_FOLDER)
+    cnef(FIXED_AUDIO_FOLDER)
+    cnef(THUMBNAIL_FOLDER)
+    cnef(VIDEO_FOLDER)
+    cnef(TAD_FOLDER)
+    cnef(TEMP_FOLDER)
+
+    if not isfile(OBS_SETTINGS_PATH):
+        json_write(OBS_SETTINGS_PATH,DEFAULT_OBS_SETTINGS)
+
+def cnef(path: str):
+    """
+    Checks if a directory path exists, and if not, creates all necessary
+    intermediate directories to ensure the full path exists.
+
+    This function iterates through the components of the given path and
+    creates each subdirectory if it doesn't already exist, effectively
+    creating a nested directory structure.
+    """
+    if not isdir(path):
+        sp = path.split('\\')
+        for idx in range(len(sp)):
+            if not idx: continue
+            cp = "\\".join(sp[0:idx+1]) + '\\'
+            if not isdir(cp):
+                mkdir(cp)
 
 class LetsPlays(Base):
     __tablename__ = 'letsplays'
