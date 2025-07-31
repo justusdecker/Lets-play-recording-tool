@@ -181,6 +181,9 @@ class SQLAccess:
     def get_lp_game_name(lpid: int):
         return [entry.game_name for entry in session.query(LetsPlays).all()][lpid]
     
+    def get_lp_description(lpid: int):
+        return [entry.description_path for entry in session.query(LetsPlays).all()][lpid]
+    
     def get_lp_game_names():
         return [entry.game_name for entry in session.query(LetsPlays).all()]
     
@@ -193,12 +196,14 @@ class SQLAccess:
     def get_title(lpid: int, epid: int):
         return [entry.title for entry in session.query(Episodes).all() if entry.lpid == SQLAccess.__cvtid(lpid)][epid]
     
+    def get_thumbnail_path(lpid: int, epid: int):
+        return [entry.thumbnail_path for entry in session.query(Episodes).all() if entry.lpid == SQLAccess.__cvtid(lpid)][epid]
+    
     def get_final_video_path(lpid: int, epid: int):
         return [entry.final_video_path for entry in session.query(Episodes).all() if entry.lpid == SQLAccess.__cvtid(lpid)][epid]
     
     def get_episode_ammount(lpid: int):
         return len([entry for entry in session.query(Episodes).all() if entry.lpid == SQLAccess.__cvtid(lpid)])
-    
     
     def get_lp_opvar(parent):
         return SQLAccess.get_lp_names().index(parent.lp_option_var.get())

@@ -487,14 +487,16 @@ class DeployWF(GenericWorkFlow):
         
         print(self.rng)
         ALL = []
+        episodes = SQLAccess.read_episodes(self.lpid)
+
         for i in range(*self.rng):
-            old_thumbnail_path = self.episode.get_thumbnail_path(i)
+            old_thumbnail_path = episodes[i].thumbnail_path
             new_thumbnail_path = old_thumbnail_path.replace('/','\\').split('\\')[-1]
             
-            old_video_path = self.episode.get_final_video_path(i)
+            old_video_path = episodes[i].final_video_path
             new_video_path = old_video_path.replace('/','\\').split('\\')[-1]
             
-            description = self.letsplay.get_description(self.lpid) #! This feature will be enhanced in 1.0
+            description = SQLAccess.get_lp_description(self.lpid) #! This feature will be enhanced in 1.0
             print(new_thumbnail_path,new_video_path)
             try:
                 copyfile(old_video_path,f'{DEST}\\{new_video_path}')
@@ -507,7 +509,7 @@ class DeployWF(GenericWorkFlow):
                 return
             REP = {
                 "id": i,
-                "title": self.episode.get_title(i),
+                "title": episodes[i].title,
                 "thumbnail_path": new_thumbnail_path,
                 "upload_at": ''
                 }
