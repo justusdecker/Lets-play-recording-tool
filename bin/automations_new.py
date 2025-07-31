@@ -321,10 +321,12 @@ class SendToAudacityWF(GenericWorkFlow):
             app.start_btn.state(['!disabled'])
             return
         ui = msgbox.askyesno('LPRT to AC','Do you want to send data to Audacity?')
-        
+        all_eps = len(range(*self.rng))
         if ui:
             episodes = SQLAccess.read_episodes(self.lpid)
-            for i in range(*self.rng): 
+            
+            for i in range(*self.rng):
+                all_eps += 1
                 filepath = episodes[i].audio_mic_path
                 if do_command(f'Import2: filename="{filepath}"') is None:
                     msgbox.showerror('ERROR','Audacity is not reachable!')
@@ -338,7 +340,8 @@ class SendToAudacityWF(GenericWorkFlow):
         toast_finished('Finished Importing')
         results_path = askdirectory() + '/'
         files = listdir(results_path)
-        if SQLAccess.get_episode_ammount(self.lpid) != len(files):
+        print(all_eps , len(files))
+        if all_eps != len(files):
             msgbox.showerror('ERROR','Did you miss some episodes?')
             app.start_btn.state(['!disabled'])
             return
