@@ -232,7 +232,7 @@ class Recording(tk.Frame):
         self.btn_connect.state(["disabled"])
         self.btn_connect.configure(text='Try connection to OBS...')
         #! Currently Disconnecting only works by closing OBS <- mainly for safety reasons!
-        obs_connect(ep,self)
+        obs_connect(self)
 
         self.btn_connect.state(["!disabled"])
         change_states(self.menu,'!disabled') # Reactivating

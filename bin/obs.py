@@ -18,6 +18,8 @@ from bin.data_access_new import json_read
 from bin.constants import OBS_SETTINGS_PATH
 from os.path import isfile
 
+from bin.data_access_new import SQLAccess
+
 OUTPUT_TYPE = 'adv_file_output'
 class OBSObserver:
     """
@@ -32,15 +34,15 @@ class OBSObserver:
         self.settings = json_read(OBS_SETTINGS_PATH) #! UNSAFE: Check exist if not return error
         self.connect()
         self.recording_flag = False #used for one_time operations like on_start
-    def update(self,ep):
+    def update(self,id):
         """
         Call this method to check on_start & on_stop events
         """
         self.connect() # Reconnect
         if self.isrecording and not self.recording_flag: # Recording started
             self.recording_flag = True
-            ep.add(video_path=self.filepath)
-            ep.save()
+            SQLAccess.create_episode(id, self.filepath)
+
         elif not self.isrecording and self.recording_flag: # Recording stopped
             self.recording_flag = False
     def connect(self):

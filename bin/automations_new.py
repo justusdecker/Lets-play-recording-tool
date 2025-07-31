@@ -55,8 +55,9 @@ def obs_connect(el):
     while OBSO.isconnected:
         el.btn_connect.configure(text= 'Connection established')
         try:
-            el.label1.configure(text= f'Recording - {SQLAccess.get_episode_ammount()} Episodes\n{OBSO.timecode}')
-            OBSO.update(ep)
+            id = SQLAccess.get_lp_names().index(el.lp_option_var.get())
+            el.label1.configure(text= f'Recording - {SQLAccess.get_episode_ammount(id)} Episodes\n{OBSO.timecode}')
+            OBSO.update(id)
         except Exception as E:
             el.btn_connect.configure(text= 'Unexpected Error happened')
             print(f'Unexpected Error happened [{E}]')
