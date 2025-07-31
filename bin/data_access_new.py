@@ -45,14 +45,12 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 class SQLAccess:
-    def get_lp_by_id(lpid:int):
-        return SQLAccess.read_letsplays()[lpid]
     
     def get_ep_by_id(lpid:int):
         return SQLAccess.read_episodes()[lpid].lpid
     
     def create_episode(lpid: int, video_path: str):
-        data = Episodes(video_path=video_path, lpid=SQLAccess.get_lp_by_id(lpid))
+        data = Episodes(video_path=video_path, lpid=lpid)
         session.add(data)
         session.commit()
         
