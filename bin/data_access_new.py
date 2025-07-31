@@ -116,8 +116,11 @@ class SQLAccess:
     def get_ep_by_id(lpid:int):
         return SQLAccess.read_episodes()[lpid].lpid
     
+    def __cvtid(lpid) -> int:
+        return SQLAccess.read_letsplays()[lpid].id
+    
     def create_episode(lpid: int, video_path: str):
-        data = Episodes(video_path=video_path, lpid=SQLAccess.read_letsplays()[lpid].id)
+        data = Episodes(video_path=video_path, lpid=SQLAccess.__cvtid(lpid))
         session.add(data)
         session.commit()
         
@@ -133,7 +136,7 @@ class SQLAccess:
         return [episodes for episodes in session.query(Episodes).all()]
     
     def read_episodes(lpid: int) -> list[Episodes]:
-        return [episodes for episodes in session.query(Episodes).all() if episodes.lpid == SQLAccess.read_letsplays()[lpid].id]
+        return [episodes for episodes in session.query(Episodes).all() if episodes.lpid == SQLAccess.__cvtid(lpid)]
     
     def update_letsplay(lpid:int, episode_length: int):
         data = SQLAccess.read_letsplays()
@@ -162,8 +165,18 @@ class SQLAccess:
         session.commit()
     
     def delete_episode(lpid: int, epid: int):
-        id = SQLAccess.read_letsplays()[lpid].id
-        print(f'id:{id}')
-        data = session.query(Episodes).filter(id == Episodes.lpid).all()[epid]
+        data = session.query(Episodes).filter(SQLAccess.__cvtid(lpid) == Episodes.lpid).all()[epid]
         session.delete(data)
         session.commit()
+        
+    def get_lp_names():
+        return [entry.name for entry in session.query(LetsPlays).all()]
+    
+    def get_lp_game_names():
+        return [entry.game_name for entry in session.query(LetsPlays).all()]
+    
+    def get_lp_ids():
+        return [entry.id for entry in session.query(LetsPlays).all()]
+    
+    def get_video_path(lpid: int, epid: int):
+        return [entry.name for entry in session.query(LetsPlays).all()]

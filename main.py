@@ -1,10 +1,13 @@
 from bin.automations_new import *
+del LetsPlay
 from bin.constants import DISCLAIMER
-from bin.data_access import LetsPlay, Episode, on_start
+from bin.data_access_new import on_start, LetsPlays, SQLAccess
 from threading import Thread
 
 import tkinter as tk
 from tkinter import ttk
+
+
 
 LARGEFONT =("Verdana", 35)
 
@@ -60,7 +63,7 @@ def get_menu(parent,controller) -> ttk.Frame:
     
     return _ret
 
-def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,tk.StringVar, LetsPlay]:
+def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,tk.StringVar, LetsPlays]:
     """
     Creates and configures Tkinter UI elements for selecting a "Let's Play" item.
 
@@ -75,8 +78,8 @@ def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,
     
     lp_option_var = tk.StringVar(parent)
         
-    lps = LetsPlay(LETS_PLAY_FILE_PATH)
-    names = lps.get_names()
+    lps = LetsPlays
+    names = SQLAccess.get_lp_names()
     options = ttk.OptionMenu(parent,lp_option_var,'None',*names,command=callback)
     
     options.grid(row = 0, column = 2)
