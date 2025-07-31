@@ -154,8 +154,9 @@ class AutomationFrame(tk.Frame):
     def update_ui(self):
         lp = self.lp_option_var.get()
         if lp != 'None':
-            SQLAccess.get_lp_names().index(self.lp_option_var.get())
-            self.epnums = [i+1 for i in range(SQLAccess.get_episode_ammount())]
+            
+            
+            self.epnums = [i+1 for i in range(SQLAccess.get_episode_ammount(SQLAccess.get_lp_opvar(self)))]
         else:
             self.epnums = []
     def run(self,*args):

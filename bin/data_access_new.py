@@ -183,3 +183,7 @@ class SQLAccess:
     
     def get_episode_ammount(lpid: int):
         return len([entry for entry in session.query(Episodes).all() if entry.lpid == SQLAccess.__cvtid(lpid)])
+    
+    
+    def get_lp_opvar(parent):
+        return SQLAccess.get_lp_names().index(parent.lp_option_var.get())
