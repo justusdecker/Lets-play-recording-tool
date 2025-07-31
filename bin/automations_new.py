@@ -461,14 +461,14 @@ class CompareAndRenderWF(GenericWorkFlow):
 class TitleSetWF(GenericWorkFlow):
 
     def __init__(self,lpid, epr,app):
-
+        
         super().__init__(folder = FIXED_AUDIO_FOLDER, finish_message = 'Title Set',lpid=lpid, epr=epr)
         self.user_workflow(app)
     def user_workflow(self, app):
 
         app.start_btn.state(['disabled'])
         
-        VideoPlayer([i + 1 for i in range(*self.rng)], self.episode,app)
+        VideoPlayer([i + 1 for i in range(*self.rng)],self.lpid,app)
 
 class DeployWF(GenericWorkFlow):
 
