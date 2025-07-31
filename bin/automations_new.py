@@ -326,7 +326,6 @@ class SendToAudacityWF(GenericWorkFlow):
             episodes = SQLAccess.read_episodes(self.lpid)
             
             for i in range(*self.rng):
-                all_eps += 1
                 filepath = episodes[i].audio_mic_path
                 if do_command(f'Import2: filename="{filepath}"') is None:
                     msgbox.showerror('ERROR','Audacity is not reachable!')
@@ -417,8 +416,8 @@ class CompareAndRenderWF(GenericWorkFlow):
             completion message.
         """
         rendering_queue = []
-
-        paths = [[i, self.episode.get_audio_mic_edit1_path(i), self.episode.get_audio_desktop_path(i), self.episode.get_video_path(i),1.0] for i in range(*self.rng)]
+        episodes = SQLAccess.read_episodes(self.lpid)
+        paths = [[i, episodes[i].audio_mic_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*self.rng)]
 
         volap = AudioPlayer(paths)
         while not volap.isfinished:
@@ -441,7 +440,7 @@ class CompareAndRenderWF(GenericWorkFlow):
             rendering_queue.append((vid, tmp_audio_path, i))
         toast_finished("[1/2] Audio combine")   
 
-        path_ending = f'_{self.letsplay.get_game_name(self.lpid)}_final.mp4'
+        path_ending = f'_{SQLAccess.get_lp_game_name(self.lpid)}_final.mp4'
         cnef(VIDEO_FOLDER)
         for video, audio, index in rendering_queue:
             final_path = f'{VIDEO_FOLDER}{index+1}{path_ending}'
@@ -454,8 +453,7 @@ class CompareAndRenderWF(GenericWorkFlow):
                 }
             )
             app.pb.step((1 / (self.rng[1] + 1))*100)
-            self.episode.set_final_video_path(index,final_path)
-            self.episode.save()
+            SQLAccess.update_episodes(self.lpid, index, final_video_path=final_path)
         super().user_workflow()
         
 
