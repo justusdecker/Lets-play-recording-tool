@@ -65,6 +65,19 @@ class SQLAccess:
     def read_episodes(lpid: int) -> list[Episodes]:
         return [episodes for episodes in session.query(Episodes).all()]
     
+    def update_letsplay(lpid:int, episode_length: int):
+        data = SQLAccess.read_letsplays()
+        data[lpid].episode_length =  episode_length
+        session.commit()
+    
+    def update_episodes(lpid: int, epid: int,
+                        **kwargs):
+        data = SQLAccess.read_episodes(lpid)
+        for key in kwargs:
+            if not hasattr(data ,key):
+                raise NameError(f'The attribute: [{key}] does not exist!')
+            Episodes().__setattr__(key,kwargs[key])
+        
 
 ## Read Values
 #for episode in session.query(Episodes).all():
