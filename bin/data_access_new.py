@@ -83,6 +83,11 @@ class SQLAccess:
             
         session.commit()
         
+    def delete_letsplay(lpid:int):
+        data = session.query(LetsPlays).all()[lpid]
+        session.delete(data)
+        session.commit()
+        
 
 ## Read Values
 #for episode in session.query(Episodes).all():
