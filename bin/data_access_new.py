@@ -35,7 +35,7 @@ class Episodes(Base):
     upload_at = Column(String)
     final_video_path = Column(String)
     
-engine = create_engine(DB_URL, echo=True) # Create the engine echo prints the sql querys
+engine = create_engine(DB_URL) # Create the engine echo prints the sql querys
 
 # create the users table
 Base.metadata.create_all(engine)
