@@ -292,6 +292,9 @@ class Deploy(AutomationFrame):
         super().__init__(parent, controller)
         self.automation_callback = DeployWF
 
+class FileManager(tk.Frame):
+    def __init__(self, parent, controller): 
+        tk.Frame.__init__(self, parent)
 class Settings(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
