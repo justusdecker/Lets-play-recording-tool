@@ -339,13 +339,14 @@ class Settings(tk.Frame):
         if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.get_lp_names():
             change_states(self.menu,'disabled')
             SQLAccess.create_letsplay(self.name_var.get(), self.game_name_var.get(),int(self.episode_length_var.get().split(' ')[0])*60)
-            msgbox.showinfo('Success', 'Lets Play created\nThe app will restart!')
-            restart_program()
+            msgbox.showinfo('Success', 'Lets Play created\nYou must restart the app!')
+            exit()
     
     def delete_lets_play(self,*args):
+        change_states(self.menu,'disabled')
         SQLAccess.delete_letsplay(SQLAccess.get_lp_names().index(self.lp_option_var.get()))
-        msgbox.showinfo('Success', 'Lets Play deleted\nThe app will restart!')
-        restart_program()
+        msgbox.showinfo('Success', 'Lets Play deleted\nYou must restart the app!')
+        exit()
 APP = TkinterApp()
 APP.mainloop()
 
