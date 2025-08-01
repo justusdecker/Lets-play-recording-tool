@@ -5,6 +5,7 @@ from threading import Thread
 from os.path import getsize
 import tkinter as tk
 from tkinter import ttk
+from tkinter.font import Font
 
 LARGEFONT =("Verdana", 35)
 
@@ -300,24 +301,60 @@ class FileManager(tk.Frame):
         
         W = ttk.Frame(self)
         
+        # Data Detection
         
-        self.detect_btn = ttk.Button(W, text='Detect',command=self.on_detect)
+        DATA_DETECTION = ttk.Frame(W)
+        data_detection_header = ttk.Label(W,text='Data Detection',font=Font(W,size=16))
+        self.detect_btn = ttk.Button(DATA_DETECTION, text='Detect',command=self.on_detect)
+        self.label = ttk.Label(DATA_DETECTION,text='')
         
-        self.label = ttk.Label(W,text='')
         
+        self.detect_btn.grid(row=0,column=0)
+        self.label.grid(row=1,column=0)
         
+        data_detection_header.pack(pady=10)
+        DATA_DETECTION.pack()
         
+
         
-        self.detect_btn.grid(row=0,column=1)
-        self.label.grid(row=0, column=2)
-        
+        # Menu
         self.menu = get_menu(self, controller)
         
-        self.import_btn = ttk.Button(W, text='Import')
+        # Data Deletion
         
-        self.import_btn.grid(row=1,column=0)
+        DATA_DELETION = ttk.Frame(W)
+        data_deletion_header = ttk.Label(W,text='Data Deletion',font=Font(W,size=16))
+        #! Let the user decide what to delete
+        #! If videos are selected. The user needs a function to delete
+        #   - All at once
+        #   - One
+        #   - All in a lp
+        
+        self.delete_options = tk.IntVar()
+        
+        
+        del_option_0 = ttk.Radiobutton(DATA_DELETION,text='All at once',variable=self.delete_options, value=0)
+        del_option_1 = ttk.Radiobutton(DATA_DELETION,text='One',variable=self.delete_options, value=1)
+        del_option_2 = ttk.Radiobutton(DATA_DELETION,text='All in a lp',variable=self.delete_options, value=2)
+        
+        del_option_0.grid(row=0,column=1)
+        del_option_1.grid(row=0,column=2)
+        del_option_2.grid(row=0,column=3)
+        
+        self.delete_btn = ttk.Button(DATA_DELETION, text='Delete',command=self.deleter)
+        self.delete_btn.grid(row=0,column=0,pady=5)
+        
+        data_deletion_header.pack(pady=10)
+        DATA_DELETION.pack()
+        
+        # Lets Play Create
+        
+        # Lets Play Delete
         
         W.grid(row=0,column=1)
+    def deleter(self,*args):
+        if msgbox.askyesno('ATTENTION!','You are trying to delete some data.\nMake sure you dont need this in the future!'):
+            print('ok')
         
     def on_detect(self,*args):
         """
