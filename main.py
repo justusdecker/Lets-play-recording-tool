@@ -290,12 +290,42 @@ class Settings(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
         
-        label = ttk.Label(self, text ="Nothing here currently", font = LARGEFONT)
+        #label = ttk.Label(self, text ="Nothing here currently", font = LARGEFONT)
 
-        label.grid(row = 0, column = 1, padx = 10, pady = 10) 
+        #label.grid(row = 0, column = 1, padx = 10, pady = 10) 
 
         self.menu = get_menu(self, controller)
         
+        
+        
+        self.label, self.lp_options, self.lp_option_var= get_lets_play(self, lambda x: None)
+        
+        self.name_var = tk.StringVar()
+        self.game_name_var = tk.StringVar()
+        self.episode_length_var = tk.StringVar()
+        new_label = ttk.Label(self,text='Create a new Lets Play')
+        new_label.grid(row=2,column=1)
+        name = ttk.Entry(self,textvariable=self.name_var)
+        game_name = ttk.Entry(self,textvariable=self.game_name_var)
+        episode_length = ttk.OptionMenu(self,self.episode_length_var,'None',*[f'{i} Minutes' for i in range(10,65,5)],command=self.something_changed)
+        name.grid(row = 2, column = 2)
+        name.bind('<KeyPress>',self.something_changed)
+        game_name.bind('<KeyPress>',self.something_changed)
+        game_name.grid(row = 2, column = 3)
+        episode_length.grid(row=2,column=4)
+        self.btn_create = ttk.Button(self,text='create',command=self.create_lets_play)
+        self.btn_create.grid(row=2,column=5)
+        self.btn_create.state(['disabled'])
+    def something_changed(self,*args):
+        if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None':
+            self.btn_create.state(['!disabled'])
+            
+        else:
+            self.btn_create.state(['disabled'])
+    def create_lets_play(self,*args):
+        if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None':
+            SQLAccess.create_letsplay(self.name_var.get(), self.game_name_var.get(),int(self.episode_length_var.get().split(' ')[0])*60)
+            msgbox.showinfo('Success', 'Lets Play created')
 
 APP = TkinterApp()
 APP.mainloop()
