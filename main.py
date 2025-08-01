@@ -6,8 +6,6 @@ from threading import Thread
 import tkinter as tk
 from tkinter import ttk
 
-import sys, os
-
 LARGEFONT =("Verdana", 35)
 
 on_start()
