@@ -170,6 +170,7 @@ class Main(tk.Frame):
 class AutomationFrame(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
+        self.should_not_reset = False
         self.thread = None
         self.automation_callback = None
         
@@ -202,8 +203,10 @@ class AutomationFrame(tk.Frame):
         
         lp = SQLAccess.get_lp_opvar(self)
         self.thread = self.automation_callback(lp,[a-1,b],self)
-        
-        change_states(self.menu,'!disabled')
+        if not self.should_not_reset:
+            
+            change_states(self.menu,'!disabled')
+
         self.thread = None
     def lp_changed(self,*args):
         
@@ -280,7 +283,9 @@ class ThumbnailGenerate(AutomationFrame):
         
 class SetTitle(AutomationFrame):
      def __init__(self, parent, controller):
+        
         super().__init__(parent, controller)
+        self.should_not_reset = True
         self.automation_callback = TitleSetWF
     
 class FetchAudio(AutomationFrame):
