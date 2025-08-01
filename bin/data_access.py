@@ -5,7 +5,7 @@ try:
     from sqlalchemy.orm import sessionmaker
 except:
     from bin.constants import ERROR_008
-    showerror('ERROR', ERROR_008 + '\nPIL')
+    showerror('ERROR', ERROR_008 + '\nSQLAlchemy')
     quit()
 
 import json
