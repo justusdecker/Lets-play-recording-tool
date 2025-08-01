@@ -35,7 +35,7 @@ except:
     showerror('ERROR', ERROR_008 + '\nPIL')
     quit()
 
-from bin.data_access_new import SQLAccess, cnef
+from bin.data_access import SQLAccess, cnef
 
 from bin.constants import ERROR_007
    
@@ -479,7 +479,7 @@ class DeployWF(GenericWorkFlow):
     def user_workflow(self,app):
         
         from shutil import copyfile
-        from bin.jinjatest import deploy_render
+        from bin.jinja import deploy_render
         
         DEST = askdirectory()
         if not DEST:
