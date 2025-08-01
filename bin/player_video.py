@@ -18,7 +18,7 @@ except:
     showerror('ERROR', ERROR_008 + '\nvlc')
     quit()
 
-from bin.data_access_new import SQLAccess
+from bin.data_access import SQLAccess
 
 CHAR_TABLE = {
         'Ä':'&Auml;',

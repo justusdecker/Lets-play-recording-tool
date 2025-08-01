@@ -1,6 +1,6 @@
-from bin.automations_new import *
+from bin.automations import *
 from bin.constants import DISCLAIMER
-from bin.data_access_new import on_start, LetsPlays, SQLAccess
+from bin.data_access import on_start, LetsPlays, SQLAccess
 from threading import Thread
 
 import tkinter as tk
