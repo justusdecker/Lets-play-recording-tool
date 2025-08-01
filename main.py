@@ -324,37 +324,34 @@ class FileManager(tk.Frame):
         
         DATA_DELETION = ttk.Frame(W)
         data_deletion_header = ttk.Label(W,text='Data Deletion',font=Font(W,size=16))
-        #! Let the user decide what to delete
-        #! If videos are selected. The user needs a function to delete
-        #   - All at once
-        #   - One
-        #   - All in a lp
-        
-        self.delete_options = tk.IntVar()
+        # lp get
+        # ep get
         
         
-        del_option_0 = ttk.Radiobutton(DATA_DELETION,text='All at once',variable=self.delete_options, value=0)
-        del_option_1 = ttk.Radiobutton(DATA_DELETION,text='One',variable=self.delete_options, value=1)
-        del_option_2 = ttk.Radiobutton(DATA_DELETION,text='All in a lp',variable=self.delete_options, value=2)
+        #self.label, self.lp_options, self.lp_option_var= get_lets_play(self, self.lp_changed)
         
-        del_option_0.grid(row=0,column=1)
-        del_option_1.grid(row=0,column=2)
-        del_option_2.grid(row=0,column=3)
+        #self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,self.epnums)
         
-        self.delete_btn = ttk.Button(DATA_DELETION, text='Delete',command=self.deleter)
-        self.delete_btn.grid(row=0,column=0,pady=5)
+        #! This will only delete some video_paths etc.
+        
+        self.delete_btn = ttk.Button(DATA_DELETION, text='Delete')
+        
+        self.delete_btn.grid(row=2,column=0,pady=5)
         
         data_deletion_header.pack(pady=10)
         DATA_DELETION.pack()
         
         # Lets Play Create
         
+        LP_CREATE = ttk.Frame(W)
+        data_lp_create_header = ttk.Label(W,text='Lets Play Create',font=Font(W,size=16))
+        
+        
+        data_lp_create_header.pack(pady=10)
+        LP_CREATE.pack()
         # Lets Play Delete
         
         W.grid(row=0,column=1)
-    def deleter(self,*args):
-        if msgbox.askyesno('ATTENTION!','You are trying to delete some data.\nMake sure you dont need this in the future!'):
-            print('ok')
         
     def on_detect(self,*args):
         """
