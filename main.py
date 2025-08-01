@@ -324,8 +324,10 @@ class Settings(tk.Frame):
             self.btn_create.state(['disabled'])
     def create_lets_play(self,*args):
         if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.get_lp_names():
+            change_states(self.menu,'disabled')
             SQLAccess.create_letsplay(self.name_var.get(), self.game_name_var.get(),int(self.episode_length_var.get().split(' ')[0])*60)
-            msgbox.showinfo('Success', 'Lets Play created')
+            msgbox.showinfo('Success', 'Lets Play created\nThe app will close')
+            exit()
         
 APP = TkinterApp()
 APP.mainloop()
