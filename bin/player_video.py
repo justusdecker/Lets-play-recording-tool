@@ -18,7 +18,7 @@ except:
     showerror('ERROR', ERROR_008 + '\nvlc')
     quit()
 
-from bin.data_access import Episode
+from bin.data_access import SQLAccess
 
 CHAR_TABLE = {
         'Ä':'&Auml;',
@@ -36,17 +36,16 @@ def convert_char(c: str):
 
 
 class VideoPlayer(Toplevel):
-    def __init__(self, data: list[int],ep:Episode,app):
+    def __init__(self, data: list[int],lpid,app):
         self.app = app
         self.data: list[int] = data
-        self.episodes: Episode = ep
         self.current_episode = 0
         super().__init__()
         self.isfinished = False
         self.geometry('640x600')
         self.vol = 1.
         self.title_var = StringVar()
-        
+        self.lpid = lpid
         # Create a VLC instance and media player.
         self.instance = vlc.Instance()
         self.player = self.instance.media_player_new()
@@ -121,17 +120,16 @@ class VideoPlayer(Toplevel):
         return self.data[self.current_episode] - 1
     @property
     def video_path(self) -> str:
-        return self.episodes.get_final_video_path(self.rel_id)
+        return SQLAccess.get_final_video_path(self.lpid,self.rel_id)
     @property
     def video_title(self) -> str:
-        return self.episodes.get_title(self.rel_id)
+        return SQLAccess.get_title(self.lpid,self.rel_id)
     @property
     def video_ep(self) -> str:
         return self.data[self.current_episode]
     def set_video_title(self,*args):
         new_title = ''.join([convert_char(c) for c in self.title_var.get()])
-        self.episodes.set_title(self.rel_id, new_title)
-        self.episodes.save()
+        SQLAccess.update_episodes(self.lpid, self.rel_id,title=new_title)
 
     def episode_down(self,*args):
 
@@ -254,4 +252,9 @@ class VideoPlayer(Toplevel):
     
     def destroy(self):
         self.app.start_btn.state(['!disabled'])
+        for element in self.app.menu:
+
+            element.state(['!disabled'])
+        for element in [self.app.label, self.app.lp_options,self.app.label2, self.app.label3,self.app.ep_end, self.app.ep_start]:
+            element.state(['!disabled'])
         return super().destroy()

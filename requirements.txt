@@ -7,3 +7,4 @@ winotify
 numpy
 python-vlc
 jinja2
+sqlalchemy

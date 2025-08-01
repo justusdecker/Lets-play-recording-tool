@@ -7,7 +7,7 @@ __email__ = "justus.d2025@gmail.com"
 __status__ = "Testing"
 from os.path import isfile
 from bin.obs import OBSObserver
-from bin.data_access import Episode, LetsPlay, cnef, json_write
+
 from bin.wintoasty import toast_finished
 
 from bin.ffmpeg import *
@@ -35,10 +35,11 @@ except:
     showerror('ERROR', ERROR_008 + '\nPIL')
     quit()
 
+from bin.data_access import SQLAccess, cnef
 
 from bin.constants import ERROR_007
    
-def obs_connect(ep: Episode,el):
+def obs_connect(el):
     """
     Connects to the obs_ws API
     
@@ -54,8 +55,9 @@ def obs_connect(ep: Episode,el):
     while OBSO.isconnected:
         el.btn_connect.configure(text= 'Connection established')
         try:
-            el.label1.configure(text= f'Recording - {ep.row} Episodes\n{OBSO.timecode}')
-            OBSO.update(ep)
+            id = SQLAccess.get_lp_names().index(el.lp_option_var.get())
+            el.label1.configure(text= f'Recording - {SQLAccess.get_episode_ammount(id)} Episodes\n{OBSO.timecode}')
+            OBSO.update(id)
         except Exception as E:
             el.btn_connect.configure(text= 'Unexpected Error happened')
             print(f'Unexpected Error happened [{E}]')
@@ -72,12 +74,9 @@ class GenericWorkFlow:
         """
         self.auto_create_folder_path = folder
         self.finish_message = finish_message
-        
-        self.letsplay = LetsPlay(LETS_PLAY_FILE_PATH)
         self.lpid,self.epr = lpid,epr
-        self.lp_name = self.letsplay.get_name(self.lpid)
-        self.ep_path = self.letsplay.get_episode_path(self.lpid)
-        self.episode = Episode(ROOT + self.ep_path)
+        self.lp_name = SQLAccess.get_lp_name(self.lpid)
+
     @property
     def rng(self) -> tuple[int,int]:
         """
@@ -113,7 +112,7 @@ class GenerateThumbnailWF(GenericWorkFlow):
     def user_workflow(self, app):
         TG = ThumbnailGenerator()
         TP = ThumbnailPreview()
-        tad = self.letsplay.get_tad_path(self.lpid)
+        tad = SQLAccess.get_tad_path(self.lpid)
         print(tad)
         if not tad:
             showerror('ERROR' ,ERROR_009)
@@ -124,8 +123,9 @@ class GenerateThumbnailWF(GenericWorkFlow):
             app.start_btn.state(['!disabled'])
             return
         check_all = msgbox.askyesno('LPRT Thumbnail Check','Do you want to check every image?')
+        episodes = SQLAccess.read_episodes(self.lpid)
         for i in range(*self.rng): 
-            video_path = self.episode.get_video_path(i)
+            video_path = episodes[i].video_path
             p = f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
             ok = False
             while not ok:
@@ -140,9 +140,7 @@ class GenerateThumbnailWF(GenericWorkFlow):
                     ok = msgbox.askyesno('LPRT Result Check','Thumbnail Result Okay?')
                 else:
                     ok = True
-            
-            self.episode.set_thumbnail_path(i,p)
-            self.episode.save()
+            SQLAccess.update_episodes(self.lpid, i,thumbnail_path=p)
         app.start_btn.state(['!disabled'])
         super().user_workflow()
 
@@ -183,18 +181,16 @@ class ExtractAudioWF(GenericWorkFlow):
         After processing all episodes, it re-enables the application's start button
         and calls the parent `user_workflow` to display the completion message.
         """
+        episodes = SQLAccess.read_episodes(self.lpid)
         for i in range(*self.rng): 
-            video_path = self.episode.get_video_path(i)
+            video_path = episodes[i].video_path
                        
             t1_path, t2_path = f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_track_mic.aac',f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_track_desktop.aac'
             
             ffmpeg_run(FFMPEG_OPTIMIZED_EXTRACT,{'__IN__':video_path,'__OUT1__':t1_path, '__OUT2__':t2_path})
             
             app.pb.step((1 / (self.rng[1] + 1))*100)
-            self.episode.set_audio_mic_path(i,t1_path)
-            self.episode.set_audio_desktop_path(i,t2_path)
-            
-            self.episode.save()
+            SQLAccess.update_episodes(self.lpid,i, audio_mic_path=t1_path, audio_desktop_path=t2_path)
 
         app.start_btn.state(['!disabled'])
         super().user_workflow()
@@ -242,8 +238,9 @@ class FixAudioWF(GenericWorkFlow):
         After processing all episodes, it re-enables the application's start button
         and calls the parent `user_workflow` to display the completion message.
         """
+        episodes = SQLAccess.read_episodes(self.lpid)
         for i in range(*self.rng): 
-            audio_mic_path = self.episode.get_audio_mic_path(i)
+            audio_mic_path = episodes[i].audio_mic_path
             # Filters
             # - Lowpass
             # - Highpass
@@ -255,8 +252,8 @@ class FixAudioWF(GenericWorkFlow):
             
             ffmpeg_run(FFMPEG_AUDIO_PF_LN_L,{'__IN__': audio_mic_path,'__OUT__':dest})
             app.pb.step((1 / (self.rng[1] + 1))*100)
-            self.episode.set_audio_mic_edit1_path(i,dest)
-            self.episode.save()
+            SQLAccess.update_episodes(self.lpid, i, audio_mic_path=dest)
+
         app.start_btn.state(['!disabled'])
         super().user_workflow()
 
@@ -324,11 +321,12 @@ class SendToAudacityWF(GenericWorkFlow):
             app.start_btn.state(['!disabled'])
             return
         ui = msgbox.askyesno('LPRT to AC','Do you want to send data to Audacity?')
-        
+        all_eps = len(range(*self.rng))
         if ui:
+            episodes = SQLAccess.read_episodes(self.lpid)
             
-            for i in range(*self.rng): 
-                filepath = self.episode.get_audio_mic_edit1_path(i)
+            for i in range(*self.rng):
+                filepath = episodes[i].audio_mic_path
                 if do_command(f'Import2: filename="{filepath}"') is None:
                     msgbox.showerror('ERROR','Audacity is not reachable!')
                     app.start_btn.state(['!disabled'])
@@ -341,7 +339,8 @@ class SendToAudacityWF(GenericWorkFlow):
         toast_finished('Finished Importing')
         results_path = askdirectory() + '/'
         files = listdir(results_path)
-        if self.episode.row != len(files):
+        print(all_eps , len(files))
+        if all_eps != len(files):
             msgbox.showerror('ERROR','Did you miss some episodes?')
             app.start_btn.state(['!disabled'])
             return
@@ -351,8 +350,7 @@ class SendToAudacityWF(GenericWorkFlow):
             new = old.split('.')[0] + '.aac'
             ffmpeg_run(FFMPEG_CONVERT_AUDIO_TYPE,{'__IN__': old, '__OUT__': new})
             #remove()
-            self.episode.set_audio_mic_edit2_path(ep, new)
-            self.episode.save()
+            SQLAccess.update_episodes(self.lpid,ep,audio_mic_edit2_path=new)
         app.start_btn.state(['!disabled'])
         super().user_workflow()
 
@@ -418,8 +416,8 @@ class CompareAndRenderWF(GenericWorkFlow):
             completion message.
         """
         rendering_queue = []
-
-        paths = [[i, self.episode.get_audio_mic_edit1_path(i), self.episode.get_audio_desktop_path(i), self.episode.get_video_path(i),1.0] for i in range(*self.rng)]
+        episodes = SQLAccess.read_episodes(self.lpid)
+        paths = [[i, episodes[i].audio_mic_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*self.rng)]
 
         volap = AudioPlayer(paths)
         while not volap.isfinished:
@@ -442,7 +440,7 @@ class CompareAndRenderWF(GenericWorkFlow):
             rendering_queue.append((vid, tmp_audio_path, i))
         toast_finished("[1/2] Audio combine")   
 
-        path_ending = f'_{self.letsplay.get_game_name(self.lpid)}_final.mp4'
+        path_ending = f'_{SQLAccess.get_lp_game_name(self.lpid)}_final.mp4'
         cnef(VIDEO_FOLDER)
         for video, audio, index in rendering_queue:
             final_path = f'{VIDEO_FOLDER}{index+1}{path_ending}'
@@ -455,8 +453,7 @@ class CompareAndRenderWF(GenericWorkFlow):
                 }
             )
             app.pb.step((1 / (self.rng[1] + 1))*100)
-            self.episode.set_final_video_path(index,final_path)
-            self.episode.save()
+            SQLAccess.update_episodes(self.lpid, index, final_video_path=final_path)
         super().user_workflow()
         
 
@@ -464,14 +461,14 @@ class CompareAndRenderWF(GenericWorkFlow):
 class TitleSetWF(GenericWorkFlow):
 
     def __init__(self,lpid, epr,app):
-
+        
         super().__init__(folder = FIXED_AUDIO_FOLDER, finish_message = 'Title Set',lpid=lpid, epr=epr)
         self.user_workflow(app)
     def user_workflow(self, app):
 
         app.start_btn.state(['disabled'])
         
-        VideoPlayer([i + 1 for i in range(*self.rng)], self.episode,app)
+        VideoPlayer([i + 1 for i in range(*self.rng)],self.lpid,app)
 
 class DeployWF(GenericWorkFlow):
 
@@ -482,7 +479,7 @@ class DeployWF(GenericWorkFlow):
     def user_workflow(self,app):
         
         from shutil import copyfile
-        from bin.jinjatest import deploy_render
+        from bin.jinja import deploy_render
         
         DEST = askdirectory()
         if not DEST:
@@ -490,14 +487,16 @@ class DeployWF(GenericWorkFlow):
         
         print(self.rng)
         ALL = []
+        episodes = SQLAccess.read_episodes(self.lpid)
+
         for i in range(*self.rng):
-            old_thumbnail_path = self.episode.get_thumbnail_path(i)
+            old_thumbnail_path = episodes[i].thumbnail_path
             new_thumbnail_path = old_thumbnail_path.replace('/','\\').split('\\')[-1]
             
-            old_video_path = self.episode.get_final_video_path(i)
+            old_video_path = episodes[i].final_video_path
             new_video_path = old_video_path.replace('/','\\').split('\\')[-1]
             
-            description = self.letsplay.get_description(self.lpid) #! This feature will be enhanced in 1.0
+            description = SQLAccess.get_lp_description(self.lpid) #! This feature will be enhanced in 1.0
             print(new_thumbnail_path,new_video_path)
             try:
                 copyfile(old_video_path,f'{DEST}\\{new_video_path}')
@@ -510,7 +509,7 @@ class DeployWF(GenericWorkFlow):
                 return
             REP = {
                 "id": i,
-                "title": self.episode.get_title(i),
+                "title": episodes[i].title,
                 "thumbnail_path": new_thumbnail_path,
                 "upload_at": ''
                 }
@@ -518,4 +517,3 @@ class DeployWF(GenericWorkFlow):
         deploy_render(f'{DEST}\\view.html', episodes=ALL,title=self.lp_name,description=description)
         copyfile('static\\style.css',f'{DEST}\\style.css')
         super().user_workflow()
-
