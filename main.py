@@ -317,16 +317,16 @@ class Settings(tk.Frame):
         self.btn_create.grid(row=2,column=5)
         self.btn_create.state(['disabled'])
     def something_changed(self,*args):
-        if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None':
+        if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.get_lp_names():
             self.btn_create.state(['!disabled'])
             
         else:
             self.btn_create.state(['disabled'])
     def create_lets_play(self,*args):
-        if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None':
+        if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.get_lp_names():
             SQLAccess.create_letsplay(self.name_var.get(), self.game_name_var.get(),int(self.episode_length_var.get().split(' ')[0])*60)
             msgbox.showinfo('Success', 'Lets Play created')
-
+        
 APP = TkinterApp()
 APP.mainloop()
 
