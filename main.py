@@ -2,7 +2,7 @@ from bin.automations import *
 from bin.constants import DISCLAIMER
 from bin.data_access import on_start, LetsPlays, SQLAccess
 from threading import Thread
-
+from os.path import getsize
 import tkinter as tk
 from tkinter import ttk
 
@@ -28,7 +28,7 @@ class TkinterApp(tk.Tk):
         self.geometry('800x600')
         # initializing frames to an empty array
         self.frames = {}
-        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender,SetTitle,Deploy, Settings):
+        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender,SetTitle,Deploy, FileManager, Settings):
  
             frame = F(container, self)
             
@@ -57,6 +57,7 @@ def get_menu(parent,controller) -> ttk.Frame:
         ("CompAndRender", lambda : controller.show_frame(CompAndRender)),
         ("SetTitle", lambda : controller.show_frame(SetTitle)),
         ("Deploy", lambda : controller.show_frame(Deploy)),
+        ("FileManager", lambda : controller.show_frame(FileManager)),
         ("Settings", lambda : controller.show_frame(Settings))
     ]
     
@@ -293,8 +294,70 @@ class Deploy(AutomationFrame):
         self.automation_callback = DeployWF
 
 class FileManager(tk.Frame):
+    
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
+        
+        W = ttk.Frame(self)
+        
+        
+        self.detect_btn = ttk.Button(W, text='Detect',command=self.on_detect)
+        
+        self.label = ttk.Label(W,text='')
+        
+        
+        
+        
+        self.detect_btn.grid(row=0,column=1)
+        self.label.grid(row=0, column=2)
+        
+        self.menu = get_menu(self, controller)
+        
+        self.import_btn = ttk.Button(W, text='Import')
+        
+        self.import_btn.grid(row=1,column=0)
+        
+        W.grid(row=0,column=1)
+        
+    def on_detect(self,*args):
+        """
+        Collects file ammount & combined file size.
+        """
+        files = 0
+        files_size = 0
+        temp_files = 0
+        temp_files_size = 0
+        for folder in (FIXED_AUDIO_FOLDER, AUDIO_FOLDER, VIDEO_FOLDER):
+            for file in listdir(folder):
+                files += 1
+                files_size += getsize(folder+file)
+        for file in listdir(TEMP_FOLDER):
+            temp_files += 1
+            temp_files_size += getsize(TEMP_FOLDER+file)
+
+        video_raw_files = 0
+        video_raw_files_size = 0
+        thumbnail_files = 0
+        thumbnail_files_size = 0
+        
+        for ep in SQLAccess.read_all_episodes():
+            
+            if isfile(ep.video_path):
+                video_raw_files_size += getsize(ep.video_path)
+                video_raw_files += 1
+            if ep.thumbnail_path is not None:
+                if isfile(ep.thumbnail_path):
+                    thumbnail_files += getsize(ep.thumbnail_path)
+                    thumbnail_files_size += 1
+        
+        TEXT = f"""
+        LPRT created Data(Audio, FixedAudio, Video):  {files_size/1024/1024/1024:.2f}GB in {files} files
+        Temp Files:         {temp_files_size/1024/1024/1024:.2f}GB in {temp_files} files
+        Video Files(raw):   {video_raw_files_size/1024/1024/1024:.2f}GB in {video_raw_files} files
+        Thumbnails:         {thumbnail_files_size/1024/1024/1024:.2f}GB in {thumbnail_files} files
+        """
+        
+        self.label.configure(text=TEXT)
 class Settings(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
