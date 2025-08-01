@@ -252,7 +252,9 @@ class VideoPlayer(Toplevel):
     
     def destroy(self):
         self.app.start_btn.state(['!disabled'])
-        for element,flag in self.app.menu:
+        for element in self.app.menu:
 
+            element.state(['!disabled'])
+        for element in [self.app.label, self.app.lp_options,self.app.label2, self.app.label3,self.app.ep_end, self.app.ep_start]:
             element.state(['!disabled'])
         return super().destroy()

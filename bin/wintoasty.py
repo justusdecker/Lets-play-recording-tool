@@ -7,7 +7,7 @@ except:
     quit()
 from os import getcwd
 
-TOAST = Notification('LPRT','Welcome','Up & Running',f'{getcwd()}\\logo.ico')
+TOAST = Notification('LPRT','Welcome','Up & Running',f'{getcwd()}\\bin\\data\\img\\logo.ico')
 TOAST.set_audio(audio.Mail,False)
 
 def toast_finished(msg: str=""):

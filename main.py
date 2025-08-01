@@ -42,21 +42,21 @@ def get_menu(parent,controller) -> ttk.Frame:
 
     
     BUILDER: list[str, function] = [
-        ("Main", lambda : controller.show_frame(Main),FLAGS.TYPE_OTHER),
-        ("Recording", lambda : controller.show_frame(Recording),FLAGS.TYPE_RECORDING),
-        ("ThumbnailGenerate", lambda : controller.show_frame(ThumbnailGenerate),FLAGS.TYPE_AUTOMATION),
-        ("FetchAudio", lambda : controller.show_frame(FetchAudio),FLAGS.TYPE_AUTOMATION),
-        ("FixAudio", lambda : controller.show_frame(FixAudio),FLAGS.TYPE_AUTOMATION),
-        ("Send2Audacity", lambda : controller.show_frame(Send2Audacity),FLAGS.TYPE_AUTOMATION),
-        ("CompAndRender", lambda : controller.show_frame(CompAndRender),FLAGS.TYPE_AUTOMATION),
-        ("SetTitle", lambda : controller.show_frame(SetTitle),FLAGS.TYPE_AUTOMATION),
-        ("Deploy", lambda : controller.show_frame(Deploy),FLAGS.TYPE_AUTOMATION),
-        ("Settings", lambda : controller.show_frame(Settings),FLAGS.TYPE_OTHER)
+        ("Main", lambda : controller.show_frame(Main)),
+        ("Recording", lambda : controller.show_frame(Recording)),
+        ("ThumbnailGenerate", lambda : controller.show_frame(ThumbnailGenerate)),
+        ("FetchAudio", lambda : controller.show_frame(FetchAudio)),
+        ("FixAudio", lambda : controller.show_frame(FixAudio)),
+        ("Send2Audacity", lambda : controller.show_frame(Send2Audacity)),
+        ("CompAndRender", lambda : controller.show_frame(CompAndRender)),
+        ("SetTitle", lambda : controller.show_frame(SetTitle)),
+        ("Deploy", lambda : controller.show_frame(Deploy)),
+        ("Settings", lambda : controller.show_frame(Settings))
     ]
     
-    _ret = [(ttk.Button(MENU, text =obj[0], command = obj[1]),obj[2]) for obj in BUILDER]# create btns based on BUILDER
+    _ret = [ttk.Button(MENU, text =obj[0], command = obj[1]) for obj in BUILDER]# create btns based on BUILDER
     
-    [obj[0].pack(fill="x") for i, obj in enumerate(_ret)]# Sets the position on frame for all btns
+    [obj.pack(fill="x") for i, obj in enumerate(_ret)]# Sets the position on frame for all btns
     
     MENU.grid(column=0,row=0,sticky='W')
     
@@ -121,39 +121,9 @@ def get_episode_range(parent, run_callback: callable, check_callback: callable,f
     ep_end.grid(row = 0, column = 6) 
     return label1, label2, start_btn, ep_start, ep_end, epstart_option_var, epend_option_var
 
-def deactive_specific_states(
-    elements: list[ttk.Button],
-    isflag: FLAGS | None
-):
-    for element, flag in elements:
-        if flag.value == isflag.value:
-            element.state(['disabled'])
-
-def active_specific_states(
-    elements: list[ttk.Button],
-    isflag: FLAGS | None
-):
-    for element, flag in elements:
-        if flag.value == isflag.value:
-            element.state(['!disabled'])
-
-def deactive_all_states(
-    elements: list[ttk.Button]
-):
-    for element, flag in elements:
-
-        element.state(['disabled'])
-        
-def active_all_states(
-    elements: list[ttk.Button]
-):
-    for element, flag in elements:
-
-        element.state(['!disabled'])
-
 def change_states(elements: list[ttk.Button],state: str):
 
-    for element,flag in elements:
+    for element in elements:
 
         element.state([state])
 
@@ -179,6 +149,7 @@ class AutomationFrame(tk.Frame):
 
         self.label, self.lp_options, self.lp_option_var= get_lets_play(self, self.lp_changed)
         
+        
         self.update_ui()
         
         self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,self.epnums)
@@ -199,6 +170,8 @@ class AutomationFrame(tk.Frame):
     def __run(self):
         self.start_btn.state(['disabled'])
         change_states(self.menu,'disabled')
+        change_states([self.label, self.lp_options],'disabled')
+        change_states([self.label2, self.label3,self.ep_end, self.ep_start],'disabled')
         a, b = int(self.epstart_option_var.get()) , int(self.epend_option_var.get())
         
         lp = SQLAccess.get_lp_opvar(self)
@@ -206,6 +179,8 @@ class AutomationFrame(tk.Frame):
         if not self.should_not_reset:
             
             change_states(self.menu,'!disabled')
+            change_states([self.label, self.lp_options],'!disabled')
+            change_states([self.label2, self.label3,self.ep_end, self.ep_start],'!disabled')
 
         self.thread = None
     def lp_changed(self,*args):
