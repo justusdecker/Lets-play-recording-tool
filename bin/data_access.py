@@ -1,6 +1,13 @@
-from sqlalchemy import create_engine, Column, Integer, String, Numeric
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from tkinter.messagebox import showerror
+try:
+    from sqlalchemy import create_engine, Column, Integer, String, Numeric
+    from sqlalchemy.ext.declarative import declarative_base
+    from sqlalchemy.orm import sessionmaker
+except:
+    from bin.constants import ERROR_008
+    showerror('ERROR', ERROR_008 + '\nPIL')
+    quit()
+
 import json
 from bin.constants import *
 from os.path import isfile, isdir

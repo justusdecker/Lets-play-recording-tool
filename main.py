@@ -6,11 +6,19 @@ from threading import Thread
 import tkinter as tk
 from tkinter import ttk
 
-
+import sys, os
 
 LARGEFONT =("Verdana", 35)
 
 on_start()
+
+def restart_program():
+    """Restarts the current program.
+    Note: this function does not return. Any cleanup action (like
+    saving data) must be done before calling this function."""
+    global APP
+    APP.destroy()
+    APP = TkinterApp()
 
 class TkinterApp(tk.Tk):
     def __init__(self, *args, **kwargs): 
@@ -298,7 +306,9 @@ class Settings(tk.Frame):
         
         
         
-        self.label, self.lp_options, self.lp_option_var= get_lets_play(self, lambda x: None)
+        self.label, self.lp_options, self.lp_option_var= get_lets_play(self, self.something_changed_delete)
+        self.btn_delete = ttk.Button(self,text='delete',command=self.delete_lets_play)
+        self.btn_delete.grid(row=0,column=3)
         
         self.name_var = tk.StringVar()
         self.game_name_var = tk.StringVar()
@@ -316,6 +326,11 @@ class Settings(tk.Frame):
         self.btn_create = ttk.Button(self,text='create',command=self.create_lets_play)
         self.btn_create.grid(row=2,column=5)
         self.btn_create.state(['disabled'])
+    def something_changed_delete(self, *args):
+        if self.lp_option_var.get() != 'None':
+            self.btn_create.state(['!disabled'])
+        else:
+            self.btn_create.state(['disabled'])
     def something_changed(self,*args):
         if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.get_lp_names():
             self.btn_create.state(['!disabled'])
@@ -326,9 +341,13 @@ class Settings(tk.Frame):
         if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.get_lp_names():
             change_states(self.menu,'disabled')
             SQLAccess.create_letsplay(self.name_var.get(), self.game_name_var.get(),int(self.episode_length_var.get().split(' ')[0])*60)
-            msgbox.showinfo('Success', 'Lets Play created\nThe app will close')
-            exit()
-        
+            msgbox.showinfo('Success', 'Lets Play created\nThe app will restart!')
+            restart_program()
+    
+    def delete_lets_play(self,*args):
+        SQLAccess.delete_letsplay(SQLAccess.get_lp_names().index(self.lp_option_var.get()))
+        msgbox.showinfo('Success', 'Lets Play deleted\nThe app will restart!')
+        restart_program()
 APP = TkinterApp()
 APP.mainloop()
 
