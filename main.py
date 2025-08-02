@@ -6,7 +6,7 @@ from os.path import getsize
 import tkinter as tk
 from tkinter import ttk
 from tkinter.font import Font
-
+from os import remove
 LARGEFONT =("Verdana", 35)
 
 on_start()
@@ -18,6 +18,13 @@ def restart_program():
     global APP
     APP.destroy()
     APP = TkinterApp()
+
+def try_delete_file(filepath: str | None) -> bool:
+    if filepath is not None:
+        if isfile(filepath):
+            remove(filepath)
+            return True
+    return False
 
 class TkinterApp(tk.Tk):
     def __init__(self, *args, **kwargs): 
@@ -412,8 +419,23 @@ class FileManager(tk.Frame):
             exit()
             
     def delete_lets_play(self,*args):
+        from bin.data_access import Episodes
 
-        raise NotImplementedError()
+        ep: Episodes
+        if self.delete_lp_option.get():
+            for ep in SQLAccess.read_all_episodes():
+                
+                for file in [
+                    ep.video_path,
+                    ep.thumbnail_path,
+                    ep.audio_mic_edit1_path,
+                    ep.audio_mic_edit2_path,
+                    ep.audio_desktop_path,
+                    ep.audio_mic_path,
+                    ep.final_video_path
+                    ]:
+                    print(file)
+        return
         change_states(self.menu,'disabled')
         SQLAccess.delete_letsplay(SQLAccess.get_lp_names().index(self.lp_option_var.get()))
         msgbox.showinfo('Success', 'Lets Play deleted\nYou must restart the app!')
