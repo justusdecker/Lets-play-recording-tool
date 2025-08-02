@@ -335,7 +335,7 @@ class FileManager(tk.Frame):
         # lp get
         # ep get
         
-        self.simdel_lp_label, self.simdel_lp_options, self.simdel_lp_option_var= get_lets_play(DATA_DELETION, self.something_changed_delete)
+        self.simdel_lp_label, self.simdel_lp_options, self.simdel_lp_option_var= get_lets_play(DATA_DELETION, self.lp_changed)
         
         self.simdel_label2, self.simdel_label3, self.start_btn, self.simdel_ep_start, self.simdel_ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(DATA_DELETION,lambda x: None,self.check_last_id,[])
         self.start_btn.destroy()
@@ -359,7 +359,7 @@ class FileManager(tk.Frame):
         
         self.delete_lp_option = tk.IntVar(value=0)
         
-        self.lp_label, self.lp_options, self.lp_option_var= get_lets_play(LP_DELETE, self.lp_changed)
+        self.lp_label, self.lp_options, self.lp_option_var= get_lets_play(LP_DELETE, self.something_changed_delete)
         self.btn_lp_delete = ttk.Button(LP_DELETE,text='delete',command=self.delete_lets_play)
         
         self.delete_files_del_lp = ttk.Checkbutton(LP_DELETE,text='Delete Files?',variable=self.delete_lp_option, onvalue=1, offvalue=0)
