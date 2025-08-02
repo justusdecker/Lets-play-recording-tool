@@ -341,30 +341,70 @@ class FileManager(tk.Frame):
         data_deletion_header.pack(pady=10)
         DATA_DELETION.pack()
         
+        
+        # Lets Play Delete
+        LP_DELETE = ttk.Frame(W)
+        data_lp_delete_header = ttk.Label(W,text='Lets Play Delete',font=Font(W,size=16))
+        
+        self.delete_lp_option = tk.IntVar(value=0)
+        
+        self.label, self.lp_options, self.lp_option_var= get_lets_play(LP_DELETE, self.something_changed_delete)
+        self.btn_lp_delete = ttk.Button(LP_DELETE,text='delete',command=self.delete_lets_play)
+        
+        self.delete_files_del_lp = ttk.Checkbutton(LP_DELETE,text='Delete Files?',variable=self.delete_lp_option, onvalue=1, offvalue=0)
+        
+        self.delete_files_del_lp.grid(row=0,column=3)
+        self.btn_lp_delete.grid(row=0,column=4)
+        
+        data_lp_delete_header.pack(pady=10)
+        LP_DELETE.pack()
         # Lets Play Create
         
         LP_CREATE = ttk.Frame(W)
         data_lp_create_header = ttk.Label(W,text='Lets Play Create',font=Font(W,size=16))
         
-        self.label, self.lp_options, self.lp_option_var= get_lets_play(LP_CREATE, self.something_changed_delete)
-        self.btn_lp_delete = ttk.Button(LP_CREATE,text='delete',command=self.delete_lets_play)
-        self.btn_lp_delete.grid(row=0,column=3)
+        self.name_var = tk.StringVar()
+        self.game_name_var = tk.StringVar()
+        self.episode_length_var = tk.StringVar()
+        new_label = ttk.Label(self,text='Create a new Lets Play')
+        new_label.grid(row=2,column=1)
+        name = ttk.Entry(self,textvariable=self.name_var)
+        game_name = ttk.Entry(self,textvariable=self.game_name_var)
+        episode_length = ttk.OptionMenu(self,self.episode_length_var,'None',*[f'{i} Minutes' for i in range(10,65,5)],command=self.something_changed)
+        name.grid(row = 2, column = 2)
+        name.bind('<KeyPress>',self.something_changed)
+        game_name.bind('<KeyPress>',self.something_changed)
+        game_name.grid(row = 2, column = 3)
+        episode_length.grid(row=2,column=4)
+        self.btn_lp_create = ttk.Button(self,text='create',command=self.create_lets_play)
+        self.btn_lp_create.grid(row=2,column=5)
+        self.btn_lp_create.state(['disabled'])
         
-        
-        
-        
-        data_lp_create_header.pack(pady=10)
-        LP_CREATE.pack()
-        # Lets Play Delete
         
         W.grid(row=0,column=1)
+        
+    def something_changed(self,*args):
+        if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.get_lp_names():
+            self.btn_lp_create.state(['!disabled'])
+            
+        else:
+            self.btn_lp_create.state(['disabled'])
+            
     def something_changed_delete(self, *args):
         if self.lp_option_var.get() != 'None':
             self.btn_lp_delete.state(['!disabled'])
         else:
             self.btn_lp_delete.state(['disabled']) 
-    
+            
+    def create_lets_play(self,*args):
+        if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.get_lp_names():
+            change_states(self.menu,'disabled')
+            SQLAccess.create_letsplay(self.name_var.get(), self.game_name_var.get(),int(self.episode_length_var.get().split(' ')[0])*60)
+            msgbox.showinfo('Success', 'Lets Play created\nYou must restart the app!')
+            exit()
+            
     def delete_lets_play(self,*args):
+
         raise NotImplementedError()
         change_states(self.menu,'disabled')
         SQLAccess.delete_letsplay(SQLAccess.get_lp_names().index(self.lp_option_var.get()))
