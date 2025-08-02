@@ -366,19 +366,26 @@ class FileManager(tk.Frame):
         self.name_var = tk.StringVar()
         self.game_name_var = tk.StringVar()
         self.episode_length_var = tk.StringVar()
-        new_label = ttk.Label(self,text='Create a new Lets Play')
-        new_label.grid(row=2,column=1)
-        name = ttk.Entry(self,textvariable=self.name_var)
+        
+        new_label = ttk.Label(LP_CREATE,text='Create a new Lets Play')
+        
+        name = ttk.Entry(LP_CREATE,textvariable=self.name_var)
         game_name = ttk.Entry(self,textvariable=self.game_name_var)
-        episode_length = ttk.OptionMenu(self,self.episode_length_var,'None',*[f'{i} Minutes' for i in range(10,65,5)],command=self.something_changed)
-        name.grid(row = 2, column = 2)
+        episode_length = ttk.OptionMenu(LP_CREATE,self.episode_length_var,'None',*[f'{i} Minutes' for i in range(10,65,5)],command=self.something_changed)
+        self.btn_lp_create = ttk.Button(LP_CREATE,text='create',command=self.create_lets_play)
+        
         name.bind('<KeyPress>',self.something_changed)
         game_name.bind('<KeyPress>',self.something_changed)
+        self.btn_lp_create.state(['disabled'])
+        
+        new_label.grid(row=2,column=1)
+        name.grid(row = 2, column = 2)
         game_name.grid(row = 2, column = 3)
         episode_length.grid(row=2,column=4)
-        self.btn_lp_create = ttk.Button(self,text='create',command=self.create_lets_play)
         self.btn_lp_create.grid(row=2,column=5)
-        self.btn_lp_create.state(['disabled'])
+        
+        data_lp_create_header.pack(pady=10)
+        LP_CREATE.pack()
         
         
         W.grid(row=0,column=1)
