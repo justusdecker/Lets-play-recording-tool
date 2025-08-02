@@ -331,6 +331,7 @@ class FileManager(tk.Frame):
         # Data Deletion
         
         DATA_DELETION = ttk.Frame(W)
+        self.DATA_DELETION = DATA_DELETION
         data_deletion_header = ttk.Label(W,text='Data Deletion',font=Font(W,size=16))
         # lp get
         # ep get
@@ -347,7 +348,7 @@ class FileManager(tk.Frame):
         
         self.delete_btn = ttk.Button(DATA_DELETION, text='Delete')
         
-        self.delete_btn.grid(row=2,column=0,pady=5)
+        self.delete_btn.grid(row=0,column=7,pady=5)
         
         data_deletion_header.pack(pady=10)
         DATA_DELETION.pack()
@@ -401,6 +402,7 @@ class FileManager(tk.Frame):
         
         
         W.grid(row=0,column=1)
+    
     def update_ui(self):
         lp = self.simdel_lp_option_var.get()
         if lp != 'None':
@@ -409,6 +411,7 @@ class FileManager(tk.Frame):
             self.epnums = [i+1 for i in range(SQLAccess.get_episode_ammount(SQLAccess.get_lp_names().index(self.simdel_lp_option_var.get())))]
         else:
             self.epnums = []
+            
     def lp_changed(self,*args):
         
         self.update_ui()
@@ -426,7 +429,7 @@ class FileManager(tk.Frame):
         del self.epstart_option_var
         del self.epend_option_var
         
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,lambda x: None,self.check_last_id,self.epnums)
+        self.simdel_label2, self.simdel_label3, self.start_btn, self.simdel_ep_start, self.simdel_ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.DATA_DELETION,lambda x: None,self.check_last_id,self.epnums)
         self.start_btn.destroy()
     
     def check_last_id(self,*args):
@@ -520,6 +523,10 @@ class FileManager(tk.Frame):
         """
         
         self.label.configure(text=TEXT)
+        
+    def delete_files(self,*args):
+        for i in range(*[int(self.epstart_option_var.get()),int(self.epend_option_var.get())]): 
+            print(i)
 class Settings(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
