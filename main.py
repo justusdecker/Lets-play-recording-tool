@@ -300,7 +300,8 @@ class FileManager(tk.Frame):
         tk.Frame.__init__(self, parent)
         
         W = ttk.Frame(self)
-        
+        # Menu
+        self.menu = get_menu(self, controller)
         # Data Detection
         
         DATA_DETECTION = ttk.Frame(W)
@@ -317,8 +318,7 @@ class FileManager(tk.Frame):
         
 
         
-        # Menu
-        self.menu = get_menu(self, controller)
+        
         
         # Data Deletion
         
@@ -358,6 +358,7 @@ class FileManager(tk.Frame):
         
         data_lp_delete_header.pack(pady=10)
         LP_DELETE.pack()
+        
         # Lets Play Create
         
         LP_CREATE = ttk.Frame(W)
