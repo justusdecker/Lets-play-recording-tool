@@ -310,7 +310,7 @@ class FileManager(tk.Frame):
         
         
         self.detect_btn.grid(row=0,column=0)
-        self.label.grid(row=1,column=0)
+        self.label.grid(row=0,column=1)
         
         data_detection_header.pack(pady=10)
         DATA_DETECTION.pack()
@@ -348,7 +348,7 @@ class FileManager(tk.Frame):
         
         self.delete_lp_option = tk.IntVar(value=0)
         
-        self.label, self.lp_options, self.lp_option_var= get_lets_play(LP_DELETE, self.something_changed_delete)
+        self.lp_label, self.lp_options, self.lp_option_var= get_lets_play(LP_DELETE, self.something_changed_delete)
         self.btn_lp_delete = ttk.Button(LP_DELETE,text='delete',command=self.delete_lets_play)
         
         self.delete_files_del_lp = ttk.Checkbutton(LP_DELETE,text='Delete Files?',variable=self.delete_lp_option, onvalue=1, offvalue=0)
@@ -370,7 +370,7 @@ class FileManager(tk.Frame):
         new_label = ttk.Label(LP_CREATE,text='Create a new Lets Play')
         
         name = ttk.Entry(LP_CREATE,textvariable=self.name_var)
-        game_name = ttk.Entry(self,textvariable=self.game_name_var)
+        game_name = ttk.Entry(LP_CREATE,textvariable=self.game_name_var)
         episode_length = ttk.OptionMenu(LP_CREATE,self.episode_length_var,'None',*[f'{i} Minutes' for i in range(10,65,5)],command=self.something_changed)
         self.btn_lp_create = ttk.Button(LP_CREATE,text='create',command=self.create_lets_play)
         
@@ -378,11 +378,11 @@ class FileManager(tk.Frame):
         game_name.bind('<KeyPress>',self.something_changed)
         self.btn_lp_create.state(['disabled'])
         
-        new_label.grid(row=2,column=1)
-        name.grid(row = 2, column = 2)
-        game_name.grid(row = 2, column = 3)
-        episode_length.grid(row=2,column=4)
-        self.btn_lp_create.grid(row=2,column=5)
+        new_label.grid(row=0,column=1)
+        name.grid(row = 0, column = 2)
+        game_name.grid(row = 0, column = 3)
+        episode_length.grid(row=0,column=4)
+        self.btn_lp_create.grid(row=0,column=5)
         
         data_lp_create_header.pack(pady=10)
         LP_CREATE.pack()
