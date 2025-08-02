@@ -406,7 +406,7 @@ class FileManager(tk.Frame):
         if lp != 'None':
             
             
-            self.epnums = [i+1 for i in range(SQLAccess.get_episode_ammount(SQLAccess.get_lp_opvar(self)))]
+            self.epnums = [i+1 for i in range(SQLAccess.get_episode_ammount(SQLAccess.get_lp_names().index(self.simdel_lp_option_var.get())))]
         else:
             self.epnums = []
     def lp_changed(self,*args):
@@ -426,7 +426,7 @@ class FileManager(tk.Frame):
         del self.epstart_option_var
         del self.epend_option_var
         
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,self.epnums)
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,lambda x: None,self.check_last_id,self.epnums)
         self.start_btn.destroy()
     
     def check_last_id(self,*args):
