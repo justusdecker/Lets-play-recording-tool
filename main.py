@@ -317,6 +317,7 @@ class FileManager(tk.Frame):
         self.label = ttk.Label(DATA_DETECTION,text='')
         
         
+        
         self.detect_btn.grid(row=0,column=0)
         self.label.grid(row=0,column=1)
         
@@ -334,7 +335,10 @@ class FileManager(tk.Frame):
         # lp get
         # ep get
         
+        self.simdel_lp_label, self.simdel_lp_options, self.simdel_lp_option_var= get_lets_play(DATA_DELETION, self.something_changed_delete)
         
+        self.simdel_label2, self.simdel_label3, self.start_btn, self.simdel_ep_start, self.simdel_ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(DATA_DELETION,lambda x: None,self.check_last_id,[])
+        self.start_btn.destroy()
         #self.label, self.lp_options, self.lp_option_var= get_lets_play(self, self.lp_changed)
         
         #self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,self.epnums)
@@ -355,7 +359,7 @@ class FileManager(tk.Frame):
         
         self.delete_lp_option = tk.IntVar(value=0)
         
-        self.lp_label, self.lp_options, self.lp_option_var= get_lets_play(LP_DELETE, self.something_changed_delete)
+        self.lp_label, self.lp_options, self.lp_option_var= get_lets_play(LP_DELETE, self.lp_changed)
         self.btn_lp_delete = ttk.Button(LP_DELETE,text='delete',command=self.delete_lets_play)
         
         self.delete_files_del_lp = ttk.Checkbutton(LP_DELETE,text='Delete Files?',variable=self.delete_lp_option, onvalue=1, offvalue=0)
@@ -397,7 +401,40 @@ class FileManager(tk.Frame):
         
         
         W.grid(row=0,column=1)
+    def update_ui(self):
+        lp = self.simdel_lp_option_var.get()
+        if lp != 'None':
+            
+            
+            self.epnums = [i+1 for i in range(SQLAccess.get_episode_ammount(SQLAccess.get_lp_opvar(self)))]
+        else:
+            self.epnums = []
+    def lp_changed(self,*args):
         
+        self.update_ui()
+        
+        if not self.epnums:
+            self.delete_btn.state(['disabled'])
+        else:
+            self.delete_btn.state(['!disabled'])
+        
+        self.simdel_ep_start.destroy()
+        self.simdel_ep_end.destroy()
+        self.simdel_label2.destroy()
+        self.simdel_label3.destroy()
+        self.start_btn.destroy()
+        del self.epstart_option_var
+        del self.epend_option_var
+        
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,self.epnums)
+        self.start_btn.destroy()
+    
+    def check_last_id(self,*args):
+        if int(self.epend_option_var.get()) < int(self.epstart_option_var.get()):
+            self.delete_btn.state(['disabled'])
+        else:
+            self.delete_btn.state(['!disabled'])
+    
     def something_changed(self,*args):
         if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.get_lp_names():
             self.btn_lp_create.state(['!disabled'])
@@ -443,6 +480,7 @@ class FileManager(tk.Frame):
         SQLAccess.delete_letsplay(SQLAccess.get_lp_names().index(self.lp_option_var.get()))
         msgbox.showinfo('Success', 'Lets Play deleted\nYou must restart the app!')
         exit()
+    
     def on_detect(self,*args):
         """
         Collects file ammount & combined file size.
