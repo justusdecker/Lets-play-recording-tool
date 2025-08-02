@@ -346,13 +346,30 @@ class FileManager(tk.Frame):
         LP_CREATE = ttk.Frame(W)
         data_lp_create_header = ttk.Label(W,text='Lets Play Create',font=Font(W,size=16))
         
+        self.label, self.lp_options, self.lp_option_var= get_lets_play(LP_CREATE, self.something_changed_delete)
+        self.btn_lp_delete = ttk.Button(LP_CREATE,text='delete',command=self.delete_lets_play)
+        self.btn_lp_delete.grid(row=0,column=3)
+        
+        
+        
         
         data_lp_create_header.pack(pady=10)
         LP_CREATE.pack()
         # Lets Play Delete
         
         W.grid(row=0,column=1)
-        
+    def something_changed_delete(self, *args):
+        if self.lp_option_var.get() != 'None':
+            self.btn_lp_delete.state(['!disabled'])
+        else:
+            self.btn_lp_delete.state(['disabled']) 
+    
+    def delete_lets_play(self,*args):
+        raise NotImplementedError()
+        change_states(self.menu,'disabled')
+        SQLAccess.delete_letsplay(SQLAccess.get_lp_names().index(self.lp_option_var.get()))
+        msgbox.showinfo('Success', 'Lets Play deleted\nYou must restart the app!')
+        exit()
     def on_detect(self,*args):
         """
         Collects file ammount & combined file size.
