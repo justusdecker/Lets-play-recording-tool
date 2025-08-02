@@ -422,6 +422,9 @@ class FileManager(tk.Frame):
         from bin.data_access import Episodes
 
         ep: Episodes
+        
+        ok = msgbox.askyesno('Attention','You are trying to delete all files in the selected lets play & \nthe lets play itself!\nThis step is irreversible!\nContinue?')
+        if not ok: return
         if self.delete_lp_option.get():
             for ep in SQLAccess.read_all_episodes():
                 
@@ -435,7 +438,7 @@ class FileManager(tk.Frame):
                     ep.final_video_path
                     ]:
                     print(file)
-        return
+        return #! UNLOCK before 0.13 full-release
         change_states(self.menu,'disabled')
         SQLAccess.delete_letsplay(SQLAccess.get_lp_names().index(self.lp_option_var.get()))
         msgbox.showinfo('Success', 'Lets Play deleted\nYou must restart the app!')
