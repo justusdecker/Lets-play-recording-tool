@@ -477,8 +477,7 @@ class FileManager(tk.Frame):
                     ep.audio_mic_path,
                     ep.final_video_path
                     ]:
-                    print(file)
-        return #! UNLOCK before 0.13 full-release
+                    try_delete_file(file)
         change_states(self.menu,'disabled')
         SQLAccess.delete_letsplay(SQLAccess.get_lp_names().index(self.lp_option_var.get()))
         msgbox.showinfo('Success', 'Lets Play deleted\nYou must restart the app!')
@@ -525,9 +524,25 @@ class FileManager(tk.Frame):
         self.label.configure(text=TEXT)
         
     def delete_files(self,*args):
+        ok = msgbox.askyesno('Attention','You are trying to delete all files in the selected lets play\nThis step is irreversible!\nContinue?')
+        if not ok: return
+        lpid = SQLAccess.get_lp_names().index(self.simdel_lp_option_var.get())
         print(SQLAccess.get_lp_names().index(self.simdel_lp_option_var.get()),self.simdel_lp_option_var.get())
-        for i in range(*self.rng): 
-            print(i)
+        episodes = SQLAccess.read_episodes(lpid)
+
+        for i in range(*self.rng):
+            ep = episodes[i]
+            for file in [
+                    ep.video_path,
+                    ep.thumbnail_path,
+                    ep.audio_mic_edit1_path,
+                    ep.audio_mic_edit2_path,
+                    ep.audio_desktop_path,
+                    ep.audio_mic_path,
+                    ep.final_video_path
+                    ]:
+                
+                try_delete_file(file)
     @property
     def rng(self) -> list:
         a,b = int(self.epstart_option_var.get())-1, int(self.epend_option_var.get())
