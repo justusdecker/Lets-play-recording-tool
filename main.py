@@ -346,7 +346,7 @@ class FileManager(tk.Frame):
         
         #! This will only delete some video_paths etc.
         
-        self.delete_btn = ttk.Button(DATA_DELETION, text='Delete')
+        self.delete_btn = ttk.Button(DATA_DELETION, text='Delete',command=self.delete_files)
         
         self.delete_btn.grid(row=0,column=7,pady=5)
         
@@ -525,8 +525,13 @@ class FileManager(tk.Frame):
         self.label.configure(text=TEXT)
         
     def delete_files(self,*args):
-        for i in range(*[int(self.epstart_option_var.get()),int(self.epend_option_var.get())]): 
+        print(SQLAccess.get_lp_names().index(self.simdel_lp_option_var.get()),self.simdel_lp_option_var.get())
+        for i in range(*self.rng): 
             print(i)
+    @property
+    def rng(self) -> list:
+        a,b = int(self.epstart_option_var.get())-1, int(self.epend_option_var.get())
+        return a,b+(1 if a == b else 0)
 class Settings(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
