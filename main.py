@@ -2,10 +2,11 @@ from bin.automations import *
 from bin.constants import DISCLAIMER
 from bin.data_access import on_start, LetsPlays, SQLAccess
 from threading import Thread
-
+from os.path import getsize
 import tkinter as tk
 from tkinter import ttk
-
+from tkinter.font import Font
+from os import remove
 LARGEFONT =("Verdana", 35)
 
 on_start()
@@ -18,6 +19,13 @@ def restart_program():
     APP.destroy()
     APP = TkinterApp()
 
+def try_delete_file(filepath: str | None) -> bool:
+    if filepath is not None:
+        if isfile(filepath):
+            remove(filepath)
+            return True
+    return False
+
 class TkinterApp(tk.Tk):
     def __init__(self, *args, **kwargs): 
         
@@ -28,7 +36,7 @@ class TkinterApp(tk.Tk):
         self.geometry('800x600')
         # initializing frames to an empty array
         self.frames = {}
-        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender,SetTitle,Deploy, Settings):
+        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender,SetTitle,Deploy, FileManager, Settings):
  
             frame = F(container, self)
             
@@ -57,6 +65,7 @@ def get_menu(parent,controller) -> ttk.Frame:
         ("CompAndRender", lambda : controller.show_frame(CompAndRender)),
         ("SetTitle", lambda : controller.show_frame(SetTitle)),
         ("Deploy", lambda : controller.show_frame(Deploy)),
+        ("FileManager", lambda : controller.show_frame(FileManager)),
         ("Settings", lambda : controller.show_frame(Settings))
     ]
     
@@ -292,6 +301,252 @@ class Deploy(AutomationFrame):
         super().__init__(parent, controller)
         self.automation_callback = DeployWF
 
+class FileManager(tk.Frame):
+    
+    def __init__(self, parent, controller): 
+        tk.Frame.__init__(self, parent)
+        
+        W = ttk.Frame(self)
+        # Menu
+        self.menu = get_menu(self, controller)
+        # Data Detection
+        
+        DATA_DETECTION = ttk.Frame(W)
+        data_detection_header = ttk.Label(W,text='Data Detection',font=Font(W,size=16))
+        self.detect_btn = ttk.Button(DATA_DETECTION, text='Detect',command=self.on_detect)
+        self.label = ttk.Label(DATA_DETECTION,text='')
+        
+        
+        
+        self.detect_btn.grid(row=0,column=0)
+        self.label.grid(row=0,column=1)
+        
+        data_detection_header.pack(pady=10)
+        DATA_DETECTION.pack()
+        
+
+        
+        
+        
+        # Data Deletion
+        
+        DATA_DELETION = ttk.Frame(W)
+        self.DATA_DELETION = DATA_DELETION
+        data_deletion_header = ttk.Label(W,text='Data Deletion',font=Font(W,size=16))
+        # lp get
+        # ep get
+        
+        self.simdel_lp_label, self.simdel_lp_options, self.simdel_lp_option_var= get_lets_play(DATA_DELETION, self.lp_changed)
+        
+        self.simdel_label2, self.simdel_label3, self.start_btn, self.simdel_ep_start, self.simdel_ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(DATA_DELETION,lambda x: None,self.check_last_id,[])
+        self.start_btn.destroy()
+        #self.label, self.lp_options, self.lp_option_var= get_lets_play(self, self.lp_changed)
+        
+        #self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,self.epnums)
+        
+        #! This will only delete some video_paths etc.
+        
+        self.delete_btn = ttk.Button(DATA_DELETION, text='Delete',command=self.delete_files)
+        
+        self.delete_btn.grid(row=0,column=7,pady=5)
+        
+        data_deletion_header.pack(pady=10)
+        DATA_DELETION.pack()
+        
+        
+        # Lets Play Delete
+        LP_DELETE = ttk.Frame(W)
+        data_lp_delete_header = ttk.Label(W,text='Lets Play Delete',font=Font(W,size=16))
+        
+        self.delete_lp_option = tk.IntVar(value=0)
+        
+        self.lp_label, self.lp_options, self.lp_option_var= get_lets_play(LP_DELETE, self.something_changed_delete)
+        self.btn_lp_delete = ttk.Button(LP_DELETE,text='delete',command=self.delete_lets_play)
+        
+        self.delete_files_del_lp = ttk.Checkbutton(LP_DELETE,text='Delete Files?',variable=self.delete_lp_option, onvalue=1, offvalue=0)
+        
+        self.delete_files_del_lp.grid(row=0,column=3)
+        self.btn_lp_delete.grid(row=0,column=4)
+        
+        data_lp_delete_header.pack(pady=10)
+        LP_DELETE.pack()
+        
+        # Lets Play Create
+        
+        LP_CREATE = ttk.Frame(W)
+        data_lp_create_header = ttk.Label(W,text='Lets Play Create',font=Font(W,size=16))
+        
+        self.name_var = tk.StringVar()
+        self.game_name_var = tk.StringVar()
+        self.episode_length_var = tk.StringVar()
+        
+        new_label = ttk.Label(LP_CREATE,text='Create a new Lets Play')
+        
+        name = ttk.Entry(LP_CREATE,textvariable=self.name_var)
+        game_name = ttk.Entry(LP_CREATE,textvariable=self.game_name_var)
+        episode_length = ttk.OptionMenu(LP_CREATE,self.episode_length_var,'None',*[f'{i} Minutes' for i in range(10,65,5)],command=self.something_changed)
+        self.btn_lp_create = ttk.Button(LP_CREATE,text='create',command=self.create_lets_play)
+        
+        name.bind('<KeyPress>',self.something_changed)
+        game_name.bind('<KeyPress>',self.something_changed)
+        self.btn_lp_create.state(['disabled'])
+        
+        new_label.grid(row=0,column=1)
+        name.grid(row = 0, column = 2)
+        game_name.grid(row = 0, column = 3)
+        episode_length.grid(row=0,column=4)
+        self.btn_lp_create.grid(row=0,column=5)
+        
+        data_lp_create_header.pack(pady=10)
+        LP_CREATE.pack()
+        
+        
+        W.grid(row=0,column=1)
+    
+    def update_ui(self):
+        lp = self.simdel_lp_option_var.get()
+        if lp != 'None':
+            
+            
+            self.epnums = [i+1 for i in range(SQLAccess.get_episode_ammount(SQLAccess.get_lp_names().index(self.simdel_lp_option_var.get())))]
+        else:
+            self.epnums = []
+            
+    def lp_changed(self,*args):
+        
+        self.update_ui()
+        
+        if not self.epnums:
+            self.delete_btn.state(['disabled'])
+        else:
+            self.delete_btn.state(['!disabled'])
+        
+        self.simdel_ep_start.destroy()
+        self.simdel_ep_end.destroy()
+        self.simdel_label2.destroy()
+        self.simdel_label3.destroy()
+        self.start_btn.destroy()
+        del self.epstart_option_var
+        del self.epend_option_var
+        
+        self.simdel_label2, self.simdel_label3, self.start_btn, self.simdel_ep_start, self.simdel_ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.DATA_DELETION,lambda x: None,self.check_last_id,self.epnums)
+        self.start_btn.destroy()
+    
+    def check_last_id(self,*args):
+        if int(self.epend_option_var.get()) < int(self.epstart_option_var.get()):
+            self.delete_btn.state(['disabled'])
+        else:
+            self.delete_btn.state(['!disabled'])
+    
+    def something_changed(self,*args):
+        if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.get_lp_names():
+            self.btn_lp_create.state(['!disabled'])
+            
+        else:
+            self.btn_lp_create.state(['disabled'])
+            
+    def something_changed_delete(self, *args):
+        if self.lp_option_var.get() != 'None':
+            self.btn_lp_delete.state(['!disabled'])
+        else:
+            self.btn_lp_delete.state(['disabled']) 
+            
+    def create_lets_play(self,*args):
+        if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.get_lp_names():
+            change_states(self.menu,'disabled')
+            SQLAccess.create_letsplay(self.name_var.get(), self.game_name_var.get(),int(self.episode_length_var.get().split(' ')[0])*60)
+            msgbox.showinfo('Success', 'Lets Play created\nYou must restart the app!')
+            exit()
+            
+    def delete_lets_play(self,*args):
+        from bin.data_access import Episodes
+
+        ep: Episodes
+        
+        ok = msgbox.askyesno('Attention','You are trying to delete all files in the selected lets play & \nthe lets play itself!\nThis step is irreversible!\nContinue?')
+        if not ok: return
+        if self.delete_lp_option.get():
+            for ep in SQLAccess.read_all_episodes():
+                
+                for file in [
+                    ep.video_path,
+                    ep.thumbnail_path,
+                    ep.audio_mic_edit1_path,
+                    ep.audio_mic_edit2_path,
+                    ep.audio_desktop_path,
+                    ep.audio_mic_path,
+                    ep.final_video_path
+                    ]:
+                    try_delete_file(file)
+        change_states(self.menu,'disabled')
+        SQLAccess.delete_letsplay(SQLAccess.get_lp_names().index(self.lp_option_var.get()))
+        msgbox.showinfo('Success', 'Lets Play deleted\nYou must restart the app!')
+        exit()
+    
+    def on_detect(self,*args):
+        """
+        Collects file ammount & combined file size.
+        """
+        files = 0
+        files_size = 0
+        temp_files = 0
+        temp_files_size = 0
+        for folder in (FIXED_AUDIO_FOLDER, AUDIO_FOLDER, VIDEO_FOLDER):
+            for file in listdir(folder):
+                files += 1
+                files_size += getsize(folder+file)
+        for file in listdir(TEMP_FOLDER):
+            temp_files += 1
+            temp_files_size += getsize(TEMP_FOLDER+file)
+
+        video_raw_files = 0
+        video_raw_files_size = 0
+        thumbnail_files = 0
+        thumbnail_files_size = 0
+        
+        for ep in SQLAccess.read_all_episodes():
+            
+            if isfile(ep.video_path):
+                video_raw_files_size += getsize(ep.video_path)
+                video_raw_files += 1
+            if ep.thumbnail_path is not None:
+                if isfile(ep.thumbnail_path):
+                    thumbnail_files += getsize(ep.thumbnail_path)
+                    thumbnail_files_size += 1
+        
+        TEXT = f"""
+        LPRT created Data(Audio, FixedAudio, Video):  {files_size/1024/1024/1024:.2f}GB in {files} files
+        Temp Files:         {temp_files_size/1024/1024/1024:.2f}GB in {temp_files} files
+        Video Files(raw):   {video_raw_files_size/1024/1024/1024:.2f}GB in {video_raw_files} files
+        Thumbnails:         {thumbnail_files_size/1024/1024/1024:.2f}GB in {thumbnail_files} files
+        """
+        
+        self.label.configure(text=TEXT)
+        
+    def delete_files(self,*args):
+        ok = msgbox.askyesno('Attention','You are trying to delete all files in the selected lets play\nThis step is irreversible!\nContinue?')
+        if not ok: return
+        lpid = SQLAccess.get_lp_names().index(self.simdel_lp_option_var.get())
+        print(SQLAccess.get_lp_names().index(self.simdel_lp_option_var.get()),self.simdel_lp_option_var.get())
+        episodes = SQLAccess.read_episodes(lpid)
+
+        for i in range(*self.rng):
+            ep = episodes[i]
+            for file in [
+                    ep.video_path,
+                    ep.thumbnail_path,
+                    ep.audio_mic_edit1_path,
+                    ep.audio_mic_edit2_path,
+                    ep.audio_desktop_path,
+                    ep.audio_mic_path,
+                    ep.final_video_path
+                    ]:
+                
+                try_delete_file(file)
+    @property
+    def rng(self) -> list:
+        a,b = int(self.epstart_option_var.get())-1, int(self.epend_option_var.get())
+        return a,b+(1 if a == b else 0)
 class Settings(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)

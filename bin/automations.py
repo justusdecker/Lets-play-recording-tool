@@ -417,7 +417,9 @@ class CompareAndRenderWF(GenericWorkFlow):
         """
         rendering_queue = []
         episodes = SQLAccess.read_episodes(self.lpid)
-        paths = [[i, episodes[i].audio_mic_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*self.rng)]
+        from bin.data_access import Episodes
+        episodes : list[Episodes]
+        paths = [[i, episodes[i].audio_mic_edit2_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*self.rng)]
 
         volap = AudioPlayer(paths)
         while not volap.isfinished:
