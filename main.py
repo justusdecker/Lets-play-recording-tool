@@ -229,25 +229,39 @@ class Recording(tk.Frame):
         self.thread = None
         W = ttk.Frame(self)
         
+        self.menu = get_menu(self, controller)
+        
+        # Create Headers
         RECORDING = ttk.Frame(W)
         recording_header = ttk.Label(W,text='Recording',font=Font(W,size=16))
         
-        self.recording_information_label = ttk.Label(self, text ="No Connection", font = LARGEFONT)
-
-        self.recording_information_label.grid(row = 0, column = 3)
+        INFORMATION = ttk.Frame(W)
+        information_header = ttk.Label(W,text='Information',font=Font(W,size=16))
         
-        self.btn_connect = ttk.Button(self, text ="Connect to obs",command=self.get_connection)
+        # Recording
+        self.btn_connect = ttk.Button(RECORDING, text ="Connect to obs",command=self.get_connection)
 
         self.btn_connect.grid(row = 0, column=4)
         
-        self.label, self.lp_options, self.lp_option_var= get_lets_play(self, self.lp_changed)
+        self.label, self.lp_options, self.lp_option_var= get_lets_play(RECORDING, self.lp_changed)
+        
+        # Information
+        self.recording_information_label = ttk.Label(INFORMATION, text ="No Connection",font=Font(W,size=12))
+
+        self.recording_information_label.grid(row = 0, column = 1)
+        
+        # Packing
+        recording_header.pack(pady=10)
+        RECORDING.pack()
+        
+        information_header.pack(pady=10)
+        INFORMATION.pack()
+        
+        W.grid(row=0,column=1)
+
+        # Disable connect button
         self.btn_connect.state(["disabled"])
         
-        #TODO
-        #! Show selected Lets Play
-        #! Show current Episode
-        
-        self.menu = get_menu(self, controller)
     def lp_changed(self,*args):
         self.btn_connect.state(["!disabled"])
     def get_connection(self):
