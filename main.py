@@ -1,5 +1,5 @@
 from bin.automations import *
-from bin.constants import DISCLAIMER
+from bin.constants import DISCLAIMER, __LICENSE__
 from bin.data_access import on_start, LetsPlays, SQLAccess
 from threading import Thread
 from os.path import getsize
@@ -74,7 +74,7 @@ def get_menu(parent,controller) -> ttk.Frame:
     
     [obj.pack(fill="x") for i, obj in enumerate(_ret)]# Sets the position on frame for all btns
     
-    MENU.grid(column=0,row=0,sticky='W')
+    MENU.grid(column=0,row=0,sticky='NW')
     
     return _ret
 
@@ -628,6 +628,10 @@ class About(tk.Frame):
         # Create Headers
         ABOUT = ttk.Frame(W)
         about_header = ttk.Label(W,text='Settings',font=Font(W,size=16))
+        
+        label = ttk.Label(ABOUT, text = __LICENSE__)
+
+        label.grid(row = 0, column = 1, padx = 10, pady = 10)
         
         # Packing
         about_header.pack(pady=10)
