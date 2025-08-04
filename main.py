@@ -466,7 +466,7 @@ class FileManager(tk.Frame):
         ok = msgbox.askyesno('Attention','You are trying to delete all files in the selected lets play & \nthe lets play itself!\nThis step is irreversible!\nContinue?')
         if not ok: return
         if self.delete_lp_option.get():
-            for ep in SQLAccess.read_all_episodes():
+            for ep in SQLAccess.read_all_episodes():#BUG
                 
                 for file in [
                     ep.video_path,
@@ -477,7 +477,8 @@ class FileManager(tk.Frame):
                     ep.audio_mic_path,
                     ep.final_video_path
                     ]:
-                    try_delete_file(file)
+                    #try_delete_file(file)
+                    print(ep.lpid, ep.id, )
         change_states(self.menu,'disabled')
         SQLAccess.delete_letsplay(SQLAccess.get_lp_names().index(self.lp_option_var.get()))
         msgbox.showinfo('Success', 'Lets Play deleted\nYou must restart the app!')
@@ -530,7 +531,7 @@ class FileManager(tk.Frame):
         print(SQLAccess.get_lp_names().index(self.simdel_lp_option_var.get()),self.simdel_lp_option_var.get())
         episodes = SQLAccess.read_episodes(lpid)
 
-        for i in range(*self.rng):
+        for i in range(*self.rng): #! Test first
             ep = episodes[i]
             for file in [
                     ep.video_path,
@@ -541,8 +542,8 @@ class FileManager(tk.Frame):
                     ep.audio_mic_path,
                     ep.final_video_path
                     ]:
-                
-                try_delete_file(file)
+                print(ep.lpid)
+                #try_delete_file(file)
     @property
     def rng(self) -> list:
         a,b = int(self.epstart_option_var.get())-1, int(self.epend_option_var.get())
