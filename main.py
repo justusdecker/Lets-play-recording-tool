@@ -153,28 +153,41 @@ class Main(tk.Frame):
         get_menu(self, controller)
 
 class AutomationFrame(tk.Frame):
-    def __init__(self, parent, controller): 
+    def __init__(self, parent, controller,name: str): 
         tk.Frame.__init__(self, parent)
         self.should_not_reset = False
         self.thread = None
         self.automation_callback = None
         
         self.pb = ttk.Progressbar(self)
-        self.pb.grid(sticky='N',row = 0, column = 2)
+        self.pb.grid(sticky='SE',row = 0, column = 2)
+        
+        
+        W = ttk.Frame(self)
+        self.menu = get_menu(self, controller)
+        
+        # Create Headers
+        THUMBNAIL_AUTOMATION = ttk.Frame(W)
+        thumbnail_automation_header = ttk.Label(W,text=name,font=Font(W,size=16))
 
-        self.label, self.lp_options, self.lp_option_var= get_lets_play(self, self.lp_changed)
+        self.THUMBNAIL_AUTOMATION = THUMBNAIL_AUTOMATION
+        
+        self.label, self.lp_options, self.lp_option_var= get_lets_play(THUMBNAIL_AUTOMATION, self.lp_changed)
         
         
         self.update_ui()
         
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,self.epnums)
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(THUMBNAIL_AUTOMATION,self.run,self.check_last_id,self.epnums)
         
-        self.menu = get_menu(self, controller)
+        
+        thumbnail_automation_header.pack(pady=10)
+        THUMBNAIL_AUTOMATION.pack()
+        
+        W.grid(row=0,column=1)
+        
     def update_ui(self):
         lp = self.lp_option_var.get()
         if lp != 'None':
-            
-            
             self.epnums = [i+1 for i in range(SQLAccess.get_episode_ammount(SQLAccess.get_lp_opvar(self)))]
         else:
             self.epnums = []
@@ -215,7 +228,7 @@ class AutomationFrame(tk.Frame):
         del self.epstart_option_var
         del self.epend_option_var
         
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,self.epnums)
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.THUMBNAIL_AUTOMATION,self.run,self.check_last_id,self.epnums)
         
     def check_last_id(self,*args):
         if int(self.epend_option_var.get()) < int(self.epstart_option_var.get()):
@@ -287,37 +300,37 @@ class Recording(tk.Frame):
             
 class ThumbnailGenerate(AutomationFrame):
      def __init__(self, parent, controller):
-        super().__init__(parent, controller)
+        super().__init__(parent, controller,'Thumbnail Generator')
         self.automation_callback = GenerateThumbnailWF
         
 class SetTitle(AutomationFrame):
      def __init__(self, parent, controller):
         
-        super().__init__(parent, controller)
+        super().__init__(parent, controller,'Set Title')
         self.should_not_reset = True
         self.automation_callback = TitleSetWF
     
 class FetchAudio(AutomationFrame):
     def __init__(self, parent, controller):
-        super().__init__(parent, controller)
+        super().__init__(parent, controller,'Fetch Audio')
         self.automation_callback = ExtractAudioWF
 class FixAudio(AutomationFrame):
     def __init__(self, parent, controller):
-        super().__init__(parent, controller)
+        super().__init__(parent, controller, 'Fix Audio')
         self.automation_callback = FixAudioWF
 class Send2Audacity(AutomationFrame):
     def __init__(self, parent, controller):
-        super().__init__(parent, controller)
+        super().__init__(parent, controller, 'Send2Audacity')
         self.automation_callback = SendToAudacityWF
 
 class CompAndRender(AutomationFrame):
     def __init__(self, parent, controller):
-        super().__init__(parent, controller)
+        super().__init__(parent, controller,'Compare & Render')
         self.automation_callback = CompareAndRenderWF
     
 class Deploy(AutomationFrame):
     def __init__(self, parent, controller):
-        super().__init__(parent, controller)
+        super().__init__(parent, controller, 'Deploy')
         self.automation_callback = DeployWF
 
 class FileManager(tk.Frame):
