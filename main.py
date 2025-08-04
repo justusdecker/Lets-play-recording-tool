@@ -155,6 +155,8 @@ class Main(tk.Frame):
         MAIN = ttk.Frame(W)
         main_header = ttk.Label(W,text='MAIN',font=Font(W,size=16))
         
+        
+        
         label = ttk.Label(MAIN, text =DISCLAIMER)
 
         label.grid(row = 0, column = 1, padx = 10, pady = 10)
@@ -633,6 +635,15 @@ class About(tk.Frame):
 
         label.grid(row = 0, column = 1, padx = 10, pady = 10)
         
+        scrollbar = ttk.Scrollbar(W,orient='vertical')
+        scrollbar.pack(side=tk.RIGHT,fill=tk.Y)
+        
+        ABOUT.bind(
+            "<Configure>",
+            lambda e: W.configure(
+                scrollregion=W.bbox("all")
+            )
+        )
         # Packing
         about_header.pack(pady=10)
         ABOUT.pack()
