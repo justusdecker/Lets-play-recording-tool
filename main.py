@@ -637,7 +637,8 @@ class About(tk.Frame):
 
         
         html_frame = HtmlFrame(SETTINGS,horizontal_scrollbar=False)
-        html_frame.load_html('static\\README\\setup.html')
+        from os import getcwd
+        html_frame.load_file(f'{getcwd()}\\output.html')
         html_frame.grid(row=0)
         W.grid(row=0,column=1)
 
