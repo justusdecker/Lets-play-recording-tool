@@ -176,8 +176,10 @@ class AutomationFrame(tk.Frame):
         self.thread = None
         self.automation_callback = None
         
-        self.pb = ttk.Progressbar(self)
-        self.pb.grid(sticky='SE',row = 0, column = 2)
+        self.progress_label = ttk.Label(self,)
+        self.progress_label.grid(sticky='SE',row = 0, column = 2)
+        
+        
         
         
         W = ttk.Frame(self)
@@ -638,17 +640,12 @@ class About(tk.Frame):
         scrollbar = ttk.Scrollbar(W,orient='vertical')
         scrollbar.pack(side=tk.RIGHT,fill=tk.Y)
         
-        ABOUT.bind(
-            "<Configure>",
-            lambda e: W.configure(
-                scrollregion=W.bbox("all")
-            )
-        )
         # Packing
         about_header.pack(pady=10)
         ABOUT.pack()
         
         W.grid(row=0,column=1)
+    
 
         
 APP = TkinterApp()

@@ -127,10 +127,12 @@ class GenerateThumbnailWF(GenericWorkFlow):
             return
         check_all = msgbox.askyesno('LPRT Thumbnail Check','Do you want to check every image?')
         episodes = SQLAccess.read_episodes(self.lpid)
-        for i in range(*self.rng): 
+        r = range(*self.rng)
+        for i in r: 
             video_path = episodes[i].video_path
             p = f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
             ok = False
+            
             while not ok:
                 TG.generate(
                             str(i+1),
@@ -143,7 +145,10 @@ class GenerateThumbnailWF(GenericWorkFlow):
                     ok = msgbox.askyesno('LPRT Result Check','Thumbnail Result Okay?')
                 else:
                     ok = True
+            app.progress_label.configure(text = f'{((i+1)/len(r))*100:.1f}%\n{i+1}/{len(r)}')
+
             SQLAccess.update_episodes(self.lpid, i,thumbnail_path=p)
+        app.reset_progressbar()
         app.start_btn.state(['!disabled'])
         super().user_workflow()
 
@@ -185,14 +190,16 @@ class ExtractAudioWF(GenericWorkFlow):
         and calls the parent `user_workflow` to display the completion message.
         """
         episodes = SQLAccess.read_episodes(self.lpid)
-        for i in range(*self.rng): 
+        r = range(*self.rng)
+        for i in r: 
             video_path = episodes[i].video_path
                        
             t1_path, t2_path = f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_track_mic.aac',f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_track_desktop.aac'
             
             ffmpeg_run(FFMPEG_OPTIMIZED_EXTRACT,{'__IN__':video_path,'__OUT1__':t1_path, '__OUT2__':t2_path})
             
-            app.pb.step((1 / (self.rng[1] + 1))*100)
+            app.progress_label.configure(text = f'{((i+1)/len(r))*100:.1f}%\n{i+1}/{len(r)}')
+            
             SQLAccess.update_episodes(self.lpid,i, audio_mic_path=t1_path, audio_desktop_path=t2_path)
 
         app.start_btn.state(['!disabled'])
@@ -242,7 +249,8 @@ class FixAudioWF(GenericWorkFlow):
         and calls the parent `user_workflow` to display the completion message.
         """
         episodes = SQLAccess.read_episodes(self.lpid)
-        for i in range(*self.rng): 
+        r = range(*self.rng)
+        for i in r: 
             audio_mic_path = episodes[i].audio_mic_path
             # Filters
             # - Lowpass
@@ -254,7 +262,7 @@ class FixAudioWF(GenericWorkFlow):
             cnef(TEMP_FOLDER)
             
             ffmpeg_run(FFMPEG_AUDIO_PF_LN_L,{'__IN__': audio_mic_path,'__OUT__':dest})
-            app.pb.step((1 / (self.rng[1] + 1))*100)
+            app.progress_label.configure(text = f'{((i+1)/len(r))*100:.1f}%\n{i+1}/{len(r)}')
             SQLAccess.update_episodes(self.lpid, i, audio_mic_path=dest)
 
         app.start_btn.state(['!disabled'])
@@ -324,17 +332,19 @@ class SendToAudacityWF(GenericWorkFlow):
             app.start_btn.state(['!disabled'])
             return
         ui = msgbox.askyesno('LPRT to AC','Do you want to send data to Audacity?')
-        all_eps = len(range(*self.rng))
+        r = range(*self.rng)
+        all_eps = len(r)
         if ui:
             episodes = SQLAccess.read_episodes(self.lpid)
             
-            for i in range(*self.rng):
+        
+            for i in r:
                 filepath = episodes[i].audio_mic_path
                 if do_command(f'Import2: filename="{filepath}"') is None:
                     msgbox.showerror('ERROR','Audacity is not reachable!')
                     app.start_btn.state(['!disabled'])
                     return
-                app.pb.step((1 / (self.rng[1] + 1))*100)
+                app.progress_label.configure(text = f'{((i+1)/len(r))*100:.1f}%\n{i+1}/{len(r)}')
                 #! The Noise Reduction is not automated
                 # do_command from the audacity pipeline
         print('test')
@@ -457,7 +467,6 @@ class CompareAndRenderWF(GenericWorkFlow):
                     '__OUTPUT__': final_path
                 }
             )
-            app.pb.step((1 / (self.rng[1] + 1))*100)
             SQLAccess.update_episodes(self.lpid, index, final_video_path=final_path)
         super().user_workflow()
         
