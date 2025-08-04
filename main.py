@@ -36,7 +36,7 @@ class TkinterApp(tk.Tk):
         self.geometry('800x600')
         # initializing frames to an empty array
         self.frames = {}
-        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender,SetTitle,Deploy, FileManager, Settings):
+        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender,SetTitle,Deploy, FileManager, Settings, About):
  
             frame = F(container, self)
             
@@ -66,7 +66,8 @@ def get_menu(parent,controller) -> ttk.Frame:
         ("SetTitle", lambda : controller.show_frame(SetTitle)),
         ("Deploy", lambda : controller.show_frame(Deploy)),
         ("FileManager", lambda : controller.show_frame(FileManager)),
-        ("Settings", lambda : controller.show_frame(Settings))
+        ("Settings", lambda : controller.show_frame(Settings)),
+        ("About", lambda : controller.show_frame(About))
     ]
     
     _ret = [ttk.Button(MENU, text =obj[0], command = obj[1]) for obj in BUILDER]# create btns based on BUILDER
@@ -610,12 +611,34 @@ class Settings(tk.Frame):
         SETTINGS = ttk.Frame(W)
         settings_header = ttk.Label(W,text='Settings',font=Font(W,size=16))
         
-
-        
         # Packing
         settings_header.pack(pady=10)
         SETTINGS.pack()
 
+        W.grid(row=0,column=1)
+        
+class About(tk.Frame):
+    def __init__(self, parent, controller): 
+        tk.Frame.__init__(self, parent)
+        
+        W = ttk.Frame(self)
+        
+        self.menu = get_menu(self, controller)
+        
+        # Create Headers
+        SETTINGS = ttk.Frame(W)
+        settings_header = ttk.Label(W,text='Settings',font=Font(W,size=16))
+        
+        # Packing
+        settings_header.pack(pady=10)
+        SETTINGS.pack()
+        
+        from tkinterweb import HtmlFrame
+
+        
+        html_frame = HtmlFrame(W,horizontal_scrollbar=False)
+        html_frame.load_website('https://github.com/justusdecker/Lets-play-recording-tool/wiki')
+        html_frame.pack()
         W.grid(row=0,column=1)
 
         
