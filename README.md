@@ -5,10 +5,11 @@ You can get the current state [here](https://github.com/justusdecker/Lets-play-r
 > 
 > Some bugs can lead to data loss. **BE CAREFUL!**
 
-> [!IMPORTANT]
-> All of the programs are needed to make LPRT fully function!
+
 
 # Setup
+> [!IMPORTANT]
+> All of the programs are needed to make LPRT fully function!
 ## Connecting LPRT to OBS
 ### Installation
 
