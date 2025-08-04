@@ -626,20 +626,13 @@ class About(tk.Frame):
         self.menu = get_menu(self, controller)
         
         # Create Headers
-        SETTINGS = ttk.Frame(W)
-        settings_header = ttk.Label(W,text='Settings',font=Font(W,size=16))
+        ABOUT = ttk.Frame(W)
+        about_header = ttk.Label(W,text='Settings',font=Font(W,size=16))
         
         # Packing
-        settings_header.pack(pady=10)
-        SETTINGS.pack()
+        about_header.pack(pady=10)
+        ABOUT.pack()
         
-        from tkinterweb import HtmlFrame
-
-        
-        html_frame = HtmlFrame(SETTINGS,horizontal_scrollbar=False)
-        from os import getcwd
-        html_frame.load_file(f'{getcwd()}\\output.html')
-        html_frame.grid(row=0)
         W.grid(row=0,column=1)
 
         
