@@ -227,9 +227,14 @@ class Recording(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
         self.thread = None
-        self.label1 = ttk.Label(self, text ="No Connection", font = LARGEFONT)
+        W = ttk.Frame(self)
+        
+        RECORDING = ttk.Frame(W)
+        recording_header = ttk.Label(W,text='Recording',font=Font(W,size=16))
+        
+        self.recording_information_label = ttk.Label(self, text ="No Connection", font = LARGEFONT)
 
-        self.label1.grid(row = 0, column = 3)
+        self.recording_information_label.grid(row = 0, column = 3)
         
         self.btn_connect = ttk.Button(self, text ="Connect to obs",command=self.get_connection)
 
