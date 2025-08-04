@@ -636,9 +636,9 @@ class About(tk.Frame):
         from tkinterweb import HtmlFrame
 
         
-        html_frame = HtmlFrame(W,horizontal_scrollbar=False)
-        html_frame.load_website('https://github.com/justusdecker/Lets-play-recording-tool/wiki')
-        html_frame.pack()
+        html_frame = HtmlFrame(SETTINGS,horizontal_scrollbar=False)
+        html_frame.load_html('static\\README\\setup.html')
+        html_frame.grid(row=0)
         W.grid(row=0,column=1)
 
         
