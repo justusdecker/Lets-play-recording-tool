@@ -36,7 +36,7 @@ class TkinterApp(tk.Tk):
         self.geometry('800x600')
         # initializing frames to an empty array
         self.frames = {}
-        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender,SetTitle,Deploy, FileManager, Settings):
+        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender,SetTitle,Deploy, FileManager, Settings, About):
  
             frame = F(container, self)
             
@@ -66,7 +66,8 @@ def get_menu(parent,controller) -> ttk.Frame:
         ("SetTitle", lambda : controller.show_frame(SetTitle)),
         ("Deploy", lambda : controller.show_frame(Deploy)),
         ("FileManager", lambda : controller.show_frame(FileManager)),
-        ("Settings", lambda : controller.show_frame(Settings))
+        ("Settings", lambda : controller.show_frame(Settings)),
+        ("About", lambda : controller.show_frame(About))
     ]
     
     _ret = [ttk.Button(MENU, text =obj[0], command = obj[1]) for obj in BUILDER]# create btns based on BUILDER
@@ -146,35 +147,66 @@ class Main(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
         
-        label = ttk.Label(self, text =DISCLAIMER)
+        W = ttk.Frame(self)
+        
+        self.menu = get_menu(self, controller)
+        
+        # Create Headers
+        MAIN = ttk.Frame(W)
+        main_header = ttk.Label(W,text='MAIN',font=Font(W,size=16))
+        
+        label = ttk.Label(MAIN, text =DISCLAIMER)
 
         label.grid(row = 0, column = 1, padx = 10, pady = 10)
+
+        # Packing
+        main_header.pack(pady=10)
+        MAIN.pack()
+
+        W.grid(row=0,column=1)
         
-        get_menu(self, controller)
+        
 
 class AutomationFrame(tk.Frame):
-    def __init__(self, parent, controller): 
+    def __init__(self, parent, controller,name: str): 
         tk.Frame.__init__(self, parent)
         self.should_not_reset = False
         self.thread = None
         self.automation_callback = None
         
         self.pb = ttk.Progressbar(self)
-        self.pb.grid(sticky='N',row = 0, column = 2)
+        self.pb.grid(sticky='SE',row = 0, column = 2)
+        
+        
+        W = ttk.Frame(self)
+        self.menu = get_menu(self, controller)
+        
+        # Create Headers
+        THUMBNAIL_AUTOMATION = ttk.Frame(W)
+        thumbnail_automation_header = ttk.Label(W,text=name,font=Font(W,size=16))
 
-        self.label, self.lp_options, self.lp_option_var= get_lets_play(self, self.lp_changed)
+        self.THUMBNAIL_AUTOMATION = THUMBNAIL_AUTOMATION
+        
+        self.label, self.lp_options, self.lp_option_var= get_lets_play(THUMBNAIL_AUTOMATION, self.lp_changed)
         
         
         self.update_ui()
         
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,self.epnums)
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(THUMBNAIL_AUTOMATION,self.run,self.check_last_id,self.epnums)
         
-        self.menu = get_menu(self, controller)
+        
+        thumbnail_automation_header.pack(pady=10)
+        THUMBNAIL_AUTOMATION.pack()
+        
+        W.grid(row=0,column=1)
+    def reset_progressbar(self):
+        self.pb.destroy()
+        
+        self.pb = ttk.Progressbar(self)
+        self.pb.grid(sticky='SE',row = 0, column = 2)
     def update_ui(self):
         lp = self.lp_option_var.get()
         if lp != 'None':
-            
-            
             self.epnums = [i+1 for i in range(SQLAccess.get_episode_ammount(SQLAccess.get_lp_opvar(self)))]
         else:
             self.epnums = []
@@ -215,7 +247,7 @@ class AutomationFrame(tk.Frame):
         del self.epstart_option_var
         del self.epend_option_var
         
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,self.epnums)
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.THUMBNAIL_AUTOMATION,self.run,self.check_last_id,self.epnums)
         
     def check_last_id(self,*args):
         if int(self.epend_option_var.get()) < int(self.epstart_option_var.get()):
@@ -227,22 +259,41 @@ class Recording(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
         self.thread = None
-        self.label1 = ttk.Label(self, text ="No Connection", font = LARGEFONT)
-
-        self.label1.grid(row = 0, column = 3)
+        W = ttk.Frame(self)
         
-        self.btn_connect = ttk.Button(self, text ="Connect to obs",command=self.get_connection)
+        self.menu = get_menu(self, controller)
+        
+        # Create Headers
+        RECORDING = ttk.Frame(W)
+        recording_header = ttk.Label(W,text='Recording',font=Font(W,size=16))
+        
+        INFORMATION = ttk.Frame(W)
+        information_header = ttk.Label(W,text='Information',font=Font(W,size=16))
+        
+        # Recording
+        self.btn_connect = ttk.Button(RECORDING, text ="Connect to obs",command=self.get_connection)
 
         self.btn_connect.grid(row = 0, column=4)
         
-        self.label, self.lp_options, self.lp_option_var= get_lets_play(self, self.lp_changed)
+        self.label, self.lp_options, self.lp_option_var= get_lets_play(RECORDING, self.lp_changed)
+        
+        # Information
+        self.recording_information_label = ttk.Label(INFORMATION, text ="No Connection",font=Font(W,size=12))
+
+        self.recording_information_label.grid(row = 0, column = 1)
+        
+        # Packing
+        recording_header.pack(pady=10)
+        RECORDING.pack()
+        
+        information_header.pack(pady=10)
+        INFORMATION.pack()
+        
+        W.grid(row=0,column=1)
+
+        # Disable connect button
         self.btn_connect.state(["disabled"])
         
-        #TODO
-        #! Show selected Lets Play
-        #! Show current Episode
-        
-        self.menu = get_menu(self, controller)
     def lp_changed(self,*args):
         self.btn_connect.state(["!disabled"])
     def get_connection(self):
@@ -268,37 +319,37 @@ class Recording(tk.Frame):
             
 class ThumbnailGenerate(AutomationFrame):
      def __init__(self, parent, controller):
-        super().__init__(parent, controller)
+        super().__init__(parent, controller,'Thumbnail Generator')
         self.automation_callback = GenerateThumbnailWF
         
 class SetTitle(AutomationFrame):
      def __init__(self, parent, controller):
         
-        super().__init__(parent, controller)
+        super().__init__(parent, controller,'Set Title')
         self.should_not_reset = True
         self.automation_callback = TitleSetWF
     
 class FetchAudio(AutomationFrame):
     def __init__(self, parent, controller):
-        super().__init__(parent, controller)
+        super().__init__(parent, controller,'Fetch Audio')
         self.automation_callback = ExtractAudioWF
 class FixAudio(AutomationFrame):
     def __init__(self, parent, controller):
-        super().__init__(parent, controller)
+        super().__init__(parent, controller, 'Fix Audio')
         self.automation_callback = FixAudioWF
 class Send2Audacity(AutomationFrame):
     def __init__(self, parent, controller):
-        super().__init__(parent, controller)
+        super().__init__(parent, controller, 'Send2Audacity')
         self.automation_callback = SendToAudacityWF
 
 class CompAndRender(AutomationFrame):
     def __init__(self, parent, controller):
-        super().__init__(parent, controller)
+        super().__init__(parent, controller,'Compare & Render')
         self.automation_callback = CompareAndRenderWF
     
 class Deploy(AutomationFrame):
     def __init__(self, parent, controller):
-        super().__init__(parent, controller)
+        super().__init__(parent, controller, 'Deploy')
         self.automation_callback = DeployWF
 
 class FileManager(tk.Frame):
@@ -466,7 +517,7 @@ class FileManager(tk.Frame):
         ok = msgbox.askyesno('Attention','You are trying to delete all files in the selected lets play & \nthe lets play itself!\nThis step is irreversible!\nContinue?')
         if not ok: return
         if self.delete_lp_option.get():
-            for ep in SQLAccess.read_all_episodes():
+            for ep in SQLAccess.read_all_episodes():#BUG
                 
                 for file in [
                     ep.video_path,
@@ -477,7 +528,8 @@ class FileManager(tk.Frame):
                     ep.audio_mic_path,
                     ep.final_video_path
                     ]:
-                    try_delete_file(file)
+                    #try_delete_file(file)
+                    print(ep.lpid, ep.id, )
         change_states(self.menu,'disabled')
         SQLAccess.delete_letsplay(SQLAccess.get_lp_names().index(self.lp_option_var.get()))
         msgbox.showinfo('Success', 'Lets Play deleted\nYou must restart the app!')
@@ -530,7 +582,7 @@ class FileManager(tk.Frame):
         print(SQLAccess.get_lp_names().index(self.simdel_lp_option_var.get()),self.simdel_lp_option_var.get())
         episodes = SQLAccess.read_episodes(lpid)
 
-        for i in range(*self.rng):
+        for i in range(*self.rng): #! Test first
             ep = episodes[i]
             for file in [
                     ep.video_path,
@@ -541,8 +593,8 @@ class FileManager(tk.Frame):
                     ep.audio_mic_path,
                     ep.final_video_path
                     ]:
-                
-                try_delete_file(file)
+                print(ep.lpid)
+                #try_delete_file(file)
     @property
     def rng(self) -> list:
         a,b = int(self.epstart_option_var.get())-1, int(self.epend_option_var.get())
@@ -551,57 +603,46 @@ class Settings(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
         
-        #label = ttk.Label(self, text ="Nothing here currently", font = LARGEFONT)
-
-        #label.grid(row = 0, column = 1, padx = 10, pady = 10) 
-
+        W = ttk.Frame(self)
+        
         self.menu = get_menu(self, controller)
         
+        # Create Headers
+        SETTINGS = ttk.Frame(W)
+        settings_header = ttk.Label(W,text='Settings',font=Font(W,size=16))
         
+        # Packing
+        settings_header.pack(pady=10)
+        SETTINGS.pack()
+
+        W.grid(row=0,column=1)
         
-        self.label, self.lp_options, self.lp_option_var= get_lets_play(self, self.something_changed_delete)
-        self.btn_delete = ttk.Button(self,text='delete',command=self.delete_lets_play)
-        self.btn_delete.grid(row=0,column=3)
+class About(tk.Frame):
+    def __init__(self, parent, controller): 
+        tk.Frame.__init__(self, parent)
         
-        self.name_var = tk.StringVar()
-        self.game_name_var = tk.StringVar()
-        self.episode_length_var = tk.StringVar()
-        new_label = ttk.Label(self,text='Create a new Lets Play')
-        new_label.grid(row=2,column=1)
-        name = ttk.Entry(self,textvariable=self.name_var)
-        game_name = ttk.Entry(self,textvariable=self.game_name_var)
-        episode_length = ttk.OptionMenu(self,self.episode_length_var,'None',*[f'{i} Minutes' for i in range(10,65,5)],command=self.something_changed)
-        name.grid(row = 2, column = 2)
-        name.bind('<KeyPress>',self.something_changed)
-        game_name.bind('<KeyPress>',self.something_changed)
-        game_name.grid(row = 2, column = 3)
-        episode_length.grid(row=2,column=4)
-        self.btn_create = ttk.Button(self,text='create',command=self.create_lets_play)
-        self.btn_create.grid(row=2,column=5)
-        self.btn_create.state(['disabled'])
-    def something_changed_delete(self, *args):
-        if self.lp_option_var.get() != 'None':
-            self.btn_create.state(['!disabled'])
-        else:
-            self.btn_create.state(['disabled'])
-    def something_changed(self,*args):
-        if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.get_lp_names():
-            self.btn_create.state(['!disabled'])
-            
-        else:
-            self.btn_create.state(['disabled'])
-    def create_lets_play(self,*args):
-        if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.get_lp_names():
-            change_states(self.menu,'disabled')
-            SQLAccess.create_letsplay(self.name_var.get(), self.game_name_var.get(),int(self.episode_length_var.get().split(' ')[0])*60)
-            msgbox.showinfo('Success', 'Lets Play created\nYou must restart the app!')
-            exit()
-    
-    def delete_lets_play(self,*args):
-        change_states(self.menu,'disabled')
-        SQLAccess.delete_letsplay(SQLAccess.get_lp_names().index(self.lp_option_var.get()))
-        msgbox.showinfo('Success', 'Lets Play deleted\nYou must restart the app!')
-        exit()
+        W = ttk.Frame(self)
+        
+        self.menu = get_menu(self, controller)
+        
+        # Create Headers
+        SETTINGS = ttk.Frame(W)
+        settings_header = ttk.Label(W,text='Settings',font=Font(W,size=16))
+        
+        # Packing
+        settings_header.pack(pady=10)
+        SETTINGS.pack()
+        
+        from tkinterweb import HtmlFrame
+
+        
+        html_frame = HtmlFrame(SETTINGS,horizontal_scrollbar=False)
+        from os import getcwd
+        html_frame.load_file(f'{getcwd()}\\output.html')
+        html_frame.grid(row=0)
+        W.grid(row=0,column=1)
+
+        
 APP = TkinterApp()
 APP.mainloop()
 
