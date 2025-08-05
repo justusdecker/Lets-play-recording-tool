@@ -30,6 +30,18 @@ FLAGS = Enum('Flags',
                  'TYPE_OTHER'
                  ]
              )
+def reoc(cond: bool,msg: str) -> None:
+    """ raise_error_on_condition """
+    if cond: raise AutomationError(msg)
+    
+class AutomationError(Exception):
+	"""
+	If this error is thrown. The user has done some bullshit, in most cases:
+    The user forgot to do a earlier automation or deleted some files.
+    In rare cases the programmer has done something wrong here!
+    This Exception should be catched, so the user can get a simple error message,
+    without throwing too much code in between the automations that makes it nearly unreadable.
+ 	"""
 
 DEFAULT_OBS_SETTINGS = {
     "ip": "",
@@ -102,6 +114,7 @@ ERROR_010 = f'[E010] FFMPEG is not installed. {exp}'
 ERROR_011 = f'[E011] FFPLAY is not installed. {exp}'
 ERROR_012 = f'[E012] FFPROBE is not installed. {exp}'
 ERROR_013 = f'[E013] File not set. {ewf}'
+ERROR_014 = f'[E014] FFMPEG File creation error! {ewf}'
 
 __LICENSE__ = """
                     GNU GENERAL PUBLIC LICENSE

@@ -113,6 +113,7 @@ class GenerateThumbnailWF(GenericWorkFlow):
         self.user_workflow(app)
         
     def user_workflow(self, app):
+        
         TG = ThumbnailGenerator()
         TP = ThumbnailPreview()
         tad = SQLAccess.get_tad_path(self.lpid)
@@ -189,21 +190,34 @@ class ExtractAudioWF(GenericWorkFlow):
         After processing all episodes, it re-enables the application's start button
         and calls the parent `user_workflow` to display the completion message.
         """
-        episodes = SQLAccess.read_episodes(self.lpid)
-        r = range(*self.rng)
-        for i in r: 
-            video_path = episodes[i].video_path
-                       
-            t1_path, t2_path = f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_track_mic.aac',f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_track_desktop.aac'
-            
-            ffmpeg_run(FFMPEG_OPTIMIZED_EXTRACT,{'__IN__':video_path,'__OUT1__':t1_path, '__OUT2__':t2_path})
-            
-            app.progress_label.configure(text = f'{((i+1)/len(r))*100:.1f}%\n{i+1}/{len(r)}')
-            
-            SQLAccess.update_episodes(self.lpid,i, audio_mic_path=t1_path, audio_desktop_path=t2_path)
+        try:
+            episodes = SQLAccess.read_episodes(self.lpid)
+            r = range(*self.rng)
+            for i in r: 
+                video_path = episodes[i].video_path
+                
+                prefix = f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_'
+                ff = '.aac'
+                mic_track_path = f'{prefix}mic{ff}'
+                desktop_track_path = f'{prefix}desktop{ff}'
+                
+                reoc(video_path is None, ERROR_013) # In case the database is corrupted or the video_file was not set!
+                
+                reoc(not isfile(video_path), ERROR_007) # In case the video_file is not existing
+                
+                ffmpeg_run(FFMPEG_OPTIMIZED_EXTRACT,{'__IN__':video_path,'__OUT1__':mic_track_path, '__OUT2__':desktop_track_path})
+                
+                reoc(not isfile(mic_track_path) or not isfile(desktop_track_path), ERROR_014) # In case ffmpeg did not create the files
+                
+                app.progress_label.configure(text = f'{((i+1)/len(r))*100:.1f}%\n{i+1}/{len(r)}')
+                
+                SQLAccess.update_episodes(self.lpid,i, audio_mic_path=mic_track_path, audio_desktop_path=desktop_track_path)
 
+            
+            super().user_workflow()
+        except AutomationError as AE:
+            msgbox.showerror('Automation Error',str(AE))
         app.start_btn.state(['!disabled'])
-        super().user_workflow()
 
 class FixAudioWF(GenericWorkFlow):
     """
