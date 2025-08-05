@@ -167,6 +167,7 @@ class ExtractAudioWF(GenericWorkFlow):
         After that the corresponding error message will be displayed.
         """
         try:
+            cnef(AUDIO_FOLDER)
             episodes = SQLAccess.read_episodes(self.lpid)
             rng = range(*self.rng)
             for ci,i in enumerate(rng):
@@ -221,6 +222,7 @@ class FixAudioWF(GenericWorkFlow):
         within the defined episode range.
         """
         try:
+            cnef(FIXED_AUDIO_FOLDER)
             episodes = SQLAccess.read_episodes(self.lpid)
             rng = range(*self.rng)
             for ci, i in enumerate(rng): 
@@ -232,7 +234,7 @@ class FixAudioWF(GenericWorkFlow):
                 
                 reoc(not isfile(audio_mic_path), ERROR_007) # In case the audio_mic_path is not existing
                 
-                cnef(TEMP_FOLDER)
+                rie(audio_mic_edit1_path)
                 
                 ffmpeg_run(FFMPEG_AUDIO_PF_LN_L,{'__IN__': audio_mic_path,'__OUT__':audio_mic_edit1_path})
                 
@@ -362,12 +364,14 @@ class CompareAndRenderWF(GenericWorkFlow):
                 pass
             result = volap.audio_list
             
-            
+            cnef(TEMP_FOLDER)
             
             ci = 0
             for i, mic, desk, vid, vol in result:
                 tmp_audio_path = f'{TEMP_FOLDER}temp_{i+1}_audio_final.mp3'
-
+                
+                rie(tmp_audio_path)
+                
                 ffmpeg_run(
                     FFMPEG_AUDIO_COMBINE,
                     {
@@ -378,6 +382,9 @@ class CompareAndRenderWF(GenericWorkFlow):
                         '__OUT__':tmp_audio_path
                         }
                     )
+                
+                reoc(not isfile(tmp_audio_path))
+                
                 app.progress_label.configure(text = f'Audio Combine\n{((ci+1)/len(result))*100:.1f}%\n{ci+1}/{len(result)}')
                 ci += 1
                 rendering_queue.append((vid, tmp_audio_path, i))
