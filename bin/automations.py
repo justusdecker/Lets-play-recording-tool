@@ -192,7 +192,6 @@ class ExtractAudioWF(GenericWorkFlow):
                 app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
                 
                 SQLAccess.update_episodes(self.lpid,i, audio_mic_path=mic_track_path, audio_desktop_path=desktop_track_path) # Saves the updated episode metadata.
-                ci += 1
             super().user_workflow()
         except AutomationError as AE:
             msgbox.showerror('Automation Error',str(AE))
@@ -221,16 +220,23 @@ class FixAudioWF(GenericWorkFlow):
         try:
             episodes = SQLAccess.read_episodes(self.lpid)
             rng = range(*self.rng)
-            for i in rng: 
+            for ci, i in enumerate(rng): 
                 audio_mic_path = episodes[i].audio_mic_path
                 
-                dest = f'{FIXED_AUDIO_FOLDER}{i+1}_{self.lp_name}_track_mic_fixed.aac'
+                audio_mic_edit1_path = f'{FIXED_AUDIO_FOLDER}{i+1}_{self.lp_name}_track_mic_fixed.aac'
+                
+                reoc(audio_mic_path is None, ERROR_013) # In case the database is corrupted or the audio_mic_path was not set!
+                
+                reoc(not isfile(audio_mic_path), ERROR_007) # In case the audio_mic_path is not existing
                 
                 cnef(TEMP_FOLDER)
                 
-                ffmpeg_run(FFMPEG_AUDIO_PF_LN_L,{'__IN__': audio_mic_path,'__OUT__':dest})
-                app.progress_label.configure(text = f'{((i+1)/len(rng))*100:.1f}%\n{i+1}/{len(rng)}')
-                SQLAccess.update_episodes(self.lpid, i, audio_mic_edit1_path=dest)
+                ffmpeg_run(FFMPEG_AUDIO_PF_LN_L,{'__IN__': audio_mic_path,'__OUT__':audio_mic_edit1_path})
+                
+                reoc(not isfile(audio_mic_edit1_path), ERROR_014) # In case ffmpeg did not create the file
+                
+                app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
+                SQLAccess.update_episodes(self.lpid, i, audio_mic_edit1_path=audio_mic_edit1_path)
             
             super().user_workflow()
         except AutomationError as AE:
