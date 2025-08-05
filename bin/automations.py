@@ -178,6 +178,17 @@ class ExtractAudioWF(GenericWorkFlow):
                 ff = '.aac'
                 mic_track_path = f'{prefix}mic{ff}'
                 desktop_track_path = f'{prefix}desktop{ff}'
+                ffmpeg_stream_ammount = ffmpeg_run(FFMPEG_GET_STREAM_AMMOUNT,{'__IN__':video_path},True).strip()
+                reoc(not ffmpeg_stream_ammount.isdecimal(),'Something went wrong.\nThis error should not happen!\nFFPROBE HAS GIVEN BACK A NOT NUMERIC STRING')
+                
+                # We only do a soft edge case test here!
+                # This is not very accurate. The user can use 2 video tracks or a subtitle track and the result can / will be correct.
+                # In this case we dont need to worry about this case. 
+                # The user has been warned to use 2 audio / 1 video track in the documentation.
+                reoc(int(ffmpeg_stream_ammount) < 3)
+                
+                print(f'"{ffmpeg_stream_ammount}"')
+                
                 
                 reoc(video_path is None, ERROR_013) # In case the database is corrupted or the video_file was not set!
                 
