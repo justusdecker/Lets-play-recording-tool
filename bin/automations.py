@@ -381,6 +381,15 @@ class CompareAndRenderWF(GenericWorkFlow):
             episodes = SQLAccess.read_episodes(self.lpid)
             from bin.data_access import Episodes
             episodes : list[Episodes]
+            
+            reoc(episodes[i].audio_mic_edit2_path is None)
+            reoc(episodes[i].audio_desktop_path is None)
+            reoc(episodes[i].video_path is None)
+            
+            reoc(not isfile(episodes[i].audio_mic_edit2_path))
+            reoc(not isfile(episodes[i].audio_desktop_path))
+            reoc(not isfile(episodes[i].video_path))
+            
             paths = [[i, episodes[i].audio_mic_edit2_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*self.rng)]
 
             volap = AudioPlayer(paths)
@@ -421,6 +430,7 @@ class CompareAndRenderWF(GenericWorkFlow):
             ci = 0
             for video, audio, index in rendering_queue:
                 final_path = f'{VIDEO_FOLDER}{index+1}{path_ending}'
+                rie(final_path)
                 ffmpeg_run(
                     FFMPEG_VIDEO_RENDER,
                     {
@@ -429,6 +439,7 @@ class CompareAndRenderWF(GenericWorkFlow):
                         '__OUTPUT__': final_path
                     }
                 )
+                reoc(not isfile(final_path))
                 app.progress_label.configure(text = f'Audio Combine\n{((ci+1)/len(result))*100:.1f}%\n{ci+1}/{len(result)}')
                 ci += 1
                 SQLAccess.update_episodes(self.lpid, index, final_video_path=final_path)
