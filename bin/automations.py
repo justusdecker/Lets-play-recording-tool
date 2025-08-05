@@ -110,46 +110,52 @@ class GenerateThumbnailWF(GenericWorkFlow):
         self.user_workflow(app)
         
     def user_workflow(self, app):
-        
-        TG = ThumbnailGenerator()
-        TP = ThumbnailPreview()
-        tad = SQLAccess.get_tad_path(self.lpid)
-        print(tad)
-        if not tad:
-            showerror('ERROR' ,ERROR_009)
-            app.start_btn.state(['!disabled'])
-            return
-        if not isfile(TAD_FOLDER + tad):
-            showerror('ERROR' ,ERROR_007 + '\nTAD Path does not exist!')
-            app.start_btn.state(['!disabled'])
-            return
-        check_all = msgbox.askyesno('LPRT Thumbnail Check','Do you want to check every image?')
-        episodes = SQLAccess.read_episodes(self.lpid)
-        r = range(*self.rng)
-        for i in r: 
-            video_path = episodes[i].video_path
-            p = f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
-            ok = False
+        try:
+            TG = ThumbnailGenerator()
+            TP = ThumbnailPreview()
+            tad = SQLAccess.get_tad_path(self.lpid)
             
-            while not ok:
-                TG.generate(
-                            str(i+1),
-                            video_path,
-                            tad,
-                            p
-                            )
-                TP.update_image(p,i)
-                if check_all:
-                    ok = msgbox.askyesno('LPRT Result Check','Thumbnail Result Okay?')
-                else:
-                    ok = True
-            app.progress_label.configure(text = f'{((i+1)/len(r))*100:.1f}%\n{i+1}/{len(r)}')
+            reoc(not tad, ERROR_009)
+            reoc(not isfile(TAD_FOLDER + tad),ERROR_007 + '\nTAD Path does not exist!')
 
-            SQLAccess.update_episodes(self.lpid, i,thumbnail_path=p)
-        
+            check_all = msgbox.askyesno('LPRT Thumbnail Check','Do you want to check every image?')
+            episodes = SQLAccess.read_episodes(self.lpid)
+            r = range(*self.rng)
+            for i in r: 
+                video_path = episodes[i].video_path
+                reoc(video_path is None,ERROR_013)
+                reoc(not isfile(video_path), ERROR_007)
+                
+                
+                p = f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
+                
+                rie(p)
+                
+                ok = False
+                
+                while not ok:
+                    TG.generate(
+                                str(i+1),
+                                video_path,
+                                tad,
+                                p
+                                )
+                    TP.update_image(p,i)
+                    if check_all:
+                        ok = msgbox.askyesno('LPRT Result Check','Thumbnail Result Okay?')
+                    else:
+                        ok = True
+                app.progress_label.configure(text = f'{((i+1)/len(r))*100:.1f}%\n{i+1}/{len(r)}')
+
+                SQLAccess.update_episodes(self.lpid, i,thumbnail_path=p)
+
+            super().user_workflow()
+        except AutomationError as AE:
+            msgbox.showerror('Automation Error',str(AE))
+        # After processing all episodes, we re-enabling the application's start button
+        # and calling the parent `user_workflow` to display the completion message.
+        # It does not matter whether the automation was completed or canceled.
         app.start_btn.state(['!disabled'])
-        super().user_workflow()
-
 class ExtractAudioWF(GenericWorkFlow):
     """
     A workflow class designed to extract audio tracks from video files for a

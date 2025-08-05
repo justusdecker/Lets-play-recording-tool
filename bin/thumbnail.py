@@ -23,9 +23,9 @@ from random import random as rnd, randint as ri
 
 from os.path import isfile
 
-from bin.data_access import json_read
+from bin.data_access import json_read,rie
 from pygame.image import save as img_save, load as img_load
-from bin.constants import DEFAULT_THUMBNAIL_SIZE, TAD_FOLDER, TEMP_FOLDER
+from bin.constants import DEFAULT_THUMBNAIL_SIZE, TAD_FOLDER, TEMP_FOLDER,reoc
 from bin.ffmpeg import ffmpeg_run, FFMPEG_GET_FRAME, FFMPEG_GET_LENGTH
 from pygame.font import Font, init, get_default_font
 init()
@@ -39,7 +39,9 @@ def get_time_va(filepath: str):
 
 def get_thumbnail(filepath: str) -> Surface:
     t = rnd() * get_time_va(filepath)
+    rie(f'{TEMP_FOLDER}temp.png')
     ffmpeg_run(FFMPEG_GET_FRAME,{'__IN__': filepath, '__TIME__': t})
+    reoc(not isfile(f'{TEMP_FOLDER}temp.png'))
     return img_load(f'{TEMP_FOLDER}temp.png')
 
 
