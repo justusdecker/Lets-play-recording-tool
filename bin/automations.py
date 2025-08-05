@@ -172,8 +172,7 @@ class ExtractAudioWF(GenericWorkFlow):
         try:
             episodes = SQLAccess.read_episodes(self.lpid)
             rng = range(*self.rng)
-            ci = 0
-            for i in rng:
+            for ci,i in enumerate(rng):
                 
                 video_path = episodes[i].video_path
                 
