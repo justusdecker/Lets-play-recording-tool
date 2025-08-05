@@ -1,6 +1,6 @@
 from bin.automations import *
 from bin.constants import DISCLAIMER, __LICENSE__
-from bin.data_access import on_start, LetsPlays, SQLAccess
+from bin.data_access import on_start, LetsPlays, SQLAccess, json_write, json_read
 from threading import Thread
 from os.path import getsize
 import tkinter as tk
@@ -653,13 +653,70 @@ class Settings(tk.Frame):
         
         # Create Headers
         SETTINGS = ttk.Frame(W)
-        settings_header = ttk.Label(W,text='Settings',font=Font(W,size=16))
+        settings_header = ttk.Label(W,text='OBS Settings',font=Font(W,size=16))
+        
+        self.IP = tk.StringVar()
+        self.PORT = tk.StringVar()
+        self.PW = tk.StringVar()
+        self.PW_TOGGLE = tk.IntVar()
+        
+        obs_ip_label = ttk.Label(SETTINGS,text='IP:')
+        self.obs_ip = ttk.Entry(SETTINGS,textvariable=self.IP)
+        
+        obs_port_label = ttk.Label(SETTINGS,text='Port:')
+        self.obs_port = ttk.Entry(SETTINGS,textvariable=self.PORT)
+        
+        obs_password_label = ttk.Label(SETTINGS,text='Password:')
+        self.obs_password = ttk.Entry(SETTINGS,show='*',textvariable=self.PW)
+        
+        self.obs_ip.bind('<KeyPress>',self.obs_something_changed)
+        self.obs_port.bind('<KeyPress>',self.obs_something_changed)
+        self.obs_password.bind('<KeyPress>',self.obs_something_changed)
+        
+        self.set_settings_obs_btn = ttk.Button(SETTINGS,text='Set',command=self.set_obs_settings)
+        
+        self.show_pw = ttk.Checkbutton(SETTINGS,variable=self.PW_TOGGLE,command=self.toggle_pw_view)
+        
+        obs_ip_label.grid(row=0,column=0)
+        self.obs_ip.grid(row=0,column=1)
+        obs_port_label.grid(row=0,column=2)
+        self.obs_port.grid(row=0,column=3)
+        obs_password_label.grid(row=0,column=4)
+        self.obs_password.grid(row=0,column=5)
+        self.show_pw.grid(row=0,column=6)
+        self.set_settings_obs_btn.grid(row=0,column=7)
+        
+        if isfile(ROOT+'obs_settings.json'):
+            OBS_SETTINGS = json_read(ROOT+'obs_settings.json')
+            self.IP.set(OBS_SETTINGS['ip'])
+            self.PORT.set(OBS_SETTINGS['port'])
+            self.PW.set(OBS_SETTINGS['pw'])
+        self.obs_something_changed()
         
         # Packing
         settings_header.pack(pady=10)
         SETTINGS.pack()
 
         W.grid(row=0,column=1)
+        
+    def toggle_pw_view(self,*args):
+        if self.PW_TOGGLE.get():
+            self.obs_password.configure(show="")
+        else:
+            self.obs_password.configure(show="*")
+    def obs_something_changed(self,*args):
+        if self.PW.get() and self.PORT.get() and self.IP.get():
+            self.set_settings_obs_btn.state(['!disabled'])
+        else:
+            self.set_settings_obs_btn.state(['disabled'])
+    def set_obs_settings(self,*args):
+        print('Updated OBS Settings')
+        
+        NEW_OBS_SETTINGS = {key: DEFAULT_OBS_SETTINGS[key] for key in DEFAULT_OBS_SETTINGS}
+        NEW_OBS_SETTINGS['ip'] = self.IP.get()
+        NEW_OBS_SETTINGS['port'] = self.PORT.get()
+        NEW_OBS_SETTINGS['pw'] = self.PW.get()
+        json_write(ROOT+'obs_settings.json',NEW_OBS_SETTINGS)
         
 class About(tk.Frame):
     def __init__(self, parent, controller): 
