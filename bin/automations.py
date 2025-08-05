@@ -263,7 +263,7 @@ class FixAudioWF(GenericWorkFlow):
             
             ffmpeg_run(FFMPEG_AUDIO_PF_LN_L,{'__IN__': audio_mic_path,'__OUT__':dest})
             app.progress_label.configure(text = f'{((i+1)/len(r))*100:.1f}%\n{i+1}/{len(r)}')
-            SQLAccess.update_episodes(self.lpid, i, audio_mic_path=dest)
+            SQLAccess.update_episodes(self.lpid, i, audio_mic_edit1_path=dest)
 
         app.start_btn.state(['!disabled'])
         super().user_workflow()
@@ -339,7 +339,7 @@ class SendToAudacityWF(GenericWorkFlow):
             
         
             for i in r:
-                filepath = episodes[i].audio_mic_path
+                filepath = episodes[i].audio_mic_edit1_path
                 if do_command(f'Import2: filename="{filepath}"') is None:
                     msgbox.showerror('ERROR','Audacity is not reachable!')
                     app.start_btn.state(['!disabled'])
