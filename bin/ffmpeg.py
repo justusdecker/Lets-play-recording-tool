@@ -90,8 +90,9 @@ FFMPEG_GET_FRAME = [*FFMPEG_DEFAULT, '-ss', '__TIME__', '-i', '__IN__', '-frames
 # - '-show_entries stream=duration': Shows only the duration entry for the stream.
 # - '-of default=noprint_wrappers=1:nokey=1': Formats the output to show only the value (duration) without keys or wrappers.
 # - '__IN__': Placeholder for the input video file path.
-FFMPEG_GET_LENGTH = ['ffprobe', '-v', 'error', '-select_streams', 'a:0','-show_entries', 'stream=duration', '-of', 'default=noprint_wrappers=1:nokey=1', '__IN__']
+FFMPEG_GET_LENGTH = ['ffprobe', '-v', 'error', '-select_streams', 'a:0','-show_entries', 'stream=duration', '-of', 'default=noprint_wrappers=1:nokey=1','-sexagesimal', '__IN__']
 
+FFMPEG_GET_STREAM_AMMOUNT = ['ffprobe', '-v', 'error','format=nb_streams','-of','default=noprint_wrappers=1:nokey=1','__IN__']
 
 def ffmpeg_exists() -> bool:
     """
