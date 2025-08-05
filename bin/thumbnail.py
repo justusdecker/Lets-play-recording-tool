@@ -5,12 +5,12 @@ __version__ = "0.5.10"
 __maintainer__ = "Justus Decker"
 __email__ = "justus.d2025@gmail.com"
 __status__ = "Production"
-
+from bin.constants import *
 try: #Fix for issue: #126
     from numpy import rot90
 except:
     from tkinter.messagebox import showerror
-    from bin.constants import ERROR_008
+    
     
     showerror('ERROR', ERROR_008 + '\nnumpy')
     quit()
@@ -25,7 +25,6 @@ from os.path import isfile
 
 from bin.data_access import json_read,rie
 from pygame.image import save as img_save, load as img_load
-from bin.constants import DEFAULT_THUMBNAIL_SIZE, TAD_FOLDER, TEMP_FOLDER,reoc
 from bin.ffmpeg import ffmpeg_run, FFMPEG_GET_FRAME, FFMPEG_GET_LENGTH
 from pygame.font import Font, init, get_default_font
 init()
@@ -34,14 +33,15 @@ def get_time_va(filepath: str):
     time_or_error = ffmpeg_run(FFMPEG_GET_LENGTH,{'__IN__':filepath},True)
     try:
         return float(time_or_error.replace('\n',''))
-    except :
+    except Exception as E:
+        print(E)
         return None
 
 def get_thumbnail(filepath: str) -> Surface:
     t = rnd() * get_time_va(filepath)
     rie(f'{TEMP_FOLDER}temp.png')
     ffmpeg_run(FFMPEG_GET_FRAME,{'__IN__': filepath, '__TIME__': t})
-    reoc(not isfile(f'{TEMP_FOLDER}temp.png'))
+    reoc(not isfile(f'{TEMP_FOLDER}temp.png'),ERROR_007)
     return img_load(f'{TEMP_FOLDER}temp.png')
 
 

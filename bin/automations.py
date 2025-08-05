@@ -120,8 +120,8 @@ class GenerateThumbnailWF(GenericWorkFlow):
 
             check_all = msgbox.askyesno('LPRT Thumbnail Check','Do you want to check every image?')
             episodes = SQLAccess.read_episodes(self.lpid)
-            r = range(*self.rng)
-            for i in r: 
+            rng = range(*self.rng)
+            for ci,i in enumerate(rng): 
                 video_path = episodes[i].video_path
                 reoc(video_path is None,ERROR_013)
                 reoc(not isfile(video_path), ERROR_007)
@@ -145,7 +145,7 @@ class GenerateThumbnailWF(GenericWorkFlow):
                         ok = msgbox.askyesno('LPRT Result Check','Thumbnail Result Okay?')
                     else:
                         ok = True
-                app.progress_label.configure(text = f'{((i+1)/len(r))*100:.1f}%\n{i+1}/{len(r)}')
+                app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
 
                 SQLAccess.update_episodes(self.lpid, i,thumbnail_path=p)
 
