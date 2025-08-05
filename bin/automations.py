@@ -157,43 +157,24 @@ class ExtractAudioWF(GenericWorkFlow):
     """
     A workflow class designed to extract audio tracks from video files for a
     given "LetsPlay" episode range.
-
-    This class extends `GenericWorkFlow` and specializes in automating the
-    process of extracting microphone and desktop audio tracks from video files,
-    saving them to a specified audio folder, and updating the episode's
-    metadata with the paths to the extracted audio files. It also provides
-    progress updates via an application's progress bar.
     """
     def __init__(self,lpid,epr,app):
-        """
-        This constructor calls the parent `GenericWorkFlow`'s constructor,
-        setting up the audio extraction folder and a finish message.
-        It then immediately initiates the audio extraction process by calling
-        its own `user_workflow` method, passing the application instance for
-        progress updates.
-        """
         super().__init__(folder=AUDIO_FOLDER, finish_message='Audio extraction finished',lpid=lpid,epr=epr)
         self.user_workflow(app)
     def user_workflow(self,app):
         """
         Executes the audio extraction process for each episode within the
         defined range.
-
-        For each episode:
-        1. Retrieves the video path.
-        2. Defines output paths for microphone and desktop audio tracks.
-        3. Uses `ffmpeg_run` to extract both audio tracks from the video.
-        4. Updates the application's progress bar.
-        5. Stores the paths of the extracted audio files in the episode's metadata.
-        6. Saves the updated episode metadata.
-
-        After processing all episodes, it re-enables the application's start button
-        and calls the parent `user_workflow` to display the completion message.
+        
+        If the user has done something wrong. A AutomationError will be thrown & catched. 
+        After that the corresponding error message will be displayed.
         """
         try:
             episodes = SQLAccess.read_episodes(self.lpid)
             rng = range(*self.rng)
-            for i in rng: 
+            ci = 0
+            for i in rng:
+                
                 video_path = episodes[i].video_path
                 
                 prefix = f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_'
@@ -205,39 +186,31 @@ class ExtractAudioWF(GenericWorkFlow):
                 
                 reoc(not isfile(video_path), ERROR_007) # In case the video_file is not existing
                 
-                ffmpeg_run(FFMPEG_OPTIMIZED_EXTRACT,{'__IN__':video_path,'__OUT1__':mic_track_path, '__OUT2__':desktop_track_path})
+                ffmpeg_run(FFMPEG_OPTIMIZED_EXTRACT,{'__IN__':video_path,'__OUT1__':mic_track_path, '__OUT2__':desktop_track_path}) # Uses `ffmpeg_run` to extract both audio tracks from the video.
                 
                 reoc(not isfile(mic_track_path) or not isfile(desktop_track_path), ERROR_014) # In case ffmpeg did not create the files
                 
-                app.progress_label.configure(text = f'{((i+1)/len(rng))*100:.1f}%\n{i+1}/{len(rng)}')
+                app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
                 
-                SQLAccess.update_episodes(self.lpid,i, audio_mic_path=mic_track_path, audio_desktop_path=desktop_track_path)
-
+                SQLAccess.update_episodes(self.lpid,i, audio_mic_path=mic_track_path, audio_desktop_path=desktop_track_path) # Saves the updated episode metadata.
+                ci += 1
             super().user_workflow()
         except AutomationError as AE:
             msgbox.showerror('Automation Error',str(AE))
+            
+        # After processing all episodes, we re-enabling the application's start button
+        # and calling the parent `user_workflow` to display the completion message.
+        # It does not matter whether the automation was completed or canceled.
         app.start_btn.state(['!disabled'])
 
 class FixAudioWF(GenericWorkFlow):
     """
     A workflow class designed to apply various audio processing filters to
     microphone audio tracks extracted from "LetsPlay" videos.
-
-    This class extends `GenericWorkFlow` and specializes in automating the
-    process of enhancing microphone audio quality by applying a sequence of
-    filters (Lowpass, Highpass, Loudness Normalize, Limiter). It saves the
-    processed audio to the `FIXED_AUDIO_FOLDER`, updates the episode's metadata
-    with the path to the fixed audio file, and provides progress updates
-    via an application's progress bar.
+    
+    Filters: (Lowpass, Highpass, Loudness Normalize)
     """
     def __init__(self,lpid, epr,app):
-        """
-        This constructor calls the parent `GenericWorkFlow`'s constructor,
-        setting up the fixed audio folder and a finish message.
-        It then immediately initiates the audio fixing process by calling
-        its own `user_workflow` method, passing the application instance for
-        progress updates.
-        """
         super().__init__(FIXED_AUDIO_FOLDER, 'Audio Fix', lpid, epr)
         self.user_workflow(app)
         
@@ -245,41 +218,28 @@ class FixAudioWF(GenericWorkFlow):
         """
         Executes the audio fixing process for each microphone audio track
         within the defined episode range.
-
-        For each episode:
-        1. Retrieves the path to the original microphone audio track.
-        2. Defines the destination path for the fixed audio file.
-        3. Ensures a temporary folder exists (`cnef` to create/ensure folder).
-        4. Uses `ffmpeg_run` to apply a predefined set of audio filters
-           (Lowpass, Highpass, Loudness Normalize, Limiter) to the microphone track.
-           (`FFMPEG_AUDIO_PF_LN_L` and `ffmpeg_run` are assumed external).
-        5. Updates the application's progress bar.
-        6. Stores the path of the fixed audio file in the episode's metadata
-           as `audio_mic_edit1_path`.
-        7. Saves the updated episode metadata.
-
-        After processing all episodes, it re-enables the application's start button
-        and calls the parent `user_workflow` to display the completion message.
         """
-        episodes = SQLAccess.read_episodes(self.lpid)
-        r = range(*self.rng)
-        for i in r: 
-            audio_mic_path = episodes[i].audio_mic_path
-            # Filters
-            # - Lowpass
-            # - Highpass
-            # - Loudness Normalize
-            # - Limiter
-            dest = f'{FIXED_AUDIO_FOLDER}{i+1}_{self.lp_name}_track_mic_fixed.aac'
+        try:
+            episodes = SQLAccess.read_episodes(self.lpid)
+            rng = range(*self.rng)
+            for i in rng: 
+                audio_mic_path = episodes[i].audio_mic_path
+                
+                dest = f'{FIXED_AUDIO_FOLDER}{i+1}_{self.lp_name}_track_mic_fixed.aac'
+                
+                cnef(TEMP_FOLDER)
+                
+                ffmpeg_run(FFMPEG_AUDIO_PF_LN_L,{'__IN__': audio_mic_path,'__OUT__':dest})
+                app.progress_label.configure(text = f'{((i+1)/len(rng))*100:.1f}%\n{i+1}/{len(rng)}')
+                SQLAccess.update_episodes(self.lpid, i, audio_mic_edit1_path=dest)
             
-            cnef(TEMP_FOLDER)
-            
-            ffmpeg_run(FFMPEG_AUDIO_PF_LN_L,{'__IN__': audio_mic_path,'__OUT__':dest})
-            app.progress_label.configure(text = f'{((i+1)/len(r))*100:.1f}%\n{i+1}/{len(r)}')
-            SQLAccess.update_episodes(self.lpid, i, audio_mic_edit1_path=dest)
-
+            super().user_workflow()
+        except AutomationError as AE:
+            msgbox.showerror('Automation Error',str(AE))
+        # After processing all episodes, we re-enabling the application's start button
+        # and calling the parent `user_workflow` to display the completion message.
+        # It does not matter whether the automation was completed or canceled.
         app.start_btn.state(['!disabled'])
-        super().user_workflow()
 
 class SendToAudacityWF(GenericWorkFlow):
     """
