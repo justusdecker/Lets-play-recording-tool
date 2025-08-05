@@ -11,14 +11,6 @@ LARGEFONT =("Verdana", 35)
 
 on_start()
 
-def restart_program():
-    """Restarts the current program.
-    Note: this function does not return. Any cleanup action (like
-    saving data) must be done before calling this function."""
-    global APP
-    APP.destroy()
-    APP = TkinterApp()
-
 def try_delete_file(filepath: str | None) -> bool:
     if filepath is not None:
         if isfile(filepath):
@@ -167,8 +159,6 @@ class Main(tk.Frame):
 
         W.grid(row=0,column=1)
         
-        
-
 class AutomationFrame(tk.Frame):
     def __init__(self, parent, controller,name: str): 
         tk.Frame.__init__(self, parent)
@@ -337,10 +327,12 @@ class FetchAudio(AutomationFrame):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,'Fetch Audio')
         self.automation_callback = ExtractAudioWF
+
 class FixAudio(AutomationFrame):
     def __init__(self, parent, controller):
         super().__init__(parent, controller, 'Fix Audio')
         self.automation_callback = FixAudioWF
+
 class Send2Audacity(AutomationFrame):
     def __init__(self, parent, controller):
         super().__init__(parent, controller, 'Send2Audacity')
@@ -455,6 +447,14 @@ class FileManager(tk.Frame):
         data_lp_create_header.pack(pady=10)
         LP_CREATE.pack()
         
+        BACKUP = ttk.Frame(W)
+        backup_header = ttk.Label(W,text='Lets Play Backup',font=Font(W,size=16))
+        
+        backup_btn = ttk.Button(BACKUP,text='Backup all')
+        backup_btn.grid(row=0)
+        
+        backup_header.pack(pady=10)
+        BACKUP.pack()
         
         W.grid(row=0,column=1)
     
@@ -603,6 +603,7 @@ class FileManager(tk.Frame):
     def rng(self) -> list:
         a,b = int(self.epstart_option_var.get())-1, int(self.epend_option_var.get())
         return a,b+(1 if a == b else 0)
+
 class Settings(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
