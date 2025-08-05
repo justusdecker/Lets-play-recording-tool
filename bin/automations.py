@@ -148,7 +148,7 @@ class GenerateThumbnailWF(GenericWorkFlow):
             app.progress_label.configure(text = f'{((i+1)/len(r))*100:.1f}%\n{i+1}/{len(r)}')
 
             SQLAccess.update_episodes(self.lpid, i,thumbnail_path=p)
-        app.reset_progressbar()
+        
         app.start_btn.state(['!disabled'])
         super().user_workflow()
 
@@ -506,6 +506,7 @@ class DeployWF(GenericWorkFlow):
         for i in range(*self.rng):
             old_thumbnail_path = episodes[i].thumbnail_path
             new_thumbnail_path = old_thumbnail_path.replace('/','\\').split('\\')[-1]
+            #! MAY CRASH IF NO THUMBNAIL IS SET
             
             old_video_path = episodes[i].final_video_path
             new_video_path = old_video_path.replace('/','\\').split('\\')[-1]
