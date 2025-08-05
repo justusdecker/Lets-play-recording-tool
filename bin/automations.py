@@ -300,34 +300,14 @@ class SendToAudacityWF(GenericWorkFlow):
         Executes the process of sending audio to Audacity, handling user interaction,
         and processing exported results.
         
-        The workflow performs the following steps:
-        1. **Pipe Creation:** Attempts to create a pipe connection to Audacity. If it fails
-           (e.g., Audacity is not open or mod-pipe is not enabled), it displays an error
-           message and re-enables the start button.
-        2. **User Confirmation:** Prompts the user to confirm if they want to send data to Audacity.
-        3. **Audio Import (if confirmed):**
-           - Iterates through each episode in the defined range.
-           - Retrieves the path to the previously fixed microphone audio track (`audio_mic_edit1_path`).
-           - Sends an "Import2" command to Audacity to import the audio file.
-           - Handles errors if Audacity is not reachable during import.
-           - Updates the application's progress bar.
-           - **Note:** The Noise Reduction step is explicitly mentioned as not automated
-             and requires manual intervention in Audacity.
-        4. **Import Completion Toast:** Displays a "Finished Importing" toast message.
-        5. **Exported Results Handling:**
-           - Prompts the user to select a directory where Audacity's exported files are located.
-           - Validates if the number of exported files matches the number of episodes. If not,
-             it displays an error.
-           - Iterates through the exported files:
-             - Extracts the episode number from the filename.
-             - Converts the exported audio file to AAC format using `ffmpeg_run`
-               (`FFMPEG_CONVERT_AUDIO_TYPE` is assumed external).
-             - Updates the episode's metadata with the path to the newly converted AAC file
-               as `audio_mic_edit2_path`.
-             - Saves the updated episode metadata.
-        6. **Finalization:** Re-enables the application's start button and calls the
-           parent `user_workflow` to display the overall completion message.
+        - Prompts the user to select a directory where Audacity's exported files are located.
+        - Validates if the number of exported files matches the number of episodes. If not,
+    
+        If the user has done something wrong. A AutomationError will be thrown & catched. 
+        After that the corresponding error message will be displayed.
         """
+        
+        
         try:
             create_pipe()
         except Exception as E:
@@ -335,41 +315,51 @@ class SendToAudacityWF(GenericWorkFlow):
             msgbox.showerror('ERROR','Did you open Audacity & enabled the mod-pipe?')
             app.start_btn.state(['!disabled'])
             return
-        ui = msgbox.askyesno('LPRT to AC','Do you want to send data to Audacity?')
-        r = range(*self.rng)
-        all_eps = len(r)
-        if ui:
-            episodes = SQLAccess.read_episodes(self.lpid)
-            
         
-            for i in r:
-                filepath = episodes[i].audio_mic_edit1_path
-                if do_command(f'Import2: filename="{filepath}"') is None:
-                    msgbox.showerror('ERROR','Audacity is not reachable!')
-                    app.start_btn.state(['!disabled'])
-                    return
-                app.progress_label.configure(text = f'{((i+1)/len(r))*100:.1f}%\n{i+1}/{len(r)}')
-                #! The Noise Reduction is not automated
-                # do_command from the audacity pipeline
-        print('test')
-        break_pipe()
-        toast_finished('Finished Importing')
-        results_path = askdirectory() + '/'
-        files = listdir(results_path)
-        print(all_eps , len(files))
-        if all_eps != len(files):
-            msgbox.showerror('ERROR','Did you miss some episodes?')
+        try:
+            ui = msgbox.askyesno('LPRT to AC','Do you want to send data to Audacity?')
+            r = range(*self.rng)
+            all_eps = len(r)
+            if ui:
+                episodes = SQLAccess.read_episodes(self.lpid)
+                
+            
+                for i in r:
+                    filepath = episodes[i].audio_mic_edit1_path
+                    if do_command(f'Import2: filename="{filepath}"') is None:
+                        msgbox.showerror('ERROR','Audacity is not reachable!')
+                        app.start_btn.state(['!disabled'])
+                        return
+                    app.progress_label.configure(text = f'{((i+1)/len(r))*100:.1f}%\n{i+1}/{len(r)}')
+            
+            toast_finished('Finished Importing')
+            results_path = askdirectory() + '/'
+            files = listdir(results_path)
+            print(all_eps , len(files))
+            if all_eps != len(files):
+                msgbox.showerror('ERROR','Did you miss some episodes?')
+                app.start_btn.state(['!disabled'])
+                return
+            for file in files:
+                ep = int(file.split('_-')[1].split('.')[0]) - 1
+                old = results_path + file
+                new = old.split('.')[0] + '.aac'
+                ffmpeg_run(FFMPEG_CONVERT_AUDIO_TYPE,{'__IN__': old, '__OUT__': new})
+                #remove()
+                SQLAccess.update_episodes(self.lpid,ep,audio_mic_edit2_path=new)
             app.start_btn.state(['!disabled'])
-            return
-        for file in files:
-            ep = int(file.split('_-')[1].split('.')[0]) - 1
-            old = results_path + file
-            new = old.split('.')[0] + '.aac'
-            ffmpeg_run(FFMPEG_CONVERT_AUDIO_TYPE,{'__IN__': old, '__OUT__': new})
-            #remove()
-            SQLAccess.update_episodes(self.lpid,ep,audio_mic_edit2_path=new)
+            super().user_workflow()
+        except AutomationError as AE:
+            msgbox.showerror('Automation Error',str(AE))
+            
+        # After processing all episodes, we re-enabling the application's start button
+        # and calling the parent `user_workflow` to display the completion message.
+        # It does not matter whether the automation was completed or canceled.
         app.start_btn.state(['!disabled'])
-        super().user_workflow()
+        try:
+            break_pipe()
+        except Exception as E:
+            pass
 
 class CompareAndRenderWF(GenericWorkFlow):
     """
@@ -475,11 +465,20 @@ class TitleSetWF(GenericWorkFlow):
         VideoPlayer([i + 1 for i in range(*self.rng)],self.lpid,app)
 
 class DeployWF(GenericWorkFlow):
+    """
+    Copies user generated data to user set destination...
+    """
 
     def __init__(self,lpid, epr,app):
         super().__init__(folder=TEMP_FOLDER, finish_message="CAAR",lpid=lpid, epr=epr)
         self.user_workflow(app)
     def user_workflow(self,app):
+        """
+        ...
+        
+        If the user has done something wrong. A AutomationError will be thrown & catched. 
+        After that the corresponding error message will be displayed.
+        """
         try:
             DEST = askdirectory()
             reoc(not DEST,ERROR_006)
