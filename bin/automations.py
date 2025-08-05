@@ -185,7 +185,7 @@ class ExtractAudioWF(GenericWorkFlow):
                 # This is not very accurate. The user can use 2 video tracks or a subtitle track and the result can / will be correct.
                 # In this case we dont need to worry about this case. 
                 # The user has been warned to use 2 audio / 1 video track in the documentation.
-                reoc(int(ffmpeg_stream_ammount) < 3)
+                reoc(int(ffmpeg_stream_ammount) < 3,'Not enough tracks to execute this automation!')
                 
                 print(f'"{ffmpeg_stream_ammount}"')
                 
