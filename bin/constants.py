@@ -1,7 +1,7 @@
 __author__ = "Justus Decker"
 __copyright__ = "(c) 2024 - 2025 , The LPRT Project"
 __credits__ = []
-__version__ = "0.10.114"
+__version__ = "0.14.20"
 __maintainer__ = "Justus Decker"
 __email__ = "justus.d2025@gmail.com"
 __status__ = "Testing"
@@ -81,6 +81,7 @@ TAD_FOLDER = f'{ROOT}tad\\'
 TEMP_FOLDER = f'{ROOT}temp\\'
 THUMBNAIL_FOLDER = f'{ROOT}thumbnails\\'
 FIXED_AUDIO_FOLDER = f'{ROOT}audio_fixed\\'
+BACKUP_FOLDER = f'{ROOT}backup\\'
 
 LETS_PLAY_FILE_PATH = f'{ROOT}lets_plays.csv'
 OBS_SETTINGS_PATH = f'{ROOT}obs_settings.json'

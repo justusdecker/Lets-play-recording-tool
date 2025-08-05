@@ -61,6 +61,7 @@ def on_start():
     cnef(VIDEO_FOLDER)
     cnef(TAD_FOLDER)
     cnef(TEMP_FOLDER)
+    cnef(BACKUP_FOLDER)
 
     if not isfile(OBS_SETTINGS_PATH):
         json_write(OBS_SETTINGS_PATH,DEFAULT_OBS_SETTINGS)

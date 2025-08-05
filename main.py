@@ -7,6 +7,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter.font import Font
 from os import remove
+from zipfile import ZipFile
 LARGEFONT =("Verdana", 35)
 
 on_start()
@@ -450,19 +451,55 @@ class FileManager(tk.Frame):
         BACKUP = ttk.Frame(W)
         backup_header = ttk.Label(W,text='Lets Play Backup',font=Font(W,size=16))
         
-        backup_btn = ttk.Button(BACKUP,text='Backup all')
-        backup_btn.grid(row=0)
+        self.backup_lp_label, self.backup_lp_options, self.backup_lp_option_var= get_lets_play(BACKUP, self.something_changed_backup)
+        
+        self.backup_btn = ttk.Button(BACKUP,text='Backup',command=self.create_video_backup)
+        self.backup_btn.grid(row=0,column=3)
+        self.backup_btn.state(['disabled']) 
         
         backup_header.pack(pady=10)
         BACKUP.pack()
         
         W.grid(row=0,column=1)
     
+    def create_video_backup(self,*args):
+        change_states(self.menu,'disabled')
+        lpid = SQLAccess.get_lp_names().index(self.backup_lp_option_var.get())
+        lpname = SQLAccess.get_lp_names()[lpid]
+        cnef(BACKUP_FOLDER)
+        ZIP = ZipFile(f'{BACKUP_FOLDER}{lpname}.7z','w',)
+        tad = SQLAccess.get_tad_path(lpid)
+        
+        if tad is not None:
+            if isfile(TAD_FOLDER+tad):
+                ZIP.write(TAD_FOLDER+tad,tad)
+        for ep in SQLAccess.read_episodes(lpid):#BUG
+                
+            for file in [
+                ep.video_path,
+                ep.final_video_path
+                ]:
+                
+                if file is not None:
+                    if isfile(file):
+                        print(file)
+                        ZIP.write(file,file.replace('\\','/').split('/')[-1])
+        change_states(self.menu,'!disabled')
+
+                
+        
+        
+        
+    
+    def something_changed_backup(self, *args):
+        if self.backup_lp_option_var.get() != 'None':
+            self.backup_btn.state(['!disabled'])
+        else:
+            self.backup_btn.state(['disabled']) 
+    
     def update_ui(self):
         lp = self.simdel_lp_option_var.get()
         if lp != 'None':
-            
-            
             self.epnums = [i+1 for i in range(SQLAccess.get_episode_ammount(SQLAccess.get_lp_names().index(self.simdel_lp_option_var.get())))]
         else:
             self.epnums = []
@@ -520,8 +557,9 @@ class FileManager(tk.Frame):
         
         ok = msgbox.askyesno('Attention','You are trying to delete all files in the selected lets play & \nthe lets play itself!\nThis step is irreversible!\nContinue?')
         if not ok: return
-        if self.delete_lp_option.get():
-            for ep in SQLAccess.read_all_episodes():#BUG
+        lpid = SQLAccess.get_lp_names().index(self.lp_option_var.get())
+        if self.delete_lp_option.get(lpid):
+            for ep in SQLAccess.read_episodes(lpid):#BUG
                 
                 for file in [
                     ep.video_path,
