@@ -25,6 +25,17 @@ from bin.player_video import VideoPlayer
 from bin.player_audio import AudioPlayer
 from bin.player_thumbnail import ThumbnailPreview
 
+from shutil import copyfile
+
+
+
+try:
+    from bin.jinja import deploy_render
+except:
+    from bin.constants import ERROR_008
+    showerror('ERROR', ERROR_008 + '\nJinja')
+    quit()
+
 try: #Fix for issue: #127
     from PIL import ImageTk, Image
 except:
@@ -469,58 +480,45 @@ class DeployWF(GenericWorkFlow):
         super().__init__(folder=TEMP_FOLDER, finish_message="CAAR",lpid=lpid, epr=epr)
         self.user_workflow(app)
     def user_workflow(self,app):
-        
-        from shutil import copyfile
-        from bin.jinja import deploy_render
-        
-        DEST = askdirectory()
-        if not DEST:
-            msgbox.showerror('Error',ERROR_006)
-            return
-        
-        print(self.rng)
-        ALL = []
-        episodes = SQLAccess.read_episodes(self.lpid)
+        try:
+            DEST = askdirectory()
+            reoc(not DEST,ERROR_006)
+            ALL = []
+            episodes = SQLAccess.read_episodes(self.lpid)
 
-        for i in range(*self.rng):
-            old_thumbnail_path = episodes[i].thumbnail_path
-            if old_thumbnail_path is None:
-                msgbox.showerror('Error',ERROR_013)
-                return
-            if not isfile(old_thumbnail_path):
-                msgbox.showerror('Error',ERROR_007)
-                return
-            new_thumbnail_path = old_thumbnail_path.replace('/','\\').split('\\')[-1]
-            #! MAY CRASH IF NO THUMBNAIL IS SET
-            
-            old_video_path = episodes[i].final_video_path
-            if old_video_path is None:
-                msgbox.showerror('Error',ERROR_013)
-                return
-            if not isfile(old_video_path):
-                msgbox.showerror('Error',ERROR_007)
-                return
-            
-            new_video_path = old_video_path.replace('/','\\').split('\\')[-1]
-            
-            description = SQLAccess.get_lp_description(self.lpid) #! This feature will be enhanced in 1.0
-            print(new_thumbnail_path,new_video_path)
-            try:
+            for i in range(*self.rng):
+                old_thumbnail_path = episodes[i].thumbnail_path
+                reoc(old_thumbnail_path is None,ERROR_013)
+                reoc(not isfile(old_thumbnail_path),ERROR_007)
+
+                new_thumbnail_path = old_thumbnail_path.replace('/','\\').split('\\')[-1]
+                
+                old_video_path = episodes[i].final_video_path
+                
+                reoc(old_video_path is None,ERROR_013)
+                reoc(not isfile(old_video_path),ERROR_007)
+                
+                new_video_path = old_video_path.replace('/','\\').split('\\')[-1]
+                
+                description = SQLAccess.get_lp_description(self.lpid) #! This feature will be enhanced in 1.0
+
                 copyfile(old_video_path,f'{DEST}\\{new_video_path}')
                 copyfile(old_thumbnail_path,f'{DEST}\\{new_thumbnail_path}')
-            except FileNotFoundError:
-                msgbox.showerror('Something went wrong!','Data does not exist')
-                return
-            except Exception:
-                msgbox.showerror('Something went wrong!','Unknown Error')
-                return
-            REP = {
-                "id": i,
-                "title": episodes[i].title,
-                "thumbnail_path": new_thumbnail_path,
-                "upload_at": ''
-                }
-            ALL.append(REP)
-        deploy_render(f'{DEST}\\view.html', episodes=ALL,title=self.lp_name,description=description)
-        copyfile('static\\style.css',f'{DEST}\\style.css')
-        super().user_workflow()
+
+                REP = {
+                    "id": i,
+                    "title": episodes[i].title,
+                    "thumbnail_path": new_thumbnail_path,
+                    "upload_at": ''
+                    }
+                ALL.append(REP)
+            deploy_render(f'{DEST}\\view.html', episodes=ALL,title=self.lp_name,description=description)
+            copyfile('static\\style.css',f'{DEST}\\style.css')
+            super().user_workflow()
+        except AutomationError as AE:
+            msgbox.showerror('Automation Error',str(AE))
+            
+        # After processing all episodes, we re-enabling the application's start button
+        # and calling the parent `user_workflow` to display the completion message.
+        # It does not matter whether the automation was completed or canceled.
+        app.start_btn.state(['!disabled'])
