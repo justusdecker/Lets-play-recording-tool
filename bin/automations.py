@@ -192,8 +192,8 @@ class ExtractAudioWF(GenericWorkFlow):
         """
         try:
             episodes = SQLAccess.read_episodes(self.lpid)
-            r = range(*self.rng)
-            for i in r: 
+            rng = range(*self.rng)
+            for i in rng: 
                 video_path = episodes[i].video_path
                 
                 prefix = f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_'
@@ -209,11 +209,10 @@ class ExtractAudioWF(GenericWorkFlow):
                 
                 reoc(not isfile(mic_track_path) or not isfile(desktop_track_path), ERROR_014) # In case ffmpeg did not create the files
                 
-                app.progress_label.configure(text = f'{((i+1)/len(r))*100:.1f}%\n{i+1}/{len(r)}')
+                app.progress_label.configure(text = f'{((i+1)/len(rng))*100:.1f}%\n{i+1}/{len(rng)}')
                 
                 SQLAccess.update_episodes(self.lpid,i, audio_mic_path=mic_track_path, audio_desktop_path=desktop_track_path)
 
-            
             super().user_workflow()
         except AutomationError as AE:
             msgbox.showerror('Automation Error',str(AE))
