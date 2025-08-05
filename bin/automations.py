@@ -388,12 +388,13 @@ class CompareAndRenderWF(GenericWorkFlow):
                 app.progress_label.configure(text = f'Audio Combine\n{((ci+1)/len(result))*100:.1f}%\n{ci+1}/{len(result)}')
                 ci += 1
                 rendering_queue.append((vid, tmp_audio_path, i))
-            toast_finished("[1/2] Audio combine")   
+            toast_finished("[1/2] Audio combine")
 
             
             
             path_ending = f'_{SQLAccess.get_lp_game_name(self.lpid)}_final.mp4'
             cnef(VIDEO_FOLDER)
+            ci = 0
             for video, audio, index in rendering_queue:
                 final_path = f'{VIDEO_FOLDER}{index+1}{path_ending}'
                 ffmpeg_run(
@@ -404,6 +405,8 @@ class CompareAndRenderWF(GenericWorkFlow):
                         '__OUTPUT__': final_path
                     }
                 )
+                app.progress_label.configure(text = f'Audio Combine\n{((ci+1)/len(result))*100:.1f}%\n{ci+1}/{len(result)}')
+                ci += 1
                 SQLAccess.update_episodes(self.lpid, index, final_video_path=final_path)
             super().user_workflow()
         except AutomationError as AE:
