@@ -446,7 +446,9 @@ class CompareAndRenderWF(GenericWorkFlow):
             super().user_workflow()
         except AutomationError as AE:
             msgbox.showerror('Automation Error',str(AE))
-        
+        # After processing all episodes, we re-enabling the application's start button
+        # and calling the parent `user_workflow` to display the completion message.
+        # It does not matter whether the automation was completed or canceled.
         app.start_btn.state(['!disabled'])
 
 class TitleSetWF(GenericWorkFlow):
@@ -464,7 +466,6 @@ class TitleSetWF(GenericWorkFlow):
 class DeployWF(GenericWorkFlow):
 
     def __init__(self,lpid, epr,app):
-
         super().__init__(folder=TEMP_FOLDER, finish_message="CAAR",lpid=lpid, epr=epr)
         self.user_workflow(app)
     def user_workflow(self,app):
