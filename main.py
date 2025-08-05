@@ -622,6 +622,9 @@ class Settings(tk.Frame):
 
         W.grid(row=0,column=1)
         
+        
+        
+
 class About(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
@@ -631,19 +634,24 @@ class About(tk.Frame):
         self.menu = get_menu(self, controller)
         
         # Create Headers
-        ABOUT = ttk.Frame(W)
-        about_header = ttk.Label(W,text='Settings',font=Font(W,size=16))
-        
-        label = ttk.Label(ABOUT, text = __LICENSE__)
-
-        label.grid(row = 0, column = 1, padx = 10, pady = 10)
+        LICENSE = ttk.Frame(W)
+        license_header = ttk.Label(W,text='License',font=Font(W,size=16))
         
         scrollbar = ttk.Scrollbar(W,orient='vertical')
         scrollbar.pack(side=tk.RIGHT,fill=tk.Y)
         
+        text = tk.Text(LICENSE, width = 80, height = 35, wrap = tk.NONE,
+                 yscrollcommand = scrollbar.set)
+        
+        for i in __LICENSE__.splitlines():
+            text.insert(tk.END, f'{i}\n')
+            
+        text.pack(side=tk.TOP, fill=tk.X)
+        scrollbar.config(command=text.yview)
+        
         # Packing
-        about_header.pack(pady=10)
-        ABOUT.pack()
+        license_header.pack(pady=10)
+        LICENSE.pack()
         
         W.grid(row=0,column=1)
     
