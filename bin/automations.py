@@ -318,35 +318,36 @@ class SendToAudacityWF(GenericWorkFlow):
         
         try:
             ui = msgbox.askyesno('LPRT to AC','Do you want to send data to Audacity?')
-            r = range(*self.rng)
-            all_eps = len(r)
+            rng = range(*self.rng)
+            all_eps = len(rng)
             if ui:
                 episodes = SQLAccess.read_episodes(self.lpid)
                 
-            
-                for i in r:
+                for ci, i in enumerate(rng):
                     filepath = episodes[i].audio_mic_edit1_path
-                    if do_command(f'Import2: filename="{filepath}"') is None:
-                        msgbox.showerror('ERROR','Audacity is not reachable!')
-                        app.start_btn.state(['!disabled'])
-                        return
-                    app.progress_label.configure(text = f'{((i+1)/len(r))*100:.1f}%\n{i+1}/{len(r)}')
+                    reoc(filepath is None,ERROR_013)
+                    reoc(not isfile(filepath), ERROR_007)
+                    reoc(do_command(f'Import2: filename="{filepath}"') is None,'Audacity is not reachable!')
+                    app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
             
             toast_finished('Finished Importing')
             results_path = askdirectory() + '/'
             files = listdir(results_path)
-            print(all_eps , len(files))
-            if all_eps != len(files):
-                msgbox.showerror('ERROR','Did you miss some episodes?')
-                app.start_btn.state(['!disabled'])
-                return
+            reoc(all_eps != len(files),'Did you miss some episodes?')
+            rng_list = list(rng)
             for file in files:
+                
+                reoc(not file.endswith('.ac3'),'Wrong file format!')
+                reoc('_-' not in file,'Wrong filename format!')
+                reoc(not file.split('_-')[1].isdecimal(),'Numbering is not correct!')
+                
                 ep = int(file.split('_-')[1].split('.')[0]) - 1
+                print(rng_list[ep])
                 old = results_path + file
                 new = old.split('.')[0] + '.aac'
                 ffmpeg_run(FFMPEG_CONVERT_AUDIO_TYPE,{'__IN__': old, '__OUT__': new})
                 #remove()
-                SQLAccess.update_episodes(self.lpid,ep,audio_mic_edit2_path=new)
+                SQLAccess.update_episodes(self.lpid,rng_list[ep],audio_mic_edit2_path=new)
             app.start_btn.state(['!disabled'])
             super().user_workflow()
         except AutomationError as AE:
