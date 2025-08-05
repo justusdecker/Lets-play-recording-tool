@@ -101,6 +101,7 @@ ERROR_009 = f"[E009] Something went wrong. No TAD found. {ewf}"
 ERROR_010 = f'[E010] FFMPEG is not installed. {exp}'
 ERROR_011 = f'[E011] FFPLAY is not installed. {exp}'
 ERROR_012 = f'[E012] FFPROBE is not installed. {exp}'
+ERROR_013 = f'[E013] File not set. {ewf}'
 
 __LICENSE__ = """
                     GNU GENERAL PUBLIC LICENSE

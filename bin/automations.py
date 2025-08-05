@@ -497,6 +497,7 @@ class DeployWF(GenericWorkFlow):
         
         DEST = askdirectory()
         if not DEST:
+            msgbox.showerror('Error',ERROR_006)
             return
         
         print(self.rng)
@@ -505,10 +506,23 @@ class DeployWF(GenericWorkFlow):
 
         for i in range(*self.rng):
             old_thumbnail_path = episodes[i].thumbnail_path
+            if old_thumbnail_path is None:
+                msgbox.showerror('Error',ERROR_013)
+                return
+            if not isfile(old_thumbnail_path):
+                msgbox.showerror('Error',ERROR_007)
+                return
             new_thumbnail_path = old_thumbnail_path.replace('/','\\').split('\\')[-1]
             #! MAY CRASH IF NO THUMBNAIL IS SET
             
             old_video_path = episodes[i].final_video_path
+            if old_video_path is None:
+                msgbox.showerror('Error',ERROR_013)
+                return
+            if not isfile(old_video_path):
+                msgbox.showerror('Error',ERROR_007)
+                return
+            
             new_video_path = old_video_path.replace('/','\\').split('\\')[-1]
             
             description = SQLAccess.get_lp_description(self.lpid) #! This feature will be enhanced in 1.0
