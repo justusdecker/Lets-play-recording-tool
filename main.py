@@ -622,9 +622,6 @@ class Settings(tk.Frame):
 
         W.grid(row=0,column=1)
         
-        
-        
-
 class About(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
@@ -640,7 +637,7 @@ class About(tk.Frame):
         scrollbar = ttk.Scrollbar(W,orient='vertical')
         scrollbar.pack(side=tk.RIGHT,fill=tk.Y)
         
-        text = tk.Text(LICENSE, width = 80, height = 35, wrap = tk.NONE,
+        text = tk.Text(LICENSE, width = 80, height = 25, wrap = tk.NONE,
                  yscrollcommand = scrollbar.set)
         
         for i in __LICENSE__.splitlines():
