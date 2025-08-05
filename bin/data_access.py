@@ -11,11 +11,16 @@ except:
 import json
 from bin.constants import *
 from os.path import isfile, isdir
-from os import mkdir
+from os import mkdir, remove
 
 DB_URL = f"sqlite:///{ROOT}lprt_data.db" # Define the database URL
 
 Base = declarative_base()
+
+def rie(filepath: str) -> None:
+    """ remove if exist """
+    if isfile(filepath):
+        remove(filepath)
 
 def file_read(filepath : str) -> str:
     """Reads the entire content of a text file into a single string."""

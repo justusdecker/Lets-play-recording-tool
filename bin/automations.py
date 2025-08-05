@@ -18,9 +18,6 @@ import tkinter.messagebox as msgbox
 from os import listdir
 from bin.constants import *
 
-from tkinter import Toplevel
-from tkinter.ttk import Label
-
 from bin.thumbnail import ThumbnailGenerator
 from tkinter.messagebox import showerror
 
@@ -35,7 +32,7 @@ except:
     showerror('ERROR', ERROR_008 + '\nPIL')
     quit()
 
-from bin.data_access import SQLAccess, cnef
+from bin.data_access import SQLAccess, cnef,rie
 
 from bin.constants import ERROR_007
    
@@ -185,6 +182,9 @@ class ExtractAudioWF(GenericWorkFlow):
                 
                 reoc(not isfile(video_path), ERROR_007) # In case the video_file is not existing
                 
+                rie(mic_track_path) # remove files to prevent false negative after ffmpeg_run
+                rie(desktop_track_path)
+                
                 ffmpeg_run(FFMPEG_OPTIMIZED_EXTRACT,{'__IN__':video_path,'__OUT1__':mic_track_path, '__OUT2__':desktop_track_path}) # Uses `ffmpeg_run` to extract both audio tracks from the video.
                 
                 reoc(not isfile(mic_track_path) or not isfile(desktop_track_path), ERROR_014) # In case ffmpeg did not create the files
@@ -207,6 +207,9 @@ class FixAudioWF(GenericWorkFlow):
     microphone audio tracks extracted from "LetsPlay" videos.
     
     Filters: (Lowpass, Highpass, Loudness Normalize)
+    
+    If the user has done something wrong. A AutomationError will be thrown & catched. 
+    After that the corresponding error message will be displayed.
     """
     def __init__(self,lpid, epr,app):
         super().__init__(FIXED_AUDIO_FOLDER, 'Audio Fix', lpid, epr)
@@ -251,22 +254,8 @@ class SendToAudacityWF(GenericWorkFlow):
     A workflow class designed to integrate with Audacity for further audio
     processing, specifically for importing fixed microphone audio tracks and
     then handling the exported results.
-
-    This class extends `GenericWorkFlow` and automates the process of:
-    1. Establishing a connection with Audacity via its mod-pipe.
-    2. Importing processed microphone audio tracks into Audacity.
-    3. Guiding the user through the export process in Audacity (manual step for Noise Reduction).
-    4. Converting the exported audio files to AAC format.
-    5. Updating the episode's metadata with the paths to the final processed audio files.
-    It also provides error handling and progress updates via an application's progress bar.
     """
     def __init__(self,lpid, epr,app):
-        """
-        This constructor calls the parent `GenericWorkFlow`'s constructor,
-        setting up a folder and a finish message. It then immediately initiates the Audacity
-        integration process by calling its own `user_workflow` method,
-        passing the application instance for UI and progress updates.
-        """
         super().__init__(folder = FIXED_AUDIO_FOLDER, finish_message = 'Audacity Send',lpid=lpid, epr=epr)
         self.user_workflow(app)
     def user_workflow(self, app):
@@ -351,104 +340,69 @@ class CompareAndRenderWF(GenericWorkFlow):
     levels for episodes, then combining these adjusted audio tracks with
     their respective video files to produce final rendered videos.
     
-    This class extends `GenericWorkFlow` and orchestrates the following:
-    1. Interactive audio volume adjustment using an `AudioPlayer` GUI.
-    2. Combining microphone and desktop audio tracks based on user-adjusted volumes.
-    3. Rendering the combined audio with the original video to create final video files.
-    4. Updating episode metadata with the paths to the final rendered videos.
-    It provides progress updates via an application's progress bar.
+    If the user has done something wrong. A AutomationError will be thrown & catched. 
+    After that the corresponding error message will be displayed.
     """
     def __init__(self,lpid, epr,app):
-        """
-        This constructor calls the parent `GenericWorkFlow`'s constructor,
-        setting up a temporary folder (`TEMP_FOLDER`) for intermediate files
-        and a finish message.
-        It then immediately initiates the comparison and rendering process by
-        calling its own `user_workflow` method, passing the application instance
-        for UI and progress updates.
-        """
         super().__init__(folder=TEMP_FOLDER, finish_message="CAAR",lpid=lpid, epr=epr)
         self.user_workflow(app)
     def user_workflow(self,app):
         """
         Executes the main logic for audio comparison, combination, and video rendering.
-
-        The workflow performs the following steps:
-        1.  **Audio Player Initialization:**
-            -   Prepares a list of audio and video paths for the `AudioPlayer`.
-            -   Launches an `AudioPlayer` instance, allowing the user to interactively
-                adjust the volume levels for each episode's desktop audio track relative
-                to the microphone track.
-            -   Pauses execution until the `AudioPlayer` window is closed by the user.
-            -   Retrieves the user-adjusted volume settings from the `AudioPlayer`.
-        2.  **Audio Combination:**
-            -   Initializes an empty `rendering_queue`.
-            -   Iterates through the results obtained from the `AudioPlayer` (episode index,
-                microphone path, desktop path, video path, adjusted desktop volume).
-            -   For each episode, it combines the microphone and desktop audio tracks
-                using `ffmpeg_run` and `FFMPEG_AUDIO_COMBINE`,
-                applying the user-adjusted desktop volume.
-            -   Saves the combined audio to a temporary MP3 file.
-            -   Adds the video path, temporary combined audio path, and episode index
-                to the `rendering_queue`.
-            -   Displays a toast message indicating audio combination is complete.
-        3.  **Video Rendering:**
-            -   Constructs a dynamic path ending for the final video files, incorporating
-                the game name from the "LetsPlay" ID.
-            -   Ensures the `VIDEO_FOLDER` exists (`cnef` to create/ensure folder).
-            -   Iterates through the `rendering_queue`.
-            -   For each item, it defines the `final_path` for the rendered video.
-            -   Uses `ffmpeg_run` and `FFMPEG_VIDEO_RENDER`
-                to combine the original video with the newly combined audio track.
-            -   Updates the application's progress bar.
-            -   Sets the path to the final rendered video in the episode's metadata.
-            -   Saves the updated episode metadata.
-        4.  **Finalization:** Calls the parent `user_workflow` to display the overall
-            completion message.
         """
-        rendering_queue = []
-        episodes = SQLAccess.read_episodes(self.lpid)
-        from bin.data_access import Episodes
-        episodes : list[Episodes]
-        paths = [[i, episodes[i].audio_mic_edit2_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*self.rng)]
+        try:
+            rendering_queue = []
+            episodes = SQLAccess.read_episodes(self.lpid)
+            from bin.data_access import Episodes
+            episodes : list[Episodes]
+            paths = [[i, episodes[i].audio_mic_edit2_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*self.rng)]
 
-        volap = AudioPlayer(paths)
-        while not volap.isfinished:
-            pass
-        result = volap.audio_list
-        
-        for i, mic, desk, vid, vol in result:
-            tmp_audio_path = f'{TEMP_FOLDER}temp_{i+1}_audio_final.mp3'
+            volap = AudioPlayer(paths)
+            while not volap.isfinished:
+                pass
+            result = volap.audio_list
+            
+            
+            
+            ci = 0
+            for i, mic, desk, vid, vol in result:
+                tmp_audio_path = f'{TEMP_FOLDER}temp_{i+1}_audio_final.mp3'
 
-            ffmpeg_run(
-                FFMPEG_AUDIO_COMBINE,
-                {
-                    '__IN1__':mic,
-                    '__IN2__': desk,
-                    '__VOLUME1__': str(1.0),
-                    '__VOLUME2__': str(vol),
-                    '__OUT__':tmp_audio_path
+                ffmpeg_run(
+                    FFMPEG_AUDIO_COMBINE,
+                    {
+                        '__IN1__':mic,
+                        '__IN2__': desk,
+                        '__VOLUME1__': str(1.0),
+                        '__VOLUME2__': str(vol),
+                        '__OUT__':tmp_audio_path
+                        }
+                    )
+                app.progress_label.configure(text = f'Audio Combine\n{((ci+1)/len(result))*100:.1f}%\n{ci+1}/{len(result)}')
+                ci += 1
+                rendering_queue.append((vid, tmp_audio_path, i))
+            toast_finished("[1/2] Audio combine")   
+
+            
+            
+            path_ending = f'_{SQLAccess.get_lp_game_name(self.lpid)}_final.mp4'
+            cnef(VIDEO_FOLDER)
+            for video, audio, index in rendering_queue:
+                final_path = f'{VIDEO_FOLDER}{index+1}{path_ending}'
+                ffmpeg_run(
+                    FFMPEG_VIDEO_RENDER,
+                    {
+                        '__VIDEO__': video,
+                        '__AUDIO__': audio,
+                        '__OUTPUT__': final_path
                     }
                 )
-            rendering_queue.append((vid, tmp_audio_path, i))
-        toast_finished("[1/2] Audio combine")   
-
-        path_ending = f'_{SQLAccess.get_lp_game_name(self.lpid)}_final.mp4'
-        cnef(VIDEO_FOLDER)
-        for video, audio, index in rendering_queue:
-            final_path = f'{VIDEO_FOLDER}{index+1}{path_ending}'
-            ffmpeg_run(
-                FFMPEG_VIDEO_RENDER,
-                {
-                    '__VIDEO__': video,
-                    '__AUDIO__': audio,
-                    '__OUTPUT__': final_path
-                }
-            )
-            SQLAccess.update_episodes(self.lpid, index, final_video_path=final_path)
-        super().user_workflow()
+                SQLAccess.update_episodes(self.lpid, index, final_video_path=final_path)
+            super().user_workflow()
+        except AutomationError as AE:
+            msgbox.showerror('Automation Error',str(AE))
         
-
+        app.start_btn.state(['!disabled'])
 
 class TitleSetWF(GenericWorkFlow):
 
