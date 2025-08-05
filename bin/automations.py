@@ -110,6 +110,12 @@ class GenerateThumbnailWF(GenericWorkFlow):
         self.user_workflow(app)
         
     def user_workflow(self, app):
+        """
+        Generates Thumbnails based on TAD.
+        
+        If the user has done something wrong. A AutomationError will be thrown & catched. 
+        After that the corresponding error message will be displayed.
+        """
         try:
             TG = ThumbnailGenerator()
             TP = ThumbnailPreview()
@@ -156,6 +162,7 @@ class GenerateThumbnailWF(GenericWorkFlow):
         # and calling the parent `user_workflow` to display the completion message.
         # It does not matter whether the automation was completed or canceled.
         app.start_btn.state(['!disabled'])
+
 class ExtractAudioWF(GenericWorkFlow):
     """
     A workflow class designed to extract audio tracks from video files for a
