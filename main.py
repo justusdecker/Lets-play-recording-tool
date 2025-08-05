@@ -558,7 +558,7 @@ class FileManager(tk.Frame):
         ok = msgbox.askyesno('Attention','You are trying to delete all files in the selected lets play & \nthe lets play itself!\nThis step is irreversible!\nContinue?')
         if not ok: return
         lpid = SQLAccess.get_lp_names().index(self.lp_option_var.get())
-        if self.delete_lp_option.get(lpid):
+        if self.delete_lp_option.get():
             for ep in SQLAccess.read_episodes(lpid):#BUG
                 
                 for file in [
@@ -570,10 +570,11 @@ class FileManager(tk.Frame):
                     ep.audio_mic_path,
                     ep.final_video_path
                     ]:
-                    #try_delete_file(file)
-                    print(ep.lpid, ep.id, )
+                    try_delete_file(file)
+                    #print(ep.lpid, ep.id, )
         change_states(self.menu,'disabled')
-        SQLAccess.delete_letsplay(SQLAccess.get_lp_names().index(self.lp_option_var.get()))
+        #! Deleting Lets Play 
+        #! SQLAccess.delete_letsplay(SQLAccess.get_lp_names().index(self.lp_option_var.get()))
         msgbox.showinfo('Success', 'Lets Play deleted\nYou must restart the app!')
         exit()
     
