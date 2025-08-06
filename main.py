@@ -29,7 +29,7 @@ class TkinterApp(tk.Tk):
         self.geometry('800x600')
         # initializing frames to an empty array
         self.frames = {}
-        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender,SetTitle,Deploy, FileManager, Settings, About):
+        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender,SetTitle,Deploy, TadEditor,FileManager, Settings, About):
  
             frame = F(container, self)
             
@@ -58,6 +58,7 @@ def get_menu(parent,controller) -> ttk.Frame:
         ("CompAndRender", lambda : controller.show_frame(CompAndRender)),
         ("SetTitle", lambda : controller.show_frame(SetTitle)),
         ("Deploy", lambda : controller.show_frame(Deploy)),
+        ("TadEditor", lambda : controller.show_frame(TadEditor)),
         ("FileManager", lambda : controller.show_frame(FileManager)),
         ("Settings", lambda : controller.show_frame(Settings)),
         ("About", lambda : controller.show_frame(About))
@@ -717,7 +718,42 @@ class Settings(tk.Frame):
         NEW_OBS_SETTINGS['port'] = self.PORT.get()
         NEW_OBS_SETTINGS['pw'] = self.PW.get()
         json_write(ROOT+'obs_settings.json',NEW_OBS_SETTINGS)
+
+class TadEditor(tk.Frame):
+    def __init__(self, parent, controller): 
+        tk.Frame.__init__(self, parent)
         
+        W = ttk.Frame(self)
+        
+        self.menu = get_menu(self, controller)
+        
+        # Create Headers
+        TAD_EDITOR = ttk.Frame(W)
+        tad_editor_header = ttk.Label(W,text='TAD Editor',font=Font(W,size=16))
+        
+        BACKGROUND = ttk.Frame(W)
+        background_header = ttk.Label(W,text='Background',font=Font(W,size=14))
+        
+        LOGO = ttk.Frame(W)
+        logo_header = ttk.Label(W,text='Logo',font=Font(W,size=14))
+        
+        TEXT = ttk.Frame(W)
+        text_header = ttk.Label(W,text='Text',font=Font(W,size=14))
+        # Packing
+        tad_editor_header.pack(pady=10)
+        TAD_EDITOR.pack()
+        
+        background_header.pack(pady=10)
+        BACKGROUND.pack()
+        
+        logo_header.pack(pady=10)
+        LOGO.pack()
+        
+        text_header.pack(pady=10)
+        TEXT.pack()
+        
+        W.grid(row=0,column=1)
+   
 class About(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
