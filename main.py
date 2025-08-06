@@ -719,6 +719,29 @@ class Settings(tk.Frame):
         NEW_OBS_SETTINGS['pw'] = self.PW.get()
         json_write(ROOT+'obs_settings.json',NEW_OBS_SETTINGS)
 
+class TBO:
+    def __init__(self,type, uie, rng):
+        self.type = type
+        self.uie = uie
+        self.range = rng
+    def set_name(self,name: str):
+        self.name = name
+def get_tad_uie(ELEMENTS: list) -> list:
+    ALL_UIES = []
+        
+    for a in ELEMENTS:
+        if isinstance(ELEMENTS[a],TBO):
+            ALL_UIES.append(ELEMENTS[a])
+            continue
+        for b in ELEMENTS[a]:
+            if isinstance(b,TBO):
+                ALL_UIES.append(b)
+                continue
+            for c in b:
+                if isinstance(c,TBO):
+                    ALL_UIES.append(c)
+                    
+    return ALL_UIES
 class TadEditor(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
@@ -734,9 +757,62 @@ class TadEditor(tk.Frame):
         BACKGROUND = ttk.Frame(W)
         background_header = ttk.Label(W,text='Background',font=Font(W,size=14))
         
+        
+        
+        INT = tk.IntVar
+        STR = tk.StringVar
+        FLT = tk.DoubleVar
+        
+        SLR = ttk.LabeledScale
+        BTN = ttk.Button
+        INP = ttk.Entry
+        CBT = ttk.Checkbutton
+        # Vartype | UIE | (from, to) or None
+        
+        NUM_INP_NR = TBO(INT,INP,None)
+        NUM_INP_0_1 = TBO(INT,INP,(0,1))
+        NUM_INP_0_3 = TBO(INT,INP,(0,3))
+        NUM_INP_0_255 = TBO(INT,INP,(0,255))
+        NUM_INP_N360_360 = TBO(INT,INP,(-360,360))
+        NUM_INP_0_360 = TBO(INT,INP,(0,360))
+        BOOL_INP = TBO(INT,INP,(0,1))
+        FILE = TBO(STR,BTN,None)
+        ALL_ELEMENTS = [
+            {
+                "pos": [NUM_INP_NR,NUM_INP_NR],
+                "r_pos": [[NUM_INP_NR,NUM_INP_NR],[NUM_INP_NR,NUM_INP_NR]],
+                "r_scale": [NUM_INP_0_1,NUM_INP_0_1],
+                "r_rot": [NUM_INP_N360_360,NUM_INP_N360_360],
+                "center": BOOL_INP,
+                "scale": NUM_INP_0_360,
+                "rot": NUM_INP_N360_360
+            },
+            {
+                "path": FILE,
+                "scale": NUM_INP_0_3,
+                "rot": NUM_INP_N360_360,
+                "pos": [NUM_INP_NR,NUM_INP_NR],
+                "center": BOOL_INP
+            },
+            {
+                "path": FILE,
+                "scale": NUM_INP_0_3,
+                "rot": NUM_INP_N360_360,
+                "color": [NUM_INP_0_255,NUM_INP_0_255,NUM_INP_0_255,NUM_INP_0_255],
+                "ol_color": [NUM_INP_0_255,NUM_INP_0_255,NUM_INP_0_255,NUM_INP_0_255],
+                "size": NUM_INP_NR,
+                "pos": [NUM_INP_NR,NUM_INP_NR],
+                "center": BOOL_INP
+            }
+
+        ]
+        
         LOGO = ttk.Frame(W)
         logo_header = ttk.Label(W,text='Logo',font=Font(W,size=14))
-        
+        BG_UIE = get_tad_uie(ALL_ELEMENTS[0])
+        LOGO_UIE = get_tad_uie(ALL_ELEMENTS[1])
+        TEXT_UIE = get_tad_uie(ALL_ELEMENTS[2])
+        print(len(BG_UIE),len(LOGO_UIE),len(TEXT_UIE))
         TEXT = ttk.Frame(W)
         text_header = ttk.Label(W,text='Text',font=Font(W,size=14))
         # Packing
@@ -752,7 +828,10 @@ class TadEditor(tk.Frame):
         text_header.pack(pady=10)
         TEXT.pack()
         
+        
         W.grid(row=0,column=1)
+    def get_val(self,*args):
+        print(self.val.get())
    
 class About(tk.Frame):
     def __init__(self, parent, controller): 
