@@ -335,16 +335,17 @@ class SendToAudacityWF(GenericWorkFlow):
             files = listdir(results_path)
             reoc(all_eps != len(files),'Did you miss some episodes?')
             rng_list = list(rng)
+            
             for file in files:
                 
                 reoc(not file.endswith('.ac3'),'Wrong file format!')
                 reoc('_-' not in file,'Wrong filename format!')
-                reoc(not file.split('_-')[1].isdecimal(),'Numbering is not correct!')
+                reoc(not file.split('_-')[1].split('.')[0].isdecimal(),'Numbering is not correct!')
                 
                 ep = int(file.split('_-')[1].split('.')[0]) - 1
                 print(rng_list[ep])
                 old = results_path + file
-                new = old.split('.')[0] + '.aac'
+                new = FIXED_AUDIO_FOLDER+f'{rng_list[ep]}_track_mic_fixed_ac.aac'
                 ffmpeg_run(FFMPEG_CONVERT_AUDIO_TYPE,{'__IN__': old, '__OUT__': new})
                 #remove()
                 SQLAccess.update_episodes(self.lpid,rng_list[ep],audio_mic_edit2_path=new)
