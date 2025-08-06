@@ -1,23 +1,16 @@
 from bin.automations import *
-from bin.constants import DISCLAIMER
-from bin.data_access import on_start, LetsPlays, SQLAccess
+from bin.constants import DISCLAIMER, __LICENSE__
+from bin.data_access import on_start, LetsPlays, SQLAccess, json_write, json_read
 from threading import Thread
 from os.path import getsize
 import tkinter as tk
 from tkinter import ttk
 from tkinter.font import Font
 from os import remove
+from zipfile import ZipFile
 LARGEFONT =("Verdana", 35)
 
 on_start()
-
-def restart_program():
-    """Restarts the current program.
-    Note: this function does not return. Any cleanup action (like
-    saving data) must be done before calling this function."""
-    global APP
-    APP.destroy()
-    APP = TkinterApp()
 
 def try_delete_file(filepath: str | None) -> bool:
     if filepath is not None:
@@ -74,7 +67,7 @@ def get_menu(parent,controller) -> ttk.Frame:
     
     [obj.pack(fill="x") for i, obj in enumerate(_ret)]# Sets the position on frame for all btns
     
-    MENU.grid(column=0,row=0,sticky='W')
+    MENU.grid(column=0,row=0,sticky='NW')
     
     return _ret
 
@@ -155,6 +148,8 @@ class Main(tk.Frame):
         MAIN = ttk.Frame(W)
         main_header = ttk.Label(W,text='MAIN',font=Font(W,size=16))
         
+        
+        
         label = ttk.Label(MAIN, text =DISCLAIMER)
 
         label.grid(row = 0, column = 1, padx = 10, pady = 10)
@@ -165,8 +160,6 @@ class Main(tk.Frame):
 
         W.grid(row=0,column=1)
         
-        
-
 class AutomationFrame(tk.Frame):
     def __init__(self, parent, controller,name: str): 
         tk.Frame.__init__(self, parent)
@@ -174,8 +167,10 @@ class AutomationFrame(tk.Frame):
         self.thread = None
         self.automation_callback = None
         
-        self.pb = ttk.Progressbar(self)
-        self.pb.grid(sticky='SE',row = 0, column = 2)
+        self.progress_label = ttk.Label(self,)
+        self.progress_label.grid(sticky='SE',row = 0, column = 2)
+        
+        
         
         
         W = ttk.Frame(self)
@@ -333,10 +328,12 @@ class FetchAudio(AutomationFrame):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,'Fetch Audio')
         self.automation_callback = ExtractAudioWF
+
 class FixAudio(AutomationFrame):
     def __init__(self, parent, controller):
         super().__init__(parent, controller, 'Fix Audio')
         self.automation_callback = FixAudioWF
+
 class Send2Audacity(AutomationFrame):
     def __init__(self, parent, controller):
         super().__init__(parent, controller, 'Send2Audacity')
@@ -451,14 +448,58 @@ class FileManager(tk.Frame):
         data_lp_create_header.pack(pady=10)
         LP_CREATE.pack()
         
+        BACKUP = ttk.Frame(W)
+        backup_header = ttk.Label(W,text='Lets Play Backup',font=Font(W,size=16))
+        
+        self.backup_lp_label, self.backup_lp_options, self.backup_lp_option_var= get_lets_play(BACKUP, self.something_changed_backup)
+        
+        self.backup_btn = ttk.Button(BACKUP,text='Backup',command=self.create_video_backup)
+        self.backup_btn.grid(row=0,column=3)
+        self.backup_btn.state(['disabled']) 
+        
+        backup_header.pack(pady=10)
+        BACKUP.pack()
         
         W.grid(row=0,column=1)
+    
+    def create_video_backup(self,*args):
+        change_states(self.menu,'disabled')
+        lpid = SQLAccess.get_lp_names().index(self.backup_lp_option_var.get())
+        lpname = SQLAccess.get_lp_names()[lpid]
+        cnef(BACKUP_FOLDER)
+        ZIP = ZipFile(f'{BACKUP_FOLDER}{lpname}.7z','w',)
+        tad = SQLAccess.get_tad_path(lpid)
+        
+        if tad is not None:
+            if isfile(TAD_FOLDER+tad):
+                ZIP.write(TAD_FOLDER+tad,tad)
+        for ep in SQLAccess.read_episodes(lpid):#BUG
+                
+            for file in [
+                ep.video_path,
+                ep.final_video_path
+                ]:
+                
+                if file is not None:
+                    if isfile(file):
+                        print(file)
+                        ZIP.write(file,file.replace('\\','/').split('/')[-1])
+        change_states(self.menu,'!disabled')
+
+                
+        
+        
+        
+    
+    def something_changed_backup(self, *args):
+        if self.backup_lp_option_var.get() != 'None':
+            self.backup_btn.state(['!disabled'])
+        else:
+            self.backup_btn.state(['disabled']) 
     
     def update_ui(self):
         lp = self.simdel_lp_option_var.get()
         if lp != 'None':
-            
-            
             self.epnums = [i+1 for i in range(SQLAccess.get_episode_ammount(SQLAccess.get_lp_names().index(self.simdel_lp_option_var.get())))]
         else:
             self.epnums = []
@@ -516,8 +557,9 @@ class FileManager(tk.Frame):
         
         ok = msgbox.askyesno('Attention','You are trying to delete all files in the selected lets play & \nthe lets play itself!\nThis step is irreversible!\nContinue?')
         if not ok: return
+        lpid = SQLAccess.get_lp_names().index(self.lp_option_var.get())
         if self.delete_lp_option.get():
-            for ep in SQLAccess.read_all_episodes():#BUG
+            for ep in SQLAccess.read_episodes(lpid):#BUG
                 
                 for file in [
                     ep.video_path,
@@ -528,10 +570,11 @@ class FileManager(tk.Frame):
                     ep.audio_mic_path,
                     ep.final_video_path
                     ]:
-                    #try_delete_file(file)
-                    print(ep.lpid, ep.id, )
+                    try_delete_file(file)
+                    #print(ep.lpid, ep.id, )
         change_states(self.menu,'disabled')
-        SQLAccess.delete_letsplay(SQLAccess.get_lp_names().index(self.lp_option_var.get()))
+        #! Deleting Lets Play 
+        #! SQLAccess.delete_letsplay(SQLAccess.get_lp_names().index(self.lp_option_var.get()))
         msgbox.showinfo('Success', 'Lets Play deleted\nYou must restart the app!')
         exit()
     
@@ -599,6 +642,7 @@ class FileManager(tk.Frame):
     def rng(self) -> list:
         a,b = int(self.epstart_option_var.get())-1, int(self.epend_option_var.get())
         return a,b+(1 if a == b else 0)
+
 class Settings(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
@@ -609,13 +653,70 @@ class Settings(tk.Frame):
         
         # Create Headers
         SETTINGS = ttk.Frame(W)
-        settings_header = ttk.Label(W,text='Settings',font=Font(W,size=16))
+        settings_header = ttk.Label(W,text='OBS Settings',font=Font(W,size=16))
+        
+        self.IP = tk.StringVar()
+        self.PORT = tk.StringVar()
+        self.PW = tk.StringVar()
+        self.PW_TOGGLE = tk.IntVar()
+        
+        obs_ip_label = ttk.Label(SETTINGS,text='IP:')
+        self.obs_ip = ttk.Entry(SETTINGS,textvariable=self.IP)
+        
+        obs_port_label = ttk.Label(SETTINGS,text='Port:')
+        self.obs_port = ttk.Entry(SETTINGS,textvariable=self.PORT)
+        
+        obs_password_label = ttk.Label(SETTINGS,text='Password:')
+        self.obs_password = ttk.Entry(SETTINGS,show='*',textvariable=self.PW)
+        
+        self.obs_ip.bind('<KeyPress>',self.obs_something_changed)
+        self.obs_port.bind('<KeyPress>',self.obs_something_changed)
+        self.obs_password.bind('<KeyPress>',self.obs_something_changed)
+        
+        self.set_settings_obs_btn = ttk.Button(SETTINGS,text='Set',command=self.set_obs_settings)
+        
+        self.show_pw = ttk.Checkbutton(SETTINGS,variable=self.PW_TOGGLE,command=self.toggle_pw_view)
+        
+        obs_ip_label.grid(row=0,column=0)
+        self.obs_ip.grid(row=0,column=1)
+        obs_port_label.grid(row=0,column=2)
+        self.obs_port.grid(row=0,column=3)
+        obs_password_label.grid(row=0,column=4)
+        self.obs_password.grid(row=0,column=5)
+        self.show_pw.grid(row=0,column=6)
+        self.set_settings_obs_btn.grid(row=0,column=7)
+        
+        if isfile(ROOT+'obs_settings.json'):
+            OBS_SETTINGS = json_read(ROOT+'obs_settings.json')
+            self.IP.set(OBS_SETTINGS['ip'])
+            self.PORT.set(OBS_SETTINGS['port'])
+            self.PW.set(OBS_SETTINGS['pw'])
+        self.obs_something_changed()
         
         # Packing
         settings_header.pack(pady=10)
         SETTINGS.pack()
 
         W.grid(row=0,column=1)
+        
+    def toggle_pw_view(self,*args):
+        if self.PW_TOGGLE.get():
+            self.obs_password.configure(show="")
+        else:
+            self.obs_password.configure(show="*")
+    def obs_something_changed(self,*args):
+        if self.PW.get() and self.PORT.get() and self.IP.get():
+            self.set_settings_obs_btn.state(['!disabled'])
+        else:
+            self.set_settings_obs_btn.state(['disabled'])
+    def set_obs_settings(self,*args):
+        print('Updated OBS Settings')
+        
+        NEW_OBS_SETTINGS = {key: DEFAULT_OBS_SETTINGS[key] for key in DEFAULT_OBS_SETTINGS}
+        NEW_OBS_SETTINGS['ip'] = self.IP.get()
+        NEW_OBS_SETTINGS['port'] = self.PORT.get()
+        NEW_OBS_SETTINGS['pw'] = self.PW.get()
+        json_write(ROOT+'obs_settings.json',NEW_OBS_SETTINGS)
         
 class About(tk.Frame):
     def __init__(self, parent, controller): 
@@ -626,21 +727,27 @@ class About(tk.Frame):
         self.menu = get_menu(self, controller)
         
         # Create Headers
-        SETTINGS = ttk.Frame(W)
-        settings_header = ttk.Label(W,text='Settings',font=Font(W,size=16))
+        LICENSE = ttk.Frame(W)
+        license_header = ttk.Label(W,text='License',font=Font(W,size=16))
+        
+        scrollbar = ttk.Scrollbar(W,orient='vertical')
+        scrollbar.pack(side=tk.RIGHT,fill=tk.Y)
+        
+        text = tk.Text(LICENSE, width = 80, height = 25, wrap = tk.NONE,
+                 yscrollcommand = scrollbar.set)
+        
+        for i in __LICENSE__.splitlines():
+            text.insert(tk.END, f'{i}\n')
+            
+        text.pack(side=tk.TOP, fill=tk.X)
+        scrollbar.config(command=text.yview)
         
         # Packing
-        settings_header.pack(pady=10)
-        SETTINGS.pack()
+        license_header.pack(pady=10)
+        LICENSE.pack()
         
-        from tkinterweb import HtmlFrame
-
-        
-        html_frame = HtmlFrame(SETTINGS,horizontal_scrollbar=False)
-        from os import getcwd
-        html_frame.load_file(f'{getcwd()}\\output.html')
-        html_frame.grid(row=0)
         W.grid(row=0,column=1)
+    
 
         
 APP = TkinterApp()

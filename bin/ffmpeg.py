@@ -60,7 +60,10 @@ FFMPEG_AUDIO_COMBINE_TRUNCATED = [*FFMPEG_DEFAULT, '-ss' ,'00:00:00', '-to', '00
 #   - 'loudnorm=-15': Applies loudness normalization to -15 LUFS (Loudness Units Full Scale).
 #   - 'compand=...': Applies a dynamic range compression/expansion filter with specific parameters.
 # - '__OUT__': Placeholder for the output processed audio file path.
-FFMPEG_AUDIO_PF_LN_L = [*FFMPEG_DEFAULT, '-i', '__IN__', '-af','highpass=f=175, lowpass=f=13000, loudnorm=-15, compand=0|0:1|1:0/-3|10/-3|20/-3:0.1:0:0:0', '__OUT__']
+FFMPEG_AUDIO_PF_LN_L = [*FFMPEG_DEFAULT, '-i', '__IN__', '-af','highpass=f=175, lowpass=f=13000, loudnorm=I=-15:TP=-1.5:LRA=11', '__OUT__']
+
+#! The new audiofilter will be:
+#highpass=f=175, lowpass=f=13000, loudnorm=I=-15:TP=-1.5:LRA=11
 
 # FFMPEG_VIDEO_RENDER: Command to combine a video stream with an audio stream.
 # - '-an': Disables audio from the first input (video).
@@ -89,6 +92,7 @@ FFMPEG_GET_FRAME = [*FFMPEG_DEFAULT, '-ss', '__TIME__', '-i', '__IN__', '-frames
 # - '__IN__': Placeholder for the input video file path.
 FFMPEG_GET_LENGTH = ['ffprobe', '-v', 'error', '-select_streams', 'v:0','-show_entries', 'stream=duration', '-of', 'default=noprint_wrappers=1:nokey=1', '__IN__']
 
+FFMPEG_GET_STREAM_AMMOUNT = ['ffprobe', '-v', 'error','-show_entries','format=nb_streams','-of','default=noprint_wrappers=1:nokey=1','__IN__']
 
 def ffmpeg_exists() -> bool:
     """

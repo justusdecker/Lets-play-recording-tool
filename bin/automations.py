@@ -18,15 +18,23 @@ import tkinter.messagebox as msgbox
 from os import listdir
 from bin.constants import *
 
-from tkinter import Toplevel
-from tkinter.ttk import Label
-
 from bin.thumbnail import ThumbnailGenerator
 from tkinter.messagebox import showerror
 
 from bin.player_video import VideoPlayer
 from bin.player_audio import AudioPlayer
 from bin.player_thumbnail import ThumbnailPreview
+
+from shutil import copyfile
+
+
+
+try:
+    from bin.jinja import deploy_render
+except:
+    from bin.constants import ERROR_008
+    showerror('ERROR', ERROR_008 + '\nJinja')
+    quit()
 
 try: #Fix for issue: #127
     from PIL import ImageTk, Image
@@ -35,7 +43,7 @@ except:
     showerror('ERROR', ERROR_008 + '\nPIL')
     quit()
 
-from bin.data_access import SQLAccess, cnef
+from bin.data_access import SQLAccess, cnef,rie
 
 from bin.constants import ERROR_007
    
@@ -113,111 +121,133 @@ class GenerateThumbnailWF(GenericWorkFlow):
         self.user_workflow(app)
         
     def user_workflow(self, app):
-        TG = ThumbnailGenerator()
-        TP = ThumbnailPreview()
-        tad = SQLAccess.get_tad_path(self.lpid)
-        print(tad)
-        if not tad:
-            showerror('ERROR' ,ERROR_009)
-            app.start_btn.state(['!disabled'])
-            return
-        if not isfile(TAD_FOLDER + tad):
-            showerror('ERROR' ,ERROR_007 + '\nTAD Path does not exist!')
-            app.start_btn.state(['!disabled'])
-            return
-        check_all = msgbox.askyesno('LPRT Thumbnail Check','Do you want to check every image?')
-        episodes = SQLAccess.read_episodes(self.lpid)
-        for i in range(*self.rng): 
-            video_path = episodes[i].video_path
-            p = f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
-            ok = False
-            while not ok:
-                TG.generate(
-                            str(i+1),
-                            video_path,
-                            tad,
-                            p
-                            )
-                TP.update_image(p,i)
-                if check_all:
-                    ok = msgbox.askyesno('LPRT Result Check','Thumbnail Result Okay?')
-                else:
-                    ok = True
-            SQLAccess.update_episodes(self.lpid, i,thumbnail_path=p)
+        """
+        Generates Thumbnails based on TAD.
+        
+        If the user has done something wrong. A AutomationError will be thrown & catched. 
+        After that the corresponding error message will be displayed.
+        """
+        try:
+            TG = ThumbnailGenerator()
+            TP = ThumbnailPreview()
+            tad = SQLAccess.get_tad_path(self.lpid)
+            
+            reoc(not tad, ERROR_009)
+            reoc(not isfile(TAD_FOLDER + tad),ERROR_007 + '\nTAD Path does not exist!')
+
+            check_all = msgbox.askyesno('LPRT Thumbnail Check','Do you want to check every image?')
+            episodes = SQLAccess.read_episodes(self.lpid)
+            rng = range(*self.rng)
+            for ci,i in enumerate(rng): 
+                video_path = episodes[i].video_path
+                reoc(video_path is None,ERROR_013)
+                reoc(not isfile(video_path), ERROR_007)
+                
+                
+                p = f'{THUMBNAIL_FOLDER}{i+1}_{self.lp_name}_thumbnail.png'
+                
+                rie(p)
+                
+                ok = False
+                
+                while not ok:
+                    TG.generate(
+                                str(i+1),
+                                video_path,
+                                tad,
+                                p
+                                )
+                    TP.update_image(p,i)
+                    if check_all:
+                        ok = msgbox.askyesno('LPRT Result Check','Thumbnail Result Okay?')
+                    else:
+                        ok = True
+                app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
+
+                SQLAccess.update_episodes(self.lpid, i,thumbnail_path=p)
+
+            super().user_workflow()
+        except AutomationError as AE:
+            msgbox.showerror('Automation Error',str(AE))
+        # After processing all episodes, we re-enabling the application's start button
+        # and calling the parent `user_workflow` to display the completion message.
+        # It does not matter whether the automation was completed or canceled.
         app.start_btn.state(['!disabled'])
-        super().user_workflow()
 
 class ExtractAudioWF(GenericWorkFlow):
     """
     A workflow class designed to extract audio tracks from video files for a
     given "LetsPlay" episode range.
-
-    This class extends `GenericWorkFlow` and specializes in automating the
-    process of extracting microphone and desktop audio tracks from video files,
-    saving them to a specified audio folder, and updating the episode's
-    metadata with the paths to the extracted audio files. It also provides
-    progress updates via an application's progress bar.
     """
     def __init__(self,lpid,epr,app):
-        """
-        This constructor calls the parent `GenericWorkFlow`'s constructor,
-        setting up the audio extraction folder and a finish message.
-        It then immediately initiates the audio extraction process by calling
-        its own `user_workflow` method, passing the application instance for
-        progress updates.
-        """
         super().__init__(folder=AUDIO_FOLDER, finish_message='Audio extraction finished',lpid=lpid,epr=epr)
         self.user_workflow(app)
     def user_workflow(self,app):
         """
         Executes the audio extraction process for each episode within the
         defined range.
-
-        For each episode:
-        1. Retrieves the video path.
-        2. Defines output paths for microphone and desktop audio tracks.
-        3. Uses `ffmpeg_run` to extract both audio tracks from the video.
-        4. Updates the application's progress bar.
-        5. Stores the paths of the extracted audio files in the episode's metadata.
-        6. Saves the updated episode metadata.
-
-        After processing all episodes, it re-enables the application's start button
-        and calls the parent `user_workflow` to display the completion message.
+        
+        If the user has done something wrong. A AutomationError will be thrown & catched. 
+        After that the corresponding error message will be displayed.
         """
-        episodes = SQLAccess.read_episodes(self.lpid)
-        for i in range(*self.rng): 
-            video_path = episodes[i].video_path
-                       
-            t1_path, t2_path = f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_track_mic.aac',f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_track_desktop.aac'
+        try:
+            cnef(AUDIO_FOLDER)
+            episodes = SQLAccess.read_episodes(self.lpid)
+            rng = range(*self.rng)
+            for ci,i in enumerate(rng):
+                
+                video_path = episodes[i].video_path
+                
+                prefix = f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_'
+                ff = '.aac'
+                mic_track_path = f'{prefix}mic{ff}'
+                desktop_track_path = f'{prefix}desktop{ff}'
+                ffmpeg_stream_ammount = ffmpeg_run(FFMPEG_GET_STREAM_AMMOUNT,{'__IN__':video_path},True).strip()
+                reoc(not ffmpeg_stream_ammount.isdecimal(),'Something went wrong.\nThis error should not happen!\nFFPROBE HAS GIVEN BACK A NOT NUMERIC STRING')
+                
+                # We only do a soft edge case test here!
+                # This is not very accurate. The user can use 2 video tracks or a subtitle track and the result can / will be correct.
+                # In this case we dont need to worry about this case. 
+                # The user has been warned to use 2 audio / 1 video track in the documentation.
+                reoc(int(ffmpeg_stream_ammount) < 3,'Not enough tracks to execute this automation!')
+                
+                print(f'"{ffmpeg_stream_ammount}"')
+                
+                
+                reoc(video_path is None, ERROR_013) # In case the database is corrupted or the video_file was not set!
+                
+                reoc(not isfile(video_path), ERROR_007) # In case the video_file is not existing
+                
+                rie(mic_track_path) # remove files to prevent false negative after ffmpeg_run
+                rie(desktop_track_path)
+                
+                ffmpeg_run(FFMPEG_OPTIMIZED_EXTRACT,{'__IN__':video_path,'__OUT1__':mic_track_path, '__OUT2__':desktop_track_path}) # Uses `ffmpeg_run` to extract both audio tracks from the video.
+                
+                reoc(not isfile(mic_track_path) or not isfile(desktop_track_path), ERROR_014) # In case ffmpeg did not create the files
+                
+                app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
+                
+                SQLAccess.update_episodes(self.lpid,i, audio_mic_path=mic_track_path, audio_desktop_path=desktop_track_path) # Saves the updated episode metadata.
+            super().user_workflow()
+        except AutomationError as AE:
+            msgbox.showerror('Automation Error',str(AE))
             
-            ffmpeg_run(FFMPEG_OPTIMIZED_EXTRACT,{'__IN__':video_path,'__OUT1__':t1_path, '__OUT2__':t2_path})
-            
-            app.pb.step((1 / (self.rng[1] + 1))*100)
-            SQLAccess.update_episodes(self.lpid,i, audio_mic_path=t1_path, audio_desktop_path=t2_path)
-
+        # After processing all episodes, we re-enabling the application's start button
+        # and calling the parent `user_workflow` to display the completion message.
+        # It does not matter whether the automation was completed or canceled.
         app.start_btn.state(['!disabled'])
-        super().user_workflow()
 
 class FixAudioWF(GenericWorkFlow):
     """
     A workflow class designed to apply various audio processing filters to
     microphone audio tracks extracted from "LetsPlay" videos.
-
-    This class extends `GenericWorkFlow` and specializes in automating the
-    process of enhancing microphone audio quality by applying a sequence of
-    filters (Lowpass, Highpass, Loudness Normalize, Limiter). It saves the
-    processed audio to the `FIXED_AUDIO_FOLDER`, updates the episode's metadata
-    with the path to the fixed audio file, and provides progress updates
-    via an application's progress bar.
+    
+    Filters: (Lowpass, Highpass, Loudness Normalize)
+    
+    If the user has done something wrong. A AutomationError will be thrown & catched. 
+    After that the corresponding error message will be displayed.
     """
     def __init__(self,lpid, epr,app):
-        """
-        This constructor calls the parent `GenericWorkFlow`'s constructor,
-        setting up the fixed audio folder and a finish message.
-        It then immediately initiates the audio fixing process by calling
-        its own `user_workflow` method, passing the application instance for
-        progress updates.
-        """
         super().__init__(FIXED_AUDIO_FOLDER, 'Audio Fix', lpid, epr)
         self.user_workflow(app)
         
@@ -225,62 +255,44 @@ class FixAudioWF(GenericWorkFlow):
         """
         Executes the audio fixing process for each microphone audio track
         within the defined episode range.
-
-        For each episode:
-        1. Retrieves the path to the original microphone audio track.
-        2. Defines the destination path for the fixed audio file.
-        3. Ensures a temporary folder exists (`cnef` to create/ensure folder).
-        4. Uses `ffmpeg_run` to apply a predefined set of audio filters
-           (Lowpass, Highpass, Loudness Normalize, Limiter) to the microphone track.
-           (`FFMPEG_AUDIO_PF_LN_L` and `ffmpeg_run` are assumed external).
-        5. Updates the application's progress bar.
-        6. Stores the path of the fixed audio file in the episode's metadata
-           as `audio_mic_edit1_path`.
-        7. Saves the updated episode metadata.
-
-        After processing all episodes, it re-enables the application's start button
-        and calls the parent `user_workflow` to display the completion message.
         """
-        episodes = SQLAccess.read_episodes(self.lpid)
-        for i in range(*self.rng): 
-            audio_mic_path = episodes[i].audio_mic_path
-            # Filters
-            # - Lowpass
-            # - Highpass
-            # - Loudness Normalize
-            # - Limiter
-            dest = f'{FIXED_AUDIO_FOLDER}{i+1}_{self.lp_name}_track_mic_fixed.aac'
+        try:
+            cnef(FIXED_AUDIO_FOLDER)
+            episodes = SQLAccess.read_episodes(self.lpid)
+            rng = range(*self.rng)
+            for ci, i in enumerate(rng): 
+                audio_mic_path = episodes[i].audio_mic_path
+                
+                audio_mic_edit1_path = f'{FIXED_AUDIO_FOLDER}{i+1}_{self.lp_name}_track_mic_fixed.aac'
+                
+                reoc(audio_mic_path is None, ERROR_013) # In case the database is corrupted or the audio_mic_path was not set!
+                
+                reoc(not isfile(audio_mic_path), ERROR_007) # In case the audio_mic_path is not existing
+                
+                rie(audio_mic_edit1_path)
+                
+                ffmpeg_run(FFMPEG_AUDIO_PF_LN_L,{'__IN__': audio_mic_path,'__OUT__':audio_mic_edit1_path})
+                
+                reoc(not isfile(audio_mic_edit1_path), ERROR_014) # In case ffmpeg did not create the file
+                
+                app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
+                SQLAccess.update_episodes(self.lpid, i, audio_mic_edit1_path=audio_mic_edit1_path)
             
-            cnef(TEMP_FOLDER)
-            
-            ffmpeg_run(FFMPEG_AUDIO_PF_LN_L,{'__IN__': audio_mic_path,'__OUT__':dest})
-            app.pb.step((1 / (self.rng[1] + 1))*100)
-            SQLAccess.update_episodes(self.lpid, i, audio_mic_path=dest)
-
+            super().user_workflow()
+        except AutomationError as AE:
+            msgbox.showerror('Automation Error',str(AE))
+        # After processing all episodes, we re-enabling the application's start button
+        # and calling the parent `user_workflow` to display the completion message.
+        # It does not matter whether the automation was completed or canceled.
         app.start_btn.state(['!disabled'])
-        super().user_workflow()
 
 class SendToAudacityWF(GenericWorkFlow):
     """
     A workflow class designed to integrate with Audacity for further audio
     processing, specifically for importing fixed microphone audio tracks and
     then handling the exported results.
-
-    This class extends `GenericWorkFlow` and automates the process of:
-    1. Establishing a connection with Audacity via its mod-pipe.
-    2. Importing processed microphone audio tracks into Audacity.
-    3. Guiding the user through the export process in Audacity (manual step for Noise Reduction).
-    4. Converting the exported audio files to AAC format.
-    5. Updating the episode's metadata with the paths to the final processed audio files.
-    It also provides error handling and progress updates via an application's progress bar.
     """
     def __init__(self,lpid, epr,app):
-        """
-        This constructor calls the parent `GenericWorkFlow`'s constructor,
-        setting up a folder and a finish message. It then immediately initiates the Audacity
-        integration process by calling its own `user_workflow` method,
-        passing the application instance for UI and progress updates.
-        """
         super().__init__(folder = FIXED_AUDIO_FOLDER, finish_message = 'Audacity Send',lpid=lpid, epr=epr)
         self.user_workflow(app)
     def user_workflow(self, app):
@@ -288,34 +300,14 @@ class SendToAudacityWF(GenericWorkFlow):
         Executes the process of sending audio to Audacity, handling user interaction,
         and processing exported results.
         
-        The workflow performs the following steps:
-        1. **Pipe Creation:** Attempts to create a pipe connection to Audacity. If it fails
-           (e.g., Audacity is not open or mod-pipe is not enabled), it displays an error
-           message and re-enables the start button.
-        2. **User Confirmation:** Prompts the user to confirm if they want to send data to Audacity.
-        3. **Audio Import (if confirmed):**
-           - Iterates through each episode in the defined range.
-           - Retrieves the path to the previously fixed microphone audio track (`audio_mic_edit1_path`).
-           - Sends an "Import2" command to Audacity to import the audio file.
-           - Handles errors if Audacity is not reachable during import.
-           - Updates the application's progress bar.
-           - **Note:** The Noise Reduction step is explicitly mentioned as not automated
-             and requires manual intervention in Audacity.
-        4. **Import Completion Toast:** Displays a "Finished Importing" toast message.
-        5. **Exported Results Handling:**
-           - Prompts the user to select a directory where Audacity's exported files are located.
-           - Validates if the number of exported files matches the number of episodes. If not,
-             it displays an error.
-           - Iterates through the exported files:
-             - Extracts the episode number from the filename.
-             - Converts the exported audio file to AAC format using `ffmpeg_run`
-               (`FFMPEG_CONVERT_AUDIO_TYPE` is assumed external).
-             - Updates the episode's metadata with the path to the newly converted AAC file
-               as `audio_mic_edit2_path`.
-             - Saves the updated episode metadata.
-        6. **Finalization:** Re-enables the application's start button and calls the
-           parent `user_workflow` to display the overall completion message.
+        - Prompts the user to select a directory where Audacity's exported files are located.
+        - Validates if the number of exported files matches the number of episodes. If not,
+    
+        If the user has done something wrong. A AutomationError will be thrown & catched. 
+        After that the corresponding error message will be displayed.
         """
+        
+        
         try:
             create_pipe()
         except Exception as E:
@@ -323,39 +315,55 @@ class SendToAudacityWF(GenericWorkFlow):
             msgbox.showerror('ERROR','Did you open Audacity & enabled the mod-pipe?')
             app.start_btn.state(['!disabled'])
             return
-        ui = msgbox.askyesno('LPRT to AC','Do you want to send data to Audacity?')
-        all_eps = len(range(*self.rng))
-        if ui:
-            episodes = SQLAccess.read_episodes(self.lpid)
+        
+        try:
+            ui = msgbox.askyesno('LPRT to AC','Do you want to send data to Audacity?')
+            rng = range(*self.rng)
+            all_eps = len(rng)
+            if ui:
+                episodes = SQLAccess.read_episodes(self.lpid)
+                
+                for ci, i in enumerate(rng):
+                    filepath = episodes[i].audio_mic_edit1_path
+                    reoc(filepath is None,ERROR_013)
+                    reoc(not isfile(filepath), ERROR_007)
+                    reoc(do_command(f'Import2: filename="{filepath}"') is None,'Audacity is not reachable!')
+                    app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
             
-            for i in range(*self.rng):
-                filepath = episodes[i].audio_mic_path
-                if do_command(f'Import2: filename="{filepath}"') is None:
-                    msgbox.showerror('ERROR','Audacity is not reachable!')
-                    app.start_btn.state(['!disabled'])
-                    return
-                app.pb.step((1 / (self.rng[1] + 1))*100)
-                #! The Noise Reduction is not automated
-                # do_command from the audacity pipeline
-        print('test')
-        break_pipe()
-        toast_finished('Finished Importing')
-        results_path = askdirectory() + '/'
-        files = listdir(results_path)
-        print(all_eps , len(files))
-        if all_eps != len(files):
-            msgbox.showerror('ERROR','Did you miss some episodes?')
+            toast_finished('Finished Importing')
+            results_path = askdirectory() + '/'
+            files = listdir(results_path)
+            reoc(all_eps != len(files),'Did you miss some episodes?')
+            rng_list = list(rng)
+            
+            for file in files:
+                
+                reoc(not file.endswith('.ac3'),'Wrong file format!')
+                reoc('_-' not in file,'Wrong filename format!')
+                reoc(not file.split('_-')[1].split('.')[0].isdecimal(),'Numbering is not correct!')
+                
+                ep = int(file.split('_-')[1].split('.')[0]) - 1
+                print(rng_list[ep])
+                old = results_path + file
+                new = FIXED_AUDIO_FOLDER+f'{rng_list[ep]}_track_mic_fixed_ac.aac'
+                rie(new)
+                ffmpeg_run(FFMPEG_CONVERT_AUDIO_TYPE,{'__IN__': old, '__OUT__': new})
+                reoc(not isfile(new))
+                #remove()
+                SQLAccess.update_episodes(self.lpid,rng_list[ep],audio_mic_edit2_path=new)
             app.start_btn.state(['!disabled'])
-            return
-        for file in files:
-            ep = int(file.split('_-')[1].split('.')[0]) - 1
-            old = results_path + file
-            new = old.split('.')[0] + '.aac'
-            ffmpeg_run(FFMPEG_CONVERT_AUDIO_TYPE,{'__IN__': old, '__OUT__': new})
-            #remove()
-            SQLAccess.update_episodes(self.lpid,ep,audio_mic_edit2_path=new)
+            super().user_workflow()
+        except AutomationError as AE:
+            msgbox.showerror('Automation Error',str(AE))
+            
+        # After processing all episodes, we re-enabling the application's start button
+        # and calling the parent `user_workflow` to display the completion message.
+        # It does not matter whether the automation was completed or canceled.
         app.start_btn.state(['!disabled'])
-        super().user_workflow()
+        try:
+            break_pipe()
+        except Exception as E:
+            pass
 
 class CompareAndRenderWF(GenericWorkFlow):
     """
@@ -363,105 +371,90 @@ class CompareAndRenderWF(GenericWorkFlow):
     levels for episodes, then combining these adjusted audio tracks with
     their respective video files to produce final rendered videos.
     
-    This class extends `GenericWorkFlow` and orchestrates the following:
-    1. Interactive audio volume adjustment using an `AudioPlayer` GUI.
-    2. Combining microphone and desktop audio tracks based on user-adjusted volumes.
-    3. Rendering the combined audio with the original video to create final video files.
-    4. Updating episode metadata with the paths to the final rendered videos.
-    It provides progress updates via an application's progress bar.
+    If the user has done something wrong. A AutomationError will be thrown & catched. 
+    After that the corresponding error message will be displayed.
     """
     def __init__(self,lpid, epr,app):
-        """
-        This constructor calls the parent `GenericWorkFlow`'s constructor,
-        setting up a temporary folder (`TEMP_FOLDER`) for intermediate files
-        and a finish message.
-        It then immediately initiates the comparison and rendering process by
-        calling its own `user_workflow` method, passing the application instance
-        for UI and progress updates.
-        """
         super().__init__(folder=TEMP_FOLDER, finish_message="CAAR",lpid=lpid, epr=epr)
         self.user_workflow(app)
     def user_workflow(self,app):
         """
         Executes the main logic for audio comparison, combination, and video rendering.
-
-        The workflow performs the following steps:
-        1.  **Audio Player Initialization:**
-            -   Prepares a list of audio and video paths for the `AudioPlayer`.
-            -   Launches an `AudioPlayer` instance, allowing the user to interactively
-                adjust the volume levels for each episode's desktop audio track relative
-                to the microphone track.
-            -   Pauses execution until the `AudioPlayer` window is closed by the user.
-            -   Retrieves the user-adjusted volume settings from the `AudioPlayer`.
-        2.  **Audio Combination:**
-            -   Initializes an empty `rendering_queue`.
-            -   Iterates through the results obtained from the `AudioPlayer` (episode index,
-                microphone path, desktop path, video path, adjusted desktop volume).
-            -   For each episode, it combines the microphone and desktop audio tracks
-                using `ffmpeg_run` and `FFMPEG_AUDIO_COMBINE`,
-                applying the user-adjusted desktop volume.
-            -   Saves the combined audio to a temporary MP3 file.
-            -   Adds the video path, temporary combined audio path, and episode index
-                to the `rendering_queue`.
-            -   Displays a toast message indicating audio combination is complete.
-        3.  **Video Rendering:**
-            -   Constructs a dynamic path ending for the final video files, incorporating
-                the game name from the "LetsPlay" ID.
-            -   Ensures the `VIDEO_FOLDER` exists (`cnef` to create/ensure folder).
-            -   Iterates through the `rendering_queue`.
-            -   For each item, it defines the `final_path` for the rendered video.
-            -   Uses `ffmpeg_run` and `FFMPEG_VIDEO_RENDER`
-                to combine the original video with the newly combined audio track.
-            -   Updates the application's progress bar.
-            -   Sets the path to the final rendered video in the episode's metadata.
-            -   Saves the updated episode metadata.
-        4.  **Finalization:** Calls the parent `user_workflow` to display the overall
-            completion message.
         """
-        rendering_queue = []
-        episodes = SQLAccess.read_episodes(self.lpid)
-        from bin.data_access import Episodes
-        episodes : list[Episodes]
-        paths = [[i, episodes[i].audio_mic_edit2_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*self.rng)]
+        try:
+            rendering_queue = []
+            episodes = SQLAccess.read_episodes(self.lpid)
+            from bin.data_access import Episodes
+            episodes : list[Episodes]
+            
+            reoc(episodes[i].audio_mic_edit2_path is None)
+            reoc(episodes[i].audio_desktop_path is None)
+            reoc(episodes[i].video_path is None)
+            
+            reoc(not isfile(episodes[i].audio_mic_edit2_path))
+            reoc(not isfile(episodes[i].audio_desktop_path))
+            reoc(not isfile(episodes[i].video_path))
+            
+            paths = [[i, episodes[i].audio_mic_edit2_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*self.rng)]
 
-        volap = AudioPlayer(paths)
-        while not volap.isfinished:
-            pass
-        result = volap.audio_list
-        
-        for i, mic, desk, vid, vol in result:
-            tmp_audio_path = f'{TEMP_FOLDER}temp_{i+1}_audio_final.mp3'
+            volap = AudioPlayer(paths)
+            while not volap.isfinished:
+                pass
+            result = volap.audio_list
+            
+            cnef(TEMP_FOLDER)
+            
+            ci = 0
+            for i, mic, desk, vid, vol in result:
+                tmp_audio_path = f'{TEMP_FOLDER}temp_{i+1}_audio_final.mp3'
+                
+                rie(tmp_audio_path)
+                
+                ffmpeg_run(
+                    FFMPEG_AUDIO_COMBINE,
+                    {
+                        '__IN1__':mic,
+                        '__IN2__': desk,
+                        '__VOLUME1__': str(1.0),
+                        '__VOLUME2__': str(vol),
+                        '__OUT__':tmp_audio_path
+                        }
+                    )
+                
+                reoc(not isfile(tmp_audio_path))
+                
+                app.progress_label.configure(text = f'Audio Combine\n{((ci+1)/len(result))*100:.1f}%\n{ci+1}/{len(result)}')
+                ci += 1
+                rendering_queue.append((vid, tmp_audio_path, i))
+            toast_finished("[1/2] Audio combine")
 
-            ffmpeg_run(
-                FFMPEG_AUDIO_COMBINE,
-                {
-                    '__IN1__':mic,
-                    '__IN2__': desk,
-                    '__VOLUME1__': str(1.0),
-                    '__VOLUME2__': str(vol),
-                    '__OUT__':tmp_audio_path
+            
+            
+            path_ending = f'_{SQLAccess.get_lp_game_name(self.lpid)}_final.mp4'
+            cnef(VIDEO_FOLDER)
+            ci = 0
+            for video, audio, index in rendering_queue:
+                final_path = f'{VIDEO_FOLDER}{index+1}{path_ending}'
+                rie(final_path)
+                ffmpeg_run(
+                    FFMPEG_VIDEO_RENDER,
+                    {
+                        '__VIDEO__': video,
+                        '__AUDIO__': audio,
+                        '__OUTPUT__': final_path
                     }
                 )
-            rendering_queue.append((vid, tmp_audio_path, i))
-        toast_finished("[1/2] Audio combine")   
-
-        path_ending = f'_{SQLAccess.get_lp_game_name(self.lpid)}_final.mp4'
-        cnef(VIDEO_FOLDER)
-        for video, audio, index in rendering_queue:
-            final_path = f'{VIDEO_FOLDER}{index+1}{path_ending}'
-            ffmpeg_run(
-                FFMPEG_VIDEO_RENDER,
-                {
-                    '__VIDEO__': video,
-                    '__AUDIO__': audio,
-                    '__OUTPUT__': final_path
-                }
-            )
-            app.pb.step((1 / (self.rng[1] + 1))*100)
-            SQLAccess.update_episodes(self.lpid, index, final_video_path=final_path)
-        super().user_workflow()
-        
-
+                reoc(not isfile(final_path))
+                app.progress_label.configure(text = f'Audio Combine\n{((ci+1)/len(result))*100:.1f}%\n{ci+1}/{len(result)}')
+                ci += 1
+                SQLAccess.update_episodes(self.lpid, index, final_video_path=final_path)
+            super().user_workflow()
+        except AutomationError as AE:
+            msgbox.showerror('Automation Error',str(AE))
+        # After processing all episodes, we re-enabling the application's start button
+        # and calling the parent `user_workflow` to display the completion message.
+        # It does not matter whether the automation was completed or canceled.
+        app.start_btn.state(['!disabled'])
 
 class TitleSetWF(GenericWorkFlow):
 
@@ -476,49 +469,59 @@ class TitleSetWF(GenericWorkFlow):
         VideoPlayer([i + 1 for i in range(*self.rng)],self.lpid,app)
 
 class DeployWF(GenericWorkFlow):
+    """
+    Copies user generated data to user set destination...
+    """
 
     def __init__(self,lpid, epr,app):
-
         super().__init__(folder=TEMP_FOLDER, finish_message="CAAR",lpid=lpid, epr=epr)
         self.user_workflow(app)
     def user_workflow(self,app):
+        """
+        ...
         
-        from shutil import copyfile
-        from bin.jinja import deploy_render
-        
-        DEST = askdirectory()
-        if not DEST:
-            return
-        
-        print(self.rng)
-        ALL = []
-        episodes = SQLAccess.read_episodes(self.lpid)
+        If the user has done something wrong. A AutomationError will be thrown & catched. 
+        After that the corresponding error message will be displayed.
+        """
+        try:
+            DEST = askdirectory()
+            reoc(not DEST,ERROR_006)
+            ALL = []
+            episodes = SQLAccess.read_episodes(self.lpid)
 
-        for i in range(*self.rng):
-            old_thumbnail_path = episodes[i].thumbnail_path
-            new_thumbnail_path = old_thumbnail_path.replace('/','\\').split('\\')[-1]
-            
-            old_video_path = episodes[i].final_video_path
-            new_video_path = old_video_path.replace('/','\\').split('\\')[-1]
-            
-            description = SQLAccess.get_lp_description(self.lpid) #! This feature will be enhanced in 1.0
-            print(new_thumbnail_path,new_video_path)
-            try:
+            for i in range(*self.rng):
+                old_thumbnail_path = episodes[i].thumbnail_path
+                reoc(old_thumbnail_path is None,ERROR_013)
+                reoc(not isfile(old_thumbnail_path),ERROR_007)
+
+                new_thumbnail_path = old_thumbnail_path.replace('/','\\').split('\\')[-1]
+                
+                old_video_path = episodes[i].final_video_path
+                
+                reoc(old_video_path is None,ERROR_013)
+                reoc(not isfile(old_video_path),ERROR_007)
+                
+                new_video_path = old_video_path.replace('/','\\').split('\\')[-1]
+                
+                description = SQLAccess.get_lp_description(self.lpid) #! This feature will be enhanced in 1.0
+
                 copyfile(old_video_path,f'{DEST}\\{new_video_path}')
                 copyfile(old_thumbnail_path,f'{DEST}\\{new_thumbnail_path}')
-            except FileNotFoundError:
-                msgbox.showerror('Something went wrong!','Data does not exist')
-                return
-            except Exception:
-                msgbox.showerror('Something went wrong!','Unknown Error')
-                return
-            REP = {
-                "id": i,
-                "title": episodes[i].title,
-                "thumbnail_path": new_thumbnail_path,
-                "upload_at": ''
-                }
-            ALL.append(REP)
-        deploy_render(f'{DEST}\\view.html', episodes=ALL,title=self.lp_name,description=description)
-        copyfile('static\\style.css',f'{DEST}\\style.css')
-        super().user_workflow()
+
+                REP = {
+                    "id": i,
+                    "title": episodes[i].title,
+                    "thumbnail_path": new_thumbnail_path,
+                    "upload_at": ''
+                    }
+                ALL.append(REP)
+            deploy_render(f'{DEST}\\view.html', episodes=ALL,title=self.lp_name,description=description)
+            copyfile('static\\style.css',f'{DEST}\\style.css')
+            super().user_workflow()
+        except AutomationError as AE:
+            msgbox.showerror('Automation Error',str(AE))
+            
+        # After processing all episodes, we re-enabling the application's start button
+        # and calling the parent `user_workflow` to display the completion message.
+        # It does not matter whether the automation was completed or canceled.
+        app.start_btn.state(['!disabled'])
