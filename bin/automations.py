@@ -346,7 +346,9 @@ class SendToAudacityWF(GenericWorkFlow):
                 print(rng_list[ep])
                 old = results_path + file
                 new = FIXED_AUDIO_FOLDER+f'{rng_list[ep]}_track_mic_fixed_ac.aac'
+                rie(new)
                 ffmpeg_run(FFMPEG_CONVERT_AUDIO_TYPE,{'__IN__': old, '__OUT__': new})
+                reoc(not isfile(new))
                 #remove()
                 SQLAccess.update_episodes(self.lpid,rng_list[ep],audio_mic_edit2_path=new)
             app.start_btn.state(['!disabled'])
