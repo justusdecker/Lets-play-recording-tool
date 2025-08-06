@@ -757,7 +757,11 @@ class TadEditor(tk.Frame):
         BACKGROUND = ttk.Frame(W)
         background_header = ttk.Label(W,text='Background',font=Font(W,size=14))
         
-        
+        LOGO = ttk.Frame(W)
+        logo_header = ttk.Label(W,text='Logo',font=Font(W,size=14))
+
+        TEXT = ttk.Frame(W)
+        text_header = ttk.Label(W,text='Text',font=Font(W,size=14))
         
         INT = tk.IntVar
         STR = tk.StringVar
@@ -770,12 +774,12 @@ class TadEditor(tk.Frame):
         # Vartype | UIE | (from, to) or None
         
         NUM_INP_NR = TBO(INT,INP,None)
-        NUM_INP_0_1 = TBO(INT,INP,(0,1))
-        NUM_INP_0_3 = TBO(INT,INP,(0,3))
+        NUM_INP_0_1 = TBO(FLT,INP,(0,1))
+        NUM_INP_0_3 = TBO(FLT,SLR,(0,3))
         NUM_INP_0_255 = TBO(INT,INP,(0,255))
-        NUM_INP_N360_360 = TBO(INT,INP,(-360,360))
-        NUM_INP_0_360 = TBO(INT,INP,(0,360))
-        BOOL_INP = TBO(INT,INP,(0,1))
+        NUM_INP_N360_360 = TBO(FLT,SLR,(-360,360))
+        NUM_INP_0_360 = TBO(INT,SLR,(0,360))
+        BOOL_INP = TBO(INT,CBT,(0,1))
         FILE = TBO(STR,BTN,None)
         ALL_ELEMENTS = [
             {
@@ -784,7 +788,7 @@ class TadEditor(tk.Frame):
                 "r_scale": [NUM_INP_0_1,NUM_INP_0_1],
                 "r_rot": [NUM_INP_N360_360,NUM_INP_N360_360],
                 "center": BOOL_INP,
-                "scale": NUM_INP_0_360,
+                "scale": NUM_INP_0_3,
                 "rot": NUM_INP_N360_360
             },
             {
@@ -807,14 +811,25 @@ class TadEditor(tk.Frame):
 
         ]
         
-        LOGO = ttk.Frame(W)
-        logo_header = ttk.Label(W,text='Logo',font=Font(W,size=14))
         BG_UIE = get_tad_uie(ALL_ELEMENTS[0])
+        for ui in BG_UIE:
+            ui: TBO
+            if ui.uie is SLR:
+                    
+                uie = ui.uie(BACKGROUND,from_=ui.range[0],to=ui.range[1])
+            
+                uie.pack()
+            elif ui.uie is INP:
+                uie = ui.uie(BACKGROUND,)
+                uie.pack()
+            elif ui.uie is CBT:
+                uie = ui.uie(BACKGROUND,text='test')
+                uie.pack()
         LOGO_UIE = get_tad_uie(ALL_ELEMENTS[1])
         TEXT_UIE = get_tad_uie(ALL_ELEMENTS[2])
-        print(len(BG_UIE),len(LOGO_UIE),len(TEXT_UIE))
-        TEXT = ttk.Frame(W)
-        text_header = ttk.Label(W,text='Text',font=Font(W,size=14))
+        
+        
+        
         # Packing
         tad_editor_header.pack(pady=10)
         TAD_EDITOR.pack()
