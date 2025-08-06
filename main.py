@@ -729,25 +729,6 @@ class TBO:
         self.range = rng
     def set_name(self,name: str):
         self.name = name
-def get_tad_uie(ELEMENTS: list,NAMES: list) -> list:
-    ALL_UIES = []
-    ALL_NAMES = []
-    for a in ELEMENTS:
-        if isinstance(ELEMENTS[a],TBO):
-            ALL_UIES.append(ELEMENTS[a])
-            ALL_NAMES.append(a)
-            continue
-        for i,b in enumerate(ELEMENTS[a]):
-            if isinstance(b,TBO):
-                ALL_UIES.append(b)
-                ALL_NAMES.append(f'{a} - {NAMES[a][i]}')
-                continue
-            for j,c in enumerate(b):
-                if isinstance(c,TBO):
-                    ALL_UIES.append(c)
-                    ALL_NAMES.append(f'{a} - {NAMES[a][i][j]}')
-                    
-    return ALL_UIES,ALL_NAMES
 
 def generate_tad_edit_uie(ELEMENTS,NAMES,master):
     SLR = ttk.LabeledScale
@@ -769,6 +750,35 @@ def generate_tad_edit_uie(ELEMENTS,NAMES,master):
             uie = ui.uie(master,text='test')
             uie.pack()
 class TadEditor(tk.Frame):
+    names = [
+            {
+                "pos": ['x','y'],
+                "r_pos": [['x-from','x-to'],['y-from','y-to']],
+                "r_scale": ['from','to'],
+                "r_rot": ['from','to'],
+                "center": None,
+                "scale": None,
+                "rot": None
+            },
+            {
+                "path": None,
+                "scale": None,
+                "rot": None,
+                "pos": ['x','y'],
+                "center": None
+            },
+            {
+                "path": None,
+                "scale": None,
+                "rot": None,
+                "color": ['R','G','B','A'],
+                "ol_color": ['R','G','B','A'],
+                "size": None,
+                "pos": ['x','y'],
+                "center": None
+            }
+
+        ]
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
         
@@ -837,48 +847,11 @@ class TadEditor(tk.Frame):
 
         ]
         
-        names = [
-            {
-                "pos": ['x','y'],
-                "r_pos": [['x-from','x-to'],['y-from','y-to']],
-                "r_scale": ['from','to'],
-                "r_rot": ['from','to'],
-                "center": None,
-                "scale": None,
-                "rot": None
-            },
-            {
-                "path": None,
-                "scale": None,
-                "rot": None,
-                "pos": ['x','y'],
-                "center": None
-            },
-            {
-                "path": None,
-                "scale": None,
-                "rot": None,
-                "color": ['R','G','B','A'],
-                "ol_color": ['R','G','B','A'],
-                "size": None,
-                "pos": ['x','y'],
-                "center": None
-            }
-
-        ]
         SUBHEADER = [BACKGROUND, LOGO, TEXT]
         for i in range(3):
             
-            UIE,NAMES = get_tad_uie(ALL_ELEMENTS[i],names[i])
+            UIE,NAMES = self.get_tad_uie(ALL_ELEMENTS[i],self.names[i])
             generate_tad_edit_uie(UIE,NAMES,SUBHEADER[i])
-        
-        #- Create Values
-        #- Read Values
-        #- add lp change
-        #- Insert Values on lp change
-        #- lock if no lp is selected
-        #- write it back into TAD
-        
         
         # Packing
         tad_editor_header.pack(pady=10)
@@ -895,9 +868,29 @@ class TadEditor(tk.Frame):
         
         
         W.grid(row=0,column=1)
-    def get_val(self,*args):
-        print(self.val.get())
-   
+
+    def get_tad_uie(self,elements: list,names: list) -> list:
+        """
+        Get UIElements & Pre Label Names
+        """
+        ALL_UIES = []
+        ALL_NAMES = []
+        for a in elements:
+            if isinstance(elements[a],TBO):
+                ALL_UIES.append(elements[a])
+                ALL_NAMES.append(a)
+                continue
+            for i,b in enumerate(elements[a]):
+                if isinstance(b,TBO):
+                    ALL_UIES.append(b)
+                    ALL_NAMES.append(f'{a} - {names[a][i]}')
+                    continue
+                for j,c in enumerate(b):
+                    if isinstance(c,TBO):
+                        ALL_UIES.append(c)
+                        ALL_NAMES.append(f'{a} - {names[a][i][j]}')
+                    
+        return ALL_UIES,ALL_NAMES
 class About(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
