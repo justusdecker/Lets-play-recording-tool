@@ -4,11 +4,14 @@ from bin.data_access import on_start, LetsPlays, SQLAccess, json_write, json_rea
 from threading import Thread
 from os.path import getsize
 import tkinter as tk
+import customtkinter as ctk
+
 from tkinter import ttk
 from tkinter.font import Font
 from os import remove
 from zipfile import ZipFile
 LARGEFONT =("Verdana", 35)
+ctk.set_appearance_mode('light')
 
 on_start()
 
@@ -726,28 +729,51 @@ class TBO:
         self.range = rng
     def set_name(self,name: str):
         self.name = name
-def get_tad_uie(ELEMENTS: list) -> list:
+def get_tad_uie(ELEMENTS: list,NAMES: list) -> list:
     ALL_UIES = []
-        
+    ALL_NAMES = []
     for a in ELEMENTS:
         if isinstance(ELEMENTS[a],TBO):
             ALL_UIES.append(ELEMENTS[a])
+            ALL_NAMES.append(a)
             continue
-        for b in ELEMENTS[a]:
+        for i,b in enumerate(ELEMENTS[a]):
             if isinstance(b,TBO):
                 ALL_UIES.append(b)
+                ALL_NAMES.append(f'{a} - {NAMES[a][i]}')
                 continue
-            for c in b:
+            for j,c in enumerate(b):
                 if isinstance(c,TBO):
                     ALL_UIES.append(c)
+                    ALL_NAMES.append(f'{a} - {NAMES[a][i][j]}')
                     
-    return ALL_UIES
+    return ALL_UIES,ALL_NAMES
+
+def generate_tad_edit_uie(ELEMENTS,NAMES,master):
+    SLR = ttk.LabeledScale
+    BTN = ttk.Button
+    INP = ttk.Entry
+    CBT = ttk.Checkbutton
+    for name, ui in zip(NAMES, ELEMENTS):
+        ui: TBO
+        ttk.Label(master,text=name).pack()
+        if ui.uie is SLR:
+                
+            uie = ui.uie(master,from_=ui.range[0],to=ui.range[1])
+        
+            uie.pack()
+        elif ui.uie is INP:
+            uie = ui.uie(master,)
+            uie.pack()
+        elif ui.uie is CBT:
+            uie = ui.uie(master,text='test')
+            uie.pack()
 class TadEditor(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
         
-        W = ttk.Frame(self)
-        
+        #W = ttk.Frame(self)
+        W = ctk.CTkScrollableFrame(self,width=600,height=400)
         self.menu = get_menu(self, controller)
         
         # Create Headers
@@ -811,23 +837,47 @@ class TadEditor(tk.Frame):
 
         ]
         
-        BG_UIE = get_tad_uie(ALL_ELEMENTS[0])
-        for ui in BG_UIE:
-            ui: TBO
-            if ui.uie is SLR:
-                    
-                uie = ui.uie(BACKGROUND,from_=ui.range[0],to=ui.range[1])
+        names = [
+            {
+                "pos": ['x','y'],
+                "r_pos": [['x-from','x-to'],['y-from','y-to']],
+                "r_scale": ['from','to'],
+                "r_rot": ['from','to'],
+                "center": None,
+                "scale": None,
+                "rot": None
+            },
+            {
+                "path": None,
+                "scale": None,
+                "rot": None,
+                "pos": ['x','y'],
+                "center": None
+            },
+            {
+                "path": None,
+                "scale": None,
+                "rot": None,
+                "color": ['R','G','B','A'],
+                "ol_color": ['R','G','B','A'],
+                "size": None,
+                "pos": ['x','y'],
+                "center": None
+            }
+
+        ]
+        SUBHEADER = [BACKGROUND, LOGO, TEXT]
+        for i in range(3):
             
-                uie.pack()
-            elif ui.uie is INP:
-                uie = ui.uie(BACKGROUND,)
-                uie.pack()
-            elif ui.uie is CBT:
-                uie = ui.uie(BACKGROUND,text='test')
-                uie.pack()
-        LOGO_UIE = get_tad_uie(ALL_ELEMENTS[1])
-        TEXT_UIE = get_tad_uie(ALL_ELEMENTS[2])
+            UIE,NAMES = get_tad_uie(ALL_ELEMENTS[i],names[i])
+            generate_tad_edit_uie(UIE,NAMES,SUBHEADER[i])
         
+        #- Create Values
+        #- Read Values
+        #- add lp change
+        #- Insert Values on lp change
+        #- lock if no lp is selected
+        #- write it back into TAD
         
         
         # Packing
