@@ -730,25 +730,6 @@ class TBO:
     def set_name(self,name: str):
         self.name = name
 
-def generate_tad_edit_uie(ELEMENTS,NAMES,master):
-    SLR = ttk.LabeledScale
-    BTN = ttk.Button
-    INP = ttk.Entry
-    CBT = ttk.Checkbutton
-    for name, ui in zip(NAMES, ELEMENTS):
-        ui: TBO
-        ttk.Label(master,text=name).pack()
-        if ui.uie is SLR:
-                
-            uie = ui.uie(master,from_=ui.range[0],to=ui.range[1])
-        
-            uie.pack()
-        elif ui.uie is INP:
-            uie = ui.uie(master,)
-            uie.pack()
-        elif ui.uie is CBT:
-            uie = ui.uie(master,text='test')
-            uie.pack()
 class TadEditor(tk.Frame):
     names = [
             {
@@ -851,7 +832,7 @@ class TadEditor(tk.Frame):
         for i in range(3):
             
             UIE,NAMES = self.get_tad_uie(ALL_ELEMENTS[i],self.names[i])
-            generate_tad_edit_uie(UIE,NAMES,SUBHEADER[i])
+            self.generate_tad_edit_uie(UIE,NAMES,SUBHEADER[i])
         
         # Packing
         tad_editor_header.pack(pady=10)
@@ -868,7 +849,25 @@ class TadEditor(tk.Frame):
         
         
         W.grid(row=0,column=1)
-
+    def generate_tad_edit_uie(self,elements,names,master):
+        SLR = ttk.LabeledScale
+        BTN = ttk.Button
+        INP = ttk.Entry
+        CBT = ttk.Checkbutton
+        for name, ui in zip(names, elements):
+            ui: TBO
+            ttk.Label(master,text=name).pack()
+            if ui.uie is SLR:
+                    
+                uie = ui.uie(master,from_=ui.range[0],to=ui.range[1])
+            
+                uie.pack()
+            elif ui.uie is INP:
+                uie = ui.uie(master,)
+                uie.pack()
+            elif ui.uie is CBT:
+                uie = ui.uie(master,text='test')
+                uie.pack()
     def get_tad_uie(self,elements: list,names: list) -> list:
         """
         Get UIElements & Pre Label Names
