@@ -782,9 +782,11 @@ FLATTENED_DEFAULT_SETTINGS = {
     "text::pos::y": 0,
     "text::center": True
 }
-INPUT_INT_NV = (tk.IntVar,tk.Entry, '>-2048::<2048')
-INPUT_SCALE = (tk.DoubleVar,tk.Entry, '>-0.5::<3.5')
-INPUT_ROT = (tk.DoubleVar,tk.Entry, '>-359::<359')
+INPUT_INT_NV = (tk.IntVar,ttk.Entry, '>-2048::<2048')
+INPUT_SCALE = (tk.DoubleVar,ttk.LabeledScale, '>-0.5::<3.5')
+INPUT_ROT = (tk.DoubleVar,ttk.LabeledScale, '>-359::<359')
+INPUT_CB = (tk.IntVar,ttk.Checkbutton, '')
+INPUT_COLOR = (tk.IntVar,ttk.Entry, '>-1::<256') #! Will be changed later
 FDS_TBO = {
     "bg::pos::x": INPUT_INT_NV,
     "bg::pos::y": INPUT_INT_NV,
@@ -796,32 +798,32 @@ FDS_TBO = {
     "bg::r_scale::to": INPUT_SCALE,
     "bg::r_rot::from": INPUT_ROT,
     "bg::r_rot::to": INPUT_ROT,
-    "bg::center": True,
+    "bg::center": INPUT_CB,
     "bg::scale": INPUT_SCALE,
     "bg::rot": INPUT_ROT,
 
-    "logo::path": "test_logo.png",
+    "logo::path": (tk.StringVar,ttk.Entry, 'notnull'),
     "logo::scale": INPUT_SCALE,
     "logo::rot": INPUT_ROT,
     "logo::pos::x": INPUT_INT_NV,
     "logo::pos::y": INPUT_INT_NV,
-    "logo::center": True,
+    "logo::center": INPUT_CB,
 
-    "text::path": "",
-    "text::scale": 1,
-    "text::rot": 0,
-    "text::color::R": 255,
-    "text::color::G": 255,
-    "text::color::B": 255,
-    "text::color::A": 255,
-    "text::ol_color::R": 1,
-    "text::ol_color::G": 1,
-    "text::ol_color::B": 1,
-    "text::ol_color::A": 255,
-    "text::size": 40,
+    "text::path": (tk.StringVar,ttk.Entry, ''),
+    "text::scale": INPUT_SCALE,
+    "text::rot": INPUT_ROT,
+    "text::color::R": INPUT_COLOR,
+    "text::color::G": INPUT_COLOR,
+    "text::color::B": INPUT_COLOR,
+    "text::color::A": INPUT_COLOR,
+    "text::ol_color::R": INPUT_COLOR,
+    "text::ol_color::G": INPUT_COLOR,
+    "text::ol_color::B": INPUT_COLOR,
+    "text::ol_color::A": INPUT_COLOR,
+    "text::size": INPUT_INT_NV,
     "text::pos::x": INPUT_INT_NV,
     "text::pos::y": INPUT_INT_NV,
-    "text::center": True
+    "text::center": INPUT_CB
 }
 
 class TBO:
