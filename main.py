@@ -853,7 +853,7 @@ class TadEditor(tk.Frame):
         askopenfilename(title=f'{uie.range} - {name}')
        
     def set_font_path(self,*args):
-        pass
+        askopenfilename(title=f'{uie.range} - {name}')
     
     def type_check(self,*args):
 
