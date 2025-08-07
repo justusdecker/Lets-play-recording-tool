@@ -724,10 +724,11 @@ class Settings(tk.Frame):
         json_write(ROOT+'obs_settings.json',NEW_OBS_SETTINGS)
 
 class TBO:
-    def __init__(self,type, uie, rng):
+    def __init__(self,type, uie, rng, mustbeset:bool=True):
         self.type = type
         self.uie = uie
         self.range = rng
+        self.mustbeset = mustbeset
     def set_name(self,name: str):
         self.name = name
 
@@ -781,6 +782,9 @@ class TadEditor(tk.Frame):
         TEXT = ttk.Frame(W)
         text_header = ttk.Label(W,text='Text',font=Font(W,size=14))
         
+        SAVE = ttk.Frame(W)
+        save_header = ttk.Label(W,text='Save',font=Font(W,size=14))
+        
         INT = tk.IntVar
         STR = tk.StringVar
         FLT = tk.DoubleVar
@@ -799,6 +803,7 @@ class TadEditor(tk.Frame):
         NUM_INP_0_360 = TBO(INT,SLR,(0,360))
         BOOL_INP = TBO(INT,CBT,(0,1))
         FILE = TBO(STR,BTN,None)
+        
         ALL_ELEMENTS = [
             {
                 "pos": [NUM_INP_NR,NUM_INP_NR],
@@ -810,14 +815,14 @@ class TadEditor(tk.Frame):
                 "rot": NUM_INP_N360_360
             },
             {
-                "path": TBO(STR,BTN,'logo'),
+                "path": TBO(STR,BTN,self.set_logo_path),
                 "scale": NUM_INP_0_3,
                 "rot": NUM_INP_N360_360,
                 "pos": [NUM_INP_NR,NUM_INP_NR],
                 "center": BOOL_INP
             },
             {
-                "path": TBO(STR,BTN,'text'),
+                "path": TBO(STR,BTN,self.set_font_path,False),
                 "scale": NUM_INP_0_3,
                 "rot": NUM_INP_N360_360,
                 "color": [NUM_INP_0_255,NUM_INP_0_255,NUM_INP_0_255,NUM_INP_0_255],
@@ -834,26 +839,48 @@ class TadEditor(tk.Frame):
             self.get_tad_uie(ALL_ELEMENTS[i],self.names[i],SUBHEADER[i])
         print(len(self.uie_elements),len(self.pre_lbl_names),len(self.variables))
         # Packing
-        tad_editor_header.pack(pady=10)
-        TAD_EDITOR.pack()
+        tad_editor_header.grid(row=0,column=1,pady=10,sticky='N')
+        TAD_EDITOR.grid(row=1,column=0,sticky='N')
         
-        background_header.pack(pady=10)
-        BACKGROUND.pack()
+        background_header.grid(row=0,column=1,pady=10,sticky='N')
+        BACKGROUND.grid(row=1,column=1,sticky='N')
         
-        logo_header.pack(pady=10)
-        LOGO.pack()
+        logo_header.grid(row=0,column=2,pady=10,sticky='N')
+        LOGO.grid(row=1,column=2,sticky='N')
         
-        text_header.pack(pady=10)
-        TEXT.pack()
+        text_header.grid(row=0,column=3,pady=10,sticky='N')
+        TEXT.grid(row=1,column=3,sticky='N')
+        
+        self.save_btn = ttk.Button(SAVE,text='save',command=self.get_values)
+        self.save_btn.grid(row=0,column=5)
+        
+        save_header.grid(row=0,column=4,pady=10,sticky='N')
+        SAVE.grid(row=1,column=4,sticky='N')
         
         
         W.grid(row=0,column=1)
-    
+    def get_strings(self) -> list[str]:
+        return [value for uie, value in zip(self.uie_elements, self.variables) if uie.type == tk.StringVar]
     def set_logo_path(self,*args):
-        askopenfilename(title=f'{uie.range} - {name}')
+        filepath = askopenfilename()
+        if not filepath:
+            msgbox.showwarning('WARN','No File selected')
+            return
+        if filepath.endswith('.png'):
+            self.get_strings()[0].set(filepath)
+        else:
+            msgbox.showerror('ERROR','Wrong File Format')
+        
        
     def set_font_path(self,*args):
-        askopenfilename(title=f'{uie.range} - {name}')
+        filepath = askopenfilename()
+        if not filepath:
+            msgbox.showwarning('WARN','No File selected')
+            return
+        if filepath.endswith('.ttf') or filepath.endswith('.otf'):
+            self.get_strings()[1].set(filepath)
+        else:
+            msgbox.showerror('ERROR','Wrong File Format')
     
     def type_check(self,*args):
 
@@ -932,7 +959,7 @@ class TadEditor(tk.Frame):
                 self.tke.append(uie)
             elif ui.uie is BTN:
                 typ = ui.type()
-                uie = ui.uie(master,text=name,command=self.type_check)
+                uie = ui.uie(master,text=name,command=ui.range)
                 uie.pack()
                 self.variables.append(typ)
                 self.tke.append(uie)
@@ -962,6 +989,38 @@ class TadEditor(tk.Frame):
         self.uie_elements.extend(UIE)
         self.pre_lbl_names.extend(NAMES)
         self.generate_tad_edit_uie(UIE,NAMES,sh)
+    
+    def asdict(self):
+        index = 0
+        names = self.names.copy()
+        
+        for x in range(3):
+            
+            for a in names[x]:
+                names[x][a] = self.variables[index].get()
+                index += 1
+                if not isinstance(names[x][a],list):
+                    break
+                for i,b in enumerate(names[x][a]):
+                    names[x][a][i] = self.variables[index].get()
+                    index += 1
+                    if not isinstance(names[x][a][i],list):
+                        break
+                    for j,c in enumerate(b):
+                        names[x][a][i][j] = self.variables[index].get()
+                        index += 1
+        print(len(self.variables),index)
+        return names
+
+    
+    def get_values(self) -> dict:
+        #Convert list back to dict
+        #!for uie, value in zip(self.uie_elements,self.variables):
+        #!    if uie.type == tk.StringVar:
+        #!        if not value.get() and uie.mustbeset:
+        #!            print('Not all values set!')
+        #!            break
+        json_write('test.json',self.asdict())
 class About(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
