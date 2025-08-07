@@ -859,13 +859,17 @@ class TadEditor(tk.Frame):
         CBT = ttk.Checkbutton
         for uie, value,ui in zip(self.uie_elements, self.variables,self.tke):
             if ui is None: continue
-            print(uie.uie is INP,uie.uie)
+
             try:
+
                 rng = uie.range
                 if rng is None:
                     # no range check
                     try:
                         value.get()
+                        if ui.get().startswith('0') and len(ui.get()) > 1 and not ui.get().startswith('0.'):
+                            value.set(0)
+                        print(value.get(),ui.get())
                     except Exception as E:
                         print(E)
                         value.set(0)
@@ -874,19 +878,17 @@ class TadEditor(tk.Frame):
                     try:
                         value.get()
                     except Exception as E:
-                        print(E)
+
                         value.set(rng[0])
                     
                     if not (value.get() >= rng[0]):
+
                         value.set(rng[0])
 
                     elif not (value.get() <= rng[1]):
+
                         value.set(rng[1])
 
-                
-                if uie.uie is INP:
-                    ui.delete(0,tk.END)
-                    ui.insert(0,str(value.get()))
             except TypeError as E:
                 print(E)
             except tk.TclError as E:
@@ -910,7 +912,7 @@ class TadEditor(tk.Frame):
             elif ui.uie is INP:
                 typ = ui.type()
                 uie = ui.uie(master,textvariable=typ)
-                uie.bind('<KeyPress>',self.type_check)
+                uie.bind('<KeyRelease>',self.type_check)
                 self.variables.append(typ)
                 uie.pack()
                 self.tke.append(uie)
