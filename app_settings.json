@@ -1,0 +1,65 @@
+[
+    {
+        "name": "Transform Settings",
+        "pos": [
+            "X",
+            "Y"
+        ],
+        "r_pos": [
+            [
+                "X From",
+                "X To"
+            ],
+            [
+                "Y From",
+                "Y To"
+            ]
+        ],
+        "r_scale": [
+            "FROM",
+            "TO"
+        ],
+        "r_rot": [
+            "FROM",
+            "TO"
+        ],
+        "center": "Enter center",
+        "scale": "Enter scale",
+        "rot": "Enter rot"
+    },
+    {
+        "name": "Image Settings",
+        "path": "Enter path",
+        "scale": "Enter scale",
+        "rot": "Enter rot",
+        "pos": [
+            "X",
+            "Y"
+        ],
+        "center": "Enter center"
+    },
+    {
+        "name": "Shape Settings",
+        "path": "Enter path",
+        "scale": "Enter scale",
+        "rot": "Enter rot",
+        "color": [
+            "R",
+            "G",
+            "B",
+            "A"
+        ],
+        "ol_color": [
+            "R",
+            "",
+            "B",
+            "A"
+        ],
+        "size": "Enter size",
+        "pos": [
+            "X",
+            "Y"
+        ],
+        "center": "Enter center"
+    }
+]
