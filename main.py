@@ -1110,21 +1110,27 @@ class TBO:
             if not cond and cond != 'notnull':
                 raise ValueError(f'Wrong condition should be empty or notnull. Not {cond}')
         return cond
-    def _check(self,cond,val: float | int) -> bool:
+    def _check_numeric(self,cond) -> bool:
         if cond.startswith('<'):
-            return float(cond[1:]) > val
+            return float(cond[1:]) >= self.get_value()
         elif cond.startswith('>'):
-            return float(cond[1:]) < val
-        return
+            return float(cond[1:]) <= self.get_value()
+    def _check_text(self,cond) -> bool:
+        if cond == 'notnull':
+            return not self.get_value()
     def get_value(self):
         try:
             return self.var.get()
         except:
-            
+            #!RESET VALUE
             return #default
     def check(self):
         if self.type is tk.IntVar or self.type is tk.DoubleVar:
-            self._check(self.condition[0])
+            if self._check_numeric(self.condition[0]):
+                self.var.set(self.condition[0])
+            elif self._check_numeric(self.condition[1]):
+                self.var.set(self.condition[1])
+        
     def set_name(self,name: str):
         self.name = name
  
