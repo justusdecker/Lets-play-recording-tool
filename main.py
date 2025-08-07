@@ -742,343 +742,88 @@ class Settings(tk.Frame):
 
         W.grid(row=0,column=1)
 
-class TBO:
-    def __init__(self,type, uie, rng, mustbeset:bool=True):
-        self.type = type
-        self.uie = uie
-        self.range = rng
-        self.mustbeset = mustbeset
-    def set_name(self,name: str):
-        self.name = name
-
-class __TadEditor(tk.Frame):
-    names = [
-            {
-                "pos": ['x','y'],
-                "r_pos": [['x-from','x-to'],['y-from','y-to']],
-                "r_scale": ['from','to'],
-                "r_rot": ['from','to'],
-                "center": None,
-                "scale": None,
-                "rot": None
-            },
-            {
-                "path": None,
-                "scale": None,
-                "rot": None,
-                "pos": ['x','y'],
-                "center": None
-            },
-            {
-                "path": None,
-                "scale": None,
-                "rot": None,
-                "color": ['R','G','B','A'],
-                "ol_color": ['R','G','B','A'],
-                "size": None,
-                "pos": ['x','y'],
-                "center": None
-            }
-
-        ]
-    def __init__(self, parent, controller): 
-        tk.Frame.__init__(self, parent)
-        
-        #W = ttk.Frame(self)
-        W = ctk.CTkScrollableFrame(self,width=600,height=400)
-        self.menu = get_menu(self, controller)
-        
-        # Create Headers
-        TAD_EDITOR = ttk.Frame(W)
-        tad_editor_header = ttk.Label(W,text='TAD Editor',font=Font(W,size=16))
-        
-        BACKGROUND = ttk.Frame(W)
-        background_header = ttk.Label(W,text='Background',font=Font(W,size=14))
-        
-        LOGO = ttk.Frame(W)
-        logo_header = ttk.Label(W,text='Logo',font=Font(W,size=14))
-
-        TEXT = ttk.Frame(W)
-        text_header = ttk.Label(W,text='Text',font=Font(W,size=14))
-        
-        SAVE = ttk.Frame(W)
-        save_header = ttk.Label(W,text='Save',font=Font(W,size=14))
-        
-        INT = tk.IntVar
-        STR = tk.StringVar
-        FLT = tk.DoubleVar
-        
-        SLR = ttk.LabeledScale
-        BTN = ttk.Button
-        INP = ttk.Entry
-        CBT = ttk.Checkbutton
-        # Vartype | UIE | (from, to) or None
-        
-        NUM_INP_NR = TBO(INT,INP,None)
-        NUM_INP_0_1 = TBO(FLT,INP,(0,1))
-        NUM_INP_0_3 = TBO(FLT,SLR,(0,3))
-        NUM_INP_0_255 = TBO(INT,INP,(0,255))
-        NUM_INP_N360_360 = TBO(FLT,SLR,(-360,360))
-        NUM_INP_0_360 = TBO(INT,SLR,(0,360))
-        BOOL_INP = TBO(INT,CBT,(0,1))
-        FILE = TBO(STR,BTN,None)
-        
-        ALL_ELEMENTS = [
-            {
-                "pos": [NUM_INP_NR,NUM_INP_NR],
-                "r_pos": [[NUM_INP_NR,NUM_INP_NR],[NUM_INP_NR,NUM_INP_NR]],
-                "r_scale": [NUM_INP_0_1,NUM_INP_0_1],
-                "r_rot": [NUM_INP_N360_360,NUM_INP_N360_360],
-                "center": BOOL_INP,
-                "scale": NUM_INP_0_3,
-                "rot": NUM_INP_N360_360
-            },
-            {
-                "path": TBO(STR,BTN,self.set_logo_path),
-                "scale": NUM_INP_0_3,
-                "rot": NUM_INP_N360_360,
-                "pos": [NUM_INP_NR,NUM_INP_NR],
-                "center": BOOL_INP
-            },
-            {
-                "path": TBO(STR,BTN,self.set_font_path,False),
-                "scale": NUM_INP_0_3,
-                "rot": NUM_INP_N360_360,
-                "color": [NUM_INP_0_255,NUM_INP_0_255,NUM_INP_0_255,NUM_INP_0_255],
-                "ol_color": [NUM_INP_0_255,NUM_INP_0_255,NUM_INP_0_255,NUM_INP_0_255],
-                "size": NUM_INP_NR,
-                "pos": [NUM_INP_NR,NUM_INP_NR],
-                "center": BOOL_INP
-            }
-
-        ]
-        self.uie_elements, self.pre_lbl_names, self.variables, self.values,self.tke = [],[],[], [], []
-        SUBHEADER = [BACKGROUND, LOGO, TEXT]
-        for i in range(3):
-            self.get_tad_uie(ALL_ELEMENTS[i],self.names[i],SUBHEADER[i])
-        print(len(self.uie_elements),len(self.pre_lbl_names),len(self.variables))
-        # Packing
-        tad_editor_header.grid(row=0,column=1,pady=10,sticky='N')
-        TAD_EDITOR.grid(row=1,column=0,sticky='N')
-        
-        background_header.grid(row=0,column=1,pady=10,sticky='N')
-        BACKGROUND.grid(row=1,column=1,sticky='N')
-        
-        logo_header.grid(row=0,column=2,pady=10,sticky='N')
-        LOGO.grid(row=1,column=2,sticky='N')
-        
-        text_header.grid(row=0,column=3,pady=10,sticky='N')
-        TEXT.grid(row=1,column=3,sticky='N')
-        
-        self.save_btn = ttk.Button(SAVE,text='save',command=self.get_values)
-        self.save_btn.grid(row=0,column=5)
-        
-        save_header.grid(row=0,column=4,pady=10,sticky='N')
-        SAVE.grid(row=1,column=4,sticky='N')
-        
-        
-        W.grid(row=0,column=1)
-    def get_strings(self) -> list[str]:
-        return [value for uie, value in zip(self.uie_elements, self.variables) if uie.type == tk.StringVar]
-    def set_logo_path(self,*args):
-        filepath = askopenfilename()
-        if not filepath:
-            msgbox.showwarning('WARN','No File selected')
-            return
-        if filepath.endswith('.png'):
-            self.get_strings()[0].set(filepath)
-        else:
-            msgbox.showerror('ERROR','Wrong File Format')
-        
-       
-    def set_font_path(self,*args):
-        filepath = askopenfilename()
-        if not filepath:
-            msgbox.showwarning('WARN','No File selected')
-            return
-        if filepath.endswith('.ttf') or filepath.endswith('.otf'):
-            self.get_strings()[1].set(filepath)
-        else:
-            msgbox.showerror('ERROR','Wrong File Format')
-    
-    def type_check(self,*args):
-
-        for uie, value,ui,name in zip(self.uie_elements, self.variables,self.tke,self.uie_names):
-            if ui is None: continue
-            print(name)
-            try:
-                
-                # Get Btnstuff
-                if uie.uie is not ttk.Entry: continue
-
-                rng = uie.range
-                if rng is None:
-                    # no range check
-                    try:
-                        value.get()
-                        if ui.get().startswith('0') and len(ui.get()) > 1 and not ui.get().startswith('0.'):
-                            value.set(0)
-                    except Exception as E:
-                        print(E)
-                        value.set(0)
-                    
-                elif isinstance(rng,tuple):
-                    try:
-                        value.get()
-                    except Exception as E:
-                        print(E)
-                        value.set(rng[0])
-                    if ui.get().startswith('0') and len(ui.get()) > 1 and not ui.get().startswith('0.'):
-                        value.set(rng[0])
-                    
-                    if not (value.get() >= rng[0]):
-
-                        value.set(rng[0])
-
-                    elif not (value.get() <= rng[1]):
-                        
-                        value.set(rng[1])
-                
-
-            except TypeError as E:
-                print(E)
-            except tk.TclError as E:
-                print(E)
-            
-    def generate_tad_edit_uie(self,elements,names,master):
-        SLR = ttk.LabeledScale
-        BTN = ttk.Button
-        INP = ttk.Entry
-        CBT = ttk.Checkbutton
-        for name, ui in zip(names, elements):
-            ui: TBO
-            if ui.uie is not CBT and ui.uie is not BTN:
-                ttk.Label(master,text=name).pack()
-            
-            if ui.uie is SLR:
-                typ = ui.type()
-                uie = ui.uie(master,from_=ui.range[0],to=ui.range[1],variable=typ)
-                self.variables.append(typ)
-                uie.pack()
-                
-                self.tke.append(uie)
-            elif ui.uie is INP:
-                typ = ui.type()
-                uie = ui.uie(master,textvariable=typ)
-                uie.bind('<KeyRelease>',self.type_check)
-                self.variables.append(typ)
-                uie.pack()
-                self.tke.append(uie)
-                
-            elif ui.uie is CBT:
-                typ = ui.type()
-                uie = ui.uie(master,text=name,variable=typ)
-                self.variables.append(typ)
-                uie.pack()
-                self.tke.append(uie)
-            elif ui.uie is BTN:
-                typ = ui.type()
-                uie = ui.uie(master,text=name,command=ui.range)
-                uie.pack()
-                self.variables.append(typ)
-                self.tke.append(uie)
-
-                
-    def get_tad_uie(self,elements: list,names: list,sh: list,id: int) -> list:
-        """
-        Get UIElements & Pre Label Names
-        """
-        UIE = []
-        NAMES = []
-        for a in elements:
-            if isinstance(elements[a],TBO):
-                UIE.append(elements[a])
-                NAMES.append(a)
-                self.values.append((id,a))
-                continue
-            for i,b in enumerate(elements[a]):
-                if isinstance(b,TBO):
-                    UIE.append(b)
-                    NAMES.append(f'{a} - {names[a][i]}')
-                    self.values.append((id,a,i))
-                    continue
-                for j,c in enumerate(b):
-                    if isinstance(c,TBO):
-                        UIE.append(c)
-                        NAMES.append(f'{a} - {names[a][i][j]}')
-                        self.values.append((id,a,i,j))
-        self.uie_names = NAMES
-        self.uie_elements.extend(UIE)
-        self.pre_lbl_names.extend(NAMES)
-        self.generate_tad_edit_uie(UIE,NAMES,sh)
-    
-    def asdict(self):
-        index = 0
-        names = self.names.copy()
-        
-        for x in range(3):
-            
-            for a in names[x]:
-                names[x][a] = self.variables[index].get()
-                index += 1
-                if names[x][a] is None:
-                    break
-                for i,b in enumerate(names[x][a]):
-                    names[x][a][i] = self.variables[index].get()
-                    index += 1
-                    if names[x][a][i] is None:
-                        break
-                    for j,c in enumerate(b):
-                        names[x][a][i][j] = self.variables[index].get()
-                        index += 1
-        print(len(self.variables),index)
-        
-        
-        
-        
-        return names
-
-    
-    def get_values(self) -> dict:
-        #Convert list back to dict
-        #!for uie, value in zip(self.uie_elements,self.variables):
-        #!    if uie.type == tk.StringVar:
-        #!        if not value.get() and uie.mustbeset:
-        #!            print('Not all values set!')
-        #!            break
-        json_write('test.json',self.asdict())
 
 
-class About(tk.Frame):
-    def __init__(self, parent, controller): 
-        tk.Frame.__init__(self, parent)
-        
-        W = ttk.Frame(self)
-        
-        self.menu = get_menu(self, controller)
-        
-        # Create Headers
-        LICENSE = ttk.Frame(W)
-        license_header = ttk.Label(W,text='License',font=Font(W,size=16))
-        
-        scrollbar = ttk.Scrollbar(W,orient='vertical')
-        scrollbar.pack(side=tk.RIGHT,fill=tk.Y)
-        
-        text = tk.Text(LICENSE, width = 80, height = 25, wrap = tk.NONE,
-                 yscrollcommand = scrollbar.set)
-        
-        for i in __LICENSE__.splitlines():
-            text.insert(tk.END, f'{i}\n')
-            
-        text.pack(side=tk.TOP, fill=tk.X)
-        scrollbar.config(command=text.yview)
-        
-        # Packing
-        license_header.pack(pady=10)
-        LICENSE.pack()
-        
-        W.grid(row=0,column=1)
-   
+FLATTENED_DEFAULT_SETTINGS = {
+    "bg::pos::x": 0,
+    "bg::pos::y": 0,
+    "bg::r_pos::x-from": 0,
+    "bg::r_pos::x-to": 0,
+    "bg::r_pos::y-from": 0,
+    "bg::r_pos::y-to": 0,
+    "bg::r_scale::from": 0,
+    "bg::r_scale::to": 0,
+    "bg::r_rot::from": 0,
+    "bg::r_rot::to": 0,
+    "bg::center": True,
+    "bg::scale": 1.35,
+    "bg::rot": 0,
+
+    "logo::path": "test_logo.png",
+    "logo::scale": 1,
+    "logo::rot": 0,
+    "logo::pos::x": 0,
+    "logo::pos::y": 0,
+    "logo::center": True,
+
+    "text::path": "",
+    "text::scale": 1,
+    "text::rot": 0,
+    "text::color::R": 255,
+    "text::color::G": 255,
+    "text::color::B": 255,
+    "text::color::A": 255,
+    "text::ol_color::R": 1,
+    "text::ol_color::G": 1,
+    "text::ol_color::B": 1,
+    "text::ol_color::A": 255,
+    "text::size": 40,
+    "text::pos::x": 0,
+    "text::pos::y": 0,
+    "text::center": True
+}
+INPUT_INT_NV = (tk.IntVar,tk.Entry, '>-2048::<2048')
+INPUT_SCALE = (tk.DoubleVar,tk.Entry, '>-0.5::<3.5')
+INPUT_ROT = (tk.DoubleVar,tk.Entry, '>-359::<359')
+FDS_TBO = {
+    "bg::pos::x": INPUT_INT_NV,
+    "bg::pos::y": INPUT_INT_NV,
+    "bg::r_pos::x-from": INPUT_INT_NV,
+    "bg::r_pos::x-to": INPUT_INT_NV,
+    "bg::r_pos::y-from": INPUT_INT_NV,
+    "bg::r_pos::y-to": INPUT_INT_NV,
+    "bg::r_scale::from": INPUT_SCALE,
+    "bg::r_scale::to": INPUT_SCALE,
+    "bg::r_rot::from": INPUT_ROT,
+    "bg::r_rot::to": INPUT_ROT,
+    "bg::center": True,
+    "bg::scale": INPUT_SCALE,
+    "bg::rot": INPUT_ROT,
+
+    "logo::path": "test_logo.png",
+    "logo::scale": INPUT_SCALE,
+    "logo::rot": INPUT_ROT,
+    "logo::pos::x": INPUT_INT_NV,
+    "logo::pos::y": INPUT_INT_NV,
+    "logo::center": True,
+
+    "text::path": "",
+    "text::scale": 1,
+    "text::rot": 0,
+    "text::color::R": 255,
+    "text::color::G": 255,
+    "text::color::B": 255,
+    "text::color::A": 255,
+    "text::ol_color::R": 1,
+    "text::ol_color::G": 1,
+    "text::ol_color::B": 1,
+    "text::ol_color::A": 255,
+    "text::size": 40,
+    "text::pos::x": INPUT_INT_NV,
+    "text::pos::y": INPUT_INT_NV,
+    "text::center": True
+}
+
 class TBO:
     def __init__(self,
                  master,
@@ -1151,46 +896,143 @@ class TBO:
     def set_name(self,name: str):
         self.name = name
  
-# uie
-FLATTENED_DEFAULT_SETTINGS = {
-    "transform::pos::x": 0,
-    "transform::pos::y": 0,
-    "transform::r_pos::x-from": 0,
-    "transform::r_pos::x-to": 0,
-    "transform::r_pos::y-from": 0,
-    "transform::r_pos::y-to": 0,
-    "transform::r_scale::from": 0,
-    "transform::r_scale::to": 0,
-    "transform::r_rot::from": 0,
-    "transform::r_rot::to": 0,
-    "transform::center": True,
-    "transform::scale": 1.35,
-    "transform::rot": 0,
+class TadEditor(tk.Frame):#! REWORK HERE
+    names = [
+            {
+                "pos": ['x','y'],
+                "r_pos": [['x-from','x-to'],['y-from','y-to']],
+                "r_scale": ['from','to'],
+                "r_rot": ['from','to'],
+                "center": None,
+                "scale": None,
+                "rot": None
+            },
+            {
+                "path": None,
+                "scale": None,
+                "rot": None,
+                "pos": ['x','y'],
+                "center": None
+            },
+            {
+                "path": None,
+                "scale": None,
+                "rot": None,
+                "color": ['R','G','B','A'],
+                "ol_color": ['R','G','B','A'],
+                "size": None,
+                "pos": ['x','y'],
+                "center": None
+            }
 
-    "image::path": "test_logo.png",
-    "image::scale": 1,
-    "image::rot": 0,
-    "image::pos::x": 0,
-    "image::pos::y": 0,
-    "image::center": True,
-
-    "shape::path": "",
-    "shape::scale": 1,
-    "shape::rot": 0,
-    "shape::color::R": 255,
-    "shape::color::G": 255,
-    "shape::color::B": 255,
-    "shape::color::A": 255,
-    "shape::ol_color::R": 1,
-    "shape::ol_color::G": 1,
-    "shape::ol_color::B": 1,
-    "shape::ol_color::A": 255,
-    "shape::size": 40,
-    "shape::pos::x": 0,
-    "shape::pos::y": 0,
-    "shape::center": True
-}
+        ]
+    def __init__(self, parent, controller): 
+        tk.Frame.__init__(self, parent)
         
+        #W = ttk.Frame(self)
+        W = ctk.CTkScrollableFrame(self,width=600,height=400)
+        self.menu = get_menu(self, controller)
+        
+        # Create Headers
+        TAD_EDITOR = ttk.Frame(W)
+        tad_editor_header = ttk.Label(W,text='TAD Editor',font=Font(W,size=16))
+        
+        BACKGROUND = ttk.Frame(W)
+        background_header = ttk.Label(W,text='Background',font=Font(W,size=14))
+        
+        LOGO = ttk.Frame(W)
+        logo_header = ttk.Label(W,text='Logo',font=Font(W,size=14))
+
+        TEXT = ttk.Frame(W)
+        text_header = ttk.Label(W,text='Text',font=Font(W,size=14))
+        
+        SAVE = ttk.Frame(W)
+        save_header = ttk.Label(W,text='Save',font=Font(W,size=14))
+        
+        lheader = 'bg'
+        self.tbos = []
+        for cheader, HEADER in zip(['bg','logo','text'],[BACKGROUND,LOGO,TEXT]):
+            
+            if lheader == cheader.split('::')[0]:
+                
+                [TBO(HEADER,tbo,) for tbo in FLATTENED_DEFAULT_SETTINGS]
+        
+        
+        # Vartype | UIE | (from, to) or None
+
+        # Packing
+        tad_editor_header.grid(row=0,column=1,pady=10,sticky='N')
+        TAD_EDITOR.grid(row=1,column=0,sticky='N')
+        
+        background_header.grid(row=0,column=1,pady=10,sticky='N')
+        BACKGROUND.grid(row=1,column=1,sticky='N')
+        
+        logo_header.grid(row=0,column=2,pady=10,sticky='N')
+        LOGO.grid(row=1,column=2,sticky='N')
+        
+        text_header.grid(row=0,column=3,pady=10,sticky='N')
+        TEXT.grid(row=1,column=3,sticky='N')
+        
+        self.save_btn = ttk.Button(SAVE,text='save',command=self.get_values)
+        self.save_btn.grid(row=0,column=5)
+        
+        save_header.grid(row=0,column=4,pady=10,sticky='N')
+        SAVE.grid(row=1,column=4,sticky='N')
+        
+        
+        W.grid(row=0,column=1)
+
+    def set_logo_path(self,*args):
+        filepath = askopenfilename()
+        if not filepath:
+            msgbox.showwarning('WARN','No File selected')
+            return
+        if filepath.endswith('.png'):
+            self.get_strings()[0].set(filepath)
+        else:
+            msgbox.showerror('ERROR','Wrong File Format')
+        
+       
+    def set_font_path(self,*args):
+        filepath = askopenfilename()
+        if not filepath:
+            msgbox.showwarning('WARN','No File selected')
+            return
+        if filepath.endswith('.ttf') or filepath.endswith('.otf'):
+            self.get_strings()[1].set(filepath)
+        else:
+            msgbox.showerror('ERROR','Wrong File Format')
+
+class About(tk.Frame):
+    def __init__(self, parent, controller): 
+        tk.Frame.__init__(self, parent)
+        
+        W = ttk.Frame(self)
+        
+        self.menu = get_menu(self, controller)
+        
+        # Create Headers
+        LICENSE = ttk.Frame(W)
+        license_header = ttk.Label(W,text='License',font=Font(W,size=16))
+        
+        scrollbar = ttk.Scrollbar(W,orient='vertical')
+        scrollbar.pack(side=tk.RIGHT,fill=tk.Y)
+        
+        text = tk.Text(LICENSE, width = 80, height = 25, wrap = tk.NONE,
+                 yscrollcommand = scrollbar.set)
+        
+        for i in __LICENSE__.splitlines():
+            text.insert(tk.END, f'{i}\n')
+            
+        text.pack(side=tk.TOP, fill=tk.X)
+        scrollbar.config(command=text.yview)
+        
+        # Packing
+        license_header.pack(pady=10)
+        LICENSE.pack()
+        
+        W.grid(row=0,column=1)
+    
 APP = TkinterApp()
 APP.mainloop()
 
