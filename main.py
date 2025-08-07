@@ -827,13 +827,11 @@ class TadEditor(tk.Frame):
             }
 
         ]
-        
+        self.uie_elements, self.pre_lbl_names, self.variables, self.values,self.tke = [],[],[], [], []
         SUBHEADER = [BACKGROUND, LOGO, TEXT]
         for i in range(3):
-            
-            UIE,NAMES = self.get_tad_uie(ALL_ELEMENTS[i],self.names[i])
-            self.generate_tad_edit_uie(UIE,NAMES,SUBHEADER[i])
-        
+            self.get_tad_uie(ALL_ELEMENTS[i],self.names[i],SUBHEADER[i])
+        print(len(self.uie_elements),len(self.pre_lbl_names),len(self.variables))
         # Packing
         tad_editor_header.pack(pady=10)
         TAD_EDITOR.pack()
@@ -849,6 +847,51 @@ class TadEditor(tk.Frame):
         
         
         W.grid(row=0,column=1)
+    
+    def type_check(self,*args):
+        INT = tk.IntVar
+        STR = tk.StringVar
+        FLT = tk.DoubleVar
+        
+        SLR = ttk.LabeledScale
+        BTN = ttk.Button
+        INP = ttk.Entry
+        CBT = ttk.Checkbutton
+        for uie, value,ui in zip(self.uie_elements, self.variables,self.tke):
+            if ui is None: continue
+            print(uie.uie is INP,uie.uie)
+            try:
+                rng = uie.range
+                if rng is None:
+                    # no range check
+                    try:
+                        value.get()
+                    except Exception as E:
+                        print(E)
+                        value.set(0)
+                        
+                elif isinstance(rng,tuple):
+                    try:
+                        value.get()
+                    except Exception as E:
+                        print(E)
+                        value.set(rng[0])
+                    
+                    if not (value.get() >= rng[0]):
+                        value.set(rng[0])
+
+                    elif not (value.get() <= rng[1]):
+                        value.set(rng[1])
+
+                
+                if uie.uie is INP:
+                    ui.delete(0,tk.END)
+                    ui.insert(0,str(value.get()))
+            except TypeError as E:
+                print(E)
+            except tk.TclError as E:
+                print(E)
+            
     def generate_tad_edit_uie(self,elements,names,master):
         SLR = ttk.LabeledScale
         BTN = ttk.Button
@@ -858,38 +901,52 @@ class TadEditor(tk.Frame):
             ui: TBO
             ttk.Label(master,text=name).pack()
             if ui.uie is SLR:
-                    
-                uie = ui.uie(master,from_=ui.range[0],to=ui.range[1])
-            
+                typ = ui.type()
+                uie = ui.uie(master,from_=ui.range[0],to=ui.range[1],variable=typ)
+                self.variables.append(typ)
                 uie.pack()
+                
+                self.tke.append(uie)
             elif ui.uie is INP:
-                uie = ui.uie(master,)
+                typ = ui.type()
+                uie = ui.uie(master,textvariable=typ)
+                uie.bind('<KeyPress>',self.type_check)
+                self.variables.append(typ)
                 uie.pack()
+                self.tke.append(uie)
+                
             elif ui.uie is CBT:
-                uie = ui.uie(master,text='test')
+                typ = ui.type()
+                uie = ui.uie(master,text='test',variable=typ)
+                self.variables.append(typ)
                 uie.pack()
-    def get_tad_uie(self,elements: list,names: list) -> list:
+                self.tke.append(uie)
+            else:
+                self.variables.append(None)
+                self.tke.append(None)
+    def get_tad_uie(self,elements: list,names: list,sh: list) -> list:
         """
         Get UIElements & Pre Label Names
         """
-        ALL_UIES = []
-        ALL_NAMES = []
+        UIE = []
+        NAMES = []
         for a in elements:
             if isinstance(elements[a],TBO):
-                ALL_UIES.append(elements[a])
-                ALL_NAMES.append(a)
+                UIE.append(elements[a])
+                NAMES.append(a)
                 continue
             for i,b in enumerate(elements[a]):
                 if isinstance(b,TBO):
-                    ALL_UIES.append(b)
-                    ALL_NAMES.append(f'{a} - {names[a][i]}')
+                    UIE.append(b)
+                    NAMES.append(f'{a} - {names[a][i]}')
                     continue
                 for j,c in enumerate(b):
                     if isinstance(c,TBO):
-                        ALL_UIES.append(c)
-                        ALL_NAMES.append(f'{a} - {names[a][i][j]}')
-                    
-        return ALL_UIES,ALL_NAMES
+                        UIE.append(c)
+                        NAMES.append(f'{a} - {names[a][i][j]}')
+        self.uie_elements.extend(UIE)
+        self.pre_lbl_names.extend(NAMES)
+        self.generate_tad_edit_uie(UIE,NAMES,sh)
 class About(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
