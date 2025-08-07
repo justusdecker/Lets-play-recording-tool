@@ -1080,11 +1080,51 @@ class About(tk.Frame):
         W.grid(row=0,column=1)
    
 class TBO:
-    def __init__(self,type, uie: ttk.Button | ttk.LabeledScale | ttk.Entry, rng, mustbeset:bool=True):
-        self.type = type
-        self.uie = uie
-        self.range = rng
+    def __init__(self,
+                 key: str,
+                 type: tk.IntVar | tk.StringVar | tk.DoubleVar, 
+                 uie: ttk.Button | ttk.LabeledScale | ttk.Entry | ttk.Checkbutton, 
+                 cond: str, 
+                 mustbeset:bool=True):
+        # cond: <62::>51 if int or double
+        # cond: notnull if str
+        self.key: str = key
+        self.type: tk.IntVar | tk.StringVar | tk.DoubleVar = type
+        #! prelabel
+        self.uie: ttk.Button | ttk.LabeledScale | ttk.Entry | ttk.Checkbutton = uie
+
+        self.var: tk.IntVar | tk.StringVar | tk.DoubleVar = self.type()
+        self.ui: ttk.Button | ttk.LabeledScale | ttk.Entry | ttk.Checkbutton = self.uie() #!
+        self.cond = cond
         self.mustbeset = mustbeset
+    @property
+    def condition(self) -> tuple[str,str]:
+        if self.type is tk.IntVar or self.type is tk.DoubleVar:
+            cond = self.cond.split('::')
+            if len(cond) != 2:
+                raise ValueError(f'Length must be 2! {cond}')
+            if (not cond[0].startswith('>') and not cond[0].startswith('<')) or (not cond[1].startswith('>') and not cond[1].startswith('<')):
+                raise ValueError(f'Wrong Syntax! Should be < or > at the start! {cond}')
+        elif self.type is tk.StringVar:
+            cond = self.cond
+            if not cond and cond != 'notnull':
+                raise ValueError(f'Wrong condition should be empty or notnull. Not {cond}')
+        return cond
+    def _check(self,cond,val: float | int) -> bool:
+        if cond.startswith('<'):
+            return float(cond[1:]) > val
+        elif cond.startswith('>'):
+            return float(cond[1:]) < val
+        return
+    def get_value(self):
+        try:
+            return self.var.get()
+        except:
+            
+            return #default
+    def check(self):
+        if self.type is tk.IntVar or self.type is tk.DoubleVar:
+            self._check(self.condition[0])
     def set_name(self,name: str):
         self.name = name
  
