@@ -1081,6 +1081,7 @@ class About(tk.Frame):
    
 class TBO:
     def __init__(self,
+                 master,
                  key: str,
                  type: tk.IntVar | tk.StringVar | tk.DoubleVar, 
                  uie: ttk.Button | ttk.LabeledScale | ttk.Entry | ttk.Checkbutton, 
@@ -1090,13 +1091,20 @@ class TBO:
         # cond: notnull if str
         self.key: str = key
         self.type: tk.IntVar | tk.StringVar | tk.DoubleVar = type
-        #! prelabel
+        ttk.Label(master,f'{self.name}:')
         self.uie: ttk.Button | ttk.LabeledScale | ttk.Entry | ttk.Checkbutton = uie
 
         self.var: tk.IntVar | tk.StringVar | tk.DoubleVar = self.type()
-        self.ui: ttk.Button | ttk.LabeledScale | ttk.Entry | ttk.Checkbutton = self.uie() #!
+        self.ui: ttk.Button | ttk.LabeledScale | ttk.Entry | ttk.Checkbutton = self.uie(master) #!
         self.cond = cond
         self.mustbeset = mustbeset
+    def create_ui(self):
+        #variable, textvariable
+        #key release event
+        pass
+    @property
+    def name(self) -> str:
+        return self.key.split('::')[-1]
     @property
     def condition(self) -> tuple[str,str]:
         if self.type is tk.IntVar or self.type is tk.DoubleVar:
@@ -1122,14 +1130,14 @@ class TBO:
         try:
             return self.var.get()
         except:
-            #!RESET VALUE
-            return #default
+            self.var.set(self.condition[0][1:])
+            return self.var.get()
     def check(self):
         if self.type is tk.IntVar or self.type is tk.DoubleVar:
             if self._check_numeric(self.condition[0]):
-                self.var.set(self.condition[0])
+                self.var.set(self.condition[0][1:])
             elif self._check_numeric(self.condition[1]):
-                self.var.set(self.condition[1])
+                self.var.set(self.condition[1][1:])
         
     def set_name(self,name: str):
         self.name = name
