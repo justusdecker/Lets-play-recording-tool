@@ -10,6 +10,7 @@ from tkinter import ttk
 from tkinter.font import Font
 from os import remove
 from zipfile import ZipFile
+from tkinter.filedialog import askopenfilename
 LARGEFONT =("Verdana", 35)
 ctk.set_appearance_mode('light')
 
@@ -809,14 +810,14 @@ class TadEditor(tk.Frame):
                 "rot": NUM_INP_N360_360
             },
             {
-                "path": FILE,
+                "path": TBO(STR,BTN,'logo'),
                 "scale": NUM_INP_0_3,
                 "rot": NUM_INP_N360_360,
                 "pos": [NUM_INP_NR,NUM_INP_NR],
                 "center": BOOL_INP
             },
             {
-                "path": FILE,
+                "path": TBO(STR,BTN,'text'),
                 "scale": NUM_INP_0_3,
                 "rot": NUM_INP_N360_360,
                 "color": [NUM_INP_0_255,NUM_INP_0_255,NUM_INP_0_255,NUM_INP_0_255],
@@ -848,16 +849,22 @@ class TadEditor(tk.Frame):
         
         W.grid(row=0,column=1)
     
+    def set_logo_path(self,*args):
+        askopenfilename(title=f'{uie.range} - {name}')
+       
+    def set_font_path(self,*args):
+        pass
+    
     def type_check(self,*args):
 
-        for uie, value,ui in zip(self.uie_elements, self.variables,self.tke):
+        for uie, value,ui,name in zip(self.uie_elements, self.variables,self.tke,self.uie_names):
             if ui is None: continue
-
+            print(name)
             try:
                 
                 # Get Btnstuff
-                
-                
+                if uie.uie is not ttk.Entry: continue
+
                 rng = uie.range
                 if rng is None:
                     # no range check
@@ -865,7 +872,6 @@ class TadEditor(tk.Frame):
                         value.get()
                         if ui.get().startswith('0') and len(ui.get()) > 1 and not ui.get().startswith('0.'):
                             value.set(0)
-                        print(value.get(),ui.get())
                     except Exception as E:
                         print(E)
                         value.set(0)
@@ -874,7 +880,9 @@ class TadEditor(tk.Frame):
                     try:
                         value.get()
                     except Exception as E:
-
+                        print(E)
+                        value.set(rng[0])
+                    if ui.get().startswith('0') and len(ui.get()) > 1 and not ui.get().startswith('0.'):
                         value.set(rng[0])
                     
                     if not (value.get() >= rng[0]):
@@ -882,7 +890,7 @@ class TadEditor(tk.Frame):
                         value.set(rng[0])
 
                     elif not (value.get() <= rng[1]):
-
+                        
                         value.set(rng[1])
                 
 
@@ -898,9 +906,9 @@ class TadEditor(tk.Frame):
         CBT = ttk.Checkbutton
         for name, ui in zip(names, elements):
             ui: TBO
-            if ui.uie is not CBT or ui.uie is not BTN:
+            if ui.uie is not CBT and ui.uie is not BTN:
                 ttk.Label(master,text=name).pack()
-            ttk.Label(master,text=name).pack()
+            
             if ui.uie is SLR:
                 typ = ui.type()
                 uie = ui.uie(master,from_=ui.range[0],to=ui.range[1],variable=typ)
@@ -928,9 +936,7 @@ class TadEditor(tk.Frame):
                 uie.pack()
                 self.variables.append(typ)
                 self.tke.append(uie)
-            else:
-                self.variables.append(None)
-                self.tke.append(None)
+
                 
     def get_tad_uie(self,elements: list,names: list,sh: list) -> list:
         """
@@ -952,6 +958,7 @@ class TadEditor(tk.Frame):
                     if isinstance(c,TBO):
                         UIE.append(c)
                         NAMES.append(f'{a} - {names[a][i][j]}')
+        self.uie_names = NAMES
         self.uie_elements.extend(UIE)
         self.pre_lbl_names.extend(NAMES)
         self.generate_tad_edit_uie(UIE,NAMES,sh)
