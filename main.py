@@ -1089,19 +1089,28 @@ class TBO:
                  mustbeset:bool=True):
         # cond: <62::>51 if int or double
         # cond: notnull if str
+        self.master = master
         self.key: str = key
         self.type: tk.IntVar | tk.StringVar | tk.DoubleVar = type
-        ttk.Label(master,f'{self.name}:')
+        
         self.uie: ttk.Button | ttk.LabeledScale | ttk.Entry | ttk.Checkbutton = uie
 
         self.var: tk.IntVar | tk.StringVar | tk.DoubleVar = self.type()
-        self.ui: ttk.Button | ttk.LabeledScale | ttk.Entry | ttk.Checkbutton = self.uie(master) #!
+        self.create_ui()
         self.cond = cond
         self.mustbeset = mustbeset
     def create_ui(self):
-        #variable, textvariable
-        #key release event
-        pass
+        if self.uie is ttk.LabeledScale:
+            ttk.Label(self.master,f'{self.name}:')
+            self.ui = self.uie(self.master,from_=self.condition[0][1:],to=self.condition[1][1:],variable=self.var)
+        elif self.uie is ttk.Entry:
+            ttk.Label(self.master,f'{self.name}:')
+            self.ui = self.uie(self.master,textvariable=self.var)
+            self.ui.bind('<KeyRelease>',self.check)
+        elif self.uie is ttk.Checkbutton:
+            self.ui = self.uie(self.master,variable=self.var)
+        elif self.uie is ttk.Button:
+            self.ui = self.uie(self.master,text=self.name,variable=self.var)
     @property
     def name(self) -> str:
         return self.key.split('::')[-1]
@@ -1132,7 +1141,7 @@ class TBO:
         except:
             self.var.set(self.condition[0][1:])
             return self.var.get()
-    def check(self):
+    def check(self,*args):
         if self.type is tk.IntVar or self.type is tk.DoubleVar:
             if self._check_numeric(self.condition[0]):
                 self.var.set(self.condition[0][1:])
