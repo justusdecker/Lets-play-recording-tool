@@ -849,19 +849,15 @@ class TadEditor(tk.Frame):
         W.grid(row=0,column=1)
     
     def type_check(self,*args):
-        INT = tk.IntVar
-        STR = tk.StringVar
-        FLT = tk.DoubleVar
-        
-        SLR = ttk.LabeledScale
-        BTN = ttk.Button
-        INP = ttk.Entry
-        CBT = ttk.Checkbutton
+
         for uie, value,ui in zip(self.uie_elements, self.variables,self.tke):
             if ui is None: continue
 
             try:
-
+                
+                # Get Btnstuff
+                
+                
                 rng = uie.range
                 if rng is None:
                     # no range check
@@ -873,7 +869,7 @@ class TadEditor(tk.Frame):
                     except Exception as E:
                         print(E)
                         value.set(0)
-                        
+                    
                 elif isinstance(rng,tuple):
                     try:
                         value.get()
@@ -888,6 +884,7 @@ class TadEditor(tk.Frame):
                     elif not (value.get() <= rng[1]):
 
                         value.set(rng[1])
+                
 
             except TypeError as E:
                 print(E)
@@ -901,6 +898,8 @@ class TadEditor(tk.Frame):
         CBT = ttk.Checkbutton
         for name, ui in zip(names, elements):
             ui: TBO
+            if ui.uie is not CBT or ui.uie is not BTN:
+                ttk.Label(master,text=name).pack()
             ttk.Label(master,text=name).pack()
             if ui.uie is SLR:
                 typ = ui.type()
@@ -919,13 +918,20 @@ class TadEditor(tk.Frame):
                 
             elif ui.uie is CBT:
                 typ = ui.type()
-                uie = ui.uie(master,text='test',variable=typ)
+                uie = ui.uie(master,text=name,variable=typ)
                 self.variables.append(typ)
                 uie.pack()
+                self.tke.append(uie)
+            elif ui.uie is BTN:
+                typ = ui.type()
+                uie = ui.uie(master,text=name,command=self.type_check)
+                uie.pack()
+                self.variables.append(typ)
                 self.tke.append(uie)
             else:
                 self.variables.append(None)
                 self.tke.append(None)
+                
     def get_tad_uie(self,elements: list,names: list,sh: list) -> list:
         """
         Get UIElements & Pre Label Names
