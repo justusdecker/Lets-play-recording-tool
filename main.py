@@ -997,7 +997,7 @@ class TadEditor(tk.Frame):#! REWORK HERE
                 DATA = json_read(filepath)
                 [ui.var.set(DATA[entry]) for entry, ui in zip(DATA,self.ui_elements)]
             else:
-                [ui.var.set(DATA[entry]) for entry, ui in zip(DEFAULT_TAD,self.ui_elements)]
+                [ui.var.set(DEFAULT_TAD[entry]) for entry, ui in zip(DEFAULT_TAD,self.ui_elements)]
             
     def save_tad(self,*args):
         #- Check final
