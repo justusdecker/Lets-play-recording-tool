@@ -62,7 +62,34 @@ def outlining(image: Surface,color: tuple[int]=(0,0,0,255)) -> Surface:
         surface.blit(normal,pos)
     surface.blit(image,(0,0))
     return surface
+class ImageTextRenderer:
+    #10 chars from 0 to 9
+    #image width must be even
+    #image width / 10
+    def __init__(self,img: str):
+        
+        sprite_map = img_load(img)
+        img_array = []
+        
+        if sprite_map.get_width() % 2:
+            raise Exception('Image width must be even!')
 
+        self.offset_x = sprite_map.get_width() // 10
+        
+        for x in range(10):
+            sprite_char = Surface((sprite_map.get_width() // 10,sprite_map.get_height()), SRCALPHA)
+            sprite_char.blit(sprite_map,(0,0),(x*self.offset_x,0,self.offset_x,sprite_map.get_height()))
+            img_array.append(sprite_char)
+        self.chars = {key: img for img, key in zip(img_array,'0123456789')}
+
+    def draw(self,text:str) -> Surface:
+        font = Surface((self.offset_x*len(text),self.chars['0'].get_height()),SRCALPHA)
+        for idx,char in enumerate(text):
+            if char in self.chars:
+                font.blit(self.chars[char],(self.offset_x*idx,0))
+
+        return font
+    def get_blit_data(self):return self.data , self.offset_pos
 class ThumbnailGenerator:
     def __init__(self): pass
     
@@ -164,22 +191,24 @@ class ThumbnailGenerator:
         """
         Returns the Text Image with outline
         """
-        
-        if not isfile(self.tad['text::path']):
-            font = Font(get_default_font(),self.tad['text::size'])
-        else:
-            font = Font(self.tad['text::path'],self.tad['text::size'])
-        
-        img: Surface = font.render(text,False,Color(self.tad['text::color']) if self.tad['text::color'] else (255,255,255))
-        
+        if not isfile(self.tad['text::path']) or self.tad['text::path'].endswith('.ttf') or self.tad['text::path'].endswith('.otf'):
+            if not isfile(self.tad['text::path']):
+                font = Font(get_default_font(),self.tad['text::size'])
+            else:
+                font = Font(self.tad['text::path'],self.tad['text::size'])
+            
+            img: Surface = font.render(text,False,Color(self.tad['text::color']) if self.tad['text::color'] else (255,255,255))
+
+        elif self.tad['text::path'].endswith('.png'):
+            img = ImageTextRenderer(self.tad['text::path']).draw(text)
+            
+            
         timg = outlining(img,Color(self.tad['text::ol_color']) if self.tad['text::ol_color'] else (1,1,1))
-        
+            
         timg = scale_by(timg,self.tad['text::scale'])
         
         timg = rotate(timg,self.tad['text::rot'])
-        
         return timg
-    
     def __render_logo(self) -> Surface:
         
         if not isfile(self.tad['logo::path']):
