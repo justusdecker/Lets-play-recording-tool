@@ -1,12 +1,7 @@
-from tkinter import (
-    Toplevel,
-    DoubleVar
-)
-from tkinter.ttk import (
-    Button,
-    Label,
-    LabeledScale
-)
+from tkinter import Toplevel, DoubleVar
+from tkinter.ttk import Button, Label, LabeledScale
+from bin.ffmpeg import ffmpeg_run, FFMPEG_AUDIO_COMBINE_TRUNCATED
+from bin.constants import TEMP_FOLDER
 
 try: #Fix for issue: #126
     from pygame.mixer import init, music
@@ -16,16 +11,10 @@ except:
     showerror('ERROR', ERROR_008 + '\npygame')
     quit()
 
-
-from bin.ffmpeg import ffmpeg_run, FFMPEG_AUDIO_COMBINE_TRUNCATED
-
-from bin.constants import TEMP_FOLDER
-
 init()
 
 def play_audio(filepath: str):
     stop_audio()
-    
     music.load(filepath)
     music.play(loops=-1)
 
