@@ -91,14 +91,13 @@ class ThumbnailGenerator:
         
         text_r = self.__render_text(text)
         if self.tad['text::center']:
-            x = (1280//2) - (text_r[0].get_width() // 2) + _text['pos'][0]
-            y = _text['pos'][1]
+            x = (1280//2) - (text_r.get_width() // 2) + self.tad['logo::pos::x']
+            y = self.tad['logo::pos::y']
             print(x,y)
             text_r = text_r[0], (x,y)
-            
-        print(_logo)
+
         img = self.__comp_render(
-            [(bg[0],bg_pos) if _bg['center'] else bg,
+            [(bg[0],bg_pos) if self.tad['bg::center'] else bg,
             logo,
             text_r]
             )
@@ -156,31 +155,29 @@ class ThumbnailGenerator:
             COMP.blit(obj,pos)
         return COMP
     
-    def __render_text(self, tad: dict,
+    def __render_text(self,
                  text: str= ''
                  ) -> Surface:
         """
         Returns the Text Image with outline
         """
-
-        if not 'color' in tad:
-            tad['color'] = (0,0,0,255)
-        if not isfile(tad['path']):
-            font = Font(get_default_font(),tad['size'])
+        
+        if not isfile(self.tad['text:path']):
+            font = Font(get_default_font(),self.tad['text:size'])
         else:
-            font = Font(tad['path'],tad['size'])
+            font = Font(self.tad['text:path'],self.tad['text:size'])
         
-        img: Surface = font.render(text,False,tad['color'])
+        img: Surface = font.render(text,False,self.tad['text:color'])
         
-        timg = outlining(img,tad['ol_color'])
+        timg = outlining(img,self.tad['text:ol_color'])
         
-        timg = scale_by(timg,tad['scale'])
+        timg = scale_by(timg,self.tad['text:scale'])
         
-        timg = rotate(timg,tad['rot'])
+        timg = rotate(timg,self.tad['text:rot'])
         
-        return timg, tad['pos']
+        return timg
     
-    def __render_logo(self, tad: dict) -> tuple[Surface, tuple[int, int]]:
+    def __render_logo(self) -> tuple[Surface, tuple[int, int]]:
         if not isfile(tad['path']):
             # File does not exist so return an empty logo
             return Surface((1,1),SRCALPHA),(0,0)
@@ -196,7 +193,7 @@ class ThumbnailGenerator:
         
         return surf, (x,y)
     
-    def __render_background(self, filepath: str, frame: float, tad: dict): #Here rotation, color manipulation will be added
+    def __render_background(self, filepath: str, frame: float): #Here rotation, color manipulation will be added
         
         # Manipulate pos
         rx,ry = tad['r_pos']
