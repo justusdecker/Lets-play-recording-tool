@@ -745,38 +745,7 @@ class Settings(tk.Frame):
 
 
 
-FLATTENED_DEFAULT_SETTINGS = {
-    "bg::pos::x": 0,
-    "bg::pos::y": 0,
-    "bg::r_pos::x-from": 0,
-    "bg::r_pos::x-to": 0,
-    "bg::r_pos::y-from": 0,
-    "bg::r_pos::y-to": 0,
-    "bg::r_scale::from": 0,
-    "bg::r_scale::to": 0,
-    "bg::r_rot::from": 0,
-    "bg::r_rot::to": 0,
-    "bg::center": True,
-    "bg::scale": 1.35,
-    "bg::rot": 0,
 
-    "logo::path": "test_logo.png",
-    "logo::scale": 1,
-    "logo::rot": 0,
-    "logo::pos::x": 0,
-    "logo::pos::y": 0,
-    "logo::center": True,
-
-    "text::path": "",
-    "text::scale": 1,
-    "text::rot": 0,
-    "text::color": "",
-    "text::ol_color": "",
-    "text::size": 40,
-    "text::pos::x": 0,
-    "text::pos::y": 0,
-    "text::center": True
-}
 INPUT_INT_NV = (tk.IntVar,ttk.Entry, '>-2048::<2048')
 INPUT_SCALE = (tk.DoubleVar,ttk.LabeledScale, '>-0.5::<3.5')
 INPUT_ROT = (tk.DoubleVar,ttk.LabeledScale, '>-359::<359')
@@ -964,7 +933,7 @@ class TadEditor(tk.Frame):#! REWORK HERE
         self.ui_elements = []
         for cheader, HEADER in zip(['bg','logo','text'],[BACKGROUND,LOGO,TEXT]):
             
-            self.ui_elements.extend([TBO(HEADER,tbo,*FDS_TBO[inps]) for inps, tbo in zip(FDS_TBO,FLATTENED_DEFAULT_SETTINGS) if cheader == tbo.split('::')[0]])
+            self.ui_elements.extend([TBO(HEADER,tbo,*FDS_TBO[inps]) for inps, tbo in zip(FDS_TBO,DEFAULT_TAD) if cheader == tbo.split('::')[0]])
         
         change_states([ui.ui for ui in self.ui_elements],'disabled')
         # Vartype | UIE | (from, to) or None
@@ -1018,6 +987,9 @@ class TadEditor(tk.Frame):#! REWORK HERE
         if self.lp_option_var.get() != 'None':
             change_states([ui.ui for ui in self.ui_elements],'!disabled')
     def save_tad(self,*args):
+        #- Check final
+        #- Write TAD File into TAD_FOLDER/lp_name.json
+        #- Update Database
         pass
 
 class About(tk.Frame):

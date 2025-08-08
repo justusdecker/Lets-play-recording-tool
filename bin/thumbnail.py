@@ -62,6 +62,7 @@ def outlining(image: Surface,color: tuple[int]=(0,0,0,255)) -> Surface:
         surface.blit(normal,pos)
     surface.blit(image,(0,0))
     return surface
+
 class ThumbnailGenerator:
     def __init__(self): pass
     
@@ -74,22 +75,22 @@ class ThumbnailGenerator:
                  
                  ):
         print((f'[Thumbnail Generate]: {video_path}',94))
-
-        _bg, _logo, _text = json_read(TAD_FOLDER + tad_path)
-        bg = self.__render_background(video_path,frame,_bg)
+        self.tad = json_read(TAD_FOLDER + tad_path)
+        
+        bg = self.__render_background(video_path,frame)
         bg_pos = (
             (1280//2) - (bg[0].get_width() // 2), 
             (720//2) - (bg[0].get_height() // 2)
             )
-        logo = self.__render_logo(_logo)
-        if _logo['center']:
-            x = (1280//2) - (logo[0].get_width() // 2) + _logo['pos'][0]
-            y = _logo['pos'][1]
+        logo = self.__render_logo()
+        if self.tad['logo::center']:
+            x = (1280//2) - (logo[0].get_width() // 2) + self.tad['logo::pos::x']
+            y = self.tad['logo::pos::y']
             print(x,y)
             logo = logo[0], (x,y)
         
-        text_r = self.__render_text(_text,text)
-        if _text['center']:
+        text_r = self.__render_text(text)
+        if self.tad['text::center']:
             x = (1280//2) - (text_r[0].get_width() // 2) + _text['pos'][0]
             y = _text['pos'][1]
             print(x,y)
