@@ -66,6 +66,45 @@ DEFAULT_TAD = {
     "text::pos::y": 0,
     "text::center": True
 }
+from tkinter import IntVar, DoubleVar, StringVar
+from tkinter.ttk import LabeledScale, Checkbutton, Button
+from tkinter.colorchooser import askcolor
+INPUT_INT_NV = (IntVar,LabeledScale, '>-2048::<2048')
+INPUT_SCALE = (DoubleVar,LabeledScale, '>0::<3.5')
+INPUT_ROT = (DoubleVar,LabeledScale, '>-359::<359')
+INPUT_CB = (IntVar,Checkbutton, '')
+FDS_TBO = {
+    "bg::pos::x": INPUT_INT_NV,
+    "bg::pos::y": INPUT_INT_NV,
+    "bg::r_pos::x-from": INPUT_INT_NV,
+    "bg::r_pos::x-to": INPUT_INT_NV,
+    "bg::r_pos::y-from": INPUT_INT_NV,
+    "bg::r_pos::y-to": INPUT_INT_NV,
+    "bg::r_scale::from": INPUT_SCALE,
+    "bg::r_scale::to": INPUT_SCALE,
+    "bg::r_rot::from": INPUT_ROT,
+    "bg::r_rot::to": INPUT_ROT,
+    "bg::center": INPUT_CB,
+    "bg::scale": INPUT_SCALE,
+    "bg::rot": INPUT_ROT,
+
+    "logo::path": (StringVar,Button, 'notnull'),
+    "logo::scale": INPUT_SCALE,
+    "logo::rot": INPUT_ROT,
+    "logo::pos::x": INPUT_INT_NV,
+    "logo::pos::y": INPUT_INT_NV,
+    "logo::center": INPUT_CB,
+
+    "text::path": (StringVar,Button, ''),
+    "text::scale": INPUT_SCALE,
+    "text::rot": INPUT_ROT,
+    "text::color": (StringVar,Button, 'notnull',askcolor),
+    "text::ol_color": (StringVar,Button, 'notnull',askcolor),
+    "text::size": INPUT_INT_NV,
+    "text::pos::x": INPUT_INT_NV,
+    "text::pos::y": INPUT_INT_NV,
+    "text::center": INPUT_CB
+}
 #! PATHS
 
 from os import getlogin

@@ -1,6 +1,6 @@
 from bin.automations import *
 from bin.constants import DISCLAIMER, __LICENSE__
-from bin.data_access import on_start, LetsPlays, SQLAccess, json_write, json_read
+from bin.data_access import on_start, SQLAccess, json_write, json_read
 from threading import Thread
 from os.path import getsize
 import tkinter as tk
@@ -724,7 +724,6 @@ class Settings(tk.Frame):
         NEW_OBS_SETTINGS['pw'] = self.PW.get()
         json_write(ROOT+'obs_settings.json',NEW_OBS_SETTINGS)
 
-
 class Settings(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
@@ -742,46 +741,6 @@ class Settings(tk.Frame):
         SETTINGS.pack()
 
         W.grid(row=0,column=1)
-
-
-
-
-INPUT_INT_NV = (tk.IntVar,ttk.LabeledScale, '>-2048::<2048')
-INPUT_SCALE = (tk.DoubleVar,ttk.LabeledScale, '>0::<3.5')
-INPUT_ROT = (tk.DoubleVar,ttk.LabeledScale, '>-359::<359')
-INPUT_CB = (tk.IntVar,ttk.Checkbutton, '')
-FDS_TBO = {
-    "bg::pos::x": INPUT_INT_NV,
-    "bg::pos::y": INPUT_INT_NV,
-    "bg::r_pos::x-from": INPUT_INT_NV,
-    "bg::r_pos::x-to": INPUT_INT_NV,
-    "bg::r_pos::y-from": INPUT_INT_NV,
-    "bg::r_pos::y-to": INPUT_INT_NV,
-    "bg::r_scale::from": INPUT_SCALE,
-    "bg::r_scale::to": INPUT_SCALE,
-    "bg::r_rot::from": INPUT_ROT,
-    "bg::r_rot::to": INPUT_ROT,
-    "bg::center": INPUT_CB,
-    "bg::scale": INPUT_SCALE,
-    "bg::rot": INPUT_ROT,
-
-    "logo::path": (tk.StringVar,ttk.Button, 'notnull'),
-    "logo::scale": INPUT_SCALE,
-    "logo::rot": INPUT_ROT,
-    "logo::pos::x": INPUT_INT_NV,
-    "logo::pos::y": INPUT_INT_NV,
-    "logo::center": INPUT_CB,
-
-    "text::path": (tk.StringVar,ttk.Button, ''),
-    "text::scale": INPUT_SCALE,
-    "text::rot": INPUT_ROT,
-    "text::color": (tk.StringVar,ttk.Button, 'notnull',askcolor),
-    "text::ol_color": (tk.StringVar,ttk.Button, 'notnull',askcolor),
-    "text::size": INPUT_INT_NV,
-    "text::pos::x": INPUT_INT_NV,
-    "text::pos::y": INPUT_INT_NV,
-    "text::center": INPUT_CB
-}
 
 class TBO:
     def __init__(self,
