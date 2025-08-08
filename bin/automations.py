@@ -363,13 +363,13 @@ class CompareAndRenderWF(GenericWorkFlow):
             from bin.data_access import Episodes
             episodes : list[Episodes]
             for i in range(*self.rng):
-                reoc(episodes[i].audio_mic_edit2_path is None)
-                reoc(episodes[i].audio_desktop_path is None)
-                reoc(episodes[i].video_path is None)
+                reoc(episodes[i].audio_mic_edit2_path is None,ERROR_013)
+                reoc(episodes[i].audio_desktop_path is None,ERROR_013)
+                reoc(episodes[i].video_path is None,ERROR_013)
                 
-                reoc(not isfile(episodes[i].audio_mic_edit2_path))
-                reoc(not isfile(episodes[i].audio_desktop_path))
-                reoc(not isfile(episodes[i].video_path))
+                reoc(not isfile(episodes[i].audio_mic_edit2_path),ERROR_007)
+                reoc(not isfile(episodes[i].audio_desktop_path),ERROR_007)
+                reoc(not isfile(episodes[i].video_path),ERROR_007)
             
             paths = [[i, episodes[i].audio_mic_edit2_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*self.rng)]
 
@@ -397,7 +397,7 @@ class CompareAndRenderWF(GenericWorkFlow):
                         }
                     )
                 
-                reoc(not isfile(tmp_audio_path))
+                reoc(not isfile(tmp_audio_path),ERROR_007)
                 
                 app.progress_label.configure(text = f'Audio Combine\n{((ci+1)/len(result))*100:.1f}%\n{ci+1}/{len(result)}')
                 ci += 1
@@ -420,7 +420,7 @@ class CompareAndRenderWF(GenericWorkFlow):
                         '__OUTPUT__': final_path
                     }
                 )
-                reoc(not isfile(final_path))
+                reoc(not isfile(final_path),ERROR_007)
                 app.progress_label.configure(text = f'Audio Combine\n{((ci+1)/len(result))*100:.1f}%\n{ci+1}/{len(result)}')
                 ci += 1
                 SQLAccess.update_episodes(self.lpid, index, final_video_path=final_path)
