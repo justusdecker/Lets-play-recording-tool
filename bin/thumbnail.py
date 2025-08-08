@@ -6,16 +6,7 @@ __maintainer__ = "Justus Decker"
 __email__ = "justus.d2025@gmail.com"
 __status__ = "Production"
 from bin.constants import *
-try: #Fix for issue: #126
-    from numpy import rot90
-except:
-    from tkinter.messagebox import showerror
-    
-    
-    showerror('ERROR', ERROR_008 + '\nnumpy')
-    quit()
 
-from pygame.surfarray import make_surface
 from pygame.transform import scale, flip, rotate, scale_by
 from pygame import Surface,SRCALPHA,Color,mask
 
