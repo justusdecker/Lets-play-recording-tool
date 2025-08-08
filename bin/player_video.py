@@ -19,6 +19,7 @@ except:
     quit()
 
 from bin.data_access import SQLAccess
+from bin.thumbnail import ThumbnailGenerator
 
 CHAR_TABLE = {
         'Ä':'&Auml;',
@@ -105,16 +106,22 @@ class VideoPlayer(Toplevel):
         self.volume_slider.set(50)  # Set the default volume to 50%
         self.volume_slider.pack(side=LEFT, padx=5)
 
-        self.label = ttk.Label(self.bar,text='Title: ')
-        self.label.pack(side=LEFT, padx=5)
+        ttk.Label(self.bar,text='Title: ').pack(side=LEFT, padx=5)
         self.title_setter = ttk.Entry(self.bar,textvariable=self.title_var)
         self.title_setter.pack(side=LEFT, padx=5)
         
+        
+        
         self.update_title_button = ttk.Button(self.bar, text="Update", command=self.set_video_title)
         self.update_title_button.pack(side=LEFT, padx=5)
+        
+        self.take_thumbnail_btn = ttk.Button(self.bar,text='Generate Thumbnail',command=self.gen_thumbnail)
+        self.take_thumbnail_btn(side=LEFT, padx=5)
 
         # Begin updating the progress slider periodically.
         self.update_progress()
+    def gen_thumbnail(self,*args):
+        pass
     @property
     def rel_id(self) -> int:
         return self.data[self.current_episode] - 1

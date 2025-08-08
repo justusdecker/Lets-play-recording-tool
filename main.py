@@ -12,7 +12,7 @@ from os import remove
 from zipfile import ZipFile
 from tkinter.colorchooser import askcolor
 from tkinter.filedialog import askopenfilename
-LARGEFONT =("Verdana", 35)
+LARGEFONT = ("Verdana", 35)
 ctk.set_appearance_mode('light')
 
 on_start()
@@ -870,7 +870,7 @@ class TBO:
     def set_name(self,name: str):
         self.name = name
  
-class TadEditor(tk.Frame):#! REWORK HERE
+class TadEditor(tk.Frame):
     names = [
             {
                 "pos": ['x','y'],
