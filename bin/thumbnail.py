@@ -76,14 +76,14 @@ class ThumbnailGenerator:
                  ):
         print((f'[Thumbnail Generate]: {video_path}',94))
         self.tad = json_read(TAD_FOLDER + tad_path)
-        if bg is None:
+        if video_path is None:
             bg = Surface((1280,720))
             bg.fill((34,34,34))
         else:
             bg = self.__render_background(video_path,frame)
         bg_pos = (
-            (1280//2) - (bg[0].get_width() // 2), 
-            (720//2) - (bg[0].get_height() // 2)
+            (1280//2) - (bg.get_width() // 2), 
+            (720//2) - (bg.get_height() // 2)
             )
         logo = self.__render_logo()
         if self.tad['logo::center']:
