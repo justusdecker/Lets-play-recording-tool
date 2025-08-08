@@ -873,7 +873,7 @@ class TBO:
                 raise ValueError(f'Wrong Syntax! Should be < or > at the start! {cond}')
         elif self.type is tk.StringVar:
             cond = self.cond
-            if not cond and cond != 'notnull':
+            if cond != '' and cond != 'notnull':
                 raise ValueError(f'Wrong condition should be empty or notnull. Not {cond}')
         return cond
     def filedialog(self,*args):
@@ -887,6 +887,8 @@ class TBO:
             return float(cond[1:]) <= self.get_value()
     def _check_text(self,cond) -> bool:
         if cond == 'notnull':
+            if not self.get_value():
+                msgbox.showwarning('WARN','This input is flagged as notnull!')
             return not self.get_value()
     def get_value(self):
         try:
@@ -900,6 +902,9 @@ class TBO:
                 self.var.set(self.condition[0][1:])
             elif self._check_numeric(self.condition[1]):
                 self.var.set(self.condition[1][1:])
+        else:
+            self._check_text(self.condition)
+                
         
     def set_name(self,name: str):
         self.name = name
