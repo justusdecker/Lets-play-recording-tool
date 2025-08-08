@@ -1,10 +1,3 @@
-__author__ = "Justus Decker"
-__copyright__ = "(c) 2024 - 2025 , The LPRT Project"
-__credits__ = []
-__version__ = "0.5.10"
-__maintainer__ = "Justus Decker"
-__email__ = "justus.d2025@gmail.com"
-__status__ = "Production"
 from bin.constants import *
 
 from pygame.transform import scale, flip, rotate, scale_by
