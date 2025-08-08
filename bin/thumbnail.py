@@ -85,6 +85,7 @@ class ImageTextRenderer:
 
         return font
     def get_blit_data(self):return self.data , self.offset_pos
+
 class ThumbnailGenerator:
     def __init__(self): pass
     
