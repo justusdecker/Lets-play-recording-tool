@@ -959,7 +959,7 @@ class TadEditor(tk.Frame):#! REWORK HERE
         
         save_header.grid(row=0,column=4,pady=10,sticky='N')
         SAVE.grid(row=1,column=4,sticky='N')
-        
+        self.save_btn.state(['disabled'])
         
         W.grid(row=0,column=1)
 
@@ -985,10 +985,20 @@ class TadEditor(tk.Frame):#! REWORK HERE
             msgbox.showerror('ERROR','Wrong File Format')
     def lp_changed(self,*args):
         if self.lp_option_var.get() != 'None':
+            self.save_btn.state(['!disabled'])
             change_states([ui.ui for ui in self.ui_elements],'!disabled')
             lpid = SQLAccess.get_lp_opvar(self)
-            DATA = json_read(SQLAccess.get_tad_path(lpid))
-            [ui.var.set(DATA[entry]) for entry, ui in zip(DATA,self.ui_elements)]
+            filepath = SQLAccess.get_tad_path(lpid)
+            
+            #! No JSONDecodError catch
+            #! No wrong type catch[case: only if user change the data outside of lprt!]
+            
+            if isfile(filepath):
+                DATA = json_read(filepath)
+                [ui.var.set(DATA[entry]) for entry, ui in zip(DATA,self.ui_elements)]
+            else:
+                [ui.var.set(DATA[entry]) for entry, ui in zip(DEFAULT_TAD,self.ui_elements)]
+            
     def save_tad(self,*args):
         #- Check final
         #- Write TAD File into TAD_FOLDER/lp_name.json
