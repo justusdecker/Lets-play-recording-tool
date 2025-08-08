@@ -964,7 +964,7 @@ class TadEditor(tk.Frame):#! REWORK HERE
             
             self.ui_elements.extend([TBO(HEADER,tbo,*FDS_TBO[inps]) for inps, tbo in zip(FDS_TBO,FLATTENED_DEFAULT_SETTINGS) if cheader == tbo.split('::')[0]])
         
-        change_states([ui.ui for ui in self.ui_elements],'disable')
+        change_states([ui.ui for ui in self.ui_elements],'disabled')
         # Vartype | UIE | (from, to) or None
 
         # Packing
@@ -1013,7 +1013,8 @@ class TadEditor(tk.Frame):#! REWORK HERE
         else:
             msgbox.showerror('ERROR','Wrong File Format')
     def lp_changed(self,*args):
-        pass
+        if self.lp_option_var.get() != 'None':
+            change_states([ui.ui for ui in self.ui_elements],'disabled')
     def save_tad(self,*args):
         pass
 
