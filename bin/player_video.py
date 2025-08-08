@@ -124,12 +124,15 @@ class VideoPlayer(Toplevel):
 
         # Begin updating the progress slider periodically.
         self.update_progress()
+        self.blocked = False
     def gen_thumbnail(self,*args):
+        if self.blocked: return
+        self.blocked = True
         length = ffmpeg_run(FFMPEG_GET_LENGTH)
         if length is None: return
         frame = self.progress_value.get() * length
         self.stop_video()
-        self.player.release()
+
         self.tg.generate(
             str(self.current_episode),
             self.video_path,
@@ -138,6 +141,8 @@ class VideoPlayer(Toplevel):
             frame
             )
         self.open_file()
+        print('finished generating')
+        self.blocked = False
     @property
     def rel_id(self) -> int:
         return self.data[self.current_episode] - 1
