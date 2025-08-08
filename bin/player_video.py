@@ -1,15 +1,11 @@
 import tkinter.ttk as ttk
-from tkinter import (
-    Toplevel,
-    StringVar,
-    BOTH,
-    LEFT,
-    HORIZONTAL,
-    X
-)
 import tkinter as tk
-
 from tkinter.messagebox import showerror
+from tkinter import Toplevel, StringVar, BOTH, LEFT, HORIZONTAL, X
+from bin.data_access import SQLAccess
+from bin.thumbnail import ThumbnailGenerator
+from bin.constants import *
+from bin.ffmpeg import *
 
 try:
     import vlc
@@ -17,11 +13,6 @@ except:
     from bin.constants import ERROR_008
     showerror('ERROR', ERROR_008 + '\nvlc')
     quit()
-
-from bin.data_access import SQLAccess
-from bin.thumbnail import ThumbnailGenerator
-from bin.constants import *
-from bin.ffmpeg import *
 
 CHAR_TABLE = {
         'Ä':'&Auml;',
@@ -36,7 +27,6 @@ CHAR_TABLE = {
 def convert_char(c: str):
     if not c in CHAR_TABLE: return c
     return CHAR_TABLE[c]
-
 
 class VideoPlayer(Toplevel):
     def __init__(self, data: list[int],lpid,app):
