@@ -904,6 +904,7 @@ class TadEditor(tk.Frame):#! REWORK HERE
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
         self.tg = ThumbnailGenerator()
+        self.tw = ThumbnailPreview()
         #W = ttk.Frame(self)
         W = ctk.CTkScrollableFrame(self,width=600,height=400)
         self.menu = get_menu(self, controller)
@@ -1016,6 +1017,7 @@ class TadEditor(tk.Frame):#! REWORK HERE
             SQLAccess.get_tad_path(lpid),
             f'{TEMP_FOLDER}preview.png'
         )
+        self.tw.update_image(f'{TAD_FOLDER}preview.png',-1)
 
 class About(tk.Frame):
     def __init__(self, parent, controller): 

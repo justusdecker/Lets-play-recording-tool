@@ -27,8 +27,8 @@ class ThumbnailPreview(Toplevel):
         self.update_image(f'bin\\data\\img\\logo.ico',-1)
         
         
-    def update_image(self,path: str,i:int):
-        self.title(f'Thumbnail Preview: {i+1}')
+    def update_image(self,path: str,i:int | None):
+        self.title(f'Thumbnail Preview: {i+1 if i is not None else "TADEditor"}')
         self.image = Image.open(path).resize((640,360))
         self.image = ImageTk.PhotoImage(self.image)
         self.label.configure(image=self.image,border=2,relief="raised")
