@@ -23,7 +23,7 @@ This tool has all to make your life as a lets player much easier.
 ## What do you need? - (Standalone)
 > [!NOTE]
 > No worry. This might be a bit overwhelming at first!
-> We have a detailed installationguide.
+> We have a detailed installationguide right [here](https://github.com/justusdecker/Lets-play-recording-tool/wiki/Setup-&-Troublehooting)
 > 
 - A computer that can play the games you are recording. Can work on slower system. Recommended specs: A non-potato GPU & at least 16 GB RAM
 - Third Party Software
@@ -34,6 +34,7 @@ This tool has all to make your life as a lets player much easier.
 ## What do you need? - (For Developers)
 
 You need [this](requirements.txt) libraries & [the programs here](#what-do-you-need---standalone) too.
+
 
 
 
