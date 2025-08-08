@@ -22,7 +22,7 @@ def get_time_va(filepath: str):
         return None
 
 def get_thumbnail(filepath: str,frame:None) -> Surface:
-    if frame is None:
+    if frame == -1:
         t = rnd() * get_time_va(filepath)
     else:
         t = frame
