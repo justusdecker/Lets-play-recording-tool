@@ -989,7 +989,7 @@ class TadEditor(tk.Frame):#! REWORK HERE
     def save_tad(self,*args):
         #- Check final
         #- Write TAD File into TAD_FOLDER/lp_name.json
-        DATA = {key: ui.val.get() for ui, key in zip(self.ui_elements, DEFAULT_TAD)}
+        DATA = {key: ui.var.get() for ui, key in zip(self.ui_elements, DEFAULT_TAD)}
         print(DATA)
         #- Update Database
         
