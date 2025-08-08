@@ -747,7 +747,7 @@ class Settings(tk.Frame):
 
 
 INPUT_INT_NV = (tk.IntVar,ttk.Entry, '>-2048::<2048')
-INPUT_SCALE = (tk.DoubleVar,ttk.LabeledScale, '>-0.5::<3.5')
+INPUT_SCALE = (tk.DoubleVar,ttk.LabeledScale, '>0::<3.5')
 INPUT_ROT = (tk.DoubleVar,ttk.LabeledScale, '>-359::<359')
 INPUT_CB = (tk.IntVar,ttk.Checkbutton, '')
 INPUT_COLOR = (tk.IntVar,ttk.Entry, '>-1::<256') #! Will be changed later
@@ -1006,7 +1006,7 @@ class TadEditor(tk.Frame):#! REWORK HERE
         lpid = SQLAccess.get_lp_opvar(self)
         lpname = SQLAccess.get_lp_name(lpid)
         filepath = f'{lpname}.json'
-        json_write(filepath,DATA)
+        json_write(f'{TAD_FOLDER}{filepath}',DATA)
         print(DATA)
         #- Update Database
         SQLAccess.set_tadpath(lpid, filepath)
