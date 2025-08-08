@@ -858,7 +858,7 @@ class TBO:
         elif self.uie is ttk.Checkbutton:
             self.ui = self.uie(self.master,variable=self.var,text=self.name)
         elif self.uie is ttk.Button:
-            self.ui = self.uie(self.master,text=self.name,variable=self.var)
+            self.ui = self.uie(self.master,text=self.name,command=self.filedialog)
         self.ui.pack()
     @property
     def name(self) -> str:
@@ -876,6 +876,10 @@ class TBO:
             if not cond and cond != 'notnull':
                 raise ValueError(f'Wrong condition should be empty or notnull. Not {cond}')
         return cond
+    def filedialog(self,*args):
+        self.var.set(askopenfilename())
+        self.check()
+        print(self.var.get())
     def _check_numeric(self,cond) -> bool:
         if cond.startswith('<'):
             return float(cond[1:]) >= self.get_value()
