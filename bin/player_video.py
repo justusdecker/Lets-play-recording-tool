@@ -130,14 +130,14 @@ class VideoPlayer(Toplevel):
         self.blocked = True
         length = ffmpeg_run(FFMPEG_GET_LENGTH)
         if length is None: return
-        frame = self.progress_value.get()
+        frame = self.player.get_time() * .0001
         self.stop_video()
 
         self.tg.generate(
-            str(self.current_episode),
+            str(self.data[self.current_episode]),
             self.video_path,
             SQLAccess.get_tad_path(self.lpid),
-            f'{THUMBNAIL_FOLDER}_generated_from_video_{self.current_episode}.png',
+            f'{THUMBNAIL_FOLDER}_generated_from_video_{self.data[self.current_episode]}.png',
             frame
             )
         self.open_file()
