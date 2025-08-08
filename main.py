@@ -843,21 +843,23 @@ class TBO:
         self.uie: ttk.Button | ttk.LabeledScale | ttk.Entry | ttk.Checkbutton = uie
 
         self.var: tk.IntVar | tk.StringVar | tk.DoubleVar = self.type()
-        self.create_ui()
         self.cond = cond
+        self.create_ui()
+        
         self.mustbeset = mustbeset
     def create_ui(self):
         if self.uie is ttk.LabeledScale:
-            ttk.Label(self.master,f'{self.name}:')
+            ttk.Label(self.master,text=f'{self.name}:').pack()
             self.ui = self.uie(self.master,from_=self.condition[0][1:],to=self.condition[1][1:],variable=self.var)
         elif self.uie is ttk.Entry:
-            ttk.Label(self.master,f'{self.name}:')
+            ttk.Label(self.master,text=f'{self.name}:').pack()
             self.ui = self.uie(self.master,textvariable=self.var)
             self.ui.bind('<KeyRelease>',self.check)
         elif self.uie is ttk.Checkbutton:
-            self.ui = self.uie(self.master,variable=self.var)
+            self.ui = self.uie(self.master,variable=self.var,text=self.name)
         elif self.uie is ttk.Button:
             self.ui = self.uie(self.master,text=self.name,variable=self.var)
+        self.ui.pack()
     @property
     def name(self) -> str:
         return self.key.split('::')[-1]
@@ -939,6 +941,9 @@ class TadEditor(tk.Frame):#! REWORK HERE
         TAD_EDITOR = ttk.Frame(W)
         tad_editor_header = ttk.Label(W,text='TAD Editor',font=Font(W,size=16))
         
+        LETSPLAY = ttk.Frame(W)
+        letsplay_header = ttk.Label(W,text='Lets Play',font=Font(W,size=14))
+        
         BACKGROUND = ttk.Frame(W)
         background_header = ttk.Label(W,text='Background',font=Font(W,size=14))
         
@@ -951,20 +956,23 @@ class TadEditor(tk.Frame):#! REWORK HERE
         SAVE = ttk.Frame(W)
         save_header = ttk.Label(W,text='Save',font=Font(W,size=14))
         
-        lheader = 'bg'
+        _, self.lp_options, self.lp_option_var= get_lets_play(LETSPLAY, lambda x: print('lp changed'))
+        
         self.tbos = []
         for cheader, HEADER in zip(['bg','logo','text'],[BACKGROUND,LOGO,TEXT]):
             
-            if lheader == cheader.split('::')[0]:
-                
-                [TBO(HEADER,tbo,) for tbo in FLATTENED_DEFAULT_SETTINGS]
+
+            [TBO(HEADER,tbo,*FDS_TBO[inps]) for inps, tbo in zip(FDS_TBO,FLATTENED_DEFAULT_SETTINGS) if cheader == tbo.split('::')[0]]
         
         
         # Vartype | UIE | (from, to) or None
 
         # Packing
-        tad_editor_header.grid(row=0,column=1,pady=10,sticky='N')
-        TAD_EDITOR.grid(row=1,column=0,sticky='N')
+        #tad_editor_header.grid(row=0,column=1,pady=10,sticky='N')
+        #TAD_EDITOR.grid(row=1,column=0,sticky='N')
+        
+        letsplay_header.grid(row=0,column=0,pady=10,sticky='N')
+        LETSPLAY.grid(row=1,column=0,sticky='N')
         
         background_header.grid(row=0,column=1,pady=10,sticky='N')
         BACKGROUND.grid(row=1,column=1,sticky='N')
@@ -975,7 +983,7 @@ class TadEditor(tk.Frame):#! REWORK HERE
         text_header.grid(row=0,column=3,pady=10,sticky='N')
         TEXT.grid(row=1,column=3,sticky='N')
         
-        self.save_btn = ttk.Button(SAVE,text='save',command=self.get_values)
+        self.save_btn = ttk.Button(SAVE,text='save')
         self.save_btn.grid(row=0,column=5)
         
         save_header.grid(row=0,column=4,pady=10,sticky='N')
@@ -1004,6 +1012,8 @@ class TadEditor(tk.Frame):#! REWORK HERE
             self.get_strings()[1].set(filepath)
         else:
             msgbox.showerror('ERROR','Wrong File Format')
+    def save_tad(self):
+        pass
 
 class About(tk.Frame):
     def __init__(self, parent, controller): 
