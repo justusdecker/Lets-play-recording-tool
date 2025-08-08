@@ -5,7 +5,6 @@ from threading import Thread
 from os.path import getsize
 import tkinter as tk
 import customtkinter as ctk
-
 from tkinter import ttk
 from tkinter.font import Font
 from os import remove
