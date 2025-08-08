@@ -37,20 +37,11 @@ This tool has all to make your life as a lets player much easier.
 
 You need [this](requirements.txt) libraries & [the programs here](#what-do-you-need---standalone) too.
 
+## State of Development
 
-
-
-You can get the current state [here](https://github.com/justusdecker/Lets-play-recording-tool/milestones) & More Info [here](https://github.com/justusdecker/Lets-play-recording-tool/wiki/)
+The most essential features are implemented right now. A bug here and there may appear.(gotta catch them all🦍)
+You can get the current state [here](https://github.com/justusdecker/Lets-play-recording-tool/milestones)
 
 > [!CAUTION]
-> This Application is still in development, many bugs may appear!(gotta catch them all🦍)
-> 
-> Some bugs can lead to data loss. **BE CAREFUL!**
-
-
-
-
-
-
-
-# Setup
+> Some bugs can lead to data loss(Only your lets plays!). **BE CAREFUL!**
+> For this case. You can backup your videos etc. anytime by using the FileManager! 
