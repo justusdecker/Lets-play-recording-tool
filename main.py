@@ -956,13 +956,13 @@ class TadEditor(tk.Frame):#! REWORK HERE
         SAVE = ttk.Frame(W)
         save_header = ttk.Label(W,text='Save',font=Font(W,size=14))
         
-        _, self.lp_options, self.lp_option_var= get_lets_play(LETSPLAY, lambda x: print('lp changed'))
+        _, self.lp_options, self.lp_option_var= get_lets_play(LETSPLAY, self.lp_changed)
         
         self.tbos = []
+        self.ui_elements = []
         for cheader, HEADER in zip(['bg','logo','text'],[BACKGROUND,LOGO,TEXT]):
             
-
-            [TBO(HEADER,tbo,*FDS_TBO[inps]) for inps, tbo in zip(FDS_TBO,FLATTENED_DEFAULT_SETTINGS) if cheader == tbo.split('::')[0]]
+            self.ui_elements.extend([TBO(HEADER,tbo,*FDS_TBO[inps]) for inps, tbo in zip(FDS_TBO,FLATTENED_DEFAULT_SETTINGS) if cheader == tbo.split('::')[0]])
         
         
         # Vartype | UIE | (from, to) or None
@@ -983,7 +983,7 @@ class TadEditor(tk.Frame):#! REWORK HERE
         text_header.grid(row=0,column=3,pady=10,sticky='N')
         TEXT.grid(row=1,column=3,sticky='N')
         
-        self.save_btn = ttk.Button(SAVE,text='save')
+        self.save_btn = ttk.Button(SAVE,text='save',command=self.save_tad)
         self.save_btn.grid(row=0,column=5)
         
         save_header.grid(row=0,column=4,pady=10,sticky='N')
@@ -1012,7 +1012,9 @@ class TadEditor(tk.Frame):#! REWORK HERE
             self.get_strings()[1].set(filepath)
         else:
             msgbox.showerror('ERROR','Wrong File Format')
-    def save_tad(self):
+    def lp_changed(self,*args):
+        pass
+    def save_tad(self,*args):
         pass
 
 class About(tk.Frame):
