@@ -986,14 +986,20 @@ class TadEditor(tk.Frame):#! REWORK HERE
     def lp_changed(self,*args):
         if self.lp_option_var.get() != 'None':
             change_states([ui.ui for ui in self.ui_elements],'!disabled')
+            lpid = SQLAccess.get_lp_opvar(self)
+            DATA = json_read(SQLAccess.get_tad_path(lpid))
+            [ui.var.set(DATA[entry]) for entry, ui in zip(DATA,self.ui_elements)]
     def save_tad(self,*args):
         #- Check final
         #- Write TAD File into TAD_FOLDER/lp_name.json
         DATA = {key: ui.var.get() for ui, key in zip(self.ui_elements, DEFAULT_TAD)}
         lpid = SQLAccess.get_lp_opvar(self)
+        lpname = SQLAccess.get_lp_name(lpid)
+        filepath = f'{TAD_FOLDER}{lpname}.json'
+        json_write(filepath,DATA)
         print(DATA)
         #- Update Database
-        
+        SQLAccess.set_tadpath(lpid, filepath)
         pass
 
 class About(tk.Frame):
