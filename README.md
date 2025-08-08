@@ -32,7 +32,8 @@ This tool has all to make your life as a lets player much easier.
   - FFMPEG for Audacity
   - FFMPEG
 ## What do you need? - (For Developers)
-You need [this](#what-do-you-need---standalone) too.
+
+You need [this](requirements.txt) libraries & [this](#what-do-you-need---standalone) too.
 
 You can get the current state [here](https://github.com/justusdecker/Lets-play-recording-tool/milestones) & More Info [here](https://github.com/justusdecker/Lets-play-recording-tool/wiki/)
 
