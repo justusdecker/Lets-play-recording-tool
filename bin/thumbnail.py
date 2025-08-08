@@ -84,17 +84,17 @@ class ThumbnailGenerator:
             )
         logo = self.__render_logo()
         if self.tad['logo::center']:
-            x = (1280//2) - (logo[0].get_width() // 2) + self.tad['logo::pos::x']
+            x = (1280//2) - (logo.get_width() // 2) + self.tad['logo::pos::x']
             y = self.tad['logo::pos::y']
             print(x,y)
-            logo = logo[0], (x,y)
+            logo = logo, (x,y)
         
         text_r = self.__render_text(text)
         if self.tad['text::center']:
-            x = (1280//2) - (text_r.get_width() // 2) + self.tad['logo::pos::x']
-            y = self.tad['logo::pos::y']
+            x = (1280//2) - (text_r.get_width() // 2) + self.tad['text::pos::x']
+            y = self.tad['text::pos::y']
             print(x,y)
-            text_r = text_r[0], (x,y)
+            text_r = text_r, (x,y)
 
         img = self.__comp_render(
             [(bg[0],bg_pos) if self.tad['bg::center'] else bg,
@@ -162,55 +162,56 @@ class ThumbnailGenerator:
         Returns the Text Image with outline
         """
         
-        if not isfile(self.tad['text:path']):
-            font = Font(get_default_font(),self.tad['text:size'])
+        if not isfile(self.tad['text::path']):
+            font = Font(get_default_font(),self.tad['text::size'])
         else:
-            font = Font(self.tad['text:path'],self.tad['text:size'])
+            font = Font(self.tad['text::path'],self.tad['text::size'])
         
-        img: Surface = font.render(text,False,self.tad['text:color'])
+        img: Surface = font.render(text,False,self.tad['text::color'])
         
-        timg = outlining(img,self.tad['text:ol_color'])
+        timg = outlining(img,self.tad['text::ol_color'])
         
-        timg = scale_by(timg,self.tad['text:scale'])
+        timg = scale_by(timg,self.tad['text::scale'])
         
-        timg = rotate(timg,self.tad['text:rot'])
+        timg = rotate(timg,self.tad['text::rot'])
         
         return timg
     
-    def __render_logo(self) -> tuple[Surface, tuple[int, int]]:
-        if not isfile(tad['path']):
+    def __render_logo(self) -> Surface:
+        
+        if not isfile(self.tad['logo::path']):
             # File does not exist so return an empty logo
             return Surface((1,1),SRCALPHA),(0,0)
-        surf = img_load(tad['path'])
+        surf = img_load(self.tad['logo::path'])
         
-        surf = scale_by(surf,tad['scale'])
+        surf = scale_by(surf,self.tad['logo::scale'])
         
-        surf = rotate(surf,tad['rot'])
+        surf = rotate(surf,self.tad['logo::rot'])
         
         #center image position calculation [x,y] [w,h]
         # x - (w / 2) & y - (h / 2)
-        x, y = [a - (b * .5) for a, b in zip(tad['pos'], surf.get_size())]
+        x, y = [a - (b * .5) for a, b in zip([self.tad['logo::pos::x'],self.tad['logo::pos::y']], surf.get_size())]
         
-        return surf, (x,y)
+        return surf
     
     def __render_background(self, filepath: str, frame: float): #Here rotation, color manipulation will be added
         
         # Manipulate pos
-        rx,ry = tad['r_pos']
+        rx,ry = [self.tad['bg::r_pos::x-from'], self.tad['bg::r_pos::x-to']],[self.tad['bg::r_pos::y-from'], self.tad['bg::r_pos::y-to']]
         rx, ry = ri(*rx), ri(*ry)
-        mpx = tad['pos'][0] + rx
-        mpy = tad['pos'][1] + ry
+        mpx = self.tad['bg::pos::x'] + rx
+        mpy = self.tad['bg::pos::y'] + ry
         img = self.__get_src_image(filepath, frame)
         
-        a, b = tad['r_rot']
+        a, b = [self.tad['bg::r_rot::from'], self.tad['bg::r_rot::to']]
         a, b = int(a * 100), int(b * 100)
-        r = tad['rot'] + (ri(a, b) / 100)
+        r = self.tad['bg::rot'] + (ri(a, b) / 100)
         if r:
             img = rotate(img, r)
         
-        a, b = tad['r_scale']
+        a, b = self.tad['bg::r_scale::from'], self.tad['bg::r_scale::to']
         a, b = int(a * 100), int(b * 100)
-        s = tad['scale'] + (ri(a, b) / 100)
+        s = self.tad['bg::scale'] + (ri(a, b) / 100)
         if s != 1:
             img = scale_by(img, s)
 
