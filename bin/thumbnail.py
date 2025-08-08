@@ -184,7 +184,7 @@ class ThumbnailGenerator:
         
         if not isfile(self.tad['logo::path']):
             # File does not exist so return an empty logo
-            return Surface((1,1),SRCALPHA),(0,0)
+            return Surface((1,1),SRCALPHA)
         surf = img_load(self.tad['logo::path'])
         
         surf = scale_by(surf,self.tad['logo::scale'])
@@ -193,8 +193,6 @@ class ThumbnailGenerator:
         
         #center image position calculation [x,y] [w,h]
         # x - (w / 2) & y - (h / 2)
-        x, y = [a - (b * .5) for a, b in zip([self.tad['logo::pos::x'],self.tad['logo::pos::y']], surf.get_size())]
-        
         return surf
     
     def __render_background(self, filepath: str, frame: float): #Here rotation, color manipulation will be added

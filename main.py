@@ -816,7 +816,7 @@ class TBO:
         elif self.uie is ttk.Checkbutton:
             self.ui = self.uie(self.master,variable=self.var,text=self.name)
         elif self.uie is ttk.Button:
-            self.ui = self.uie(self.master,text=self.name,command=self.filedialog)
+            self.ui = self.uie(self.master,text=self.name,command=self.btn_cb)
         self.ui.pack()
     @property
     def name(self) -> str:
@@ -835,7 +835,7 @@ class TBO:
                 raise ValueError(f'Wrong condition should be empty or notnull. Not {cond}')
         return cond
     
-    def filedialog(self,*args):
+    def btn_cb(self,*args):
         if self.command is askopenfilename:
             self.var.set(self.command())
         elif self.command is askcolor:
