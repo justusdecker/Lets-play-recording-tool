@@ -68,7 +68,7 @@ class ThumbnailGenerator:
     
     def generate(self,
                  text: str,
-                 video_path: str,
+                 video_path: str | None,
                  tad_path: str,
                  save_to_path: str,
                  frame: float = -1,
@@ -76,8 +76,11 @@ class ThumbnailGenerator:
                  ):
         print((f'[Thumbnail Generate]: {video_path}',94))
         self.tad = json_read(TAD_FOLDER + tad_path)
-        
-        bg = self.__render_background(video_path,frame)
+        if bg is None:
+            bg = Surface((1280,720))
+            bg.fill((34,34,34))
+        else:
+            bg = self.__render_background(video_path,frame)
         bg_pos = (
             (1280//2) - (bg[0].get_width() // 2), 
             (720//2) - (bg[0].get_height() // 2)
@@ -97,7 +100,7 @@ class ThumbnailGenerator:
             text_r = text_r, (x,y)
 
         img = self.__comp_render(
-            [(bg[0],bg_pos) if self.tad['bg::center'] else bg,
+            [(bg,bg_pos) if self.tad['bg::center'] else bg,
             logo,
             text_r]
             )
