@@ -746,11 +746,10 @@ class Settings(tk.Frame):
 
 
 
-INPUT_INT_NV = (tk.IntVar,ttk.Entry, '>-2048::<2048')
+INPUT_INT_NV = (tk.IntVar,ttk.LabeledScale, '>-2048::<2048')
 INPUT_SCALE = (tk.DoubleVar,ttk.LabeledScale, '>0::<3.5')
 INPUT_ROT = (tk.DoubleVar,ttk.LabeledScale, '>-359::<359')
 INPUT_CB = (tk.IntVar,ttk.Checkbutton, '')
-INPUT_COLOR = (tk.IntVar,ttk.Entry, '>-1::<256') #! Will be changed later
 FDS_TBO = {
     "bg::pos::x": INPUT_INT_NV,
     "bg::pos::y": INPUT_INT_NV,
@@ -844,9 +843,9 @@ class TBO:
         print(self.var.get())
     def _check_numeric(self,cond) -> bool:
         if cond.startswith('<'):
-            return float(cond[1:]) >= self.get_value()
-        elif cond.startswith('>'):
             return float(cond[1:]) <= self.get_value()
+        elif cond.startswith('>'):
+            return float(cond[1:]) >= self.get_value()
     def _check_text(self,cond) -> bool:
         if cond == 'notnull':
             if not self.get_value():
@@ -1021,7 +1020,7 @@ class TadEditor(tk.Frame):#! REWORK HERE
             f'{TEMP_FOLDER}preview.png'
         )
         
-        self.tw.update_image(f'{TEMP_FOLDER}preview.png',-1)
+        self.tw.update_image(f'{TEMP_FOLDER}preview.png',None)
 
 class About(tk.Frame):
     def __init__(self, parent, controller): 
