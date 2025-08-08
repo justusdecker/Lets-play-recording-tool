@@ -20,17 +20,19 @@ This tool has all to make your life as a lets player much easier.
 - Deploying - Provides an easy to use HMTL File(with all the upload essential data) and Exporting your data to an external drive(optional)
 - Easy to use in-built Filemanagement
 
-## What do you need?
-
+## What do you need? - (Standalone)
+> [!NOTE]
+> No worry. This might be a bit overwhelming at first!
+> We have a detailed installationguide.
+> 
 - A computer that can play the games you are recording. Can work on slower system. Recommended specs: A non-potato GPU & at least 16 GB RAM
 - Third Party Software
-    > [!NOTE]
-    > No worry. This might be a bit overwhelming at first!
-    > We have a detailed installationguide.
   - OBS Studio
   - Audacity - 3.0.0
   - FFMPEG for Audacity
-
+  - FFMPEG
+## What do you need? - (For Developers)
+You need [this](#what-do-you-need---standalone) too.
 
 You can get the current state [here](https://github.com/justusdecker/Lets-play-recording-tool/milestones) & More Info [here](https://github.com/justusdecker/Lets-play-recording-tool/wiki/)
 
