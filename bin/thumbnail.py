@@ -42,6 +42,8 @@ def get_thumbnail(filepath: str,frame:None) -> Surface:
         t = rnd() * get_time_va(filepath)
     else:
         t = frame
+        t1 = get_time_va(filepath)
+        print(t,t1)
     rie(f'{TEMP_FOLDER}temp.png')
     ffmpeg_run(FFMPEG_GET_FRAME,{'__IN__': filepath, '__TIME__': t})
     reoc(not isfile(f'{TEMP_FOLDER}temp.png'),ERROR_007)

@@ -97,7 +97,7 @@ class VideoPlayer(Toplevel):
         self.play_button.pack(side=LEFT, padx=5)
 
         # Stop button.
-        self.stop_button = ttk.Button(self.controls, text="Stop", command=self.stop_video)
+        self.stop_button = ttk.Button(self.controls, text="Pause", command=self.pause_video)
         self.stop_button.pack(side=LEFT, padx=5)
 
         # Volume control slider.
@@ -128,6 +128,8 @@ class VideoPlayer(Toplevel):
         length = ffmpeg_run(FFMPEG_GET_LENGTH)
         if length is None: return
         frame = self.progress_value.get() * length
+        self.stop_video()
+        self.player.release()
         self.tg.generate(
             str(self.current_episode),
             self.video_path,
@@ -135,6 +137,7 @@ class VideoPlayer(Toplevel):
             f'{THUMBNAIL_FOLDER}_generated_from_video_{self.current_episode}.png',
             frame
             )
+        self.open_file()
     @property
     def rel_id(self) -> int:
         return self.data[self.current_episode] - 1
@@ -263,11 +266,14 @@ class VideoPlayer(Toplevel):
         This function is called repeatedly every 500 milliseconds.
         """
         if not self.slider_dragging:
-            current_time = self.player.get_time()  # Current time in milliseconds.
-            duration = self.player.get_length()      # Total duration in milliseconds.
-            if duration > 0:
-                self.progress_slider.config(to=duration)
-                self.progress_slider.set(current_time)
+            try:
+                current_time = self.player.get_time()  # Current time in milliseconds.
+                duration = self.player.get_length()      # Total duration in milliseconds.
+                if duration > 0:
+                    self.progress_slider.config(to=duration)
+                    self.progress_slider.set(current_time)
+            except:
+                pass
         self.after(500, self.update_progress)
     
     def destroy(self):
