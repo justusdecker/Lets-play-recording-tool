@@ -5,8 +5,8 @@
 
 ## What is LPRT?
 
-LPRT is a Lets Play recording, editing & distribution tool.
-This tool has all to make your life as a lets player much easier.
+LPRT is an open-source windows-only recording, editing & distribution tool or lets plays.
+This tool includes features like filemanagement to make your life as a lets player much easier.
 
 ## Features
 - Your recordings cannot mix up anymore - You dont need to rename / handle your recordings in general. LPRT saves the paths for further editing & distribution.
@@ -45,3 +45,22 @@ You can get the current state [here](https://github.com/justusdecker/Lets-play-r
 > [!CAUTION]
 > Some bugs can lead to data loss(Only your lets plays!). **BE CAREFUL!**
 > For this case. You can backup your videos etc. anytime by using the FileManager! 
+
+## Planned Stuff for the future
+
+- AI generated titles - This titles will not used directly. These should serve as a suggestion!
+- Video trim / cut
+- Audio Peak Normalisation
+- Noise Reduction
+- UI quality increase
+- Image editing - e.g. cutout
+- Modules to disable unwanted features
+
+## Join LPRT-development
+
+If you are interested in LPRT, its programming, artworks, testing or something like that, you're welcome to participate in the development of LPRT.
+
+Information about what you can do and be found in the [wiki](https://github.com/justusdecker/Lets-play-recording-tool/wiki)
+
+You have an idea or suggestions? Make sure to file an issue & wait for replies!
+Maybe there are different ideas, improvements, or hints or maybe your feature is not welcome/need at the moment.
