@@ -4,11 +4,16 @@ from bin.data_access import on_start, LetsPlays, SQLAccess, json_write, json_rea
 from threading import Thread
 from os.path import getsize
 import tkinter as tk
+import customtkinter as ctk
+
 from tkinter import ttk
 from tkinter.font import Font
 from os import remove
 from zipfile import ZipFile
-LARGEFONT =("Verdana", 35)
+from tkinter.colorchooser import askcolor
+from tkinter.filedialog import askopenfilename
+LARGEFONT = ("Verdana", 35)
+ctk.set_appearance_mode('light')
 
 on_start()
 
@@ -29,7 +34,7 @@ class TkinterApp(tk.Tk):
         self.geometry('800x600')
         # initializing frames to an empty array
         self.frames = {}
-        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender,SetTitle,Deploy, FileManager, Settings, About):
+        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender,SetTitle,Deploy, TadEditor,FileManager, Settings, About):
  
             frame = F(container, self)
             
@@ -58,6 +63,7 @@ def get_menu(parent,controller) -> ttk.Frame:
         ("CompAndRender", lambda : controller.show_frame(CompAndRender)),
         ("SetTitle", lambda : controller.show_frame(SetTitle)),
         ("Deploy", lambda : controller.show_frame(Deploy)),
+        ("TadEditor", lambda : controller.show_frame(TadEditor)),
         ("FileManager", lambda : controller.show_frame(FileManager)),
         ("Settings", lambda : controller.show_frame(Settings)),
         ("About", lambda : controller.show_frame(About))
@@ -717,7 +723,305 @@ class Settings(tk.Frame):
         NEW_OBS_SETTINGS['port'] = self.PORT.get()
         NEW_OBS_SETTINGS['pw'] = self.PW.get()
         json_write(ROOT+'obs_settings.json',NEW_OBS_SETTINGS)
+
+
+class Settings(tk.Frame):
+    def __init__(self, parent, controller): 
+        tk.Frame.__init__(self, parent)
         
+        W = ttk.Frame(self)
+        
+        self.menu = get_menu(self, controller)
+        
+        # Create Headers
+        SETTINGS = ttk.Frame(W)
+        settings_header = ttk.Label(W,text='Settings',font=Font(W,size=16))
+        
+        # Packing
+        settings_header.pack(pady=10)
+        SETTINGS.pack()
+
+        W.grid(row=0,column=1)
+
+
+
+
+INPUT_INT_NV = (tk.IntVar,ttk.LabeledScale, '>-2048::<2048')
+INPUT_SCALE = (tk.DoubleVar,ttk.LabeledScale, '>0::<3.5')
+INPUT_ROT = (tk.DoubleVar,ttk.LabeledScale, '>-359::<359')
+INPUT_CB = (tk.IntVar,ttk.Checkbutton, '')
+FDS_TBO = {
+    "bg::pos::x": INPUT_INT_NV,
+    "bg::pos::y": INPUT_INT_NV,
+    "bg::r_pos::x-from": INPUT_INT_NV,
+    "bg::r_pos::x-to": INPUT_INT_NV,
+    "bg::r_pos::y-from": INPUT_INT_NV,
+    "bg::r_pos::y-to": INPUT_INT_NV,
+    "bg::r_scale::from": INPUT_SCALE,
+    "bg::r_scale::to": INPUT_SCALE,
+    "bg::r_rot::from": INPUT_ROT,
+    "bg::r_rot::to": INPUT_ROT,
+    "bg::center": INPUT_CB,
+    "bg::scale": INPUT_SCALE,
+    "bg::rot": INPUT_ROT,
+
+    "logo::path": (tk.StringVar,ttk.Button, 'notnull'),
+    "logo::scale": INPUT_SCALE,
+    "logo::rot": INPUT_ROT,
+    "logo::pos::x": INPUT_INT_NV,
+    "logo::pos::y": INPUT_INT_NV,
+    "logo::center": INPUT_CB,
+
+    "text::path": (tk.StringVar,ttk.Button, ''),
+    "text::scale": INPUT_SCALE,
+    "text::rot": INPUT_ROT,
+    "text::color": (tk.StringVar,ttk.Button, 'notnull',askcolor),
+    "text::ol_color": (tk.StringVar,ttk.Button, 'notnull',askcolor),
+    "text::size": INPUT_INT_NV,
+    "text::pos::x": INPUT_INT_NV,
+    "text::pos::y": INPUT_INT_NV,
+    "text::center": INPUT_CB
+}
+
+class TBO:
+    def __init__(self,
+                 master,
+                 key: str,
+                 type: tk.IntVar | tk.StringVar | tk.DoubleVar, 
+                 uie: ttk.Button | ttk.LabeledScale | ttk.Entry | ttk.Checkbutton, 
+                 cond: str, 
+                 command:bool=askopenfilename):
+        self.command = command
+        # cond: <62::>51 if int or double
+        # cond: notnull if str
+        self.master = master
+        self.key: str = key
+        self.type: tk.IntVar | tk.StringVar | tk.DoubleVar = type
+        
+        self.uie: ttk.Button | ttk.LabeledScale | ttk.Entry | ttk.Checkbutton = uie
+
+        self.var: tk.IntVar | tk.StringVar | tk.DoubleVar = self.type()
+        self.cond = cond
+        self.create_ui()
+    def create_ui(self):
+
+        if self.uie is ttk.LabeledScale:
+            ttk.Label(self.master,text=f'{self.name}:').pack()
+            self.ui = self.uie(self.master,from_=self.condition[0][1:],to=self.condition[1][1:],variable=self.var)
+        elif self.uie is ttk.Entry:
+            ttk.Label(self.master,text=f'{self.name}:').pack()
+            self.ui = self.uie(self.master,textvariable=self.var)
+            self.ui.bind('<KeyRelease>',self.check)
+        elif self.uie is ttk.Checkbutton:
+            self.ui = self.uie(self.master,variable=self.var,text=self.name)
+        elif self.uie is ttk.Button:
+            self.ui = self.uie(self.master,text=self.name,command=self.btn_cb)
+        self.ui.pack()
+    @property
+    def name(self) -> str:
+        return self.key.split('::')[-1]
+    @property
+    def condition(self) -> tuple[str,str]:
+        if self.type is tk.IntVar or self.type is tk.DoubleVar:
+            cond = self.cond.split('::')
+            if len(cond) != 2:
+                raise ValueError(f'Length must be 2! {cond}')
+            if (not cond[0].startswith('>') and not cond[0].startswith('<')) or (not cond[1].startswith('>') and not cond[1].startswith('<')):
+                raise ValueError(f'Wrong Syntax! Should be < or > at the start! {cond}')
+        elif self.type is tk.StringVar:
+            cond = self.cond
+            if cond != '' and cond != 'notnull':
+                raise ValueError(f'Wrong condition should be empty or notnull. Not {cond}')
+        return cond
+    
+    def btn_cb(self,*args):
+        if self.command is askopenfilename:
+            self.var.set(self.command())
+        elif self.command is askcolor:
+            self.var.set(self.command()[1])
+        self.check()
+        print(self.var.get())
+    def _check_numeric(self,cond) -> bool:
+        if cond.startswith('<'):
+            return float(cond[1:]) <= self.get_value()
+        elif cond.startswith('>'):
+            return float(cond[1:]) >= self.get_value()
+    def _check_text(self,cond) -> bool:
+        if cond == 'notnull':
+            if not self.get_value():
+                msgbox.showwarning('WARN','This input is flagged as notnull!')
+            return not self.get_value()
+    def get_value(self):
+        try:
+            return self.var.get()
+        except:
+            self.var.set(self.condition[0][1:])
+            return self.var.get()
+    def check(self,*args):
+        if self.type is tk.IntVar or self.type is tk.DoubleVar:
+            if self._check_numeric(self.condition[0]):
+                self.var.set(self.condition[0][1:])
+            elif self._check_numeric(self.condition[1]):
+                self.var.set(self.condition[1][1:])
+        else:
+            self._check_text(self.condition)
+                
+        
+    def set_name(self,name: str):
+        self.name = name
+ 
+class TadEditor(tk.Frame):
+    names = [
+            {
+                "pos": ['x','y'],
+                "r_pos": [['x-from','x-to'],['y-from','y-to']],
+                "r_scale": ['from','to'],
+                "r_rot": ['from','to'],
+                "center": None,
+                "scale": None,
+                "rot": None
+            },
+            {
+                "path": None,
+                "scale": None,
+                "rot": None,
+                "pos": ['x','y'],
+                "center": None
+            },
+            {
+                "path": None,
+                "scale": None,
+                "rot": None,
+                "color": ['R','G','B','A'],
+                "ol_color": ['R','G','B','A'],
+                "size": None,
+                "pos": ['x','y'],
+                "center": None
+            }
+
+        ]
+    def __init__(self, parent, controller): 
+        tk.Frame.__init__(self, parent)
+        self.tg = ThumbnailGenerator()
+        
+        #W = ttk.Frame(self)
+        W = ctk.CTkScrollableFrame(self,width=600,height=400)
+        self.menu = get_menu(self, controller)
+        
+        # Create Headers
+        TAD_EDITOR = ttk.Frame(W)
+        tad_editor_header = ttk.Label(W,text='TAD Editor',font=Font(W,size=16))
+        
+        LETSPLAY = ttk.Frame(W)
+        letsplay_header = ttk.Label(W,text='Lets Play',font=Font(W,size=14))
+        
+        BACKGROUND = ttk.Frame(W)
+        background_header = ttk.Label(W,text='Background',font=Font(W,size=14))
+        
+        LOGO = ttk.Frame(W)
+        logo_header = ttk.Label(W,text='Logo',font=Font(W,size=14))
+
+        TEXT = ttk.Frame(W)
+        text_header = ttk.Label(W,text='Text',font=Font(W,size=14))
+        
+        SAVE = ttk.Frame(W)
+        save_header = ttk.Label(W,text='Save',font=Font(W,size=14))
+        
+        _, self.lp_options, self.lp_option_var= get_lets_play(LETSPLAY, self.lp_changed)
+        
+        self.tbos = []
+        self.ui_elements = []
+        for cheader, HEADER in zip(['bg','logo','text'],[BACKGROUND,LOGO,TEXT]):
+            
+            self.ui_elements.extend([TBO(HEADER,tbo,*FDS_TBO[inps]) for inps, tbo in zip(FDS_TBO,DEFAULT_TAD) if cheader == tbo.split('::')[0]])
+        
+        change_states([ui.ui for ui in self.ui_elements],'disabled')
+        # Vartype | UIE | (from, to) or None
+
+        # Packing
+        #tad_editor_header.grid(row=0,column=1,pady=10,sticky='N')
+        #TAD_EDITOR.grid(row=1,column=0,sticky='N')
+        
+        letsplay_header.grid(row=0,column=0,pady=10,sticky='N')
+        LETSPLAY.grid(row=1,column=0,sticky='N')
+        
+        background_header.grid(row=0,column=1,pady=10,sticky='N')
+        BACKGROUND.grid(row=1,column=1,sticky='N')
+        
+        logo_header.grid(row=0,column=2,pady=10,sticky='N')
+        LOGO.grid(row=1,column=2,sticky='N')
+        
+        text_header.grid(row=0,column=3,pady=10,sticky='N')
+        TEXT.grid(row=1,column=3,sticky='N')
+        
+        self.save_btn = ttk.Button(SAVE,text='save',command=self.save_tad)
+        self.save_btn.grid(row=0,column=5)
+        
+        save_header.grid(row=0,column=4,pady=10,sticky='N')
+        SAVE.grid(row=1,column=4,sticky='N')
+        self.save_btn.state(['disabled'])
+        
+        W.grid(row=0,column=1)
+
+    def set_logo_path(self,*args):
+        filepath = askopenfilename()
+        if not filepath:
+            msgbox.showwarning('WARN','No File selected')
+            return
+        if filepath.endswith('.png'):
+            self.get_strings()[0].set(filepath)
+        else:
+            msgbox.showerror('ERROR','Wrong File Format')
+        
+       
+    def set_font_path(self,*args):
+        filepath = askopenfilename()
+        if not filepath:
+            msgbox.showwarning('WARN','No File selected')
+            return
+        if filepath.endswith('.ttf') or filepath.endswith('.otf'):
+            self.get_strings()[1].set(filepath)
+        else:
+            msgbox.showerror('ERROR','Wrong File Format')
+    def lp_changed(self,*args):
+        if self.lp_option_var.get() != 'None':
+            self.save_btn.state(['!disabled'])
+            change_states([ui.ui for ui in self.ui_elements],'!disabled')
+            lpid = SQLAccess.get_lp_opvar(self)
+            filepath = SQLAccess.get_tad_path(lpid)
+            
+            #! No JSONDecodError catch
+            #! No wrong type catch[case: only if user change the data outside of lprt!]
+            
+            if isfile(filepath):
+                DATA = json_read(filepath)
+                [ui.var.set(DATA[entry]) for entry, ui in zip(DATA,self.ui_elements)]
+            else:
+                [ui.var.set(DEFAULT_TAD[entry]) for entry, ui in zip(DEFAULT_TAD,self.ui_elements)]
+            
+    def save_tad(self,*args):
+        #- Check final
+        #- Write TAD File into TAD_FOLDER/lp_name.json
+        if not hasattr(self,'tw'):
+            self.tw = ThumbnailPreview()
+        DATA = {key: ui.var.get() for ui, key in zip(self.ui_elements, DEFAULT_TAD)}
+        lpid = SQLAccess.get_lp_opvar(self)
+        lpname = SQLAccess.get_lp_name(lpid)
+        filepath = f'{lpname}.json'
+        json_write(f'{TAD_FOLDER}{filepath}',DATA)
+        print(DATA)
+        #- Update Database
+        SQLAccess.set_tadpath(lpid, filepath)
+        
+        self.tg.generate(
+            '123',
+            None,
+            SQLAccess.get_tad_path(lpid),
+            f'{TEMP_FOLDER}preview.png'
+        )
+        
+        self.tw.update_image(f'{TEMP_FOLDER}preview.png',None)
+
 class About(tk.Frame):
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
@@ -748,8 +1052,6 @@ class About(tk.Frame):
         
         W.grid(row=0,column=1)
     
-
-        
 APP = TkinterApp()
 APP.mainloop()
 

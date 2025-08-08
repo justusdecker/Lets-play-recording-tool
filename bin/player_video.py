@@ -19,6 +19,9 @@ except:
     quit()
 
 from bin.data_access import SQLAccess
+from bin.thumbnail import ThumbnailGenerator
+from bin.constants import *
+from bin.ffmpeg import *
 
 CHAR_TABLE = {
         'Ä':'&Auml;',
@@ -37,6 +40,7 @@ def convert_char(c: str):
 
 class VideoPlayer(Toplevel):
     def __init__(self, data: list[int],lpid,app):
+        self.tg = ThumbnailGenerator()
         self.app = app
         self.data: list[int] = data
         self.current_episode = 0
@@ -66,9 +70,10 @@ class VideoPlayer(Toplevel):
         
         # Create the progress slider.
         # This slider's range will be updated dynamically to match the video's duration.
+        self.progress_value = tk.DoubleVar()
         self.progress_slider = tk.Scale(
             self.progress_frame, from_=0, to=100,
-            orient=HORIZONTAL, showvalue=0, length=600
+            orient=HORIZONTAL, showvalue=0, length=600,variable=self.progress_value
         )
         self.progress_slider.pack(fill=X)
         self.progress_slider.bind("<ButtonPress-1>", self.on_slider_press)
@@ -92,7 +97,7 @@ class VideoPlayer(Toplevel):
         self.play_button.pack(side=LEFT, padx=5)
 
         # Stop button.
-        self.stop_button = ttk.Button(self.controls, text="Stop", command=self.stop_video)
+        self.stop_button = ttk.Button(self.controls, text="Pause", command=self.pause_video)
         self.stop_button.pack(side=LEFT, padx=5)
 
         # Volume control slider.
@@ -105,16 +110,39 @@ class VideoPlayer(Toplevel):
         self.volume_slider.set(50)  # Set the default volume to 50%
         self.volume_slider.pack(side=LEFT, padx=5)
 
-        self.label = ttk.Label(self.bar,text='Title: ')
-        self.label.pack(side=LEFT, padx=5)
+        ttk.Label(self.bar,text='Title: ').pack(side=LEFT, padx=5)
         self.title_setter = ttk.Entry(self.bar,textvariable=self.title_var)
         self.title_setter.pack(side=LEFT, padx=5)
         
+        
+        
         self.update_title_button = ttk.Button(self.bar, text="Update", command=self.set_video_title)
         self.update_title_button.pack(side=LEFT, padx=5)
+        
+        self.take_thumbnail_btn = ttk.Button(self.bar,text='Generate Thumbnail',command=self.gen_thumbnail)
+        self.take_thumbnail_btn.pack(side=LEFT, padx=5)
 
         # Begin updating the progress slider periodically.
         self.update_progress()
+        self.blocked = False
+    def gen_thumbnail(self,*args):
+        if self.blocked: return
+        self.blocked = True
+        length = ffmpeg_run(FFMPEG_GET_LENGTH)
+        if length is None: return
+        frame = self.player.get_time() * .0001
+        self.stop_video()
+
+        self.tg.generate(
+            str(self.data[self.current_episode]),
+            self.video_path,
+            SQLAccess.get_tad_path(self.lpid),
+            f'{THUMBNAIL_FOLDER}_generated_from_video_{self.data[self.current_episode]}.png',
+            frame
+            )
+        self.open_file()
+        print('finished generating')
+        self.blocked = False
     @property
     def rel_id(self) -> int:
         return self.data[self.current_episode] - 1
@@ -243,11 +271,14 @@ class VideoPlayer(Toplevel):
         This function is called repeatedly every 500 milliseconds.
         """
         if not self.slider_dragging:
-            current_time = self.player.get_time()  # Current time in milliseconds.
-            duration = self.player.get_length()      # Total duration in milliseconds.
-            if duration > 0:
-                self.progress_slider.config(to=duration)
-                self.progress_slider.set(current_time)
+            try:
+                current_time = self.player.get_time()  # Current time in milliseconds.
+                duration = self.player.get_length()      # Total duration in milliseconds.
+                if duration > 0:
+                    self.progress_slider.config(to=duration)
+                    self.progress_slider.set(current_time)
+            except:
+                pass
         self.after(500, self.update_progress)
     
     def destroy(self):

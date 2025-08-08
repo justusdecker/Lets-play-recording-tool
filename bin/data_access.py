@@ -156,6 +156,11 @@ class SQLAccess:
         data[lpid].episode_length =  episode_length
         session.commit()
     
+    def set_tadpath(lpid:int, tad_path: int):
+        data = SQLAccess.read_letsplays()
+        data[lpid].tad_path =  tad_path
+        session.commit()
+    
     def update_episodes(lpid: int, epid: int,
                         **kwargs):
         data = SQLAccess.read_episodes(lpid)[epid]

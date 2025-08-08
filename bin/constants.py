@@ -50,35 +50,38 @@ DEFAULT_OBS_SETTINGS = {
     "timeout": 1
 }
 
-DEFAULT_TAD = [
-    {
-        "pos": [0,0],
-        "r_pos": [[0,0],[0,0]],
-        "r_scale": [0,0],
-        "r_rot": [0,0],
-        "center": True,
-        "scale": 1.35,
-        "rot": 0
-    },
-    {
-        "path": "test_logo.png",
-        "scale": 1,
-        "rot": 0,
-        "pos": [0,0],
-        "center": True
-    },
-    {
-        "path": "",
-        "scale": 1,
-        "rot": 0,
-        "color": [255,255,255,255],
-        "ol_color": [1,1,1,255],
-        "size": 40,
-        "pos": [0,0],
-        "center": True
-    }
-]
+DEFAULT_TAD = {
+    "bg::pos::x": 0,
+    "bg::pos::y": 0,
+    "bg::r_pos::x-from": 0,
+    "bg::r_pos::x-to": 0,
+    "bg::r_pos::y-from": 0,
+    "bg::r_pos::y-to": 0,
+    "bg::r_scale::from": 0,
+    "bg::r_scale::to": 0,
+    "bg::r_rot::from": 0,
+    "bg::r_rot::to": 0,
+    "bg::center": True,
+    "bg::scale": 1.35,
+    "bg::rot": 0,
 
+    "logo::path": "test_logo.png",
+    "logo::scale": 1,
+    "logo::rot": 0,
+    "logo::pos::x": 0,
+    "logo::pos::y": 0,
+    "logo::center": True,
+
+    "text::path": "",
+    "text::scale": 1,
+    "text::rot": 0,
+    "text::color": "",
+    "text::ol_color": "",
+    "text::size": 40,
+    "text::pos::x": 0,
+    "text::pos::y": 0,
+    "text::center": True
+}
 #! PATHS
 
 from os import getlogin
