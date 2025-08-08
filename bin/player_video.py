@@ -130,7 +130,7 @@ class VideoPlayer(Toplevel):
         self.blocked = True
         length = ffmpeg_run(FFMPEG_GET_LENGTH)
         if length is None: return
-        frame = self.progress_value.get() * length
+        frame = self.progress_value.get()
         self.stop_video()
 
         self.tg.generate(
