@@ -37,8 +37,11 @@ def get_time_va(filepath: str):
         print(E)
         return None
 
-def get_thumbnail(filepath: str) -> Surface:
-    t = rnd() * get_time_va(filepath)
+def get_thumbnail(filepath: str,frame:None) -> Surface:
+    if frame is None:
+        t = rnd() * get_time_va(filepath)
+    else:
+        t = frame
     rie(f'{TEMP_FOLDER}temp.png')
     ffmpeg_run(FFMPEG_GET_FRAME,{'__IN__': filepath, '__TIME__': t})
     reoc(not isfile(f'{TEMP_FOLDER}temp.png'),ERROR_007)
@@ -170,7 +173,7 @@ class ThumbnailGenerator:
             
 
             # Create a new Video Source to get images from
-            self.image = get_thumbnail(file)
+            self.image = get_thumbnail(file,frame)
             # TODO -> old code: frame if frame >= 0 and frame  <= self.video_src.duration else 0 
             
             _returnImage: Surface = scale(self.image,DEFAULT_THUMBNAIL_SIZE)

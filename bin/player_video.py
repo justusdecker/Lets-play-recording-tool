@@ -20,6 +20,8 @@ except:
 
 from bin.data_access import SQLAccess
 from bin.thumbnail import ThumbnailGenerator
+from bin.constants import *
+from bin.ffmpeg import *
 
 CHAR_TABLE = {
         'Ä':'&Auml;',
@@ -38,6 +40,7 @@ def convert_char(c: str):
 
 class VideoPlayer(Toplevel):
     def __init__(self, data: list[int],lpid,app):
+        self.tg = ThumbnailGenerator()
         self.app = app
         self.data: list[int] = data
         self.current_episode = 0
@@ -67,9 +70,10 @@ class VideoPlayer(Toplevel):
         
         # Create the progress slider.
         # This slider's range will be updated dynamically to match the video's duration.
+        self.progress_value = tk.DoubleVar()
         self.progress_slider = tk.Scale(
             self.progress_frame, from_=0, to=100,
-            orient=HORIZONTAL, showvalue=0, length=600
+            orient=HORIZONTAL, showvalue=0, length=600,variable=self.progress_value
         )
         self.progress_slider.pack(fill=X)
         self.progress_slider.bind("<ButtonPress-1>", self.on_slider_press)
@@ -116,12 +120,21 @@ class VideoPlayer(Toplevel):
         self.update_title_button.pack(side=LEFT, padx=5)
         
         self.take_thumbnail_btn = ttk.Button(self.bar,text='Generate Thumbnail',command=self.gen_thumbnail)
-        self.take_thumbnail_btn(side=LEFT, padx=5)
+        self.take_thumbnail_btn.pack(side=LEFT, padx=5)
 
         # Begin updating the progress slider periodically.
         self.update_progress()
     def gen_thumbnail(self,*args):
-        pass
+        length = ffmpeg_run(FFMPEG_GET_LENGTH)
+        if length is None: return
+        frame = self.progress_value.get() * length
+        self.tg.generate(
+            str(self.current_episode),
+            self.video_path,
+            SQLAccess.get_tad_path(self.lpid),
+            f'{THUMBNAIL_FOLDER}_generated_from_video_{self.current_episode}.png',
+            frame
+            )
     @property
     def rel_id(self) -> int:
         return self.data[self.current_episode] - 1
