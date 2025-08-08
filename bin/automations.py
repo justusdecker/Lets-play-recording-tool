@@ -362,14 +362,14 @@ class CompareAndRenderWF(GenericWorkFlow):
             episodes = SQLAccess.read_episodes(self.lpid)
             from bin.data_access import Episodes
             episodes : list[Episodes]
-            
-            reoc(episodes[i].audio_mic_edit2_path is None)
-            reoc(episodes[i].audio_desktop_path is None)
-            reoc(episodes[i].video_path is None)
-            
-            reoc(not isfile(episodes[i].audio_mic_edit2_path))
-            reoc(not isfile(episodes[i].audio_desktop_path))
-            reoc(not isfile(episodes[i].video_path))
+            for i in range(*self.rng):
+                reoc(episodes[i].audio_mic_edit2_path is None)
+                reoc(episodes[i].audio_desktop_path is None)
+                reoc(episodes[i].video_path is None)
+                
+                reoc(not isfile(episodes[i].audio_mic_edit2_path))
+                reoc(not isfile(episodes[i].audio_desktop_path))
+                reoc(not isfile(episodes[i].video_path))
             
             paths = [[i, episodes[i].audio_mic_edit2_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*self.rng)]
 
