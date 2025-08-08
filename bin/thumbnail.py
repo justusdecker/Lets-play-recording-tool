@@ -170,9 +170,9 @@ class ThumbnailGenerator:
         else:
             font = Font(self.tad['text::path'],self.tad['text::size'])
         
-        img: Surface = font.render(text,False,self.tad['text::color'])
+        img: Surface = font.render(text,False,Color(self.tad['text::color']) if self.tad['text::color'] else (255,255,255))
         
-        timg = outlining(img,self.tad['text::ol_color'])
+        timg = outlining(img,Color(self.tad['text::ol_color']) if self.tad['text::ol_color'] else (1,1,1))
         
         timg = scale_by(timg,self.tad['text::scale'])
         
