@@ -1,33 +1,20 @@
-__author__ = "Justus Decker"
-__copyright__ = "(c) 2024 - 2025 , The LPRT Project"
-__credits__ = []
-__version__ = "0.10.80"
-__maintainer__ = "Justus Decker"
-__email__ = "justus.d2025@gmail.com"
-__status__ = "Testing"
 from os.path import isfile
 from bin.obs import OBSObserver
-
 from bin.wintoasty import toast_finished
-
 from bin.ffmpeg import *
 from bin.audacity_pipeline import *
 from tkinter.filedialog import askdirectory
 import tkinter.messagebox as msgbox
-
 from os import listdir
 from bin.constants import *
-
 from bin.thumbnail import ThumbnailGenerator
 from tkinter.messagebox import showerror
-
 from bin.player_video import VideoPlayer
 from bin.player_audio import AudioPlayer
 from bin.player_thumbnail import ThumbnailPreview
-
 from shutil import copyfile
-
-
+from bin.data_access import SQLAccess, cnef,rie
+from bin.constants import ERROR_007
 
 try:
     from bin.jinja import deploy_render
@@ -35,17 +22,6 @@ except:
     from bin.constants import ERROR_008
     showerror('ERROR', ERROR_008 + '\nJinja')
     quit()
-
-try: #Fix for issue: #127
-    from PIL import ImageTk, Image
-except:
-    from bin.constants import ERROR_008
-    showerror('ERROR', ERROR_008 + '\nPIL')
-    quit()
-
-from bin.data_access import SQLAccess, cnef,rie
-
-from bin.constants import ERROR_007
    
 def obs_connect(el):
     """
