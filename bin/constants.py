@@ -1,15 +1,6 @@
-__author__ = "Justus Decker"
-__copyright__ = "(c) 2024 - 2025 , The LPRT Project"
-__credits__ = []
-__version__ = "0.14.20"
-__maintainer__ = "Justus Decker"
-__email__ = "justus.d2025@gmail.com"
-__status__ = "Testing"
-
-
 from bin.version import VERSION
 
-COPYRIGHT = f"LPRT {VERSION} - (c) Justus Decker 2024 - 2025"
+COPYRIGHT = f"LPRT {VERSION} | GPL 3.0 - (c) Justus Decker 2024 - 2025"
 
 DISCLAIMER = f"""
 {COPYRIGHT}
@@ -17,19 +8,12 @@ Welcome to LPRT
 
 This Tool is currently Work in Progress!
 Some features might not work as expected & can cause data loss! Be careful!
+
+For Documentation, please look up the GitHub-wiki
 """
 
 DEFAULT_THUMBNAIL_SIZE = (1280,720)
-from enum import Enum
 
-FLAGS = Enum('Flags',
-             [
-                 'TYPE_RECORDING',
-                 'TYPE_AUTOMATION',
-                 'TYPE_ALL',
-                 'TYPE_OTHER'
-                 ]
-             )
 def reoc(cond: bool,msg: str) -> None:
     """ raise_error_on_condition """
     if cond: raise AutomationError(msg)
@@ -98,7 +82,6 @@ THUMBNAIL_FOLDER = f'{ROOT}thumbnails\\'
 FIXED_AUDIO_FOLDER = f'{ROOT}audio_fixed\\'
 BACKUP_FOLDER = f'{ROOT}backup\\'
 
-LETS_PLAY_FILE_PATH = f'{ROOT}lets_plays.csv'
 OBS_SETTINGS_PATH = f'{ROOT}obs_settings.json'
     
 #! ERRORS
