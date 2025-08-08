@@ -24,9 +24,9 @@ This tool has all to make your life as a lets player much easier.
 
 - A computer that can play the games you are recording. Can work on slower system. Recommended specs: A non-potato GPU & at least 16 GB RAM
 - Third Party Software
-> [!NOTE]
-> No worry. This might be a bit overwhelming at first!
-> We have a detailed installationguide.
+    > [!NOTE]
+    > No worry. This might be a bit overwhelming at first!
+    > We have a detailed installationguide.
   - OBS Studio
   - Audacity - 3.0.0
   - FFMPEG for Audacity
