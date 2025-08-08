@@ -1,12 +1,7 @@
 
 
-from tkinter import (
-    Toplevel
-)
-from tkinter.ttk import (
-    Label
-)
-
+from tkinter import Toplevel
+from tkinter.ttk import Label
 from tkinter.messagebox import showerror
 
 try: #Fix for issue: #127
@@ -23,10 +18,8 @@ class ThumbnailPreview(Toplevel):
         self.geometry('640x400')
         self.label = Label(self)
         self.label.pack(pady=20)
-        
         self.update_image(f'bin\\data\\img\\logo.ico',-1)
-        
-        
+
     def update_image(self,path: str,i:int | None):
         self.title(f'Thumbnail Preview: {i+1 if i is not None else "TADEditor"}')
         self.image = Image.open(path).resize((640,360))
