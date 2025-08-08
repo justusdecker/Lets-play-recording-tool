@@ -1,10 +1,3 @@
-__author__ = "Justus Decker"
-__copyright__ = "(c) 2024 - 2025 , The LPRT Project"
-__credits__ = []
-__version__ = "0.10.73"
-__maintainer__ = "Justus Decker"
-__email__ = "justus.d2025@gmail.com"
-__status__ = "Production"
 """
 This Module contains everything you need to connect to the Audacity in a safe way.
 
@@ -20,7 +13,6 @@ Reopen Audacity & Reopen LPRT(When open)
 """
 import win32file
 from io import TextIOWrapper
-from os.path import exists
 class AudacityPipelineError(Exception):
     pass
 
@@ -41,9 +33,6 @@ class AudacityFileAccess:
     FROM_FILE: None | TextIOWrapper = None
 
 AFA = AudacityFileAccess()
-
-EOL = '\r\n\0'
-
 
 def create_pipe():
     """
@@ -78,6 +67,7 @@ def create_pipe():
                               0)
 
     print(f"-- Opened {AFA.FROM_NAME}")
+
 def break_pipe():
     win32file.CloseHandle(AFA.TO_FILE)
     win32file.CloseHandle(AFA.FROM_FILE)
@@ -89,7 +79,7 @@ def send_command(command):
     print("Send: >>> \n"+command)
     while 1:
         try:
-            win32file.WriteFile(AFA.TO_FILE,str(command + EOL).encode())
+            win32file.WriteFile(AFA.TO_FILE,str(command + '\r\n\0').encode())
             win32file.FlushFileBuffers(AFA.TO_FILE)
             break
         except:
