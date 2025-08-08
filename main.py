@@ -990,6 +990,7 @@ class TadEditor(tk.Frame):#! REWORK HERE
         #- Check final
         #- Write TAD File into TAD_FOLDER/lp_name.json
         DATA = {key: ui.var.get() for ui, key in zip(self.ui_elements, DEFAULT_TAD)}
+        lpid = SQLAccess.get_lp_opvar(self)
         print(DATA)
         #- Update Database
         
