@@ -904,7 +904,7 @@ class TadEditor(tk.Frame):#! REWORK HERE
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
         self.tg = ThumbnailGenerator()
-        self.tw = ThumbnailPreview()
+        
         #W = ttk.Frame(self)
         W = ctk.CTkScrollableFrame(self,width=600,height=400)
         self.menu = get_menu(self, controller)
@@ -1003,6 +1003,8 @@ class TadEditor(tk.Frame):#! REWORK HERE
     def save_tad(self,*args):
         #- Check final
         #- Write TAD File into TAD_FOLDER/lp_name.json
+        if not hasattr(self,'tw'):
+            self.tw = ThumbnailPreview()
         DATA = {key: ui.var.get() for ui, key in zip(self.ui_elements, DEFAULT_TAD)}
         lpid = SQLAccess.get_lp_opvar(self)
         lpname = SQLAccess.get_lp_name(lpid)
@@ -1011,13 +1013,15 @@ class TadEditor(tk.Frame):#! REWORK HERE
         print(DATA)
         #- Update Database
         SQLAccess.set_tadpath(lpid, filepath)
+        
         self.tg.generate(
             '123',
             None,
             SQLAccess.get_tad_path(lpid),
             f'{TEMP_FOLDER}preview.png'
         )
-        self.tw.update_image(f'{TAD_FOLDER}preview.png',-1)
+        
+        self.tw.update_image(f'{TEMP_FOLDER}preview.png',-1)
 
 class About(tk.Frame):
     def __init__(self, parent, controller): 
