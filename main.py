@@ -10,6 +10,7 @@ from tkinter import ttk
 from tkinter.font import Font
 from os import remove
 from zipfile import ZipFile
+from tkinter.colorchooser import askcolor
 from tkinter.filedialog import askopenfilename
 LARGEFONT =("Verdana", 35)
 ctk.set_appearance_mode('light')
@@ -812,14 +813,8 @@ FDS_TBO = {
     "text::path": (tk.StringVar,ttk.Button, ''),
     "text::scale": INPUT_SCALE,
     "text::rot": INPUT_ROT,
-    "text::color::R": INPUT_COLOR,
-    "text::color::G": INPUT_COLOR,
-    "text::color::B": INPUT_COLOR,
-    "text::color::A": INPUT_COLOR,
-    "text::ol_color::R": INPUT_COLOR,
-    "text::ol_color::G": INPUT_COLOR,
-    "text::ol_color::B": INPUT_COLOR,
-    "text::ol_color::A": INPUT_COLOR,
+    "text::color": (tk.StringVar,ttk.Button, 'notnull',askcolor),
+    "text::ol_color": (tk.StringVar,ttk.Button, 'notnull',askcolor),
     "text::size": INPUT_INT_NV,
     "text::pos::x": INPUT_INT_NV,
     "text::pos::y": INPUT_INT_NV,
@@ -833,7 +828,8 @@ class TBO:
                  type: tk.IntVar | tk.StringVar | tk.DoubleVar, 
                  uie: ttk.Button | ttk.LabeledScale | ttk.Entry | ttk.Checkbutton, 
                  cond: str, 
-                 mustbeset:bool=True):
+                 command:bool=askopenfilename):
+        self.command = command
         # cond: <62::>51 if int or double
         # cond: notnull if str
         self.master = master
@@ -845,9 +841,8 @@ class TBO:
         self.var: tk.IntVar | tk.StringVar | tk.DoubleVar = self.type()
         self.cond = cond
         self.create_ui()
-        
-        self.mustbeset = mustbeset
     def create_ui(self):
+
         if self.uie is ttk.LabeledScale:
             ttk.Label(self.master,text=f'{self.name}:').pack()
             self.ui = self.uie(self.master,from_=self.condition[0][1:],to=self.condition[1][1:],variable=self.var)
@@ -876,8 +871,12 @@ class TBO:
             if cond != '' and cond != 'notnull':
                 raise ValueError(f'Wrong condition should be empty or notnull. Not {cond}')
         return cond
+    
     def filedialog(self,*args):
-        self.var.set(askopenfilename())
+        if self.command is askopenfilename:
+            self.var.set(self.command())
+        elif self.command is askcolor:
+            self.var.set(self.command()[1])
         self.check()
         print(self.var.get())
     def _check_numeric(self,cond) -> bool:
