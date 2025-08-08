@@ -802,14 +802,14 @@ FDS_TBO = {
     "bg::scale": INPUT_SCALE,
     "bg::rot": INPUT_ROT,
 
-    "logo::path": (tk.StringVar,ttk.Entry, 'notnull'),
+    "logo::path": (tk.StringVar,ttk.Button, 'notnull'),
     "logo::scale": INPUT_SCALE,
     "logo::rot": INPUT_ROT,
     "logo::pos::x": INPUT_INT_NV,
     "logo::pos::y": INPUT_INT_NV,
     "logo::center": INPUT_CB,
 
-    "text::path": (tk.StringVar,ttk.Entry, ''),
+    "text::path": (tk.StringVar,ttk.Button, ''),
     "text::scale": INPUT_SCALE,
     "text::rot": INPUT_ROT,
     "text::color::R": INPUT_COLOR,
@@ -1014,7 +1014,7 @@ class TadEditor(tk.Frame):#! REWORK HERE
             msgbox.showerror('ERROR','Wrong File Format')
     def lp_changed(self,*args):
         if self.lp_option_var.get() != 'None':
-            change_states([ui.ui for ui in self.ui_elements],'disabled')
+            change_states([ui.ui for ui in self.ui_elements],'!disabled')
     def save_tad(self,*args):
         pass
 
