@@ -141,6 +141,49 @@ ERROR_012 = f'[E012] FFPROBE is not installed. {exp}'
 ERROR_013 = f'[E013] File not set. {ewf}'
 ERROR_014 = f'[E014] FFMPEG File creation error! {ewf}'
 
+DEPLOY_HTML = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    <ul>
+    {% for episode in episodes %}
+    <li>
+        <h2>{{ episode.id + 1 }}</h2>
+        <h3>{{ episode.title }}</h3>
+        <h4>{{ episode.upload_at }}</h4>
+        <p align="center">
+            <img height="200px" src="{{ episode.thumbnail_path }}" alt="">
+        </p>
+        
+
+    </li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
+"""
+DEPLOY_CSS = """
+body {background-color: #242424;}
+
+li{
+    list-style-type: none;
+    background-color: #363636;
+    border-radius: 16px;
+    border-color: #484848;
+    border-style:ridge;
+}
+
+h1,h2,h3,h4 {color:beige; text-align: center;}
+
+"""
+
 __LICENSE__ = """
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007

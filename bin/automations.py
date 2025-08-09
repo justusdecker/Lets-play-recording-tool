@@ -13,7 +13,7 @@ from bin.player_video import VideoPlayer
 from bin.player_audio import AudioPlayer
 from bin.player_thumbnail import ThumbnailPreview
 from shutil import copyfile
-from bin.data_access import SQLAccess, cnef,rie
+from bin.data_access import SQLAccess, cnef,rie, file_write
 from bin.constants import ERROR_007
 
 try:
@@ -491,8 +491,8 @@ class DeployWF(GenericWorkFlow):
                     "upload_at": ''
                     }
                 ALL.append(REP)
-            deploy_render(f'{DEST}\\view.html', episodes=ALL,title=self.lp_name,description=description)
-            copyfile('static\\style.css',f'{DEST}\\style.css')
+            deploy_render(f'{DEST}\\view.html',episodes=ALL,title=self.lp_name,description=description)
+            file_write(f'{DEST}\\style.css', DEPLOY_CSS)
             super().user_workflow()
         except AutomationError as AE:
             msgbox.showerror('Automation Error',str(AE))

@@ -8,9 +8,10 @@ except:
     showerror('ERROR', ERROR_008 + '\nPIL')
     quit()
 from bin.data_access import file_read,file_write
+from bin.constants import DEPLOY_HTML
 def deploy_render(*args,**replacers):
     """
     Renders the default template ´deploy´ for easy upload.
     """
-    JINJA_ENVIRONMENT = Template(file_read('static\\deploy.html'))
+    JINJA_ENVIRONMENT = Template(DEPLOY_HTML)
     file_write(args[0],JINJA_ENVIRONMENT.render(**replacers))
