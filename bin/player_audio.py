@@ -14,11 +14,26 @@ except:
 init()
 
 def play_audio(filepath: str):
+    """
+    Loads and plays an audio file indefinitely.
+
+    This function first stops any currently playing audio, then loads the
+    specified audio file and plays it in a continuous loop.
+
+    Args:
+        filepath (str): The path to the audio file to be played.
+    """
     stop_audio()
     music.load(filepath)
     music.play(loops=-1)
 
 def stop_audio():
+    """
+    Stops the currently playing audio.
+
+    If audio is currently playing, this function stops it and unloads the
+    audio file from memory.
+    """
     if music.get_busy():
         music.stop()
         music.unload()
