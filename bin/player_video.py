@@ -27,7 +27,7 @@ CHAR_TABLE = {
 def convert_char(c: str):
     if not c in CHAR_TABLE: return c
     return CHAR_TABLE[c]
-
+VLC_INSTANCE = vlc.Instance()
 class VideoPlayer(Toplevel):
     def __init__(self, data: list[int],lpid,app):
         self.tg = ThumbnailGenerator()
@@ -41,7 +41,7 @@ class VideoPlayer(Toplevel):
         self.title_var = StringVar()
         self.lpid = lpid
         # Create a VLC instance and media player.
-        self.instance = vlc.Instance()
+        self.instance = VLC_INSTANCE
         self.player = self.instance.media_player_new()
         
         # Create the video panel where the video will be displayed.
