@@ -137,7 +137,28 @@ class Episodes(Base):
         This is used to easy access the fetched audio from episodes
     .. thumbnail_path::
         This is used to easy access the generated thumbnail from episodes
-    
+    .. thumbnail_frame::
+        NOT IN USE! Will be removed in later versions, see issue #237
+    .. has_problem::
+        NOT IN USE! Functionality will be added in later versions, see issue #238
+        Indicates that the user has to do some work manually.
+    .. audio_mic_edit1_path::
+        WILL BE REMOVED later. See issue #239
+        This is used to easy access the fixed audio from episodes
+    .. audio_mic_edit2_path::
+        WILL BE REMOVED later. See issue #239
+        This is used to easy access the audacity fixed audio from episodes
+    .. audio_desktop_edit1_path::
+        NOT IN USE! WILL BE REMOVED later. See issue #240
+    .. audio_desktop_edit2_path::
+        NOT IN USE! WILL BE REMOVED later. See issue #240
+    .. title::
+        This will be used in deploy for easy upload.
+    .. upload_at::
+        NOT IN USE! See issue #241
+        This will be used in deploy for easy upload.
+    .. final_video_path::
+        This will used in deploy for easy upload.
     """
     __tablename__ = 'episodes'
     id = Column(Integer, primary_key=True)
@@ -166,7 +187,10 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 class SQLAccess:
-    
+    """
+    A Wrapper Class for all Lets Play & Episode Data Handling.
+    ---
+    """
     def get_ep_by_id(lpid:int):
         return SQLAccess.read_episodes()[lpid].lpid
     
