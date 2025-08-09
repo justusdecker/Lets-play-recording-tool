@@ -93,7 +93,7 @@ def cnef(path: str):
 
 class LetsPlays(Base):
     """
-    The Lets Plays Table
+    The lets plays table
     
     .. id::
         The index of the lp - primary key
@@ -119,6 +119,26 @@ class LetsPlays(Base):
     description_path = Column(String)
 
 class Episodes(Base):
+    """
+    The episodes table
+    
+    **WARNING**: 
+        This table stores ALL episodes from ALL lets plays you working with!
+    
+    .. id::
+        The index of the ep - primary key
+    .. lpid::
+        the index of the linked lp
+    .. video_path::
+        the recording path from OBS
+    .. audio_mic_path::
+        This is used to easy access the fetched audio from episodes
+    .. audio_desktop_path::
+        This is used to easy access the fetched audio from episodes
+    .. thumbnail_path::
+        This is used to easy access the generated thumbnail from episodes
+    
+    """
     __tablename__ = 'episodes'
     id = Column(Integer, primary_key=True)
     lpid = Column(Integer,default=0)
