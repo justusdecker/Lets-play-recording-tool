@@ -60,6 +60,9 @@ def json_write(filepath : str, data : dict | list):
         f.write(json.dumps(data))
 
 def on_start():
+    """
+    Creates all essential folders for further use.
+    """
     cnef(AUDIO_FOLDER)
     cnef(FIXED_AUDIO_FOLDER)
     cnef(THUMBNAIL_FOLDER)
@@ -89,6 +92,24 @@ def cnef(path: str):
                 mkdir(cp)
 
 class LetsPlays(Base):
+    """
+    The Lets Plays Table
+    
+    .. id::
+        The index of the lp - primary key
+    .. tad_path::
+        This is used to get the TAD file stored in ´{TAD_PATH}/{filename}´
+    .. name::
+        the lets plays name.
+        USE ONLY: `a - z` & ´_´ otherwise the app can crash. See issue #236
+    .. game_name::
+        the game_name
+        this can be the name of your series
+    .. episode_length::
+        is used to inform the user about reaching the recording time limit. See issue #204
+    .. description_path::
+        This is used to get the full description for a specific lp
+    """
     __tablename__ = 'letsplays'
     id = Column(Integer, primary_key=True)
     tad_path = Column(String)
