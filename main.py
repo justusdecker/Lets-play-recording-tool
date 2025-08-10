@@ -454,7 +454,15 @@ class Deploy(AutomationFrame):
         self.automation_callback = DeployWF
 
 class FileManager(tk.Frame):
+    """
+    Manages file-related operations within the application, including:
+    - Detecting file sizes and counts for various data categories.
+    - Providing options for deleting episode-specific and 'Let's Play' specific files.
+    - Functionality to create new 'Let's Play' entries.
+    - Options to backup 'Let's Play' related video and TAD files into a ZIP archive.
     
+    This frame serves as a central hub for data management and maintenance.
+    """
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
         
@@ -567,6 +575,13 @@ class FileManager(tk.Frame):
         W.grid(row=0,column=1)
     
     def create_video_backup(self,*args):
+        """
+        Creates a ZIP archive of selected 'Let's Play' videos and TAD files.
+
+        Disables the menu buttons during the backup process. It includes the
+        TAD file and raw/final video files associated with the selected
+        'Let's Play' series.
+        """
         change_states(self.menu,'disabled')
         lpid = SQLAccess.get_lp_names().index(self.backup_lp_option_var.get())
         lpname = SQLAccess.get_lp_names()[lpid]
@@ -589,19 +604,26 @@ class FileManager(tk.Frame):
                         print(file)
                         ZIP.write(file,file.replace('\\','/').split('/')[-1])
         change_states(self.menu,'!disabled')
-
-                
-        
-        
-        
     
     def something_changed_backup(self, *args):
+        """
+        Callback for changes in the backup 'Let's Play' selection.
+
+        Enables or disables the backup button based on whether a 'Let's Play'
+        is selected.
+        """
         if self.backup_lp_option_var.get() != 'None':
             self.backup_btn.state(['!disabled'])
         else:
             self.backup_btn.state(['disabled']) 
     
     def update_ui(self):
+        """
+        Updates UI elements related to episode range for data deletion.
+
+        Recalculates available episode numbers based on the selected 'Let's Play'
+        for the data deletion section.
+        """
         lp = self.simdel_lp_option_var.get()
         if lp != 'None':
             self.epnums = [i+1 for i in range(SQLAccess.get_episode_ammount(SQLAccess.get_lp_names().index(self.simdel_lp_option_var.get())))]
@@ -609,7 +631,12 @@ class FileManager(tk.Frame):
             self.epnums = []
             
     def lp_changed(self,*args):
-        
+        """
+        Callback for changes in the 'Let's Play' selection for data deletion.
+
+        Updates the UI to reflect episode numbers for deletion, re-creates
+        episode range selection widgets, and controls the state of the delete button.
+        """
         self.update_ui()
         
         if not self.epnums:
@@ -629,12 +656,24 @@ class FileManager(tk.Frame):
         self.start_btn.destroy()
     
     def check_last_id(self,*args):
+        """
+        Validates the episode range for data deletion.
+
+        Disables the delete button if the end episode is numerically less than
+        the start episode, or if input is invalid.
+        """
         if int(self.epend_option_var.get()) < int(self.epstart_option_var.get()):
             self.delete_btn.state(['disabled'])
         else:
             self.delete_btn.state(['!disabled'])
     
     def something_changed(self,*args):
+        """
+        Callback for changes in input fields for 'Let's Play' creation.
+
+        Enables or disables the 'create' button based on whether all required
+        fields are filled and the 'Let's Play' name is unique.
+        """
         if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.get_lp_names():
             self.btn_lp_create.state(['!disabled'])
             
@@ -642,12 +681,24 @@ class FileManager(tk.Frame):
             self.btn_lp_create.state(['disabled'])
             
     def something_changed_delete(self, *args):
+        """
+        Callback for changes in the 'Let's Play' selection for LP deletion.
+
+        Enables or disables the 'delete LP' button based on whether a 'Let's Play'
+        is selected.
+        """
         if self.lp_option_var.get() != 'None':
             self.btn_lp_delete.state(['!disabled'])
         else:
             self.btn_lp_delete.state(['disabled']) 
             
     def create_lets_play(self,*args):
+        """
+        Creates a new 'Let's Play' entry in the database.
+
+        Validates inputs, disables UI, creates the entry via SQLAccess,
+        shows a success message, and then exits the application.
+        """
         if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.get_lp_names():
             change_states(self.menu,'disabled')
             SQLAccess.create_letsplay(self.name_var.get(), self.game_name_var.get(),int(self.episode_length_var.get().split(' ')[0])*60)
@@ -655,10 +706,12 @@ class FileManager(tk.Frame):
             exit()
             
     def delete_lets_play(self,*args):
-        from bin.data_access import Episodes
+        """
+        Deletes a selected 'Let's Play' from the database and optionally its associated files.
 
-        ep: Episodes
-        
+        Prompts for confirmation, disables UI, deletes files if opted,
+        removes the 'Let's Play' entry, shows a success message, and exits the application.
+        """
         ok = msgbox.askyesno('Attention','You are trying to delete all files in the selected lets play & \nthe lets play itself!\nThis step is irreversible!\nContinue?')
         if not ok: return
         lpid = SQLAccess.get_lp_names().index(self.lp_option_var.get())
@@ -684,7 +737,11 @@ class FileManager(tk.Frame):
     
     def on_detect(self,*args):
         """
-        Collects file ammount & combined file size.
+        Collects and displays statistics about files and their sizes
+        within various application folders.
+
+        Calculates total files and sizes for LPRT created data, temporary files,
+        raw video files, and thumbnails, then updates a label with this information.
         """
         files = 0
         files_size = 0
@@ -723,6 +780,12 @@ class FileManager(tk.Frame):
         self.label.configure(text=TEXT)
         
     def delete_files(self,*args):
+        """
+        Deletes episode-specific files for a selected 'Let's Play' and episode range.
+
+        Prompts for confirmation, then iterates through the specified episode
+        range and attempts to delete associated video, audio, and thumbnail files.
+        """
         ok = msgbox.askyesno('Attention','You are trying to delete all files in the selected lets play\nThis step is irreversible!\nContinue?')
         if not ok: return
         lpid = SQLAccess.get_lp_names().index(self.simdel_lp_option_var.get())
@@ -742,12 +805,26 @@ class FileManager(tk.Frame):
                     ]:
                 print(ep.lpid)
                 #try_delete_file(file)
+    
     @property
     def rng(self) -> list:
+        """
+        Calculates the start and end indices for episode ranges.
+
+        Returns:
+            tuple: A tuple containing the start index (0-based) and end index
+                   (exclusive, 0-based) for the selected episode range.
+        """
         a,b = int(self.epstart_option_var.get())-1, int(self.epend_option_var.get())
         return a,b+(1 if a == b else 0)
 
 class Settings(tk.Frame):
+    """
+    Manages application settings, particularly for OBS (Open Broadcaster Software) integration.
+
+    Provides UI elements for configuring OBS connection details (IP, Port, Password)
+    and allows saving these settings to a JSON file.
+    """
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
         
@@ -804,17 +881,26 @@ class Settings(tk.Frame):
         W.grid(row=0,column=1)
         
     def toggle_pw_view(self,*args):
+        """ Toggles the visibility of the password in the OBS password entry field. """
         if self.PW_TOGGLE.get():
             self.obs_password.configure(show="")
         else:
             self.obs_password.configure(show="*")
+    
     def obs_something_changed(self,*args):
+        """
+        Callback for changes in OBS setting input fields.
+
+        Enables or disables the 'Set' button based on whether all OBS
+        connection details (IP, Port, Password) are filled.
+        """
         if self.PW.get() and self.PORT.get() and self.IP.get():
             self.set_settings_obs_btn.state(['!disabled'])
         else:
             self.set_settings_obs_btn.state(['disabled'])
+            
     def set_obs_settings(self,*args):
-        print('Updated OBS Settings')
+        """ Saves the current OBS connection settings to a JSON file. """
         
         NEW_OBS_SETTINGS = {key: DEFAULT_OBS_SETTINGS[key] for key in DEFAULT_OBS_SETTINGS}
         NEW_OBS_SETTINGS['ip'] = self.IP.get()
@@ -841,6 +927,13 @@ class Settings(tk.Frame):
         W.grid(row=0,column=1)
 
 class TBO:
+    """
+    A helper class for creating and managing Tkinter UI elements (Tkinter Binding Object).
+
+    This class simplifies the creation of various Tkinter widgets (Buttons, LabeledScales,
+    Entries, Checkbuttons) and binds them to Tkinter variables. It includes validation
+    logic based on specified conditions (e.g., numeric ranges, non-null strings).
+    """
     def __init__(self,
                  master,
                  key: str,
@@ -860,8 +953,13 @@ class TBO:
         self.var: tk.IntVar | tk.StringVar | tk.DoubleVar = self.type()
         self.cond = cond
         self.create_ui()
+    
     def create_ui(self):
+        """
+        Creates the Tkinter UI element based on the `uie` type and packs it.
 
+        Also binds validation checks for Entry widgets.
+        """
         if self.uie is ttk.LabeledScale:
             ttk.Label(self.master,text=f'{self.name}:').pack()
             self.ui = self.uie(self.master,from_=self.condition[0][1:],to=self.condition[1][1:],variable=self.var)
@@ -874,11 +972,20 @@ class TBO:
         elif self.uie is ttk.Button:
             self.ui = self.uie(self.master,text=self.name,command=self.btn_cb)
         self.ui.pack()
+    
     @property
     def name(self) -> str:
+        """ Extracts and returns the display name for the UI element from its key. """
         return self.key.split('::')[-1]
+    
     @property
     def condition(self) -> tuple[str,str]:
+        """
+        Parses and returns the validation conditions.
+
+        Raises:
+            ValueError: If the condition string syntax is invalid for the variable type.
+        """
         if self.type is tk.IntVar or self.type is tk.DoubleVar:
             cond = self.cond.split('::')
             if len(cond) != 2:
@@ -892,29 +999,51 @@ class TBO:
         return cond
     
     def btn_cb(self,*args):
+        """
+        Callback for button clicks, executing the assigned command.
+
+        Updates the associated Tkinter variable with the command's result and
+        then performs a validation check.
+        """
         if self.command is askopenfilename:
             self.var.set(self.command())
         elif self.command is askcolor:
             self.var.set(self.command()[1])
         self.check()
         print(self.var.get())
+        
     def _check_numeric(self,cond) -> bool:
+        """
+        Internal helper to check numeric values against a condition.
+        """
         if cond.startswith('<'):
             return float(cond[1:]) <= self.get_value()
         elif cond.startswith('>'):
             return float(cond[1:]) >= self.get_value()
+        
     def _check_text(self,cond) -> bool:
+        """ Internal helper to check string values against a condition. """
         if cond == 'notnull':
             if not self.get_value():
                 msgbox.showwarning('WARN','This input is flagged as notnull!')
             return not self.get_value()
+        
     def get_value(self):
+        """ Safely retrieves the current value from the associated Tkinter variable.
+
+        Handles potential `ValueError` during initial retrieval for numeric types
+        by setting a default. """
         try:
             return self.var.get()
         except:
             self.var.set(self.condition[0][1:])
             return self.var.get()
+    
     def check(self,*args):
+        """
+        Performs validation checks on the UI element's value based on its type and conditions.
+        Adjusts the variable's value if it falls outside the specified numeric range.
+        """
         if self.type is tk.IntVar or self.type is tk.DoubleVar:
             if self._check_numeric(self.condition[0]):
                 self.var.set(self.condition[0][1:])
@@ -923,11 +1052,24 @@ class TBO:
         else:
             self._check_text(self.condition)
                 
-        
     def set_name(self,name: str):
+        """
+        Sets the display name of the UI element.
+
+        Args:
+            name (str): The new display name.
+        """
         self.name = name
  
 class TadEditor(tk.Frame):
+    """
+    Provides a graphical user interface for editing Thumbnail Automation Data (TAD) files.
+
+    This editor allows users to configure various aspects of thumbnail generation,
+    including background properties, logo placement and scaling, and text appearance.
+    It integrates with 'Let's Play' selection and allows saving configurations
+    and previewing generated thumbnails.
+    """
     names = [
             {
                 "pos": ['x','y'],
@@ -1021,6 +1163,13 @@ class TadEditor(tk.Frame):
         W.grid(row=0,column=1)
 
     def set_logo_path(self,*args):
+        """
+        Opens a file dialog for selecting a logo image file (.png).
+
+        Validates the selected file type and updates the corresponding
+        Tkinter variable for the logo path. Shows error messages for
+        invalid selections.
+        """
         filepath = askopenfilename()
         if not filepath:
             msgbox.showwarning('WARN','No File selected')
@@ -1030,7 +1179,6 @@ class TadEditor(tk.Frame):
         else:
             msgbox.showerror('ERROR','Wrong File Format')
         
-       
     def set_font_path(self,*args):
         filepath = askopenfilename()
         if not filepath:
