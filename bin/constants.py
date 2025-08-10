@@ -49,7 +49,7 @@ DEFAULT_TAD = {
     "bg::scale": 1.35,
     "bg::rot": 0,
 
-    "logo::path": "test_logo.png",
+    "logo::path": "bin\\data\\img\\logo.png",
     "logo::scale": 1,
     "logo::rot": 0,
     "logo::pos::x": 0,

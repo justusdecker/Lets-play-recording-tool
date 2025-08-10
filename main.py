@@ -1285,5 +1285,3 @@ class About(tk.Frame):
     
 APP = TkinterApp()
 APP.mainloop()
-
-
