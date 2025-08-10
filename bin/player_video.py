@@ -1,3 +1,6 @@
+from bin.welcome_popup import WELCOME
+WELCOME.update_message(f'Load: {__name__}')
+
 import tkinter.ttk as ttk
 import tkinter as tk
 from tkinter.messagebox import showerror
@@ -31,8 +34,9 @@ def convert_char(c: str):
     """
     if not c in CHAR_TABLE: return c
     return CHAR_TABLE[c]
-from bin.welcome_popup import WELCOME
+
 WELCOME.update_message('Instanciate VLC')
+
 VLC_INSTANCE = vlc.Instance()
 class VideoPlayer(Toplevel):
     """

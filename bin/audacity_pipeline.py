@@ -1,3 +1,6 @@
+from bin.welcome_popup import WELCOME
+WELCOME.update_message(f'Load: {__name__}')
+
 """
 This Module contains everything you need to connect to the Audacity in a safe way.
 

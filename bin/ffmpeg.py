@@ -1,3 +1,6 @@
+from bin.welcome_popup import WELCOME
+WELCOME.update_message(f'Load: {__name__}')
+
 from subprocess import run, CREATE_NO_WINDOW
 from bin.constants import TEMP_FOLDER
 # FFMPEG Command Definitions

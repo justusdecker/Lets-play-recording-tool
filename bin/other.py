@@ -1,3 +1,6 @@
+from bin.welcome_popup import WELCOME
+WELCOME.update_message(f'Load: {__name__}')
+
 GERMAN_CHAR_TO_ENTITY = {
     'Ä': '&Auml;', 'ä': '&auml;',
     'Ö': '&Ouml;', 'ö': '&ouml;',

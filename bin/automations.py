@@ -1,3 +1,6 @@
+from bin.welcome_popup import WELCOME
+WELCOME.update_message(f'Load: {__name__}')
+
 from os.path import isfile
 from bin.obs import OBSObserver
 from bin.wintoasty import toast_finished

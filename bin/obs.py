@@ -1,3 +1,6 @@
+from bin.welcome_popup import WELCOME
+WELCOME.update_message(f'Load: {__name__}')
+
 try: #Fix for issue: #124
     import obsws_python as obsws
     from websocket import _exceptions
