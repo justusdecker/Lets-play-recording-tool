@@ -1270,6 +1270,7 @@ class About(tk.Frame):
         LICENSE.pack()
         
         W.grid(row=0,column=1)
-    
+
+WELCOME.update_message('Create App')
 APP = TkinterApp()
 APP.mainloop()

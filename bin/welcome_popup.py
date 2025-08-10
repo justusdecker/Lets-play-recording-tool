@@ -21,6 +21,7 @@ class Welcome:
         pg.display.set_icon(self.logo)
         self.font.set_point_size(20)
         self.update_message('Here i am...')
+        
     def run(self):
         """ calls the private self.__run method """
         Thread(target=self.__run).start()
