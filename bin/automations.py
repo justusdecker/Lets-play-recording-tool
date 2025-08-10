@@ -27,7 +27,7 @@ def obs_connect(el):
     """
     Connects to the obs_ws API
     
-    Runs until the connection breaks up
+    Runs until the connection breaks up. See issue #244
     """
     OBSO = OBSObserver()
     if OBSO.failed:
@@ -50,15 +50,19 @@ def obs_connect(el):
             print(f'Unexpected Error happened [{E}]')
 
 class GenericWorkFlow:
+    """
+    This class serves as a base for workflows, 
+    ---
+    Inheriting from this class will provide you:
+    .. rng:: This gives you the effective episode range as a tuple (start, end).
+    .. user_workflow:: shows a toast notification
+    .. auto_create_folder_path:: You can create this folder with the `cnef` function.
+    .. lpid:: Lets Play Index
+    .. finished_message:: The message that will be displayed in user_workflow.
+    .. lp_name:: The Lets Play Name
+    """
     def __init__(self, folder: str, finish_message: str,lpid,epr):
-        """
-        Initializes a GenericWorkFlow instance, setting up paths, messages,
-        and "LetsPlay" episode-related attributes.
 
-        This class serves as a base for workflows that interact with the `LetsPlay` class, 
-        managing episode-specific data and providing a windows toast message
-        to signal workflow completion.
-        """
         self.auto_create_folder_path = folder
         self.finish_message = finish_message
         self.lpid,self.epr = lpid,epr
