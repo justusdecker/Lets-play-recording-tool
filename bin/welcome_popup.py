@@ -3,6 +3,9 @@ from bin.constants import DISCLAIMER
 from threading import Thread
 
 class Welcome:
+    """
+    This is the welcome popup
+    """
     def __init__(self):
         self.window = pg.display.set_mode((800,400),pg.NOFRAME)
         self.isrunning = True
@@ -15,8 +18,10 @@ class Welcome:
         self.logo = pg.transform.scale(pg.image.load('bin\\data\\img\\logo.png'),(self.font.get_height(),self.font.get_height()))
         
     def run(self):
+        """ calls the private self.__run method """
         Thread(target=self.__run).start()
     def __run(self):
+        """ runs until loading is complete """
         while self.isrunning:
             try:
                 self.window.blit(self.welcome)
@@ -27,6 +32,7 @@ class Welcome:
             except:
                 pass
     def destroy(self):
+        """ removing its existance! """
         self.isrunning = False
         pg.display.quit()
         del self
