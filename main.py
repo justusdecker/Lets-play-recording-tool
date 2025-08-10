@@ -1180,6 +1180,13 @@ class TadEditor(tk.Frame):
             msgbox.showerror('ERROR','Wrong File Format')
         
     def set_font_path(self,*args):
+        """
+        Opens a file dialog for selecting a font file (.ttf or .otf).
+
+        Validates the selected file type and updates the corresponding
+        Tkinter variable for the font path. Shows error messages for
+        invalid selections.
+        """
         filepath = askopenfilename()
         if not filepath:
             msgbox.showwarning('WARN','No File selected')
@@ -1188,7 +1195,14 @@ class TadEditor(tk.Frame):
             self.get_strings()[1].set(filepath)
         else:
             msgbox.showerror('ERROR','Wrong File Format')
+    
     def lp_changed(self,*args):
+        """
+        Callback for changes in the 'Let's Play' selection in the editor.
+
+        Enables/disables UI elements, loads existing TAD data for the selected
+        'Let's Play' (if available), or sets default values.
+        """
         if self.lp_option_var.get() != 'None':
             self.save_btn.state(['!disabled'])
             change_states([ui.ui for ui in self.ui_elements],'!disabled')
@@ -1205,6 +1219,13 @@ class TadEditor(tk.Frame):
                 [ui.var.set(DEFAULT_TAD[entry]) for entry, ui in zip(DEFAULT_TAD,self.ui_elements)]
             
     def save_tad(self,*args):
+        """
+        Saves the current TAD settings to a JSON file and generates a preview thumbnail.
+
+        Gathers data from UI elements, writes it to a `.json` file in the TAD_FOLDER,
+        updates the database with the TAD file path, and generates a preview image
+        which is then displayed in a `ThumbnailPreview` window.
+        """
         #- Check final
         #- Write TAD File into TAD_FOLDER/lp_name.json
         if not hasattr(self,'tw'):
@@ -1228,6 +1249,11 @@ class TadEditor(tk.Frame):
         self.tw.update_image(f'{TEMP_FOLDER}preview.png',None)
 
 class About(tk.Frame):
+    """
+    Displays information about the application, including its license.
+
+    Provides a scrollable text area to show the full license text.
+    """
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
         
