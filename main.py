@@ -278,6 +278,7 @@ class AutomationFrame(tk.Frame):
             self.epnums = [i+1 for i in range(SQLAccess.get_episode_ammount(SQLAccess.get_lp_opvar(self)))]
         else:
             self.epnums = []
+            
     def run(self,*args):
         """
         Initiates the automation process in a separate thread.
@@ -289,6 +290,7 @@ class AutomationFrame(tk.Frame):
         if self.thread is None:
             self.thread = Thread(target=self.__run)
             self.thread.start()
+            
     def __run(self):
         """
         The core automation execution method, run in a separate thread.
@@ -312,6 +314,7 @@ class AutomationFrame(tk.Frame):
             change_states([self.label2, self.label3,self.ep_end, self.ep_start],'!disabled')
 
         self.thread = None
+        
     def lp_changed(self,*args):
         """
         Callback function executed when the 'Let's Play' selection changes.
