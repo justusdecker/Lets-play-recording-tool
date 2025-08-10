@@ -1,4 +1,4 @@
-<img width="128" height="128" alt="logo" src="logo.png" />
+<img width="128" height="128" alt="logo" src="bin\\data\\img\\logo.png" />
 
 
 # LPRT

@@ -1,4 +1,5 @@
-
+from bin.welcome_popup import WELCOME
+WELCOME.update_message(f'Load: {__name__}')
 
 from tkinter.messagebox import showerror
 try:

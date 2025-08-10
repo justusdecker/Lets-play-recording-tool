@@ -1,3 +1,6 @@
+from bin.welcome_popup import WELCOME
+WELCOME.update_message(f'Load: {__name__}')
+
 import tkinter.ttk as ttk
 import tkinter as tk
 from tkinter.messagebox import showerror
@@ -6,7 +9,7 @@ from bin.data_access import SQLAccess
 from bin.thumbnail import ThumbnailGenerator
 from bin.constants import *
 from bin.ffmpeg import *
-
+from bin.other import convert_from_entities, convert_to_entities
 try:
     import vlc
 except:
@@ -31,6 +34,9 @@ def convert_char(c: str):
     """
     if not c in CHAR_TABLE: return c
     return CHAR_TABLE[c]
+
+WELCOME.update_message('Instanciate VLC')
+
 VLC_INSTANCE = vlc.Instance()
 class VideoPlayer(Toplevel):
     """
@@ -159,7 +165,7 @@ class VideoPlayer(Toplevel):
     @property
     def video_title(self) -> str:
         """ Get the video_title """
-        return SQLAccess.get_title(self.lpid,self.rel_id)
+        return convert_from_entities(SQLAccess.get_title(self.lpid,self.rel_id))
     @property
     def video_ep(self) -> str:
         """ Get the current episode number """
@@ -168,7 +174,7 @@ class VideoPlayer(Toplevel):
     def set_video_title(self,*args):
         """ Sets the video title & updates the database. """
         new_title = ''.join([convert_char(c) for c in self.title_var.get()])
-        SQLAccess.update_episodes(self.lpid, self.rel_id,title=new_title)
+        SQLAccess.update_episodes(self.lpid, self.rel_id,title=convert_to_entities(new_title))
 
     def episode_down(self,*args):
         """ Change the selected episode. One down. """

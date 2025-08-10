@@ -1,3 +1,6 @@
+from bin.welcome_popup import WELCOME
+WELCOME.update_message(f'Load: {__name__}')
+
 from bin.constants import *
 
 from pygame.transform import scale, flip, rotate, scale_by
