@@ -24,6 +24,13 @@ def try_delete_file(filepath: str | None) -> bool:
     return False
 
 class TkinterApp(tk.Tk):
+    """
+    The main application window for the multi-page Tkinter application.
+
+    This class extends `tk.Tk` and provides a framework for managing
+    multiple distinct pages (frames) within a single window. It initializes
+    each page and allows seamless navigation between them.
+    """
     def __init__(self, *args, **kwargs): 
         
         # __init__ function for class Tk
@@ -43,14 +50,28 @@ class TkinterApp(tk.Tk):
  
         self.show_frame(Main)
     def show_frame(self, cont):
+        """
+        Brings the specified application page (frame) to the foreground.
+
+        This method updates the main window's title to match the name of the
+        selected frame and then uses `tkraise()` to make that frame visible
+        while hiding others.
+        """
         self.title(str(self.frames[cont]._name[1:]).capitalize())
         frame = self.frames[cont]
         frame.tkraise()
 
-def get_menu(parent,controller) -> ttk.Frame:
-    
-    MENU = ttk.Frame(parent)
+def get_menu(parent,controller) -> list[ttk.Button]:
+    """
+    Creates and configures a menu frame containing navigation buttons.
 
+    This function generates a `ttk.Frame` that acts as a menu, populating
+    it with `ttk.Button` widgets. Each button is configured to display
+    a specific page within the application when clicked, using the
+    `controller.show_frame` method. The menu is then placed in the
+    top-left corner of its parent container.
+    """
+    MENU = ttk.Frame(parent)
     
     BUILDER: list[str, function] = [
         ("Main", lambda : controller.show_frame(Main)),
