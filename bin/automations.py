@@ -37,13 +37,12 @@ def obs_rec_label_set(OBSO, el,reset:bool = False):
         el.recording_information_label.configure(foreground='black')
         return
     
-    if OBSO.time_in_seconds - epl <= 0:
-        el.recording_information_label.configure(foreground='yellow')
-        return
-    elif OBSO.time_in_seconds - epl <= 30:
+    if OBSO.time_in_seconds >= epl:
         el.recording_information_label.configure(foreground='red')
         return
-    
+    elif OBSO.time_in_seconds + 30 >= epl:
+        el.recording_information_label.configure(foreground='orange')
+        return
     else:
         el.recording_information_label.configure(foreground='green')
 

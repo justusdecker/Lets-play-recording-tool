@@ -10,6 +10,7 @@ This tool includes features like filemanagement to make your life as a lets play
 
 ## Features
 - Your recordings cannot mix up anymore - You dont need to rename / handle your recordings in general. LPRT saves the paths for further editing & distribution.
+- Warns you before the maximum length is exceeded and alerts you if it is exceeded.
 - Automated Thumbnail Generation - You can generate Thumbnails in batch.
 - Audio Extraction - Tired of Unbalanced audio volume? Thats a thing of the past.
 - Audio Fix - Automated Audio Effect applying e.g. Highpass, Lowpass & Loudness Normalization.
