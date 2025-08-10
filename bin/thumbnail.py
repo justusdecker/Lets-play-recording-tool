@@ -199,6 +199,7 @@ class ThumbnailGenerator:
         .. attention::
 
             video_src will only be updated if the file path changes.
+            See issue #249
         """
         
         # What happens here?
