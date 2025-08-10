@@ -29,4 +29,5 @@ class Welcome:
     def destroy(self):
         self.isrunning = False
         pg.display.quit()
+        del self
         
