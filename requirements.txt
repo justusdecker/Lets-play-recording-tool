@@ -1,10 +1,8 @@
-obsws-python
-pygame-ce
-shutil
-tkinter
-PIL
-winotify
-python-vlc
-jinja2
-sqlalchemy
-customtkinter
+obsws-python == 1.7.2
+pygame-ce == 2.5.3
+PIL == 11.2.1
+winotify == 1.1.0
+python-vlc == 3.0.21203
+jinja2 == 3.1.6
+sqlalchemy == 2.0.41
+customtkinter == 5.2.2
