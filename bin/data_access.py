@@ -1,3 +1,6 @@
+from bin.welcome_popup import WELCOME
+WELCOME.update_message(f'Load: {__name__}')
+
 from tkinter.messagebox import showerror
 try:
     from sqlalchemy import create_engine, Column, Integer, String, Numeric
