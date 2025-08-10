@@ -347,6 +347,18 @@ class SQLAccess:
         """
         return [entry.name for entry in session.query(LetsPlays).all()]
 
+    def get_episode_length(lpid: int):
+        """
+        Retrieves the 'episode_length' for a specific letsplay.
+        
+        Args:
+            lpid (int): The index of the letsplay.
+        
+        Returns:
+            str: The 'episode_length' for the letsplay.
+        """
+        return [entry.episode_length for entry in session.query(LetsPlays).all()][lpid]
+
     def get_tad_path(lpid: int):
         """
         Retrieves the 'tad_path' for a specific letsplay.
