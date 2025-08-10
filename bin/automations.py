@@ -1,33 +1,20 @@
-__author__ = "Justus Decker"
-__copyright__ = "(c) 2024 - 2025 , The LPRT Project"
-__credits__ = []
-__version__ = "0.10.80"
-__maintainer__ = "Justus Decker"
-__email__ = "justus.d2025@gmail.com"
-__status__ = "Testing"
 from os.path import isfile
 from bin.obs import OBSObserver
-
 from bin.wintoasty import toast_finished
-
 from bin.ffmpeg import *
 from bin.audacity_pipeline import *
 from tkinter.filedialog import askdirectory
 import tkinter.messagebox as msgbox
-
 from os import listdir
 from bin.constants import *
-
 from bin.thumbnail import ThumbnailGenerator
 from tkinter.messagebox import showerror
-
 from bin.player_video import VideoPlayer
 from bin.player_audio import AudioPlayer
 from bin.player_thumbnail import ThumbnailPreview
-
 from shutil import copyfile
-
-
+from bin.data_access import SQLAccess, cnef,rie, file_write
+from bin.constants import ERROR_007
 
 try:
     from bin.jinja import deploy_render
@@ -35,23 +22,12 @@ except:
     from bin.constants import ERROR_008
     showerror('ERROR', ERROR_008 + '\nJinja')
     quit()
-
-try: #Fix for issue: #127
-    from PIL import ImageTk, Image
-except:
-    from bin.constants import ERROR_008
-    showerror('ERROR', ERROR_008 + '\nPIL')
-    quit()
-
-from bin.data_access import SQLAccess, cnef,rie
-
-from bin.constants import ERROR_007
    
 def obs_connect(el):
     """
     Connects to the obs_ws API
     
-    Runs until the connection breaks up
+    Runs until the connection breaks up. See issue #244
     """
     OBSO = OBSObserver()
     if OBSO.failed:
@@ -74,15 +50,19 @@ def obs_connect(el):
             print(f'Unexpected Error happened [{E}]')
 
 class GenericWorkFlow:
+    """
+    This class serves as a base for workflows, 
+    ---
+    Inheriting from this class will provide you:
+    .. rng:: This gives you the effective episode range as a tuple (start, end).
+    .. user_workflow:: shows a toast notification
+    .. auto_create_folder_path:: You can create this folder with the `cnef` function.
+    .. lpid:: Lets Play Index
+    .. finished_message:: The message that will be displayed in user_workflow.
+    .. lp_name:: The Lets Play Name
+    """
     def __init__(self, folder: str, finish_message: str,lpid,epr):
-        """
-        Initializes a GenericWorkFlow instance, setting up paths, messages,
-        and "LetsPlay" episode-related attributes.
 
-        This class serves as a base for workflows that interact with the `LetsPlay` class, 
-        managing episode-specific data and providing a windows toast message
-        to signal workflow completion.
-        """
         self.auto_create_folder_path = folder
         self.finish_message = finish_message
         self.lpid,self.epr = lpid,epr
@@ -122,7 +102,7 @@ class GenerateThumbnailWF(GenericWorkFlow):
         
     def user_workflow(self, app):
         """
-        Generates Thumbnails based on TAD.
+        Generates Thumbnails based on the thumbnail automation data.
         
         If the user has done something wrong. A AutomationError will be thrown & catched. 
         After that the corresponding error message will be displayed.
@@ -348,7 +328,7 @@ class SendToAudacityWF(GenericWorkFlow):
                 new = FIXED_AUDIO_FOLDER+f'{rng_list[ep]}_track_mic_fixed_ac.aac'
                 rie(new)
                 ffmpeg_run(FFMPEG_CONVERT_AUDIO_TYPE,{'__IN__': old, '__OUT__': new})
-                reoc(not isfile(new))
+                reoc(not isfile(new),ERROR_007)
                 #remove()
                 SQLAccess.update_episodes(self.lpid,rng_list[ep],audio_mic_edit2_path=new)
             app.start_btn.state(['!disabled'])
@@ -386,14 +366,14 @@ class CompareAndRenderWF(GenericWorkFlow):
             episodes = SQLAccess.read_episodes(self.lpid)
             from bin.data_access import Episodes
             episodes : list[Episodes]
-            
-            reoc(episodes[i].audio_mic_edit2_path is None)
-            reoc(episodes[i].audio_desktop_path is None)
-            reoc(episodes[i].video_path is None)
-            
-            reoc(not isfile(episodes[i].audio_mic_edit2_path))
-            reoc(not isfile(episodes[i].audio_desktop_path))
-            reoc(not isfile(episodes[i].video_path))
+            for i in range(*self.rng):
+                reoc(episodes[i].audio_mic_edit2_path is None,ERROR_013)
+                reoc(episodes[i].audio_desktop_path is None,ERROR_013)
+                reoc(episodes[i].video_path is None,ERROR_013)
+                
+                reoc(not isfile(episodes[i].audio_mic_edit2_path),ERROR_007)
+                reoc(not isfile(episodes[i].audio_desktop_path),ERROR_007)
+                reoc(not isfile(episodes[i].video_path),ERROR_007)
             
             paths = [[i, episodes[i].audio_mic_edit2_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*self.rng)]
 
@@ -421,7 +401,7 @@ class CompareAndRenderWF(GenericWorkFlow):
                         }
                     )
                 
-                reoc(not isfile(tmp_audio_path))
+                reoc(not isfile(tmp_audio_path),ERROR_007)
                 
                 app.progress_label.configure(text = f'Audio Combine\n{((ci+1)/len(result))*100:.1f}%\n{ci+1}/{len(result)}')
                 ci += 1
@@ -444,7 +424,7 @@ class CompareAndRenderWF(GenericWorkFlow):
                         '__OUTPUT__': final_path
                     }
                 )
-                reoc(not isfile(final_path))
+                reoc(not isfile(final_path),ERROR_007)
                 app.progress_label.configure(text = f'Audio Combine\n{((ci+1)/len(result))*100:.1f}%\n{ci+1}/{len(result)}')
                 ci += 1
                 SQLAccess.update_episodes(self.lpid, index, final_video_path=final_path)
@@ -457,13 +437,19 @@ class CompareAndRenderWF(GenericWorkFlow):
         app.start_btn.state(['!disabled'])
 
 class TitleSetWF(GenericWorkFlow):
-
+    """
+    A workflow class responsible for allowing the user to change the title & take a thumbnail.
+    """
     def __init__(self,lpid, epr,app):
         
         super().__init__(folder = FIXED_AUDIO_FOLDER, finish_message = 'Title Set',lpid=lpid, epr=epr)
         self.user_workflow(app)
     def user_workflow(self, app):
-
+        """
+        Executes the main logic for title setting & taking thumbnails.
+        
+        For more Information look up: `bin.video_player.VideoPlayer`
+        """
         app.start_btn.state(['disabled'])
         
         VideoPlayer([i + 1 for i in range(*self.rng)],self.lpid,app)
@@ -478,7 +464,11 @@ class DeployWF(GenericWorkFlow):
         self.user_workflow(app)
     def user_workflow(self,app):
         """
-        ...
+        Copies Video & Thumbnail to selected destination.
+        
+        Creates both `view.html` & `style.css` to make the upload process a lot easier.
+        
+        In the `view.html`, thumbnails & titles are embedded.
         
         If the user has done something wrong. A AutomationError will be thrown & catched. 
         After that the corresponding error message will be displayed.
@@ -515,8 +505,8 @@ class DeployWF(GenericWorkFlow):
                     "upload_at": ''
                     }
                 ALL.append(REP)
-            deploy_render(f'{DEST}\\view.html', episodes=ALL,title=self.lp_name,description=description)
-            copyfile('static\\style.css',f'{DEST}\\style.css')
+            deploy_render(f'{DEST}\\view.html',episodes=ALL,title=self.lp_name,description=description)
+            file_write(f'{DEST}\\style.css', DEPLOY_CSS)
             super().user_workflow()
         except AutomationError as AE:
             msgbox.showerror('Automation Error',str(AE))

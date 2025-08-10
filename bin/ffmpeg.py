@@ -150,6 +150,3 @@ if ffmpeg_run(['ffmpeg']) is None:
 if ffmpeg_run(['ffplay']) is None:
     showerror('ERROR', ERROR_011)
     quit()
-#if ffmpeg_run(['ffprobe']) is None: Not in use currently
-#    showerror('ERROR', ERROR_010)
-#    quit()

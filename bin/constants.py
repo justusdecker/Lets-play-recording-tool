@@ -1,15 +1,6 @@
-__author__ = "Justus Decker"
-__copyright__ = "(c) 2024 - 2025 , The LPRT Project"
-__credits__ = []
-__version__ = "0.14.20"
-__maintainer__ = "Justus Decker"
-__email__ = "justus.d2025@gmail.com"
-__status__ = "Testing"
-
-
 from bin.version import VERSION
 
-COPYRIGHT = f"LPRT {VERSION} - (c) Justus Decker 2024 - 2025"
+COPYRIGHT = f"LPRT {VERSION} | GPL 3.0 - (c) Justus Decker 2024 - 2025"
 
 DISCLAIMER = f"""
 {COPYRIGHT}
@@ -17,19 +8,12 @@ Welcome to LPRT
 
 This Tool is currently Work in Progress!
 Some features might not work as expected & can cause data loss! Be careful!
+
+For Documentation, please look up the GitHub-wiki
 """
 
 DEFAULT_THUMBNAIL_SIZE = (1280,720)
-from enum import Enum
 
-FLAGS = Enum('Flags',
-             [
-                 'TYPE_RECORDING',
-                 'TYPE_AUTOMATION',
-                 'TYPE_ALL',
-                 'TYPE_OTHER'
-                 ]
-             )
 def reoc(cond: bool,msg: str) -> None:
     """ raise_error_on_condition """
     if cond: raise AutomationError(msg)
@@ -82,6 +66,45 @@ DEFAULT_TAD = {
     "text::pos::y": 0,
     "text::center": True
 }
+from tkinter import IntVar, DoubleVar, StringVar
+from tkinter.ttk import LabeledScale, Checkbutton, Button
+from tkinter.colorchooser import askcolor
+INPUT_INT_NV = (IntVar,LabeledScale, '>-2048::<2048')
+INPUT_SCALE = (DoubleVar,LabeledScale, '>0::<3.5')
+INPUT_ROT = (DoubleVar,LabeledScale, '>-359::<359')
+INPUT_CB = (IntVar,Checkbutton, '')
+FDS_TBO = {
+    "bg::pos::x": INPUT_INT_NV,
+    "bg::pos::y": INPUT_INT_NV,
+    "bg::r_pos::x-from": INPUT_INT_NV,
+    "bg::r_pos::x-to": INPUT_INT_NV,
+    "bg::r_pos::y-from": INPUT_INT_NV,
+    "bg::r_pos::y-to": INPUT_INT_NV,
+    "bg::r_scale::from": INPUT_SCALE,
+    "bg::r_scale::to": INPUT_SCALE,
+    "bg::r_rot::from": INPUT_ROT,
+    "bg::r_rot::to": INPUT_ROT,
+    "bg::center": INPUT_CB,
+    "bg::scale": INPUT_SCALE,
+    "bg::rot": INPUT_ROT,
+
+    "logo::path": (StringVar,Button, 'notnull'),
+    "logo::scale": INPUT_SCALE,
+    "logo::rot": INPUT_ROT,
+    "logo::pos::x": INPUT_INT_NV,
+    "logo::pos::y": INPUT_INT_NV,
+    "logo::center": INPUT_CB,
+
+    "text::path": (StringVar,Button, ''),
+    "text::scale": INPUT_SCALE,
+    "text::rot": INPUT_ROT,
+    "text::color": (StringVar,Button, 'notnull',askcolor),
+    "text::ol_color": (StringVar,Button, 'notnull',askcolor),
+    "text::size": INPUT_INT_NV,
+    "text::pos::x": INPUT_INT_NV,
+    "text::pos::y": INPUT_INT_NV,
+    "text::center": INPUT_CB
+}
 #! PATHS
 
 from os import getlogin
@@ -98,7 +121,6 @@ THUMBNAIL_FOLDER = f'{ROOT}thumbnails\\'
 FIXED_AUDIO_FOLDER = f'{ROOT}audio_fixed\\'
 BACKUP_FOLDER = f'{ROOT}backup\\'
 
-LETS_PLAY_FILE_PATH = f'{ROOT}lets_plays.csv'
 OBS_SETTINGS_PATH = f'{ROOT}obs_settings.json'
     
 #! ERRORS
@@ -118,6 +140,49 @@ ERROR_011 = f'[E011] FFPLAY is not installed. {exp}'
 ERROR_012 = f'[E012] FFPROBE is not installed. {exp}'
 ERROR_013 = f'[E013] File not set. {ewf}'
 ERROR_014 = f'[E014] FFMPEG File creation error! {ewf}'
+
+DEPLOY_HTML = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    <ul>
+    {% for episode in episodes %}
+    <li>
+        <h2>{{ episode.id + 1 }}</h2>
+        <h3>{{ episode.title }}</h3>
+        <h4>{{ episode.upload_at }}</h4>
+        <p align="center">
+            <img height="200px" src="{{ episode.thumbnail_path }}" alt="">
+        </p>
+        
+
+    </li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
+"""
+DEPLOY_CSS = """
+body {background-color: #242424;}
+
+li{
+    list-style-type: none;
+    background-color: #363636;
+    border-radius: 16px;
+    border-color: #484848;
+    border-style:ridge;
+}
+
+h1,h2,h3,h4 {color:beige; text-align: center;}
+
+"""
 
 __LICENSE__ = """
                     GNU GENERAL PUBLIC LICENSE

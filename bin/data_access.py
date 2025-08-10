@@ -60,6 +60,9 @@ def json_write(filepath : str, data : dict | list):
         f.write(json.dumps(data))
 
 def on_start():
+    """
+    Creates all essential folders for further use.
+    """
     cnef(AUDIO_FOLDER)
     cnef(FIXED_AUDIO_FOLDER)
     cnef(THUMBNAIL_FOLDER)
@@ -89,6 +92,24 @@ def cnef(path: str):
                 mkdir(cp)
 
 class LetsPlays(Base):
+    """
+    The lets plays table
+    
+    .. id::
+        The index of the lp - primary key
+    .. tad_path::
+        This is used to get the TAD file stored in ´{TAD_PATH}/{filename}´
+    .. name::
+        the lets plays name.
+        USE ONLY: `a - z` & ´_´ otherwise the app can crash. See issue #236
+    .. game_name::
+        the game_name
+        this can be the name of your series
+    .. episode_length::
+        is used to inform the user about reaching the recording time limit. See issue #204
+    .. description_path::
+        This is used to get the full description for a specific lp
+    """
     __tablename__ = 'letsplays'
     id = Column(Integer, primary_key=True)
     tad_path = Column(String)
@@ -98,6 +119,47 @@ class LetsPlays(Base):
     description_path = Column(String)
 
 class Episodes(Base):
+    """
+    The episodes table
+    
+    **WARNING**: 
+        This table stores ALL episodes from ALL lets plays you working with!
+    
+    .. id::
+        The index of the ep - primary key
+    .. lpid::
+        the index of the linked lp
+    .. video_path::
+        the recording path from OBS
+    .. audio_mic_path::
+        This is used to easy access the fetched audio from episodes
+    .. audio_desktop_path::
+        This is used to easy access the fetched audio from episodes
+    .. thumbnail_path::
+        This is used to easy access the generated thumbnail from episodes
+    .. thumbnail_frame::
+        NOT IN USE! Will be removed in later versions, see issue #237
+    .. has_problem::
+        NOT IN USE! Functionality will be added in later versions, see issue #238
+        Indicates that the user has to do some work manually.
+    .. audio_mic_edit1_path::
+        WILL BE REMOVED later. See issue #239
+        This is used to easy access the fixed audio from episodes
+    .. audio_mic_edit2_path::
+        WILL BE REMOVED later. See issue #239
+        This is used to easy access the audacity fixed audio from episodes
+    .. audio_desktop_edit1_path::
+        NOT IN USE! WILL BE REMOVED later. See issue #240
+    .. audio_desktop_edit2_path::
+        NOT IN USE! WILL BE REMOVED later. See issue #240
+    .. title::
+        This will be used in deploy for easy upload.
+    .. upload_at::
+        NOT IN USE! See issue #241
+        This will be used in deploy for easy upload.
+    .. final_video_path::
+        This will used in deploy for easy upload.
+    """
     __tablename__ = 'episodes'
     id = Column(Integer, primary_key=True)
     lpid = Column(Integer,default=0)
@@ -125,103 +187,301 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 class SQLAccess:
-    
-    def get_ep_by_id(lpid:int):
+    """
+    A Wrapper Class for all Lets Play & Episode Data Handling.
+    ---
+    """
+    def get_ep_by_id(lpid: int):
+        """
+        Retrieves the ID of a specific episode from a letsplay.
+        
+        Args:
+            lpid (int): The index of the letsplay to retrieve the episode from.
+
+        Returns:
+            int: The ID of the episode.
+        """
         return SQLAccess.read_episodes()[lpid].lpid
-    
+
     def __cvtid(lpid) -> int:
+        """
+        Converts a letsplay index to its database ID.
+        
+        Args:
+            lpid (int): The index of the letsplay.
+            
+        Returns:
+            int: The database ID of the letsplay.
+        """
         return SQLAccess.read_letsplays()[lpid].id
-    
+
     def create_episode(lpid: int, video_path: str):
+        """
+        Creates a new episode entry in the database.
+        
+        Args:
+            lpid (int): The index of the letsplay the episode belongs to.
+            video_path (str): The file path to the video for the episode.
+        """
         data = Episodes(video_path=video_path, lpid=SQLAccess.__cvtid(lpid))
         session.add(data)
         session.commit()
         
-    def create_letsplay(name: str,game_name: str,episode_length: int):
-        data = LetsPlays(name=name,game_name=game_name,episode_length=episode_length)
+    def create_letsplay(name: str, game_name: str, episode_length: int):
+        """
+        Creates a new letsplay entry in the database.
+        
+        Args:
+            name (str): The name of the letsplay.
+            game_name (str): The name of the game in the letsplay.
+            episode_length (int): The planned length of each episode in minutes.
+        """
+        data = LetsPlays(name=name, game_name=game_name, episode_length=episode_length)
         session.add(data)
         session.commit()
-    
+
     def read_letsplays() -> list[LetsPlays]:
+        """
+        Reads all letsplay entries from the database.
+        
+        Returns:
+            list[LetsPlays]: A list of all letsplay objects.
+        """
         return [letsplay for letsplay in session.query(LetsPlays).all()]
-    
+
     def read_all_episodes() -> list[Episodes]:
+        """
+        Reads all episode entries from the database.
+        
+        Returns:
+            list[Episodes]: A list of all episode objects.
+        """
         return [episodes for episodes in session.query(Episodes).all()]
-    
+
     def read_episodes(lpid: int) -> list[Episodes]:
+        """
+        Reads all episodes belonging to a specific letsplay.
+        
+        Args:
+            lpid (int): The index of the letsplay.
+        
+        Returns:
+            list[Episodes]: A list of episode objects for the specified letsplay.
+        """
         return [episodes for episodes in session.query(Episodes).all() if episodes.lpid == SQLAccess.__cvtid(lpid)]
-    
-    def update_letsplay(lpid:int, episode_length: int):
+
+    def update_letsplay(lpid: int, episode_length: int):
+        """
+        Updates the episode length of a specific letsplay.
+        
+        Args:
+            lpid (int): The index of the letsplay to update.
+            episode_length (int): The new planned length of each episode in minutes.
+        """
         data = SQLAccess.read_letsplays()
-        data[lpid].episode_length =  episode_length
+        data[lpid].episode_length = episode_length
         session.commit()
-    
-    def set_tadpath(lpid:int, tad_path: int):
+
+    def set_tadpath(lpid: int, tad_path: int):
+        """
+        Sets the 'tad_path' attribute for a specific letsplay.
+        
+        Args:
+            lpid (int): The index of the letsplay.
+            tad_path (int): The new value for 'tad_path'.
+        """
         data = SQLAccess.read_letsplays()
-        data[lpid].tad_path =  tad_path
+        data[lpid].tad_path = tad_path
         session.commit()
-    
-    def update_episodes(lpid: int, epid: int,
-                        **kwargs):
+
+    def update_episodes(lpid: int, epid: int, **kwargs):
+        """
+        Updates attributes of a specific episode.
+        
+        Args:
+            lpid (int): The index of the letsplay.
+            epid (int): The index of the episode to update.
+            **kwargs: Arbitrary keyword arguments representing attribute names and their new values.
+        """
         data = SQLAccess.read_episodes(lpid)[epid]
         for key in kwargs:
-            if not hasattr(data ,key):
+            if not hasattr(data, key):
                 raise NameError(f'The attribute: [{key}] does not exist!')
-            data.__setattr__(key,kwargs[key])
-            
+            data.__setattr__(key, kwargs[key])
         session.commit()
+
+    def delete_letsplay(lpid: int):
+        """
+        Deletes a letsplay and all its associated episodes.
         
-    def delete_letsplay(lpid:int):
+        Args:
+            lpid (int): The index of the letsplay to delete.
+        """
         data = session.query(LetsPlays).all()[lpid]
         session.delete(data)
-
         while SQLAccess.read_episodes(lpid):
-
-            SQLAccess.delete_episode(lpid,0)
-
-
+            SQLAccess.delete_episode(lpid, 0)
         session.commit()
-    
+
     def delete_episode(lpid: int, epid: int):
+        """
+        Deletes a specific episode from the database.
+        
+        Args:
+            lpid (int): The index of the letsplay the episode belongs to.
+            epid (int): The index of the episode to delete.
+        """
         data = session.query(Episodes).filter(SQLAccess.__cvtid(lpid) == Episodes.lpid).all()[epid]
         session.delete(data)
         session.commit()
-        
+            
     def get_lp_names():
+        """
+        Retrieves all letsplay names from the database.
+        
+        Returns:
+            list: A list of letsplay names.
+        """
         return [entry.name for entry in session.query(LetsPlays).all()]
-    
+
     def get_tad_path(lpid: int):
+        """
+        Retrieves the 'tad_path' for a specific letsplay.
+        
+        Args:
+            lpid (int): The index of the letsplay.
+        
+        Returns:
+            str: The 'tad_path' for the letsplay.
+        """
         return [entry.tad_path for entry in session.query(LetsPlays).all()][lpid]
-    
+
     def get_lp_name(lpid: int):
+        """
+        Retrieves the name of a specific letsplay.
+        
+        Args:
+            lpid (int): The index of the letsplay.
+        
+        Returns:
+            str: The name of the letsplay.
+        """
         return [entry.name for entry in session.query(LetsPlays).all()][lpid]
-    
+
     def get_lp_game_name(lpid: int):
+        """
+        Retrieves the game name of a specific letsplay.
+        
+        Args:
+            lpid (int): The index of the letsplay.
+        
+        Returns:
+            str: The game name of the letsplay.
+        """
         return [entry.game_name for entry in session.query(LetsPlays).all()][lpid]
-    
+
     def get_lp_description(lpid: int):
+        """
+        Retrieves the description path of a specific letsplay.
+        
+        Args:
+            lpid (int): The index of the letsplay.
+        
+        Returns:
+            str: The description path of the letsplay.
+        """
         return [entry.description_path for entry in session.query(LetsPlays).all()][lpid]
-    
+
     def get_lp_game_names():
+        """
+        Retrieves all game names from the database.
+        
+        Returns:
+            list: A list of game names from all letsplays.
+        """
         return [entry.game_name for entry in session.query(LetsPlays).all()]
-    
+
     def get_lp_ids():
+        """
+        Retrieves all letsplay IDs from the database.
+        
+        Returns:
+            list: A list of letsplay IDs.
+        """
         return [entry.id for entry in session.query(LetsPlays).all()]
-    
+
     def get_video_path(lpid: int, epid: int):
+        """
+        Retrieves the video path for a specific episode.
+        
+        Args:
+            lpid (int): The index of the letsplay.
+            epid (int): The index of the episode.
+            
+        Returns:
+            str: The video path for the episode.
+        """
         return [entry.video_path for entry in session.query(Episodes).all() if entry.lpid == SQLAccess.__cvtid(lpid)][epid]
-    
+
     def get_title(lpid: int, epid: int):
+        """
+        Retrieves the title of a specific episode.
+        
+        Args:
+            lpid (int): The index of the letsplay.
+            epid (int): The index of the episode.
+        
+        Returns:
+            str: The title of the episode.
+        """
         return [entry.title for entry in session.query(Episodes).all() if entry.lpid == SQLAccess.__cvtid(lpid)][epid]
-    
+
     def get_thumbnail_path(lpid: int, epid: int):
+        """
+        Retrieves the thumbnail path for a specific episode.
+        
+        Args:
+            lpid (int): The index of the letsplay.
+            epid (int): The index of the episode.
+        
+        Returns:
+            str: The thumbnail path for the episode.
+        """
         return [entry.thumbnail_path for entry in session.query(Episodes).all() if entry.lpid == SQLAccess.__cvtid(lpid)][epid]
-    
+
     def get_final_video_path(lpid: int, epid: int):
+        """
+        Retrieves the final video path for a specific episode.
+        
+        Args:
+            lpid (int): The index of the letsplay.
+            epid (int): The index of the episode.
+        
+        Returns:
+            str: The final video path for the episode.
+        """
         return [entry.final_video_path for entry in session.query(Episodes).all() if entry.lpid == SQLAccess.__cvtid(lpid)][epid]
-    
+
     def get_episode_ammount(lpid: int):
+        """
+        Retrieves the total number of episodes for a specific letsplay.
+        
+        Args:
+            lpid (int): The index of the letsplay.
+        
+        Returns:
+            int: The number of episodes.
+        """
         return len([entry for entry in session.query(Episodes).all() if entry.lpid == SQLAccess.__cvtid(lpid)])
-    
+
     def get_lp_opvar(parent):
+        """
+        Converts the lp_option_var index to database index.
+        
+        Args:
+            parent: An object containing a `lp_option_var` attribute.
+        
+        Returns:
+            int: The index of the letsplay name.
+        """
         return SQLAccess.get_lp_names().index(parent.lp_option_var.get())

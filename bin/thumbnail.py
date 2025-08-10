@@ -1,21 +1,5 @@
-__author__ = "Justus Decker"
-__copyright__ = "(c) 2024 - 2025 , The LPRT Project"
-__credits__ = []
-__version__ = "0.5.10"
-__maintainer__ = "Justus Decker"
-__email__ = "justus.d2025@gmail.com"
-__status__ = "Production"
 from bin.constants import *
-try: #Fix for issue: #126
-    from numpy import rot90
-except:
-    from tkinter.messagebox import showerror
-    
-    
-    showerror('ERROR', ERROR_008 + '\nnumpy')
-    quit()
 
-from pygame.surfarray import make_surface
 from pygame.transform import scale, flip, rotate, scale_by
 from pygame import Surface,SRCALPHA,Color,mask
 
@@ -38,7 +22,7 @@ def get_time_va(filepath: str):
         return None
 
 def get_thumbnail(filepath: str,frame:None) -> Surface:
-    if frame is None:
+    if frame == -1:
         t = rnd() * get_time_va(filepath)
     else:
         t = frame
@@ -94,7 +78,15 @@ class ImageTextRenderer:
 
         return font
     def get_blit_data(self):return self.data , self.offset_pos
+
 class ThumbnailGenerator:
+    """
+    A class used to generate custom thumbnails by composing a background (from a video frame or solid color), 
+    a text overlay, and a logo, based on a Thumbnail Automation Data (TAD) configuration file.
+
+    This generator allows for dynamic positioning, scaling, rotation, 
+    and styling of each component to create visually appealing thumbnails.
+    """
     def __init__(self): pass
     
     def generate(self,
@@ -105,6 +97,24 @@ class ThumbnailGenerator:
                  frame: float = -1,
                  
                  ):
+        """
+        Generates a thumbnail image by combining a background, logo, and text overlay, and saves it to the specified path.
+
+    The thumbnail's appearance (background, logo, text styles, positions, rotations, and scales) 
+    is determined by the configuration loaded from the Thumbnail Automation Data (TAD) file.
+
+    Args:
+
+    text (str): The text content to be rendered on the thumbnail.
+
+    video_path (str | None): The file path to the video from which a background frame will be extracted. If None, a solid dark grey background is used.
+
+    tad_path (str): The relative or absolute path to the Thumbnail Automation Data (TAD) JSON configuration file.
+
+    save_to_path (str): The file path (including filename and extension, e.g., '.png') where the generated thumbnail will be saved.
+
+    frame (float, optional): The timestamp (in seconds) of the specific frame to extract from the video. If -1, a random frame is chosen. Defaults to -1.
+        """
         print((f'[Thumbnail Generate]: {video_path}',94))
         self.tad = json_read(TAD_FOLDER + tad_path)
         if video_path is None:
@@ -141,6 +151,15 @@ class ThumbnailGenerator:
     def __save(self,
                filepath: str,
                surf: Surface):
+        """
+        Saves a given Pygame Surface to a specified file path as an image.
+
+        Args:
+
+        filepath (str): The full path including the filename and extension (e.g., '.png') where the image will be saved.
+
+        surf (pygame.Surface): The Pygame Surface object to be saved.
+        """
         img_save(surf,filepath)
         
     def __get_src_image(self, 
@@ -148,20 +167,38 @@ class ThumbnailGenerator:
                       frame: float | int = -1
                       ): # should not be none!
         """
-        Get a frame from a video
-        -----
-        
-        .. file::
-            - Must be a string
-            - Can be a relative or absolut path
-        .. frame::
-            - Must be numeric
-            - ``frame`` can be -1 or from ``0`` to ``video length``.
-            - Possible crash if ``frame`` > ``video length ``
-        
-        **ATTENTION**
-            ``video_src`` will only be updated if the ``file`` path changes
+        Get a frame from a video or load an image file to be used as a source image.
 
+        This method retrieves a specific frame from a video file using get_thumbnail, scales it to DEFAULT_THUMBNAIL_SIZE, 
+        and flips it horizontally before returning it as a Pygame Surface. If the input file does not exist, a FileNotFoundError is raised.
+        
+        Args:
+
+        file (str): The path to the video file.
+
+            Must be a string.
+
+            Can be a relative or absolute path.
+
+            frame (float | int, optional): The timestamp (in seconds) of the frame to extract.
+
+            Must be numeric.
+
+            frame can be -1 (for a random frame) or from 0 to the video length.
+
+            Possible crash if frame > video length. Defaults to -1.
+
+        Returns:
+
+            pygame.Surface: A Pygame Surface object representing the processed video frame.
+
+        Raises:
+
+            FileNotFoundError: If the specified file does not exist.
+
+        .. attention::
+
+            video_src will only be updated if the file path changes.
         """
         
         # What happens here?
@@ -184,6 +221,19 @@ class ThumbnailGenerator:
         raise FileNotFoundError('Your Image does not exist!')
     
     def __comp_render(self,objs: list[tuple[Surface,tuple[int,int]]]) -> Surface:
+        """
+        Composites multiple Pygame Surface objects onto a single new Surface.
+
+        This method creates a new Surface of DEFAULT_THUMBNAIL_SIZE with transparency (SRCALPHA) and blits each provided object onto it at its specified position.
+
+        Args:
+
+            objs (list[tuple[pygame.Surface, tuple[int, int]]]): A list of tuples, where each tuple contains a Pygame Surface and its (x, y) position to blit it at.
+
+        Returns:
+
+            pygame.Surface: The newly created composite Surface containing all blitted objects.
+        """
         COMP = Surface(DEFAULT_THUMBNAIL_SIZE,SRCALPHA)
         for obj,pos in objs:
             COMP.blit(obj,pos)
@@ -193,7 +243,17 @@ class ThumbnailGenerator:
                  text: str= ''
                  ) -> Surface:
         """
-        Returns the Text Image with outline
+        Renders the provided text onto a Pygame Surface, applying styling (font, color, outline, scale, rotation) based on the self.tad configuration.
+
+        The text can be rendered using either a standard font (TrueType/OpenType) or an image-based font renderer (ImageTextRenderer) depending on the text::path setting in the TAD file. An outline is always applied if specified in TAD.
+
+        Args:
+
+            text (str, optional): The string of text to render. Defaults to an empty string.
+
+        Returns:
+
+            pygame.Surface: A Pygame Surface containing the rendered and styled text.
         """
         if not isfile(self.tad['text::path']) or self.tad['text::path'].endswith('.ttf') or self.tad['text::path'].endswith('.otf'):
             if not isfile(self.tad['text::path']):
@@ -213,8 +273,17 @@ class ThumbnailGenerator:
         
         timg = rotate(timg,self.tad['text::rot'])
         return timg
+    
     def __render_logo(self) -> Surface:
-        
+        """
+        Renders the logo image based on the path, scale, and rotation defined in the self.tad configuration.
+
+        If the logo file specified in self.tad['logo::path'] does not exist, an empty (1x1 transparent) Surface is returned.
+
+        Returns:
+
+            pygame.Surface: A Pygame Surface containing the loaded and styled logo.
+        """
         if not isfile(self.tad['logo::path']):
             # File does not exist so return an empty logo
             return Surface((1,1),SRCALPHA)
@@ -229,7 +298,21 @@ class ThumbnailGenerator:
         return surf
     
     def __render_background(self, filepath: str, frame: float): #Here rotation, color manipulation will be added
-        
+        """
+        Renders the background image for the thumbnail, applying positional offsets, random rotation, and random scaling based on self.tad configuration.
+
+        This method first retrieves the source image/video frame using __get_src_image, then applies random variations to its position, rotation, and scale before returning the modified Surface.
+
+        Args:
+
+            filepath (str): The path to the video file or image to use as the background.
+
+            frame (float): The specific frame (timestamp in seconds) to extract from the video.
+
+        Returns:
+
+            pygame.Surface: A Pygame Surface representing the prepared background image.
+        """
         # Manipulate pos
         rx,ry = [self.tad['bg::r_pos::x-from'], self.tad['bg::r_pos::x-to']],[self.tad['bg::r_pos::y-from'], self.tad['bg::r_pos::y-to']]
         rx, ry = ri(*rx), ri(*ry)

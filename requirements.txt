@@ -4,7 +4,6 @@ shutil
 tkinter
 PIL
 winotify
-numpy
 python-vlc
 jinja2
 sqlalchemy
