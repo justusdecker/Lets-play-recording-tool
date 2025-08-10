@@ -1,14 +1,14 @@
 name: Bug Report
 description: Report a reproducible bug or issue
 title: "[Bug]: " # Pre-fills the issue title
-labels: ["bug", "triage"] # Applies these labels automatically
-assignees: ["your-github-username"] # Assigns to a specific user automatically
+labels: ["bug"] # Applies these labels automatically
+assignees: ["justusdecker"] # Assigns to a specific user automatically
 
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to fill out this bug report!
+        
         Please provide as much detail as possible to help us resolve the issue quickly.
 
   - type: input
@@ -57,9 +57,8 @@ body:
       label: Affected Component(s)
       description: Which part of the application does this bug relate to?
       options:
-        - ThumbnailGenerator.__get_src_image
-        - ThumbnailGenerator.__render_background
-        - External Asset Handling
+        - UI
+        - Error Handling
         - Other (please specify in comments)
       default: 0 # Default to the first option
     validations:
@@ -85,3 +84,8 @@ body:
       options:
         - label: I have verified that this issue has not been previously reported (checked existing issues).
           required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
