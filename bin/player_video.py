@@ -25,10 +25,21 @@ CHAR_TABLE = {
      }
 
 def convert_char(c: str):
+    """
+    converts characters to html usesable form.
+    needs refactor see issue #150
+    """
     if not c in CHAR_TABLE: return c
     return CHAR_TABLE[c]
 VLC_INSTANCE = vlc.Instance()
 class VideoPlayer(Toplevel):
+    """
+    The Videoplayer has 3 useful features:
+    - Video & Audiopreview
+    - Thumbnail Extraction
+    - Title Set
+    """
+    
     def __init__(self, data: list[int],lpid,app):
         self.tg = ThumbnailGenerator()
         self.app = app
@@ -116,6 +127,10 @@ class VideoPlayer(Toplevel):
         self.update_progress()
         self.blocked = False
     def gen_thumbnail(self,*args):
+        """ 
+        generates a thumbnail based on the current frame played
+        is currently broken see issue #246
+        """
         if self.blocked: return
         self.blocked = True
         length = ffmpeg_run(FFMPEG_GET_LENGTH)
@@ -135,22 +150,28 @@ class VideoPlayer(Toplevel):
         self.blocked = False
     @property
     def rel_id(self) -> int:
+        """ Get the current episode id """
         return self.data[self.current_episode] - 1
     @property
     def video_path(self) -> str:
+        """ Get the video_path """
         return SQLAccess.get_final_video_path(self.lpid,self.rel_id)
     @property
     def video_title(self) -> str:
+        """ Get the video_title """
         return SQLAccess.get_title(self.lpid,self.rel_id)
     @property
     def video_ep(self) -> str:
+        """ Get the current episode number """
         return self.data[self.current_episode]
+    
     def set_video_title(self,*args):
+        """ Sets the video title & updates the database. """
         new_title = ''.join([convert_char(c) for c in self.title_var.get()])
         SQLAccess.update_episodes(self.lpid, self.rel_id,title=new_title)
 
     def episode_down(self,*args):
-
+        """ Change the selected episode. One down. """
         new_location = self.current_episode - 1
 
         if new_location < 0:
@@ -163,7 +184,7 @@ class VideoPlayer(Toplevel):
             self.open_file()
             self.play_video()
     def episode_up(self,*args):
-
+        """ Change the selected episode. One up. """
         new_location = self.current_episode + 1
         
         l = len(self.data)
@@ -180,9 +201,7 @@ class VideoPlayer(Toplevel):
             self.play_video()
     def open_file(self):
         """
-        This function opens a file dialog for the user to select a video file.
-        It then creates a new VLC media object from the selected file and sets it
-        to the VLC media player instance. Finally, it calls the method to embed
+        Sets media to `video_path` in the VLC media player instance. Finally, it calls the method to embed
         the VLC video output into the Tkinter video panel.
         """
         if self.video_path:
@@ -192,6 +211,7 @@ class VideoPlayer(Toplevel):
             self.title_var.set(f'{self.video_title}')
             self.set_title()
     def set_title(self):
+        """ Set the window title """
         self.title(f'[{self.video_ep}]{self.video_path} - [{self.current_episode}]')
     def set_video_panel(self):
         """
@@ -261,17 +281,17 @@ class VideoPlayer(Toplevel):
         This function is called repeatedly every 500 milliseconds.
         """
         if not self.slider_dragging:
-            try:
-                current_time = self.player.get_time()  # Current time in milliseconds.
-                duration = self.player.get_length()      # Total duration in milliseconds.
-                if duration > 0:
-                    self.progress_slider.config(to=duration)
-                    self.progress_slider.set(current_time)
-            except:
-                pass
+
+            current_time = self.player.get_time()  # Current time in milliseconds.
+            duration = self.player.get_length()      # Total duration in milliseconds.
+            if duration > 0:
+                self.progress_slider.config(to=duration)
+                self.progress_slider.set(current_time)
+
         self.after(500, self.update_progress)
     
     def destroy(self):
+        """ make this object go bye bye """
         self.app.start_btn.state(['!disabled'])
         for element in self.app.menu:
 
