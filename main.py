@@ -1,3 +1,7 @@
+from bin.welcome_popup import Welcome
+WELCOME = Welcome()
+WELCOME.run()
+
 from bin.automations import *
 from bin.constants import DISCLAIMER, __LICENSE__
 from bin.data_access import on_start, SQLAccess, json_write, json_read
@@ -11,6 +15,7 @@ from os import remove
 from zipfile import ZipFile
 from tkinter.colorchooser import askcolor
 from tkinter.filedialog import askopenfilename
+from subprocess import Popen
 LARGEFONT = ("Verdana", 35)
 ctk.set_appearance_mode('light')
 
@@ -49,6 +54,7 @@ class TkinterApp(tk.Tk):
             frame.grid(row = 0, column = 0, sticky ="nsew")
  
         self.show_frame(Main)
+        WELCOME.destroy()
     def show_frame(self, cont):
         """
         Brings the specified application page (frame) to the foreground.
@@ -470,7 +476,8 @@ class FileManager(tk.Frame):
         # Menu
         self.menu = get_menu(self, controller)
         # Data Detection
-        
+        open_folder_btn = ttk.Button(W,text='Open lprt folder',command=lambda *x: Popen(f'explorer {ROOT}'))
+        open_folder_btn.pack()
         DATA_DETECTION = ttk.Frame(W)
         data_detection_header = ttk.Label(W,text='Data Detection',font=Font(W,size=16))
         self.detect_btn = ttk.Button(DATA_DETECTION, text='Detect',command=self.on_detect)
@@ -907,24 +914,6 @@ class Settings(tk.Frame):
         NEW_OBS_SETTINGS['port'] = self.PORT.get()
         NEW_OBS_SETTINGS['pw'] = self.PW.get()
         json_write(ROOT+'obs_settings.json',NEW_OBS_SETTINGS)
-
-class Settings(tk.Frame):
-    def __init__(self, parent, controller): 
-        tk.Frame.__init__(self, parent)
-        
-        W = ttk.Frame(self)
-        
-        self.menu = get_menu(self, controller)
-        
-        # Create Headers
-        SETTINGS = ttk.Frame(W)
-        settings_header = ttk.Label(W,text='Settings',font=Font(W,size=16))
-        
-        # Packing
-        settings_header.pack(pady=10)
-        SETTINGS.pack()
-
-        W.grid(row=0,column=1)
 
 class TBO:
     """
