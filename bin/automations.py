@@ -102,7 +102,7 @@ class GenerateThumbnailWF(GenericWorkFlow):
         
     def user_workflow(self, app):
         """
-        Generates Thumbnails based on TAD.
+        Generates Thumbnails based on the thumbnail automation data.
         
         If the user has done something wrong. A AutomationError will be thrown & catched. 
         After that the corresponding error message will be displayed.
@@ -437,13 +437,19 @@ class CompareAndRenderWF(GenericWorkFlow):
         app.start_btn.state(['!disabled'])
 
 class TitleSetWF(GenericWorkFlow):
-
+    """
+    A workflow class responsible for allowing the user to change the title & take a thumbnail.
+    """
     def __init__(self,lpid, epr,app):
         
         super().__init__(folder = FIXED_AUDIO_FOLDER, finish_message = 'Title Set',lpid=lpid, epr=epr)
         self.user_workflow(app)
     def user_workflow(self, app):
-
+        """
+        Executes the main logic for title setting & taking thumbnails.
+        
+        For more Information look up: `bin.video_player.VideoPlayer`
+        """
         app.start_btn.state(['disabled'])
         
         VideoPlayer([i + 1 for i in range(*self.rng)],self.lpid,app)
@@ -458,7 +464,11 @@ class DeployWF(GenericWorkFlow):
         self.user_workflow(app)
     def user_workflow(self,app):
         """
-        ...
+        Copies Video & Thumbnail to selected destination.
+        
+        Creates both `view.html` & `style.css` to make the upload process a lot easier.
+        
+        In the `view.html`, thumbnails & titles are embedded.
         
         If the user has done something wrong. A AutomationError will be thrown & catched. 
         After that the corresponding error message will be displayed.
