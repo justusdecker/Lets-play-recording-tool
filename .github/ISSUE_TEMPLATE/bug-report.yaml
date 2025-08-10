@@ -70,7 +70,7 @@ body:
     attributes:
       label: Environment
       description: |
-        - Operating System (e.g., Windows 10, macOS 14, Ubuntu 22.04)
+        - Windows Version (e.g., Windows: 7, 10, 11)
         - Python Version (e.g., 3.9.7)
         - Pygame Version
       placeholder: "e.g., Windows 10, Python 3.9, Pygame 2.1.2"
@@ -80,8 +80,8 @@ body:
   - type: checkboxes
     id: terms
     attributes:
-      label: Code of Conduct
-      description: By submitting this issue, you agree to follow our [Code of Conduct](link-to-your-code-of-conduct).
+      label: Important Checks
+      description: Please confirm the following before submitting your issue.
       options:
-        - label: I agree to follow this project's Code of Conduct
+        - label: I have verified that this issue has not been previously reported (checked existing issues).
           required: true
