@@ -101,7 +101,7 @@ def get_response():
                 break
         except:
             break
-    return 1
+    return result
 
 def do_command(command):
     """Send one command, and return the response."""
@@ -110,7 +110,7 @@ def do_command(command):
     try:
         send_command(command)
         response = get_response()
-        print("Rcvd: <<< \n" + response)
+        print(f"Rcvd: <<< \n{response}")
     except Exception as E:
         print(E)
     
