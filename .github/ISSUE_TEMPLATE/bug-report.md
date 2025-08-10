@@ -1,0 +1,84 @@
+name: Bug Report
+description: Report a reproducible bug or issue
+title: "[Bug]: " # Pre-fills the issue title
+labels: ["bug", "triage"] # Applies these labels automatically
+assignees: ["your-github-username"] # Assigns to a specific user automatically
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+        Please provide as much detail as possible to help us resolve the issue quickly.
+
+  - type: input
+    id: short-summary
+    attributes:
+      label: Short Summary of the Bug
+      description: Provide a concise one-liner description of the bug.
+      placeholder: e.g., "Thumbnail generation fails with video_path None"
+      required: true
+
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: Steps to Reproduce
+      description: |
+        Please list the exact steps to reproduce the behavior.
+        1.
+        2.
+        3.
+      placeholder: "Describe step-by-step how to reproduce the bug."
+      required: true
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: "Describe what you thought should happen."
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Actual Behavior
+      description: What actually happened? (Include any error messages)
+      placeholder: "Describe what actually happened, including console logs or error messages."
+      required: true
+
+  - type: dropdown
+    id: affected-component
+    attributes:
+      label: Affected Component(s)
+      description: Which part of the application does this bug relate to?
+      options:
+        - ThumbnailGenerator.__get_src_image
+        - ThumbnailGenerator.__render_background
+        - External Asset Handling
+        - Other (please specify in comments)
+      default: 0 # Default to the first option
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: |
+        - Operating System (e.g., Windows 10, macOS 14, Ubuntu 22.04)
+        - Python Version (e.g., 3.9.7)
+        - Pygame Version
+      placeholder: "e.g., Windows 10, Python 3.9, Pygame 2.1.2"
+      required: true
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](link-to-your-code-of-conduct).
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
