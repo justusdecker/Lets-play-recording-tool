@@ -17,6 +17,7 @@ body:
       label: Short Summary of the Bug
       description: Provide a concise one-liner description of the bug.
       placeholder: e.g., "Thumbnail generation fails with video_path None"
+    validations:
       required: true
 
   - type: textarea
@@ -29,7 +30,6 @@ body:
         2.
         3.
       placeholder: "Describe step-by-step how to reproduce the bug."
-      required: true
     validations:
       required: true
 
@@ -39,6 +39,7 @@ body:
       label: Expected Behavior
       description: What did you expect to happen?
       placeholder: "Describe what you thought should happen."
+    validations:
       required: true
 
   - type: textarea
@@ -47,6 +48,7 @@ body:
       label: Actual Behavior
       description: What actually happened? (Include any error messages)
       placeholder: "Describe what actually happened, including console logs or error messages."
+    validations:
       required: true
 
   - type: dropdown
@@ -72,6 +74,7 @@ body:
         - Python Version (e.g., 3.9.7)
         - Pygame Version
       placeholder: "e.g., Windows 10, Python 3.9, Pygame 2.1.2"
+    validations:
       required: true
 
   - type: checkboxes
