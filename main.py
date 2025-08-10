@@ -157,12 +157,25 @@ def get_episode_range(parent, run_callback: callable, check_callback: callable,f
     return label1, label2, start_btn, ep_start, ep_end, epstart_option_var, epend_option_var
 
 def change_states(elements: list[ttk.Button],state: str):
+    """
+    Changes the state of a list of Tkinter `ttk.Button` widgets.
 
+    This function iterates through a given list of `ttk.Button` objects
+    and applies a specified state to each one. This can be used to enable,
+    disable, or otherwise alter the visual and interactive state of buttons.
+    """
     for element in elements:
 
         element.state([state])
 
 class Main(tk.Frame):
+    """
+    Represents the main start page of the application.
+
+    This frame serves as the initial view for the application,
+    displaying a welcome message and a disclaimer, and integrating the
+    navigation menu for other application pages.
+    """
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
         
@@ -187,6 +200,37 @@ class Main(tk.Frame):
         W.grid(row=0,column=1)
         
 class AutomationFrame(tk.Frame):
+    """
+    A base class for frames that perform automated tasks, such as thumbnail generation
+    or audio processing.
+
+    This frame provides common UI elements and logic for managing automation
+    processes, including a progress bar, a navigation menu, and controls for
+    selecting "Let's Play" series and episode ranges. It supports running
+    automation tasks in a separate thread to keep the UI responsive.
+    
+    
+    Attributes:
+        should_not_reset (bool): If True, the UI elements will not be re-enabled
+                                 after the automation thread completes.
+        thread (threading.Thread or None): The background thread running the automation task.
+        automation_callback (callable or None): A function that will be called to start
+                                                 the actual automation process.
+        progress_label (ttk.Label): A label to display progress updates.
+        menu (list[ttk.Button]): The navigation menu buttons.
+        THUMBNAIL_AUTOMATION (ttk.Frame): A sub-frame for automation-specific controls.
+        label (ttk.Label): Label for 'Let's Play' selection.
+        lp_options (ttk.OptionMenu): Dropdown for 'Let's Play' selection.
+        lp_option_var (tk.StringVar): Tkinter variable holding the selected 'Let's Play' value.
+        epnums (list[int]): List of available episode numbers for the selected 'Let's Play'.
+        label2 (ttk.Label): Label for start episode selection.
+        label3 (ttk.Label): Label for end episode selection.
+        start_btn (ttk.Button): Button to start the automation.
+        ep_start (ttk.OptionMenu): Dropdown for start episode selection.
+        ep_end (ttk.OptionMenu): Dropdown for end episode selection.
+        epstart_option_var (tk.StringVar): Tkinter variable holding the selected start episode.
+        epend_option_var (tk.StringVar): Tkinter variable holding the selected end episode.
+    """
     def __init__(self, parent, controller,name: str): 
         tk.Frame.__init__(self, parent)
         self.should_not_reset = False
@@ -220,22 +264,39 @@ class AutomationFrame(tk.Frame):
         THUMBNAIL_AUTOMATION.pack()
         
         W.grid(row=0,column=1)
-    def reset_progressbar(self):
-        self.pb.destroy()
         
-        self.pb = ttk.Progressbar(self)
-        self.pb.grid(sticky='SE',row = 0, column = 2)
     def update_ui(self):
+        """
+        Updates the UI elements based on the selected 'Let's Play' series.
+
+        This method dynamically calculates the available episode numbers
+        based on the currently selected 'Let's Play' value and updates
+        the internal `epnums` list.
+        """
         lp = self.lp_option_var.get()
         if lp != 'None':
             self.epnums = [i+1 for i in range(SQLAccess.get_episode_ammount(SQLAccess.get_lp_opvar(self)))]
         else:
             self.epnums = []
     def run(self,*args):
+        """
+        Initiates the automation process in a separate thread.
+
+        This method checks if an automation thread is already running.
+        If not, it creates a new thread to execute the `__run` method
+        and starts it, preventing the UI from freezing.
+        """
         if self.thread is None:
             self.thread = Thread(target=self.__run)
             self.thread.start()
     def __run(self):
+        """
+        The core automation execution method, run in a separate thread.
+
+        This private method disables relevant UI elements, executes the
+        `automation_callback` with the selected parameters, and then
+        re-enables the UI elements upon completion unless `should_not_reset` is True.
+        """
         self.start_btn.state(['disabled'])
         change_states(self.menu,'disabled')
         change_states([self.label, self.lp_options],'disabled')
@@ -252,7 +313,14 @@ class AutomationFrame(tk.Frame):
 
         self.thread = None
     def lp_changed(self,*args):
-        
+        """
+        Callback function executed when the 'Let's Play' selection changes.
+
+        This method updates the UI based on the new 'Let's Play' selection,
+        recalculates available episode numbers, and dynamically rebuilds
+        the episode range selection widgets. It also adjusts the state
+        of the start button.
+        """
         self.update_ui()
         
         if not self.epnums:
@@ -271,6 +339,13 @@ class AutomationFrame(tk.Frame):
         self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.THUMBNAIL_AUTOMATION,self.run,self.check_last_id,self.epnums)
         
     def check_last_id(self,*args):
+        """
+        Validates the selected episode range.
+
+        This callback is triggered when either the start or end episode
+        selection changes. It disables the start button if the end episode
+        is numerically less than the start episode, ensuring valid range selection.
+        """
         if int(self.epend_option_var.get()) < int(self.epstart_option_var.get()):
             self.start_btn.state(['disabled'])
         else:
