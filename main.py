@@ -579,7 +579,8 @@ class FileManager(tk.Frame):
         BACKUP.pack()
         
         W.grid(row=0,column=1)
-    
+    def load_video_backup(self,*args):
+        pass
     def create_video_backup(self,*args):
         """
         Creates a ZIP archive of selected 'Let's Play' videos and TAD files.
