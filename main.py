@@ -1,6 +1,5 @@
-from bin.welcome_popup import Welcome
-WELCOME = Welcome()
-WELCOME.run()
+from bin.welcome_popup import WELCOME
+
 
 from bin.automations import *
 from bin.constants import DISCLAIMER, __LICENSE__
