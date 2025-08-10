@@ -31,18 +31,19 @@ def obs_rec_label_set(OBSO, el,reset:bool = False):
     if reset:
         el.recording_information_label.configure(foreground='black')
         return
-    epl = SQLAccess.get_episode_length(id)
+    epl = SQLAccess.get_episode_length(SQLAccess.get_lp_names().index(el.lp_option_var.get()))
     
     if epl is None:
         el.recording_information_label.configure(foreground='black')
         return
     
-    if OBSO.time_in_seconds >= epl:
-        el.recording_information_label.configure(foreground='red')
-        return
-    elif OBSO.time_in_seconds - 30 >= epl:
+    if OBSO.time_in_seconds - epl <= 0:
         el.recording_information_label.configure(foreground='yellow')
         return
+    elif OBSO.time_in_seconds - epl <= 30:
+        el.recording_information_label.configure(foreground='red')
+        return
+    
     else:
         el.recording_information_label.configure(foreground='green')
 
@@ -54,11 +55,11 @@ def obs_connect(el):
     """
     OBSO = OBSObserver()
     if OBSO.failed:
-        obs_rec_label_set(OBSO,el, False)
+        obs_rec_label_set(OBSO,el, True)
         el.btn_connect.configure(text= 'Settings File does not exist!')
         return
     if not OBSO.isconnected:
-        obs_rec_label_set(OBSO,el, False)
+        obs_rec_label_set(OBSO,el, True)
         el.btn_connect.configure(text= 'No Connection!')
         return
     while OBSO.isconnected:
@@ -69,11 +70,11 @@ def obs_connect(el):
                 el.recording_information_label.configure(text= f'Recording - {SQLAccess.get_episode_ammount(id)} Episodes\n{OBSO.timecode}')
                 obs_rec_label_set(OBSO,el)
             else:
-                obs_rec_label_set(OBSO,el, False)
+                obs_rec_label_set(OBSO,el, True)
                 el.recording_information_label.configure(text= f'Waiting - {SQLAccess.get_episode_ammount(id)} Episodes')
             OBSO.update(id)
         except Exception as E:
-            obs_rec_label_set(OBSO,el, False)
+            obs_rec_label_set(OBSO,el, True)
             el.btn_connect.configure(text= 'Unexpected Error happened')
             print(f'Unexpected Error happened [{E}]')
 
