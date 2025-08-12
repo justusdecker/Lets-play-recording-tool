@@ -118,7 +118,7 @@ def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,
     lp_option_var = tk.StringVar(parent)
         
     #lps = LetsPlays
-    names = SQLAccess.get_lp_names()
+    names = SQLAccess.read_letsplay_names()
     options = ttk.OptionMenu(parent,lp_option_var,'None',*names,command=callback)
     
     options.grid(row = 0, column = 2)
@@ -283,7 +283,7 @@ class AutomationFrame(tk.Frame):
         """
         lp = self.lp_option_var.get()
         if lp != 'None':
-            self.epnums = [i+1 for i in range(SQLAccess.get_episode_ammount(SQLAccess.get_lp_opvar(self)))]
+            self.epnums = [i+1 for i in range(SQLAccess.read_episode_ammount(SQLAccess.read_letsplay_by_option_var(self)))]
         else:
             self.epnums = []
             
@@ -313,7 +313,7 @@ class AutomationFrame(tk.Frame):
         change_states([self.label2, self.label3,self.ep_end, self.ep_start],'disabled')
         a, b = int(self.epstart_option_var.get()) , int(self.epend_option_var.get())
         
-        lp = SQLAccess.get_lp_opvar(self)
+        lp = SQLAccess.read_letsplay_by_option_var(self)
         self.thread = self.automation_callback(lp,[a-1,b],self)
         if not self.should_not_reset:
             
@@ -412,7 +412,7 @@ class Recording(tk.Frame):
         
         change_states(self.menu,'disabled') # Deactivates all menu buttons for safety reasons
         
-        ep = SQLAccess.read_episodes(SQLAccess.get_lp_names().index(self.lp_option_var.get()))
+        ep = SQLAccess.read_episodes(SQLAccess.read_letsplay_names().index(self.lp_option_var.get()))
         self.btn_connect.state(["disabled"])
         self.btn_connect.configure(text='Try connection to OBS...')
         #! Currently Disconnecting only works by closing OBS <- mainly for safety reasons!
@@ -596,11 +596,11 @@ class FileManager(tk.Frame):
         'Let's Play' series.
         """
         change_states(self.menu,'disabled')
-        lpid = SQLAccess.get_lp_names().index(self.backup_lp_option_var.get())
-        lpname = SQLAccess.get_lp_names()[lpid]
+        lpid = SQLAccess.read_letsplay_names().index(self.backup_lp_option_var.get())
+        lpname = SQLAccess.read_letsplay_names()[lpid]
         cnef(BACKUP_FOLDER)
         ZIP = ZipFile(f'{BACKUP_FOLDER}{lpname}.7z','w',)
-        tad = SQLAccess.get_tad_path(lpid)
+        tad = SQLAccess.update_tad_path(lpid)
         
         if tad is not None:
             if isfile(TAD_FOLDER+tad):
@@ -639,7 +639,7 @@ class FileManager(tk.Frame):
         """
         lp = self.simdel_lp_option_var.get()
         if lp != 'None':
-            self.epnums = [i+1 for i in range(SQLAccess.get_episode_ammount(SQLAccess.get_lp_names().index(self.simdel_lp_option_var.get())))]
+            self.epnums = [i+1 for i in range(SQLAccess.read_episode_ammount(SQLAccess.read_letsplay_names().index(self.simdel_lp_option_var.get())))]
         else:
             self.epnums = []
             
@@ -692,7 +692,7 @@ class FileManager(tk.Frame):
                 self.btn_lp_create.state(['disabled'])
                 return 
         
-        if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.get_lp_names():
+        if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.read_letsplay_names():
             self.btn_lp_create.state(['!disabled'])
             
         else:
@@ -717,7 +717,7 @@ class FileManager(tk.Frame):
         Validates inputs, disables UI, creates the entry via SQLAccess,
         shows a success message, and then exits the application.
         """
-        if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.get_lp_names():
+        if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.read_letsplay_names():
             change_states(self.menu,'disabled')
             SQLAccess.create_letsplay(self.name_var.get(), self.game_name_var.get(),int(self.episode_length_var.get().split(' ')[0])*60)
             msgbox.showinfo('Success', 'Lets Play created\nYou must restart the app!')
@@ -732,7 +732,7 @@ class FileManager(tk.Frame):
         """
         ok = msgbox.askyesno('Attention','You are trying to delete all files in the selected lets play & \nthe lets play itself!\nThis step is irreversible!\nContinue?')
         if not ok: return
-        lpid = SQLAccess.get_lp_names().index(self.lp_option_var.get())
+        lpid = SQLAccess.read_letsplay_names.index(self.lp_option_var.get())
         if self.delete_lp_option.get():
             for ep in SQLAccess.read_episodes(lpid):#BUG
                 
@@ -748,8 +748,6 @@ class FileManager(tk.Frame):
                     try_delete_file(file)
                     #print(ep.lpid, ep.id, )
         change_states(self.menu,'disabled')
-        #! Deleting Lets Play 
-        #! SQLAccess.delete_letsplay(SQLAccess.get_lp_names().index(self.lp_option_var.get()))
         msgbox.showinfo('Success', 'Lets Play deleted\nYou must restart the app!')
         exit()
     
@@ -806,8 +804,8 @@ class FileManager(tk.Frame):
         """
         ok = msgbox.askyesno('Attention','You are trying to delete all files in the selected lets play\nThis step is irreversible!\nContinue?')
         if not ok: return
-        lpid = SQLAccess.get_lp_names().index(self.simdel_lp_option_var.get())
-        print(SQLAccess.get_lp_names().index(self.simdel_lp_option_var.get()),self.simdel_lp_option_var.get())
+        lpid = SQLAccess.read_letsplay_names().index(self.simdel_lp_option_var.get())
+        print(SQLAccess.read_letsplay_names().index(self.simdel_lp_option_var.get()),self.simdel_lp_option_var.get())
         episodes = SQLAccess.read_episodes(lpid)
 
         for i in range(*self.rng): #! Test first
@@ -1206,8 +1204,8 @@ class TadEditor(tk.Frame):
         if self.lp_option_var.get() != 'None':
             self.save_btn.state(['!disabled'])
             change_states([ui.ui for ui in self.ui_elements],'!disabled')
-            lpid = SQLAccess.get_lp_opvar(self)
-            filepath = SQLAccess.get_tad_path(lpid)
+            lpid = SQLAccess.read_letsplay_by_option_var(self)
+            filepath = SQLAccess.read_tad_path(lpid)
             
             #! No JSONDecodError catch
             #! No wrong type catch[case: only if user change the data outside of lprt!]
@@ -1231,18 +1229,18 @@ class TadEditor(tk.Frame):
         if not hasattr(self,'tw'):
             self.tw = ThumbnailPreview()
         DATA = {key: ui.var.get() for ui, key in zip(self.ui_elements, DEFAULT_TAD)}
-        lpid = SQLAccess.get_lp_opvar(self)
-        lpname = SQLAccess.get_lp_name(lpid)
+        lpid = SQLAccess.read_letsplay_by_option_var(self)
+        lpname = SQLAccess.read_letsplay_name(lpid)
         filepath = f'{lpname}.json'
         json_write(f'{TAD_FOLDER}{filepath}',DATA)
         print(DATA)
         #- Update Database
-        SQLAccess.set_tadpath(lpid, filepath)
+        SQLAccess.update_tadpath(lpid, filepath)
         
         self.tg.generate(
             '123',
             None,
-            SQLAccess.get_tad_path(lpid),
+            SQLAccess.read_tad_path(lpid),
             f'{TEMP_FOLDER}preview.png'
         )
         

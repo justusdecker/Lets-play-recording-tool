@@ -19,6 +19,7 @@ from PIL import ImageTk, Image
 import base64
 from PIL import ImageTk, Image
 from io import BytesIO
+
 class AsciiImage:
     def __init__(self, var: str):
         self.var = var
@@ -27,7 +28,6 @@ class AsciiImage:
         io_stream = BytesIO(decoded_data)
         img = Image.open(io_stream)
         self.image = ImageTk.PhotoImage(img)
-
 
 DB_URL = f"sqlite:///{ROOT}lprt_data.db" # Define the database URL
 
@@ -298,7 +298,7 @@ class SQLAccess:
         data[lpid].episode_length = episode_length
         session.commit()
 
-    def set_tadpath(lpid: int, tad_path: int):
+    def update_tadpath(lpid: int, tad_path: int):
         """
         Sets the 'tad_path' attribute for a specific letsplay.
         
@@ -351,7 +351,7 @@ class SQLAccess:
         session.delete(data)
         session.commit()
             
-    def get_lp_names():
+    def read_letsplay_names():
         """
         Retrieves all letsplay names from the database.
         
@@ -360,7 +360,7 @@ class SQLAccess:
         """
         return [entry.name for entry in session.query(LetsPlays).all()]
 
-    def get_episode_length(lpid: int):
+    def read_episode_length(lpid: int):
         """
         Retrieves the 'episode_length' for a specific letsplay.
         
@@ -372,7 +372,7 @@ class SQLAccess:
         """
         return [entry.episode_length for entry in session.query(LetsPlays).all()][lpid]
 
-    def get_tad_path(lpid: int):
+    def read_tad_path(lpid: int):
         """
         Retrieves the 'tad_path' for a specific letsplay.
         
@@ -384,7 +384,7 @@ class SQLAccess:
         """
         return [entry.tad_path for entry in session.query(LetsPlays).all()][lpid]
 
-    def get_lp_name(lpid: int):
+    def read_letsplay_name(lpid: int):
         """
         Retrieves the name of a specific letsplay.
         
@@ -396,7 +396,7 @@ class SQLAccess:
         """
         return [entry.name for entry in session.query(LetsPlays).all()][lpid]
 
-    def get_lp_game_name(lpid: int):
+    def read_letsplay_game_name(lpid: int):
         """
         Retrieves the game name of a specific letsplay.
         
@@ -408,7 +408,7 @@ class SQLAccess:
         """
         return [entry.game_name for entry in session.query(LetsPlays).all()][lpid]
 
-    def get_lp_description(lpid: int):
+    def read_letsplay_description(lpid: int):
         """
         Retrieves the description path of a specific letsplay.
         
@@ -420,7 +420,7 @@ class SQLAccess:
         """
         return [entry.description_path for entry in session.query(LetsPlays).all()][lpid]
 
-    def get_lp_game_names():
+    def read_letsplay_game_names():
         """
         Retrieves all game names from the database.
         
@@ -429,7 +429,7 @@ class SQLAccess:
         """
         return [entry.game_name for entry in session.query(LetsPlays).all()]
 
-    def get_lp_ids():
+    def read_letsplay_ids():
         """
         Retrieves all letsplay IDs from the database.
         
@@ -438,7 +438,7 @@ class SQLAccess:
         """
         return [entry.id for entry in session.query(LetsPlays).all()]
 
-    def get_video_path(lpid: int, epid: int):
+    def read_video_path(lpid: int, epid: int):
         """
         Retrieves the video path for a specific episode.
         
@@ -451,7 +451,7 @@ class SQLAccess:
         """
         return [entry.video_path for entry in session.query(Episodes).all() if entry.lpid == SQLAccess.__cvtid(lpid)][epid]
 
-    def get_title(lpid: int, epid: int):
+    def read_title(lpid: int, epid: int):
         """
         Retrieves the title of a specific episode.
         
@@ -464,7 +464,7 @@ class SQLAccess:
         """
         return [entry.title for entry in session.query(Episodes).all() if entry.lpid == SQLAccess.__cvtid(lpid)][epid]
 
-    def get_thumbnail_path(lpid: int, epid: int):
+    def read_thumbnail_path(lpid: int, epid: int):
         """
         Retrieves the thumbnail path for a specific episode.
         
@@ -477,7 +477,7 @@ class SQLAccess:
         """
         return [entry.thumbnail_path for entry in session.query(Episodes).all() if entry.lpid == SQLAccess.__cvtid(lpid)][epid]
 
-    def get_final_video_path(lpid: int, epid: int):
+    def read_final_video_path(lpid: int, epid: int):
         """
         Retrieves the final video path for a specific episode.
         
@@ -490,7 +490,7 @@ class SQLAccess:
         """
         return [entry.final_video_path for entry in session.query(Episodes).all() if entry.lpid == SQLAccess.__cvtid(lpid)][epid]
 
-    def get_episode_ammount(lpid: int):
+    def read_episode_ammount(lpid: int):
         """
         Retrieves the total number of episodes for a specific letsplay.
         
@@ -502,7 +502,7 @@ class SQLAccess:
         """
         return len([entry for entry in session.query(Episodes).all() if entry.lpid == SQLAccess.__cvtid(lpid)])
 
-    def get_lp_opvar(parent):
+    def read_letsplay_by_option_var(parent):
         """
         Converts the lp_option_var index to database index.
         
@@ -512,4 +512,4 @@ class SQLAccess:
         Returns:
             int: The index of the letsplay name.
         """
-        return SQLAccess.get_lp_names().index(parent.lp_option_var.get())
+        return SQLAccess.read_letsplay_names().index(parent.lp_option_var.get())

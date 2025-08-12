@@ -31,7 +31,7 @@ def obs_rec_label_set(OBSO, el,reset:bool = False):
     if reset:
         el.recording_information_label.configure(foreground='black')
         return
-    epl = SQLAccess.get_episode_length(SQLAccess.get_lp_names().index(el.lp_option_var.get()))
+    epl = SQLAccess.read_episode_length(SQLAccess.read_letsplay_names().index(el.lp_option_var.get()))
     
     if epl is None:
         el.recording_information_label.configure(foreground='black')
@@ -64,13 +64,13 @@ def obs_connect(el):
     while OBSO.isconnected:
         el.btn_connect.configure(text= 'Connection established')
         try:
-            id = SQLAccess.get_lp_names().index(el.lp_option_var.get())
+            id = SQLAccess.read_letsplay_names().index(el.lp_option_var.get())
             if OBSO.time_in_seconds:
-                el.recording_information_label.configure(text= f'Recording - {SQLAccess.get_episode_ammount(id)} Episodes\n{OBSO.timecode}')
+                el.recording_information_label.configure(text= f'Recording - {SQLAccess.read_episode_ammount(id)} Episodes\n{OBSO.timecode}')
                 obs_rec_label_set(OBSO,el)
             else:
                 obs_rec_label_set(OBSO,el, True)
-                el.recording_information_label.configure(text= f'Waiting - {SQLAccess.get_episode_ammount(id)} Episodes')
+                el.recording_information_label.configure(text= f'Waiting - {SQLAccess.read_episode_ammount(id)} Episodes')
             OBSO.update(id)
         except Exception as E:
             obs_rec_label_set(OBSO,el, True)
@@ -94,7 +94,7 @@ class GenericWorkFlow:
         self.auto_create_folder_path = folder
         self.finish_message = finish_message
         self.lpid,self.epr = lpid,epr
-        self.lp_name = SQLAccess.get_lp_name(self.lpid)
+        self.lp_name = SQLAccess.read_letsplay_name(self.lpid)
 
     @property
     def rng(self) -> tuple[int,int]:
@@ -138,7 +138,7 @@ class GenerateThumbnailWF(GenericWorkFlow):
         try:
             TG = ThumbnailGenerator()
             TP = ThumbnailPreview()
-            tad = SQLAccess.get_tad_path(self.lpid)
+            tad = SQLAccess.read_tad_path(self.lpid)
             
             reoc(not tad, ERROR_009)
             reoc(not isfile(TAD_FOLDER + tad),ERROR_007 + '\nTAD Path does not exist!')
@@ -439,7 +439,7 @@ class CompareAndRenderWF(GenericWorkFlow):
 
             
             
-            path_ending = f'_{SQLAccess.get_lp_game_name(self.lpid)}_final.mp4'
+            path_ending = f'_{SQLAccess.read_letsplay_game_name(self.lpid)}_final.mp4'
             cnef(VIDEO_FOLDER)
             ci = 0
             for video, audio, index in rendering_queue:
@@ -522,7 +522,7 @@ class DeployWF(GenericWorkFlow):
                 
                 new_video_path = old_video_path.replace('/','\\').split('\\')[-1]
                 
-                description = SQLAccess.get_lp_description(self.lpid) #! This feature will be enhanced in 1.0
+                description = SQLAccess.read_letsplay_description(self.lpid) #! This feature will be enhanced in 1.0
 
                 copyfile(old_video_path,f'{DEST}\\{new_video_path}')
                 copyfile(old_thumbnail_path,f'{DEST}\\{new_thumbnail_path}')

@@ -151,7 +151,7 @@ class VideoPlayer(Toplevel):
         self.tg.generate(
             str(self.data[self.current_episode]),
             self.video_path,
-            SQLAccess.get_tad_path(self.lpid),
+            SQLAccess.read_tad_path(self.lpid),
             f'{THUMBNAIL_FOLDER}_generated_from_video_{self.data[self.current_episode]}.png',
             frame
             )
@@ -165,11 +165,11 @@ class VideoPlayer(Toplevel):
     @property
     def video_path(self) -> str:
         """ Get the video_path """
-        return SQLAccess.get_final_video_path(self.lpid,self.rel_id)
+        return SQLAccess.read_final_video_path(self.lpid,self.rel_id)
     @property
     def video_title(self) -> str:
         """ Get the video_title """
-        return convert_from_entities(SQLAccess.get_title(self.lpid,self.rel_id))
+        return convert_from_entities(SQLAccess.read_title(self.lpid,self.rel_id))
     @property
     def video_ep(self) -> str:
         """ Get the current episode number """
