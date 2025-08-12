@@ -172,7 +172,7 @@ class GenerateThumbnailWF(GenericWorkFlow):
                         ok = True
                 app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
 
-                SQLAccess.update_episodes(self.lpid, i,thumbnail_path=p)
+                SQLAccess.update_episode(self.lpid, i,thumbnail_path=p)
 
             super().user_workflow()
         except AutomationError as AE:
@@ -235,7 +235,7 @@ class ExtractAudioWF(GenericWorkFlow):
                 
                 app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
                 
-                SQLAccess.update_episodes(self.lpid,i, audio_mic_path=mic_track_path, audio_desktop_path=desktop_track_path) # Saves the updated episode metadata.
+                SQLAccess.update_episode(self.lpid,i, audio_mic_path=mic_track_path, audio_desktop_path=desktop_track_path) # Saves the updated episode metadata.
             super().user_workflow()
         except AutomationError as AE:
             msgbox.showerror('Automation Error',str(AE))
@@ -284,7 +284,7 @@ class FixAudioWF(GenericWorkFlow):
                 reoc(not isfile(audio_mic_edit1_path), ERROR_014) # In case ffmpeg did not create the file
                 
                 app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
-                SQLAccess.update_episodes(self.lpid, i, audio_mic_edit1_path=audio_mic_edit1_path)
+                SQLAccess.update_episode(self.lpid, i, audio_mic_edit1_path=audio_mic_edit1_path)
             
             super().user_workflow()
         except AutomationError as AE:
@@ -358,7 +358,7 @@ class SendToAudacityWF(GenericWorkFlow):
                 ffmpeg_run(FFMPEG_CONVERT_AUDIO_TYPE,{'__IN__': old, '__OUT__': new})
                 reoc(not isfile(new),ERROR_007)
                 #remove()
-                SQLAccess.update_episodes(self.lpid,rng_list[ep],audio_mic_edit2_path=new)
+                SQLAccess.update_episode(self.lpid,rng_list[ep],audio_mic_edit2_path=new)
             app.start_btn.state(['!disabled'])
             super().user_workflow()
         except AutomationError as AE:
@@ -456,7 +456,7 @@ class CompareAndRenderWF(GenericWorkFlow):
                 reoc(not isfile(final_path),ERROR_007)
                 app.progress_label.configure(text = f'Audio Combine\n{((ci+1)/len(result))*100:.1f}%\n{ci+1}/{len(result)}')
                 ci += 1
-                SQLAccess.update_episodes(self.lpid, index, final_video_path=final_path)
+                SQLAccess.update_episode(self.lpid, index, final_video_path=final_path)
             super().user_workflow()
         except AutomationError as AE:
             msgbox.showerror('Automation Error',str(AE))

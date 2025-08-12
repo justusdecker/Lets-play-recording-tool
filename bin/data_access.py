@@ -310,7 +310,7 @@ class SQLAccess:
         data[lpid].tad_path = tad_path
         session.commit()
 
-    def update_episodes(lpid: int, epid: int, **kwargs):
+    def update_episode(lpid: int, epid: int, **kwargs):
         """
         Updates attributes of a specific episode.
         

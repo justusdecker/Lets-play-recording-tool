@@ -178,7 +178,7 @@ class VideoPlayer(Toplevel):
     def set_video_title(self,*args):
         """ Sets the video title & updates the database. """
         new_title = ''.join([convert_char(c) for c in self.title_var.get()])
-        SQLAccess.update_episodes(self.lpid, self.rel_id,title=convert_to_entities(new_title))
+        SQLAccess.update_episode(self.lpid, self.rel_id,title=convert_to_entities(new_title))
 
     def episode_down(self,*args):
         """ Change the selected episode. One down. """
