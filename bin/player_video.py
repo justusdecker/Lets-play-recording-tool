@@ -5,7 +5,7 @@ import tkinter.ttk as ttk
 import tkinter as tk
 from tkinter.messagebox import showerror
 from tkinter import Toplevel, StringVar, BOTH, LEFT, HORIZONTAL, X
-from bin.data_access import SQLAccess
+from bin.data_access import SQLAccess,AsciiImage
 from bin.thumbnail import ThumbnailGenerator
 from bin.constants import *
 from bin.ffmpeg import *
@@ -13,7 +13,6 @@ from bin.other import convert_from_entities, convert_to_entities
 try:
     import vlc
 except:
-    from bin.constants import ERROR_008
     showerror('ERROR', ERROR_008 + '\nvlc')
     quit()
 
@@ -100,9 +99,11 @@ class VideoPlayer(Toplevel):
         self.next_button.pack(side=LEFT, padx=5)
         
         # Play button.
-        self.play_button = ttk.Button(self.controls, text="Play", command=self.play_video)
+        img = AsciiImage(ICO_RUN)
+        self.play_button = ttk.Button(self.controls, command=self.play_video,image=img.image)
         self.play_button.pack(side=LEFT, padx=5)
 
+        self.play_button.image = img.image
         # Stop button.
         self.stop_button = ttk.Button(self.controls, text="Pause", command=self.pause_video)
         self.stop_button.pack(side=LEFT, padx=5)

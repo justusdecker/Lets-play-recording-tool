@@ -142,7 +142,7 @@ def get_episode_range(parent, run_callback: callable, check_callback: callable,f
     label2 = ttk.Label(parent, text ="Episode end")
 
     label2.grid(row = 0, column = 5) 
-    img = AsciiImage("""iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAABJ0AAASdAHeZh94AAABXUlEQVRYCdWU4RXCMAiE1ec4juAezugejuA+NajXd0UChOpT+8OkCdx3IdTN5svPdi3/crpOrHE8H4Y0h4IZ1MDyuoBjf8TEDknvHJ/mUpIfMdDIZmUsR2UDrcyWHtbSV1s2AJI1BuYWKasMdJotfXpxkgr2Ol5ExAgab+T0KQMRXETk6VTjsen87p09bM0dzZBmbF5HoB5RlbY+cS7HZQzc43sCLMbzbOXcJsQpNRzrCqgrMr/rfM4baUK553uuZYBFee7BJc6tgBLi19Q8gotIqgJMs+4WIK4M1jjXmqeb0ErWa1ko56WvgJN4XoFyfsXA3N0sVJ1XDFRZZt7XDQx9BdzlfJw1fZA20IPDSNVEyoCGM8zbgzlvDHtgFKDjPbjsdSughfjUlijHR7GcvzDQRGTv5TuPBKtwgem/4gU8AovATzxSAa7CiKmwCSOxKhi6qw1A6G+uC4Yx3gDHfXlp0A+QAQAAAABJRU5ErkJggg==""")
+    img = AsciiImage(ICO_RUN)
     
     start_btn = ttk.Button(parent, image=img.image,command=run_callback)
     start_btn.image = img.image
