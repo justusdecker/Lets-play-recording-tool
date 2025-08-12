@@ -153,8 +153,6 @@ class Episodes(Base):
         This is used to easy access the fetched audio from episodes
     .. thumbnail_path::
         This is used to easy access the generated thumbnail from episodes
-    .. thumbnail_frame::
-        NOT IN USE! Will be removed in later versions, see issue #237
     .. has_problem::
         NOT IN USE! Functionality will be added in later versions, see issue #238
         Indicates that the user has to do some work manually.
@@ -164,10 +162,6 @@ class Episodes(Base):
     .. audio_mic_edit2_path::
         WILL BE REMOVED later. See issue #239
         This is used to easy access the audacity fixed audio from episodes
-    .. audio_desktop_edit1_path::
-        NOT IN USE! WILL BE REMOVED later. See issue #240
-    .. audio_desktop_edit2_path::
-        NOT IN USE! WILL BE REMOVED later. See issue #240
     .. title::
         This will be used in deploy for easy upload.
     .. upload_at::
@@ -183,12 +177,9 @@ class Episodes(Base):
     audio_mic_path = Column(String)
     audio_desktop_path = Column(String)
     thumbnail_path = Column(String)
-    thumbnail_frame = Column(Numeric)
     has_problem = Column(Integer)
     audio_mic_edit1_path = Column(String)
     audio_mic_edit2_path = Column(String)
-    audio_desktop_edit1_path = Column(String)
-    audio_desktop_edit2_path = Column(String)
     title = Column(String)
     upload_at = Column(String)
     final_video_path = Column(String)
