@@ -44,7 +44,6 @@ class VideoPlayer(MediaPlayer):
         self.tg = ThumbnailGenerator()
         self.data: list[int] = data
         self.current_episode = 0
-        self.vol = 1.
         self.isfinished = False
         self.title_var = StringVar()
         self.lpid = lpid
@@ -142,6 +141,7 @@ class VideoPlayer(MediaPlayer):
             self.set_title()
             self.open_file(self.video_path)
             self.play_video()
+            
     def destroy(self):
         self.app.start_btn.state(['!disabled'])
         for element in self.app.menu:

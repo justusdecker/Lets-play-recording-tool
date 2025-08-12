@@ -18,7 +18,7 @@ from bin.player_thumbnail import ThumbnailPreview
 from shutil import copyfile
 from bin.data_access import SQLAccess, cnef,rie, file_write
 from bin.constants import ERROR_007
-from bin.player_audio import stop_audio
+
 
 try:
     from bin.jinja import deploy_render
@@ -408,7 +408,6 @@ class CompareAndRenderWF(GenericWorkFlow):
             volap = AudioPlayer(paths)
             while not volap.isfinished:
                 pass
-            stop_audio()
             result = volap.audio_list
             
             cnef(TEMP_FOLDER)
