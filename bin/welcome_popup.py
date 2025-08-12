@@ -1,7 +1,7 @@
 import pygame as pg
 from bin.constants import DISCLAIMER
 from threading import Thread
-
+from bin.data_access import AsciiImage
 class Welcome:
     """
     This is the welcome popup

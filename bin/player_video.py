@@ -91,23 +91,26 @@ class VideoPlayer(Toplevel):
         self.controls.pack(fill=X, padx=10, pady=5)
 
         # Last button.
-        self.last_button = ttk.Button(self.controls, text="Last", command=self.episode_down)
+        img = AsciiImage(ICO_BACKWARD)
+        self.last_button = ttk.Button(self.controls, command=self.episode_down,image=img.image)
         self.last_button.pack(side=LEFT, padx=5)
-
+        self.last_button.image = img.image
         # Next button.
-        self.next_button = ttk.Button(self.controls, text="Next", command=self.episode_up)
+        img = AsciiImage(ICO_FORWARD)
+        self.next_button = ttk.Button(self.controls, command=self.episode_up,image=img.image)
         self.next_button.pack(side=LEFT, padx=5)
-        
+        self.next_button.image = img.image
         # Play button.
-        img = AsciiImage(ICO_RUN)
+        img = AsciiImage(ICO_PLAY)
         self.play_button = ttk.Button(self.controls, command=self.play_video,image=img.image)
         self.play_button.pack(side=LEFT, padx=5)
 
         self.play_button.image = img.image
         # Stop button.
-        self.stop_button = ttk.Button(self.controls, text="Pause", command=self.pause_video)
+        img = AsciiImage(ICO_PAUSE)
+        self.stop_button = ttk.Button(self.controls, command=self.pause_video,image=img.image)
         self.stop_button.pack(side=LEFT, padx=5)
-
+        self.stop_button.image = img.image
         # Volume control slider.
         # This slider controls the player's volume in real time.
         self.volume_slider = tk.Scale(
