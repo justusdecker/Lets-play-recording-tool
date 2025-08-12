@@ -200,4 +200,5 @@ class MediaPlayer(tk.Toplevel):
         self.after(500, self.update_progress)
     
     def destroy(self):
+        self.stop_video()
         return super().destroy()

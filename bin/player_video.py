@@ -140,7 +140,6 @@ class VideoPlayer(MediaPlayer):
             self.set_title()
             self.open_file(self.video_path)
             self.play_video()
-            raise AutomationError
             
     def destroy(self):
         self.app.start_btn.state(['!disabled'])
