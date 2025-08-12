@@ -61,7 +61,7 @@ class AudioPlayer(MediaPlayer):
             self.current_episode = new_location
 
             self.set_title()
-            self.open_file(self.media)
+            self.open_file()
             self.play_video()
             
     def episode_up(self,*args):
@@ -75,9 +75,12 @@ class AudioPlayer(MediaPlayer):
         else:
             self.current_episode = new_location
             self.set_title()
-            self.open_file(self.media)
+            self.open_file()
             self.play_video()
             
+    def open_file(self):
+        return super().open_file(self.open_file(self.media))
+    
     def set_volume_desktop(self, value):
         self.desktop_vol = int(value)
         self.current_media[4] = self.desktop_vol / 100 if self.desktop_vol else 0
