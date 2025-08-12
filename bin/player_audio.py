@@ -41,10 +41,6 @@ def stop_audio():
         music.stop()
         music.unload()
 
-
-
-
-
 class AudioPlayer(Toplevel):
     """
     A Tkinter Toplevel window that functions as a simple audio player.
