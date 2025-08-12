@@ -3,14 +3,13 @@ WELCOME.update_message(f'Load: {__name__}')
 
 from bin.automations import *
 from bin.constants import DISCLAIMER, __LICENSE__
-from bin.data_access import on_start, SQLAccess, json_write, json_read, AsciiImage
+from bin.data_access import on_start, SQLAccess, json_write, json_read, AsciiImage, try_delete_file
 from threading import Thread
 from os.path import getsize
 import tkinter as tk
 import customtkinter as ctk
 from tkinter import ttk
 from tkinter.font import Font
-from os import remove
 from zipfile import ZipFile
 from tkinter.colorchooser import askcolor
 from tkinter.filedialog import askopenfilename
@@ -20,12 +19,7 @@ ctk.set_appearance_mode('light')
 
 on_start()
 
-def try_delete_file(filepath: str | None) -> bool:
-    if filepath is not None:
-        if isfile(filepath):
-            remove(filepath)
-            return True
-    return False
+
 
 class TkinterApp(tk.Tk):
     """

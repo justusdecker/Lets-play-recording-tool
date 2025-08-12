@@ -16,9 +16,9 @@ from bin.player_video import VideoPlayer
 from bin.player_audio import AudioPlayer
 from bin.player_thumbnail import ThumbnailPreview
 from shutil import copyfile
-from bin.data_access import SQLAccess, cnef,rie, file_write
-from bin.constants import ERROR_007
+from bin.data_access import SQLAccess, cnef,rie, file_write, try_delete_file
 from time import sleep
+from subprocess import Popen
 
 try:
     from bin.jinja import deploy_render
@@ -513,12 +513,20 @@ class DeployWF(GenericWorkFlow):
         After that the corresponding error message will be displayed.
         """
         try:
-            DEST = askdirectory()
+            data_deletion = msgbox.askyesno('Question','Do you want to delete temp files?')
+            move_files = msgbox.askyesno('Question','Do you want to move the files to another path?')
+            if move_files:
+                DEST = askdirectory()
+            else:
+                DEST = f'{DEPLOY_FOLDER}{SQLAccess.read_letsplay_name(self.lpid)}\\'
+                cnef(DEST)
             reoc(not DEST,ERROR_006)
             ALL = []
             episodes = SQLAccess.read_episodes(self.lpid)
 
             for i in range(*self.rng):
+                
+                
                 old_thumbnail_path = episodes[i].thumbnail_path
                 reoc(old_thumbnail_path is None,ERROR_013)
                 reoc(not isfile(old_thumbnail_path),ERROR_007)
@@ -543,9 +551,25 @@ class DeployWF(GenericWorkFlow):
                     "thumbnail_path": new_thumbnail_path,
                     "upload_at": ''
                     }
+                
+                #! Delete Temps
+                if data_deletion:
+                    ep = episodes[i]
+                    for file in [
+                                    ep.thumbnail_path,
+                                    ep.audio_mic_edit1_path,
+                                    ep.audio_mic_edit2_path,
+                                    ep.audio_desktop_path,
+                                    ep.audio_mic_path,
+                                    ep.final_video_path
+                                ]:
+                        try_delete_file(file)
+                
+                    
                 ALL.append(REP)
             deploy_render(f'{DEST}\\view.html',episodes=ALL,title=self.lp_name,description=description)
             file_write(f'{DEST}\\style.css', DEPLOY_CSS)
+            Popen(f'explorer {DEST}')
             super().user_workflow()
         except AutomationError as AE:
             msgbox.showerror('Automation Error',str(AE))

@@ -129,6 +129,7 @@ TEMP_FOLDER = f'{ROOT}temp\\'
 THUMBNAIL_FOLDER = f'{ROOT}thumbnails\\'
 FIXED_AUDIO_FOLDER = f'{ROOT}audio_fixed\\'
 BACKUP_FOLDER = f'{ROOT}backup\\'
+DEPLOY_FOLDER = f'{ROOT}deploy\\'
 
 OBS_SETTINGS_PATH = f'{ROOT}obs_settings.json'
     

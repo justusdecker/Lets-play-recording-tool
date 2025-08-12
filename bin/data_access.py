@@ -20,6 +20,13 @@ import base64
 from PIL import ImageTk, Image
 from io import BytesIO
 
+def try_delete_file(filepath: str | None) -> bool:
+    if filepath is not None:
+        if isfile(filepath):
+            remove(filepath)
+            return True
+    return False
+
 class AsciiImage:
     def __init__(self, var: str):
         self.var = var
@@ -86,6 +93,7 @@ def on_start():
     cnef(TAD_FOLDER)
     cnef(TEMP_FOLDER)
     cnef(BACKUP_FOLDER)
+    cnef(DEPLOY_FOLDER)
 
     if not isfile(OBS_SETTINGS_PATH):
         json_write(OBS_SETTINGS_PATH,DEFAULT_OBS_SETTINGS)
