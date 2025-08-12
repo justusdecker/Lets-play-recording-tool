@@ -1,7 +1,7 @@
 from bin.welcome_popup import WELCOME
 WELCOME.update_message(f'Load: {__name__}')
 
-from tkinter import Toplevel, DoubleVar, LEFT
+from tkinter import Toplevel, DoubleVar, LEFT, Scale, HORIZONTAL
 from tkinter.ttk import Button, Label, LabeledScale
 from bin.ffmpeg import ffmpeg_run, FFMPEG_AUDIO_COMBINE_TRUNCATED
 from bin.constants import TEMP_FOLDER
@@ -21,12 +21,22 @@ class AudioPlayer(MediaPlayer):
         self.audio_list = paths
         self.current_episode = 0
         self.isfinished = False
+        self.desktop_vol = 1.
         super().__init__(app, True)
         
         self.finished_button = Button(self.bar,text='Apply Volume', command=self.destroy)
         self.finished_button.pack(side=LEFT)
         self.finished_all_button = Button(self.bar,text='Apply Volume to\nall episodes!', command=self.destroy)
         self.finished_all_button.pack(side=LEFT)
+        
+        self.desktop_volume_slider = Scale(
+            self.controls, from_=0, to=100,
+            orient=HORIZONTAL, label="Desktop Volume",
+            command=self.set_volume_desktop
+        )
+        
+        self.desktop_volume_slider.set(50)  # Set the default volume to 50%
+        self.desktop_volume_slider.pack(side=LEFT, padx=5)
     @property
     def current_media(self) -> list:
         return self.audio_list[self.current_episode]
@@ -58,7 +68,7 @@ class AudioPlayer(MediaPlayer):
         """ Change the selected episode. One up. """
         new_location = self.current_episode + 1
         
-        l = len(self.data)
+        l = len(self.audio_list)
         
         if new_location > l - 1:
             self.current_episode = l - 1
@@ -67,9 +77,11 @@ class AudioPlayer(MediaPlayer):
             self.set_title()
             self.open_file(self.media)
             self.play_video()
-    def set_volume(self, value):
-        super().set_volume(value)
-        self.current_media[4] = self.vol
+            
+    def set_volume_desktop(self, value):
+        self.desktop_vol = int(value)
+        self.current_media[4] = self.desktop_vol / 100 if self.desktop_vol else 0
+        
     def destroy(self):
         super().destroy()
         self.isfinished = True

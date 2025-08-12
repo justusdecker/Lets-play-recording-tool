@@ -86,6 +86,7 @@ class MediaPlayer(tk.Toplevel):
             orient=tk.HORIZONTAL, label="Volume",
             command=self.set_volume
         )
+        
         self.volume_slider.set(50)  # Set the default volume to 50%
         self.volume_slider.pack(side=tk.LEFT, padx=5)
 

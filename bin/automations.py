@@ -405,7 +405,7 @@ class CompareAndRenderWF(GenericWorkFlow):
             
             paths = [[i, episodes[i].audio_mic_edit2_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*self.rng)]
 
-            volap = AudioPlayer(paths)
+            volap = AudioPlayer(paths,self)
             while not volap.isfinished:
                 pass
             result = volap.audio_list
