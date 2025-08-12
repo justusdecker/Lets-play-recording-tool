@@ -47,9 +47,7 @@ class VideoPlayer(MediaPlayer):
         self.isfinished = False
         self.title_var = StringVar()
         self.lpid = lpid
-        
-        
-        
+
         super().__init__(app, audio_only=False)
         
         ttk.Label(self.bar,text='Title: ').pack(side=LEFT, padx=5)
@@ -102,6 +100,7 @@ class VideoPlayer(MediaPlayer):
                 frame
                 )
         except AutomationError as E:
+            
             showerror('ERROR','Cannot create Thumbnail.\n Dont select the last frame of a video.\nThat does not work work!')
             self.blocked = False
         
@@ -141,6 +140,7 @@ class VideoPlayer(MediaPlayer):
             self.set_title()
             self.open_file(self.video_path)
             self.play_video()
+            raise AutomationError
             
     def destroy(self):
         self.app.start_btn.state(['!disabled'])
@@ -149,4 +149,5 @@ class VideoPlayer(MediaPlayer):
             element.state(['!disabled'])
         for element in [self.app.label, self.app.lp_options,self.app.label2, self.app.label3,self.app.ep_end, self.app.ep_start]:
             element.state(['!disabled'])
+        self.isfinished = True
         return super().destroy()

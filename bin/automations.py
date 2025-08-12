@@ -18,7 +18,7 @@ from bin.player_thumbnail import ThumbnailPreview
 from shutil import copyfile
 from bin.data_access import SQLAccess, cnef,rie, file_write
 from bin.constants import ERROR_007
-
+from time import sleep
 
 try:
     from bin.jinja import deploy_render
@@ -406,8 +406,12 @@ class CompareAndRenderWF(GenericWorkFlow):
             paths = [[i, episodes[i].audio_mic_edit2_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*self.rng)]
 
             volap = AudioPlayer(paths,self)
-            while not volap.isfinished:
-                pass
+            
+            while volap.winfo_exists():
+                sleep(1)
+            if not volap.isfinished:
+                msgbox.showerror('ERROR','User interrupt!')
+                return
             result = volap.audio_list
             
             cnef(TEMP_FOLDER)
@@ -458,6 +462,8 @@ class CompareAndRenderWF(GenericWorkFlow):
                 SQLAccess.update_episode(self.lpid, index, final_video_path=final_path)
             super().user_workflow()
         except AutomationError as AE:
+            if 'volap' in locals(): # This will fix issue #234
+                volap.destroy()
             msgbox.showerror('Automation Error',str(AE))
         # After processing all episodes, we re-enabling the application's start button
         # and calling the parent `user_workflow` to display the completion message.
@@ -480,7 +486,12 @@ class TitleSetWF(GenericWorkFlow):
         """
         app.start_btn.state(['disabled'])
         
-        VideoPlayer([i + 1 for i in range(*self.rng)],self.lpid,app)
+
+        video_player = VideoPlayer([i + 1 for i in range(*self.rng)],self.lpid,app)
+        while video_player.winfo_exists(): # Fix for issue #234
+            sleep(1)
+
+        
 
 class DeployWF(GenericWorkFlow):
     """

@@ -24,9 +24,9 @@ class AudioPlayer(MediaPlayer):
         self.desktop_vol = 1.
         super().__init__(app, True)
         
-        self.finished_button = Button(self.bar,text='Apply Volume', command=self.destroy)
+        self.finished_button = Button(self.bar,text='Apply Volume', command=self.save_destroy)
         self.finished_button.pack(side=LEFT)
-        self.finished_all_button = Button(self.bar,text='Apply Volume to\nall episodes!', command=self.destroy)
+        self.finished_all_button = Button(self.bar,text='Apply Volume to\nall episodes!', command=self.apply_vol_to_all_and_destroy)
         self.finished_all_button.pack(side=LEFT)
         
         self.desktop_volume_slider = Scale(
@@ -77,14 +77,25 @@ class AudioPlayer(MediaPlayer):
             self.set_title()
             self.open_file()
             self.play_video()
-            
+    def play_video(self):
+        self.open_file()
+        return super().play_video()
+    
     def open_file(self):
-        return super().open_file(self.open_file(self.media))
+        return super().open_file(self.media)
     
     def set_volume_desktop(self, value):
         self.desktop_vol = int(value)
         self.current_media[4] = self.desktop_vol / 100 if self.desktop_vol else 0
         
-    def destroy(self):
-        super().destroy()
+    def apply_vol_to_all_and_destroy(self):
+        for media in self.audio_list:
+            media[4] = self.desktop_vol
+        self.save_destroy()
+        
+    def save_destroy(self):
         self.isfinished = True
+        self.destroyed = True
+        self.destroy()
+
+        
