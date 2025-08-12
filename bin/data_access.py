@@ -15,6 +15,19 @@ import json
 from bin.constants import *
 from os.path import isfile, isdir
 from os import mkdir, remove
+from PIL import ImageTk, Image
+import base64
+from PIL import ImageTk, Image
+from io import BytesIO
+class AsciiImage:
+    def __init__(self, var: str):
+        self.var = var
+
+        decoded_data =  base64.b64decode(var.encode('ascii'))
+        io_stream = BytesIO(decoded_data)
+        img = Image.open(io_stream)
+        self.image = ImageTk.PhotoImage(img)
+
 
 DB_URL = f"sqlite:///{ROOT}lprt_data.db" # Define the database URL
 

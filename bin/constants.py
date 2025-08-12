@@ -12,6 +12,9 @@ Some features might not work as expected & can cause data loss! Be careful!
 For Documentation, please look up the GitHub-wiki
 """
 
+ICO_RUN = "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAABJ0AAASdAHeZh94AAABXUlEQVRYCdWU4RXCMAiE1ec4juAezugejuA+NajXd0UChOpT+8OkCdx3IdTN5svPdi3/crpOrHE8H4Y0h4IZ1MDyuoBjf8TEDknvHJ/mUpIfMdDIZmUsR2UDrcyWHtbSV1s2AJI1BuYWKasMdJotfXpxkgr2Ol5ExAgab+T0KQMRXETk6VTjsen87p09bM0dzZBmbF5HoB5RlbY+cS7HZQzc43sCLMbzbOXcJsQpNRzrCqgrMr/rfM4baUK553uuZYBFee7BJc6tgBLi19Q8gotIqgJMs+4WIK4M1jjXmqeb0ErWa1ko56WvgJN4XoFyfsXA3N0sVJ1XDFRZZt7XDQx9BdzlfJw1fZA20IPDSNVEyoCGM8zbgzlvDHtgFKDjPbjsdSughfjUlijHR7GcvzDQRGTv5TuPBKtwgem/4gU8AovATzxSAa7CiKmwCSOxKhi6qw1A6G+uC4Yx3gDHfXlp0A+QAQAAAABJRU5ErkJggg=="
+
+
 DEFAULT_THUMBNAIL_SIZE = (1280,720)
 
 def reoc(cond: bool,msg: str) -> None:
