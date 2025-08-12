@@ -145,17 +145,19 @@ class VideoPlayer(Toplevel):
         self.blocked = True
         length = ffmpeg_run(FFMPEG_GET_LENGTH)
         if length is None: return
-        frame = self.player.get_time() * .0001
-        self.stop_video()
-
-        self.tg.generate(
-            str(self.data[self.current_episode]),
-            self.video_path,
-            SQLAccess.read_tad_path(self.lpid),
-            f'{THUMBNAIL_FOLDER}_generated_from_video_{self.data[self.current_episode]}.png',
-            frame
-            )
-        self.open_file()
+        frame = self.player.get_time() * .001
+        try:
+            self.tg.generate(
+                str(self.data[self.current_episode]),
+                self.video_path,
+                SQLAccess.read_tad_path(self.lpid),
+                f'{THUMBNAIL_FOLDER}_generated_from_video_{self.data[self.current_episode]}.png',
+                frame
+                )
+        except AutomationError as E:
+            showerror('ERROR','Cannot create Thumbnail.\n Dont select the last frame of a video.\nThat does not work work!')
+            self.blocked = False
+        
         print('finished generating')
         self.blocked = False
     @property

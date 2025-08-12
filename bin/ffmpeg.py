@@ -11,7 +11,9 @@ from bin.constants import TEMP_FOLDER
 # - '-stats': Displays encoding progress statistics.
 # - '-loglevel error': Sets the logging level to show only error messages.
 # - '-y': Overwrites output files without asking for confirmation.
-FFMPEG_DEFAULT = ['ffmpeg', '-v', 'quiet', '-stats' , '-loglevel', 'error', '-y']
+FFMPEG_DEFAULT = ['ffmpeg', '-y']
+
+FFMPEG_DEFAULT_PRODUCTION = ['ffmpeg', '-v', 'quiet', '-stats' , '-loglevel', 'error', '-y']
 
 # FFMPEG_CONVERT_AUDIO_TYPE: Command to convert an audio file's type.
 # - '__IN__': Placeholder for the input audio file path.
@@ -84,7 +86,7 @@ FFMPEG_VIDEO_RENDER = [*FFMPEG_DEFAULT, '-an', '-i', '__VIDEO__', '-i', '__AUDIO
 # - '__IN__': Placeholder for the input video file path.
 # - '-frames:v 1': Extracts only one video frame.
 # - 'temp.png': The output file name for the extracted frame.
-FFMPEG_GET_FRAME = [*FFMPEG_DEFAULT, '-ss', '__TIME__', '-i', '__IN__', '-frames:v', '1', f'{TEMP_FOLDER}temp.png']
+FFMPEG_GET_FRAME = [*FFMPEG_DEFAULT, '-ss', '__TIME__' , '-accurate_seek', '-i', '__IN__', '-frames:v', '1', f'{TEMP_FOLDER}temp.png']
 
 # FFMPEG_GET_LENGTH: Command (using ffprobe) to get the duration of a video stream.
 # - 'ffprobe': The FFprobe executable (part of the FFmpeg suite).

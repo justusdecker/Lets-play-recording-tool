@@ -16,6 +16,62 @@ from bin.ffmpeg import ffmpeg_run, FFMPEG_GET_FRAME, FFMPEG_GET_LENGTH
 from pygame.font import Font, init, get_default_font
 init()
 
+
+    
+import cv2
+import random
+from io import BytesIO
+# Fix for issue #260
+
+def get_video_duration(filepath: str) -> float:
+    """ Gets the duration of the given video """
+    vidcap = cv2.VideoCapture(filepath)
+    if not vidcap.isOpened():
+        print("Error. Video cannot be opened!")
+        return 0.0
+    
+    fps = vidcap.get(cv2.CAP_PROP_FPS)
+    frame_count = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
+    duration_s = frame_count / fps
+    vidcap.release()
+    return duration_s
+
+def extract_frame(filepath: str, timestamp_s: float = None):
+    """
+    Extracts a frame from a video with OpenCV
+    """
+    vidcap = cv2.VideoCapture(filepath)
+    if not vidcap.isOpened():
+        return False, None
+
+    if timestamp_s is None:
+        duration = get_video_duration(filepath)
+        if duration > 0:
+            timestamp_s = random.uniform(0, duration)
+            print(f"Extrahiere zufälligen Frame bei {timestamp_s:.2f}s...")
+        else:
+            return False, None
+
+    # Setze die Position des Videos auf den gewünschten Zeitstempel (in ms)
+    vidcap.set(cv2.CAP_PROP_POS_MSEC, int(timestamp_s * 1000))
+    
+    success, frame = vidcap.read()
+    vidcap.release()
+    
+    if success:
+        return True, frame
+    else:
+        print(f"Fehler: Frame bei {timestamp_s}s konnte nicht extrahiert werden.")
+        return False, None
+
+
+def save_frame_to_file(frame_data: any, output_path: str):
+    """ Saves a frame to disk """
+    cv2.imwrite(output_path, frame_data)
+    print(f"Saved image successfully: {output_path}")
+
+
+
 def get_time_va(filepath: str):
     time_or_error = ffmpeg_run(FFMPEG_GET_LENGTH,{'__IN__':filepath},True)
     try:
@@ -29,9 +85,12 @@ def get_thumbnail(filepath: str,frame:None) -> Surface:
         t = rnd() * get_time_va(filepath)
     else:
         t = frame
-    print(t,frame,get_time_va(filepath))
+    print(t,frame,get_time_va(filepath),filepath)
     rie(f'{TEMP_FOLDER}temp.png')
     ffmpeg_run(FFMPEG_GET_FRAME,{'__IN__': filepath, '__TIME__': t})
+    #s, fr = extract_frame(filepath,t)
+    #if s:
+    #    save_frame_to_file(fr,f'{TEMP_FOLDER}temp.png')
     reoc(not isfile(f'{TEMP_FOLDER}temp.png'),ERROR_007)
     return img_load(f'{TEMP_FOLDER}temp.png')
 
