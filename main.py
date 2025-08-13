@@ -400,8 +400,11 @@ class Recording(tk.Frame):
     def lp_changed(self,*args):
         self.btn_connect.state(["!disabled"])
     def get_connection(self):
+        if self.thread:
+            self.close_connection = True
         self.lp_options.state(['disabled'])
         if self.thread is None:
+            self.close_connection = False
             self.thread = Thread(target=self.__get_connection)
             self.thread.start()
     def __get_connection(self):
@@ -416,7 +419,8 @@ class Recording(tk.Frame):
 
         self.btn_connect.state(["!disabled"])
         change_states(self.menu,'!disabled') # Reactivating
-        self.btn_connect.configure(text='Error occured! Try again')
+        if not self.close_connection:
+            self.btn_connect.configure(text='Error occured! Try again')
         self.thread = None
         self.lp_options.state(['!disabled'])
             

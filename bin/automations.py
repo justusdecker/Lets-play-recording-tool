@@ -61,8 +61,13 @@ def obs_connect(el):
         obs_rec_label_set(OBSO,el, True)
         el.btn_connect.configure(text= 'No Connection!')
         return
+    el.btn_connect.configure(text= 'Disconnect')
+    el.btn_connect.state(["!disabled"])
     while OBSO.isconnected:
-        el.btn_connect.configure(text= 'Connection established')
+        if el.close_connection:
+            OBSO.client.disconnect()
+            el.btn_connect.configure(text= 'Connection closed!')
+            return
         try:
             id = SQLAccess.read_letsplay_names().index(el.lp_option_var.get())
             if OBSO.time_in_seconds:
@@ -110,7 +115,7 @@ class GenericWorkFlow:
                              for the workflow.
         """
         return self.epr[0],self.epr[1]+(1 if self.epr[0] == self.epr[1] else 0)
-        
+    
     def user_workflow(self):
         """
         Executes the primary user-facing part of the workflow.
