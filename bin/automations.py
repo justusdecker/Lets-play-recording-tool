@@ -264,6 +264,7 @@ class FixAudioWF(GenericWorkFlow):
         Executes the audio fixing process for each microphone audio track
         within the defined episode range.
         """
+        app.get_ffmpeg_audio_filter_string()
         try:
             cnef(FIXED_AUDIO_FOLDER)
             episodes = SQLAccess.read_episodes(self.lpid)

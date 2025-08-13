@@ -343,7 +343,7 @@ class AutomationFrame(tk.Frame):
         del self.epstart_option_var
         del self.epend_option_var
         
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.THUMBNAIL_AUTOMATION,self.run,self.check_last_id,self.epnums)
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.normal_options,self.run,self.check_last_id,self.epnums)
         
     def check_last_id(self,*args):
         """
