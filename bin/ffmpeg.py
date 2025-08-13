@@ -65,7 +65,7 @@ FFMPEG_AUDIO_COMBINE_TRUNCATED = [*FFMPEG_DEFAULT, '-ss' ,'00:00:00', '-to', '00
 #   - 'loudnorm=-15': Applies loudness normalization to -15 LUFS (Loudness Units Full Scale).
 #   - 'compand=...': Applies a dynamic range compression/expansion filter with specific parameters.
 # - '__OUT__': Placeholder for the output processed audio file path.
-FFMPEG_AUDIO_PF_LN_L = [*FFMPEG_DEFAULT, '-i', '__IN__', '-af','highpass=f=175, lowpass=f=13000, loudnorm=I=-15:TP=-1.5:LRA=11', '__OUT__']
+FFMPEG_AUDIO_PF_LN_L = [*FFMPEG_DEFAULT, '-i', '__IN__', '-af','__FILTERS__', '__OUT__']
 
 #! The new audiofilter will be:
 #highpass=f=175, lowpass=f=13000, loudnorm=I=-15:TP=-1.5:LRA=11

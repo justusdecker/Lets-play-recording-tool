@@ -539,8 +539,11 @@ class FixAudio(AutomationFrame):
         # Loudness Normalization
         if self.ln_enabled.get():
             filters.append(f"loudnorm=I={self.ln_i.get()}:TP={self.ln_tp.get()}:LRA={self.ln_lra.get()}")
-            
-        print(",".join(filters))
+        
+        if not filters: # This will prevent no audio filter usage!
+            raise AutomationError
+        
+        return ", ".join(filters)
 
 class Send2Audacity(AutomationFrame):
     def __init__(self, parent, controller):
