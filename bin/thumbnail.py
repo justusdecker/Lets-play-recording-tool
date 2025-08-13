@@ -118,6 +118,7 @@ class ThumbnailGenerator:
 
     frame (float, optional): The timestamp (in seconds) of the specific frame to extract from the video. If -1, a random frame is chosen. Defaults to -1.
         """
+        
         print((f'[Thumbnail Generate]: {video_path}',94))
         self.tad = json_read(TAD_FOLDER + tad_path)
         if video_path is None:

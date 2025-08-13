@@ -310,7 +310,8 @@ class AutomationFrame(tk.Frame):
         a, b = int(self.epstart_option_var.get()) , int(self.epend_option_var.get())
         
         lp = SQLAccess.read_letsplay_by_option_var(self)
-        self.thread = self.automation_callback(lp,[a-1,b],self)
+        self.automation_callback(lp,[a-1,b],self)
+        
         if not self.should_not_reset:
             
             change_states(self.menu,'!disabled')
