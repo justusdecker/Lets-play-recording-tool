@@ -3,14 +3,13 @@ WELCOME.update_message(f'Load: {__name__}')
 
 from bin.automations import *
 from bin.constants import DISCLAIMER, __LICENSE__
-from bin.data_access import on_start, SQLAccess, json_write, json_read
+from bin.data_access import on_start, SQLAccess, json_write, json_read, AsciiImage, try_delete_file
 from threading import Thread
 from os.path import getsize
 import tkinter as tk
 import customtkinter as ctk
 from tkinter import ttk
 from tkinter.font import Font
-from os import remove
 from zipfile import ZipFile
 from tkinter.colorchooser import askcolor
 from tkinter.filedialog import askopenfilename
@@ -20,12 +19,7 @@ ctk.set_appearance_mode('light')
 
 on_start()
 
-def try_delete_file(filepath: str | None) -> bool:
-    if filepath is not None:
-        if isfile(filepath):
-            remove(filepath)
-            return True
-    return False
+import bin.ffmpeg
 
 class TkinterApp(tk.Tk):
     """
@@ -118,7 +112,7 @@ def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,
     lp_option_var = tk.StringVar(parent)
         
     #lps = LetsPlays
-    names = SQLAccess.get_lp_names()
+    names = SQLAccess.read_letsplay_names()
     options = ttk.OptionMenu(parent,lp_option_var,'None',*names,command=callback)
     
     options.grid(row = 0, column = 2)
@@ -142,8 +136,10 @@ def get_episode_range(parent, run_callback: callable, check_callback: callable,f
     label2 = ttk.Label(parent, text ="Episode end")
 
     label2.grid(row = 0, column = 5) 
-
-    start_btn = ttk.Button(parent, text ="Run",command=run_callback)
+    img = AsciiImage(ICO_RUN)
+    
+    start_btn = ttk.Button(parent, image=img.image,command=run_callback)
+    start_btn.image = img.image
     if not ft:
         start_btn.state(['disabled'])
 
@@ -252,21 +248,24 @@ class AutomationFrame(tk.Frame):
         self.menu = get_menu(self, controller)
         
         # Create Headers
-        THUMBNAIL_AUTOMATION = ttk.Frame(W)
-        thumbnail_automation_header = ttk.Label(W,text=name,font=Font(W,size=16))
-
-        self.THUMBNAIL_AUTOMATION = THUMBNAIL_AUTOMATION
+        AUTOMATION_ROOT = ttk.Frame(W)
         
-        self.label, self.lp_options, self.lp_option_var= get_lets_play(THUMBNAIL_AUTOMATION, self.lp_changed)
+        self.normal_options = ttk.Frame(AUTOMATION_ROOT)
+        
+        automation_root_header = ttk.Label(W,text=name,font=Font(W,size=16))
+
+        self.AUTOMATION_ROOT = AUTOMATION_ROOT
+        
+        self.label, self.lp_options, self.lp_option_var= get_lets_play(self.normal_options, self.lp_changed)
         
         
         self.update_ui()
         
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(THUMBNAIL_AUTOMATION,self.run,self.check_last_id,self.epnums)
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.normal_options,self.run,self.check_last_id,self.epnums)
         
-        
-        thumbnail_automation_header.pack(pady=10)
-        THUMBNAIL_AUTOMATION.pack()
+        self.normal_options.pack()
+        automation_root_header.pack(pady=10)
+        AUTOMATION_ROOT.pack()
         
         W.grid(row=0,column=1)
         
@@ -280,7 +279,7 @@ class AutomationFrame(tk.Frame):
         """
         lp = self.lp_option_var.get()
         if lp != 'None':
-            self.epnums = [i+1 for i in range(SQLAccess.get_episode_ammount(SQLAccess.get_lp_opvar(self)))]
+            self.epnums = [i+1 for i in range(SQLAccess.read_episode_ammount(SQLAccess.read_letsplay_by_option_var(self)))]
         else:
             self.epnums = []
             
@@ -310,8 +309,9 @@ class AutomationFrame(tk.Frame):
         change_states([self.label2, self.label3,self.ep_end, self.ep_start],'disabled')
         a, b = int(self.epstart_option_var.get()) , int(self.epend_option_var.get())
         
-        lp = SQLAccess.get_lp_opvar(self)
-        self.thread = self.automation_callback(lp,[a-1,b],self)
+        lp = SQLAccess.read_letsplay_by_option_var(self)
+        self.automation_callback(lp,[a-1,b],self)
+        
         if not self.should_not_reset:
             
             change_states(self.menu,'!disabled')
@@ -344,7 +344,7 @@ class AutomationFrame(tk.Frame):
         del self.epstart_option_var
         del self.epend_option_var
         
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.THUMBNAIL_AUTOMATION,self.run,self.check_last_id,self.epnums)
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.normal_options,self.run,self.check_last_id,self.epnums)
         
     def check_last_id(self,*args):
         """
@@ -401,15 +401,18 @@ class Recording(tk.Frame):
     def lp_changed(self,*args):
         self.btn_connect.state(["!disabled"])
     def get_connection(self):
+        if self.thread:
+            self.close_connection = True
         self.lp_options.state(['disabled'])
         if self.thread is None:
+            self.close_connection = False
             self.thread = Thread(target=self.__get_connection)
             self.thread.start()
     def __get_connection(self):
         
         change_states(self.menu,'disabled') # Deactivates all menu buttons for safety reasons
         
-        ep = SQLAccess.read_episodes(SQLAccess.get_lp_names().index(self.lp_option_var.get()))
+        ep = SQLAccess.read_episodes(SQLAccess.read_letsplay_names().index(self.lp_option_var.get()))
         self.btn_connect.state(["disabled"])
         self.btn_connect.configure(text='Try connection to OBS...')
         #! Currently Disconnecting only works by closing OBS <- mainly for safety reasons!
@@ -417,7 +420,8 @@ class Recording(tk.Frame):
 
         self.btn_connect.state(["!disabled"])
         change_states(self.menu,'!disabled') # Reactivating
-        self.btn_connect.configure(text='Error occured! Try again')
+        if not self.close_connection:
+            self.btn_connect.configure(text='Error occured! Try again')
         self.thread = None
         self.lp_options.state(['!disabled'])
             
@@ -442,6 +446,109 @@ class FixAudio(AutomationFrame):
     def __init__(self, parent, controller):
         super().__init__(parent, controller, 'Fix Audio')
         self.automation_callback = FixAudioWF
+        audio_filters_frame = ttk.Frame(self.AUTOMATION_ROOT)
+        audio_filters_frame.pack(pady=10,)
+
+        # Highpass Filter
+        hp_frame = ttk.LabelFrame(audio_filters_frame, text="High-Pass Filter")
+        hp_frame.pack(fill='x', padx=5, pady=5)
+        
+        self.hp_enabled = tk.BooleanVar(value=False)
+        self.hp_freq = tk.DoubleVar(value=175.0)
+        
+        ttk.Checkbutton(hp_frame, text="Aktivate", variable=self.hp_enabled).grid(row=0, column=0, sticky='w')
+        ttk.Label(hp_frame, text="Frequency (Hz):").grid(row=0, column=1, sticky='w')
+        ttk.Spinbox(
+            hp_frame,
+            from_=20.0,
+            to=5000.0,
+            increment=1.0,
+            textvariable=self.hp_freq,
+            width=8
+        ).grid(row=0, column=2, sticky='w')
+
+        # Lowpass Filter
+        lp_frame = ttk.LabelFrame(audio_filters_frame, text="Low-Pass Filter")
+        lp_frame.pack(fill='x', padx=5, pady=5)
+        
+        self.lp_enabled = tk.BooleanVar(value=False)
+        self.lp_freq = tk.DoubleVar(value=13000.0)
+        
+        ttk.Checkbutton(lp_frame, text="Aktivate", variable=self.lp_enabled).grid(row=0, column=0, sticky='w')
+        ttk.Label(lp_frame, text="Frequency (Hz):").grid(row=0, column=1, sticky='w')
+        ttk.Spinbox(
+            lp_frame,
+            from_=500.0,
+            to=20000.0,
+            increment=100.0,
+            textvariable=self.lp_freq,
+            width=8
+        ).grid(row=0, column=2, sticky='w')
+
+        # Loudness Normalization
+        ln_frame = ttk.LabelFrame(audio_filters_frame, text="Loudness Normalization")
+        ln_frame.pack(fill='x', padx=5, pady=5)
+        
+        self.ln_enabled = tk.BooleanVar(value=True)
+        self.ln_i = tk.DoubleVar(value=-15.0)
+        self.ln_tp = tk.DoubleVar(value=-1.5)
+        self.ln_lra = tk.DoubleVar(value=11.0)
+        
+        ttk.Checkbutton(ln_frame, text="Aktivate", variable=self.ln_enabled).grid(row=0, column=0, sticky='w', columnspan=2)
+        
+        ttk.Label(ln_frame, text="Integrated (LUFS):").grid(row=1, column=0, sticky='w')
+        ttk.Spinbox(
+            ln_frame,
+            from_=-24.0,
+            to=-10.0,
+            increment=0.5,
+            textvariable=self.ln_i,
+            width=6
+        ).grid(row=1, column=1, sticky='w')
+
+        ttk.Label(ln_frame, text="True Peak (dBTP):").grid(row=2, column=0, sticky='w')
+        ttk.Spinbox(
+            ln_frame,
+            from_=-6.0,
+            to=0.0,
+            increment=0.1,
+            textvariable=self.ln_tp,
+            width=6
+        ).grid(row=2, column=1, sticky='w')
+
+        ttk.Label(ln_frame, text="Loudness Range (LU):").grid(row=3, column=0, sticky='w')
+        ttk.Spinbox(
+            ln_frame,
+            from_=1.0,
+            to=20.0,
+            increment=1.0,
+            textvariable=self.ln_lra,
+            width=6
+        ).grid(row=3, column=1, sticky='w')
+
+    def get_ffmpeg_audio_filter_string(self):
+        """
+        Constructs the FFmpeg audio filter string based on the current UI settings.
+        Returns the filter string or None if no filters are enabled.
+        """
+        filters = []
+        
+        # Highpass Filter
+        if self.hp_enabled.get():
+            filters.append(f"highpass=f={self.hp_freq.get()}")
+            
+        # Lowpass Filter
+        if self.lp_enabled.get():
+            filters.append(f"lowpass=f={self.lp_freq.get()}")
+
+        # Loudness Normalization
+        if self.ln_enabled.get():
+            filters.append(f"loudnorm=I={self.ln_i.get()}:TP={self.ln_tp.get()}:LRA={self.ln_lra.get()}")
+        
+        if not filters: # This will prevent no audio filter usage!
+            raise AutomationError
+        
+        return ", ".join(filters)
 
 class Send2Audacity(AutomationFrame):
     def __init__(self, parent, controller):
@@ -547,21 +654,24 @@ class FileManager(tk.Frame):
         self.episode_length_var = tk.StringVar()
         
         new_label = ttk.Label(LP_CREATE,text='Create a new Lets Play')
-        
+        name_label = ttk.Label(LP_CREATE,text='Name')
+        game_name_label = ttk.Label(LP_CREATE,text='Gamename')
         name = ttk.Entry(LP_CREATE,textvariable=self.name_var)
         game_name = ttk.Entry(LP_CREATE,textvariable=self.game_name_var)
         episode_length = ttk.OptionMenu(LP_CREATE,self.episode_length_var,'None',*[f'{i} Minutes' for i in range(10,65,5)],command=self.something_changed)
         self.btn_lp_create = ttk.Button(LP_CREATE,text='create',command=self.create_lets_play)
         
-        name.bind('<KeyPress>',self.something_changed)
-        game_name.bind('<KeyPress>',self.something_changed)
+        name.bind('<KeyRelease>',self.something_changed)
+        game_name.bind('<KeyRelease>',self.something_changed)
         self.btn_lp_create.state(['disabled'])
         
         new_label.grid(row=0,column=1)
-        name.grid(row = 0, column = 2)
-        game_name.grid(row = 0, column = 3)
-        episode_length.grid(row=0,column=4)
-        self.btn_lp_create.grid(row=0,column=5)
+        name_label.grid(row = 0, column = 2)
+        name.grid(row = 0, column = 3)
+        game_name_label.grid(row = 0, column = 4)
+        game_name.grid(row = 0, column = 5)
+        episode_length.grid(row=0,column=6)
+        self.btn_lp_create.grid(row=0,column=7)
         
         data_lp_create_header.pack(pady=10)
         LP_CREATE.pack()
@@ -590,11 +700,11 @@ class FileManager(tk.Frame):
         'Let's Play' series.
         """
         change_states(self.menu,'disabled')
-        lpid = SQLAccess.get_lp_names().index(self.backup_lp_option_var.get())
-        lpname = SQLAccess.get_lp_names()[lpid]
+        lpid = SQLAccess.read_letsplay_names().index(self.backup_lp_option_var.get())
+        lpname = SQLAccess.read_letsplay_names()[lpid]
         cnef(BACKUP_FOLDER)
         ZIP = ZipFile(f'{BACKUP_FOLDER}{lpname}.7z','w',)
-        tad = SQLAccess.get_tad_path(lpid)
+        tad = SQLAccess.update_tad_path(lpid)
         
         if tad is not None:
             if isfile(TAD_FOLDER+tad):
@@ -633,7 +743,7 @@ class FileManager(tk.Frame):
         """
         lp = self.simdel_lp_option_var.get()
         if lp != 'None':
-            self.epnums = [i+1 for i in range(SQLAccess.get_episode_ammount(SQLAccess.get_lp_names().index(self.simdel_lp_option_var.get())))]
+            self.epnums = [i+1 for i in range(SQLAccess.read_episode_ammount(SQLAccess.read_letsplay_names().index(self.simdel_lp_option_var.get())))]
         else:
             self.epnums = []
             
@@ -681,7 +791,12 @@ class FileManager(tk.Frame):
         Enables or disables the 'create' button based on whether all required
         fields are filled and the 'Let's Play' name is unique.
         """
-        if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.get_lp_names():
+        for char in self.game_name_var.get(): # See issue #236
+            if char not in 'abcdefghijklmnopqrstuvwxyz_':
+                self.btn_lp_create.state(['disabled'])
+                return 
+        
+        if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.read_letsplay_names():
             self.btn_lp_create.state(['!disabled'])
             
         else:
@@ -706,7 +821,7 @@ class FileManager(tk.Frame):
         Validates inputs, disables UI, creates the entry via SQLAccess,
         shows a success message, and then exits the application.
         """
-        if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.get_lp_names():
+        if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.read_letsplay_names():
             change_states(self.menu,'disabled')
             SQLAccess.create_letsplay(self.name_var.get(), self.game_name_var.get(),int(self.episode_length_var.get().split(' ')[0])*60)
             msgbox.showinfo('Success', 'Lets Play created\nYou must restart the app!')
@@ -721,7 +836,7 @@ class FileManager(tk.Frame):
         """
         ok = msgbox.askyesno('Attention','You are trying to delete all files in the selected lets play & \nthe lets play itself!\nThis step is irreversible!\nContinue?')
         if not ok: return
-        lpid = SQLAccess.get_lp_names().index(self.lp_option_var.get())
+        lpid = SQLAccess.read_letsplay_names.index(self.lp_option_var.get())
         if self.delete_lp_option.get():
             for ep in SQLAccess.read_episodes(lpid):#BUG
                 
@@ -737,8 +852,6 @@ class FileManager(tk.Frame):
                     try_delete_file(file)
                     #print(ep.lpid, ep.id, )
         change_states(self.menu,'disabled')
-        #! Deleting Lets Play 
-        #! SQLAccess.delete_letsplay(SQLAccess.get_lp_names().index(self.lp_option_var.get()))
         msgbox.showinfo('Success', 'Lets Play deleted\nYou must restart the app!')
         exit()
     
@@ -795,8 +908,8 @@ class FileManager(tk.Frame):
         """
         ok = msgbox.askyesno('Attention','You are trying to delete all files in the selected lets play\nThis step is irreversible!\nContinue?')
         if not ok: return
-        lpid = SQLAccess.get_lp_names().index(self.simdel_lp_option_var.get())
-        print(SQLAccess.get_lp_names().index(self.simdel_lp_option_var.get()),self.simdel_lp_option_var.get())
+        lpid = SQLAccess.read_letsplay_names().index(self.simdel_lp_option_var.get())
+        print(SQLAccess.read_letsplay_names().index(self.simdel_lp_option_var.get()),self.simdel_lp_option_var.get())
         episodes = SQLAccess.read_episodes(lpid)
 
         for i in range(*self.rng): #! Test first
@@ -1195,8 +1308,8 @@ class TadEditor(tk.Frame):
         if self.lp_option_var.get() != 'None':
             self.save_btn.state(['!disabled'])
             change_states([ui.ui for ui in self.ui_elements],'!disabled')
-            lpid = SQLAccess.get_lp_opvar(self)
-            filepath = SQLAccess.get_tad_path(lpid)
+            lpid = SQLAccess.read_letsplay_by_option_var(self)
+            filepath = SQLAccess.read_tad_path(lpid)
             
             #! No JSONDecodError catch
             #! No wrong type catch[case: only if user change the data outside of lprt!]
@@ -1220,18 +1333,18 @@ class TadEditor(tk.Frame):
         if not hasattr(self,'tw'):
             self.tw = ThumbnailPreview()
         DATA = {key: ui.var.get() for ui, key in zip(self.ui_elements, DEFAULT_TAD)}
-        lpid = SQLAccess.get_lp_opvar(self)
-        lpname = SQLAccess.get_lp_name(lpid)
+        lpid = SQLAccess.read_letsplay_by_option_var(self)
+        lpname = SQLAccess.read_letsplay_name(lpid)
         filepath = f'{lpname}.json'
         json_write(f'{TAD_FOLDER}{filepath}',DATA)
         print(DATA)
         #- Update Database
-        SQLAccess.set_tadpath(lpid, filepath)
+        SQLAccess.update_tadpath(lpid, filepath)
         
         self.tg.generate(
             '123',
             None,
-            SQLAccess.get_tad_path(lpid),
+            SQLAccess.read_tad_path(lpid),
             f'{TEMP_FOLDER}preview.png'
         )
         

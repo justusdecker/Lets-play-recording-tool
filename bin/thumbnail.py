@@ -3,7 +3,7 @@ WELCOME.update_message(f'Load: {__name__}')
 
 from bin.constants import *
 
-from pygame.transform import scale, flip, rotate, scale_by
+from pygame.transform import scale, flip, rotate, scale_by, rotozoom
 from pygame import Surface,SRCALPHA,Color,mask
 
 from random import random as rnd, randint as ri
@@ -29,7 +29,7 @@ def get_thumbnail(filepath: str,frame:None) -> Surface:
         t = rnd() * get_time_va(filepath)
     else:
         t = frame
-    print(t,frame,get_time_va(filepath))
+    print(t,frame,get_time_va(filepath),filepath)
     rie(f'{TEMP_FOLDER}temp.png')
     ffmpeg_run(FFMPEG_GET_FRAME,{'__IN__': filepath, '__TIME__': t})
     reoc(not isfile(f'{TEMP_FOLDER}temp.png'),ERROR_007)
@@ -118,6 +118,7 @@ class ThumbnailGenerator:
 
     frame (float, optional): The timestamp (in seconds) of the specific frame to extract from the video. If -1, a random frame is chosen. Defaults to -1.
         """
+        
         print((f'[Thumbnail Generate]: {video_path}',94))
         self.tad = json_read(TAD_FOLDER + tad_path)
         if video_path is None:
@@ -300,8 +301,7 @@ class ThumbnailGenerator:
         #center image position calculation [x,y] [w,h]
         # x - (w / 2) & y - (h / 2)
         return surf
-    
-    def __render_background(self, filepath: str, frame: float): #Here rotation, color manipulation will be added
+    def __render_background(self, filepath: str, frame: float):
         """
         Renders the background image for the thumbnail, applying positional offsets, random rotation, and random scaling based on self.tad configuration.
 
@@ -317,23 +317,20 @@ class ThumbnailGenerator:
 
             pygame.Surface: A Pygame Surface representing the prepared background image.
         """
-        # Manipulate pos
-        rx,ry = [self.tad['bg::r_pos::x-from'], self.tad['bg::r_pos::x-to']],[self.tad['bg::r_pos::y-from'], self.tad['bg::r_pos::y-to']]
-        rx, ry = ri(*rx), ri(*ry)
-        mpx = self.tad['bg::pos::x'] + rx
-        mpy = self.tad['bg::pos::y'] + ry
         img = self.__get_src_image(filepath, frame)
+        r_rot_from = int(self.tad['bg::r_rot::from'] * 100)
+        r_rot_to = int(self.tad['bg::r_rot::to'] * 100)
+        final_rot = self.tad['bg::rot'] + (ri(r_rot_from, r_rot_to) / 100)
         
-        a, b = [self.tad['bg::r_rot::from'], self.tad['bg::r_rot::to']]
-        a, b = int(a * 100), int(b * 100)
-        r = self.tad['bg::rot'] + (ri(a, b) / 100)
-        if r:
-            img = rotate(img, r)
+        final_rot = max(-45, min(final_rot, 45))
         
-        a, b = self.tad['bg::r_scale::from'], self.tad['bg::r_scale::to']
-        a, b = int(a * 100), int(b * 100)
-        s = self.tad['bg::scale'] + (ri(a, b) / 100)
-        if s != 1:
-            img = scale_by(img, s)
+        r_scale_from = self.tad['bg::r_scale::from']
+        r_scale_to = self.tad['bg::r_scale::to']
+        final_scale = self.tad['bg::scale'] + (ri(int(r_scale_from * 100), int(r_scale_to * 100)) / 100)
 
+        final_scale = max(0.1, min(final_scale, 2.0))
+        print(final_rot, final_scale)
+        if final_rot or final_scale != 1:
+            img = rotozoom(img, final_rot, final_scale)
+        
         return img

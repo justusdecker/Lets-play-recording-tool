@@ -15,6 +15,26 @@ import json
 from bin.constants import *
 from os.path import isfile, isdir
 from os import mkdir, remove
+from PIL import ImageTk, Image
+import base64
+from PIL import ImageTk, Image
+from io import BytesIO
+
+def try_delete_file(filepath: str | None) -> bool:
+    if filepath is not None:
+        if isfile(filepath):
+            remove(filepath)
+            return True
+    return False
+
+class AsciiImage:
+    def __init__(self, var: str):
+        self.var = var
+
+        decoded_data =  base64.b64decode(var.encode('ascii'))
+        io_stream = BytesIO(decoded_data)
+        img = Image.open(io_stream)
+        self.image = ImageTk.PhotoImage(img)
 
 DB_URL = f"sqlite:///{ROOT}lprt_data.db" # Define the database URL
 
@@ -73,6 +93,7 @@ def on_start():
     cnef(TAD_FOLDER)
     cnef(TEMP_FOLDER)
     cnef(BACKUP_FOLDER)
+    cnef(DEPLOY_FOLDER)
 
     if not isfile(OBS_SETTINGS_PATH):
         json_write(OBS_SETTINGS_PATH,DEFAULT_OBS_SETTINGS)
@@ -140,8 +161,6 @@ class Episodes(Base):
         This is used to easy access the fetched audio from episodes
     .. thumbnail_path::
         This is used to easy access the generated thumbnail from episodes
-    .. thumbnail_frame::
-        NOT IN USE! Will be removed in later versions, see issue #237
     .. has_problem::
         NOT IN USE! Functionality will be added in later versions, see issue #238
         Indicates that the user has to do some work manually.
@@ -151,10 +170,6 @@ class Episodes(Base):
     .. audio_mic_edit2_path::
         WILL BE REMOVED later. See issue #239
         This is used to easy access the audacity fixed audio from episodes
-    .. audio_desktop_edit1_path::
-        NOT IN USE! WILL BE REMOVED later. See issue #240
-    .. audio_desktop_edit2_path::
-        NOT IN USE! WILL BE REMOVED later. See issue #240
     .. title::
         This will be used in deploy for easy upload.
     .. upload_at::
@@ -170,12 +185,9 @@ class Episodes(Base):
     audio_mic_path = Column(String)
     audio_desktop_path = Column(String)
     thumbnail_path = Column(String)
-    thumbnail_frame = Column(Numeric)
     has_problem = Column(Integer)
     audio_mic_edit1_path = Column(String)
     audio_mic_edit2_path = Column(String)
-    audio_desktop_edit1_path = Column(String)
-    audio_desktop_edit2_path = Column(String)
     title = Column(String)
     upload_at = Column(String)
     final_video_path = Column(String)
@@ -285,7 +297,7 @@ class SQLAccess:
         data[lpid].episode_length = episode_length
         session.commit()
 
-    def set_tadpath(lpid: int, tad_path: int):
+    def update_tadpath(lpid: int, tad_path: int):
         """
         Sets the 'tad_path' attribute for a specific letsplay.
         
@@ -297,7 +309,7 @@ class SQLAccess:
         data[lpid].tad_path = tad_path
         session.commit()
 
-    def update_episodes(lpid: int, epid: int, **kwargs):
+    def update_episode(lpid: int, epid: int, **kwargs):
         """
         Updates attributes of a specific episode.
         
@@ -338,7 +350,7 @@ class SQLAccess:
         session.delete(data)
         session.commit()
             
-    def get_lp_names():
+    def read_letsplay_names():
         """
         Retrieves all letsplay names from the database.
         
@@ -347,7 +359,7 @@ class SQLAccess:
         """
         return [entry.name for entry in session.query(LetsPlays).all()]
 
-    def get_episode_length(lpid: int):
+    def read_episode_length(lpid: int):
         """
         Retrieves the 'episode_length' for a specific letsplay.
         
@@ -359,7 +371,7 @@ class SQLAccess:
         """
         return [entry.episode_length for entry in session.query(LetsPlays).all()][lpid]
 
-    def get_tad_path(lpid: int):
+    def read_tad_path(lpid: int):
         """
         Retrieves the 'tad_path' for a specific letsplay.
         
@@ -371,7 +383,7 @@ class SQLAccess:
         """
         return [entry.tad_path for entry in session.query(LetsPlays).all()][lpid]
 
-    def get_lp_name(lpid: int):
+    def read_letsplay_name(lpid: int):
         """
         Retrieves the name of a specific letsplay.
         
@@ -383,7 +395,7 @@ class SQLAccess:
         """
         return [entry.name for entry in session.query(LetsPlays).all()][lpid]
 
-    def get_lp_game_name(lpid: int):
+    def read_letsplay_game_name(lpid: int):
         """
         Retrieves the game name of a specific letsplay.
         
@@ -395,7 +407,7 @@ class SQLAccess:
         """
         return [entry.game_name for entry in session.query(LetsPlays).all()][lpid]
 
-    def get_lp_description(lpid: int):
+    def read_letsplay_description(lpid: int):
         """
         Retrieves the description path of a specific letsplay.
         
@@ -407,7 +419,7 @@ class SQLAccess:
         """
         return [entry.description_path for entry in session.query(LetsPlays).all()][lpid]
 
-    def get_lp_game_names():
+    def read_letsplay_game_names():
         """
         Retrieves all game names from the database.
         
@@ -416,7 +428,7 @@ class SQLAccess:
         """
         return [entry.game_name for entry in session.query(LetsPlays).all()]
 
-    def get_lp_ids():
+    def read_letsplay_ids():
         """
         Retrieves all letsplay IDs from the database.
         
@@ -425,7 +437,7 @@ class SQLAccess:
         """
         return [entry.id for entry in session.query(LetsPlays).all()]
 
-    def get_video_path(lpid: int, epid: int):
+    def read_video_path(lpid: int, epid: int):
         """
         Retrieves the video path for a specific episode.
         
@@ -438,7 +450,7 @@ class SQLAccess:
         """
         return [entry.video_path for entry in session.query(Episodes).all() if entry.lpid == SQLAccess.__cvtid(lpid)][epid]
 
-    def get_title(lpid: int, epid: int):
+    def read_title(lpid: int, epid: int):
         """
         Retrieves the title of a specific episode.
         
@@ -451,7 +463,7 @@ class SQLAccess:
         """
         return [entry.title for entry in session.query(Episodes).all() if entry.lpid == SQLAccess.__cvtid(lpid)][epid]
 
-    def get_thumbnail_path(lpid: int, epid: int):
+    def read_thumbnail_path(lpid: int, epid: int):
         """
         Retrieves the thumbnail path for a specific episode.
         
@@ -464,7 +476,7 @@ class SQLAccess:
         """
         return [entry.thumbnail_path for entry in session.query(Episodes).all() if entry.lpid == SQLAccess.__cvtid(lpid)][epid]
 
-    def get_final_video_path(lpid: int, epid: int):
+    def read_final_video_path(lpid: int, epid: int):
         """
         Retrieves the final video path for a specific episode.
         
@@ -477,7 +489,7 @@ class SQLAccess:
         """
         return [entry.final_video_path for entry in session.query(Episodes).all() if entry.lpid == SQLAccess.__cvtid(lpid)][epid]
 
-    def get_episode_ammount(lpid: int):
+    def read_episode_ammount(lpid: int):
         """
         Retrieves the total number of episodes for a specific letsplay.
         
@@ -489,7 +501,7 @@ class SQLAccess:
         """
         return len([entry for entry in session.query(Episodes).all() if entry.lpid == SQLAccess.__cvtid(lpid)])
 
-    def get_lp_opvar(parent):
+    def read_letsplay_by_option_var(parent):
         """
         Converts the lp_option_var index to database index.
         
@@ -499,4 +511,4 @@ class SQLAccess:
         Returns:
             int: The index of the letsplay name.
         """
-        return SQLAccess.get_lp_names().index(parent.lp_option_var.get())
+        return SQLAccess.read_letsplay_names().index(parent.lp_option_var.get())

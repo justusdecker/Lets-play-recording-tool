@@ -16,9 +16,9 @@ from bin.player_video import VideoPlayer
 from bin.player_audio import AudioPlayer
 from bin.player_thumbnail import ThumbnailPreview
 from shutil import copyfile
-from bin.data_access import SQLAccess, cnef,rie, file_write
-from bin.constants import ERROR_007
-from bin.player_audio import stop_audio
+from bin.data_access import SQLAccess, cnef,rie, file_write, try_delete_file
+from time import sleep
+from subprocess import Popen
 
 try:
     from bin.jinja import deploy_render
@@ -31,7 +31,7 @@ def obs_rec_label_set(OBSO, el,reset:bool = False):
     if reset:
         el.recording_information_label.configure(foreground='black')
         return
-    epl = SQLAccess.get_episode_length(SQLAccess.get_lp_names().index(el.lp_option_var.get()))
+    epl = SQLAccess.read_episode_length(SQLAccess.read_letsplay_names().index(el.lp_option_var.get()))
     
     if epl is None:
         el.recording_information_label.configure(foreground='black')
@@ -61,16 +61,21 @@ def obs_connect(el):
         obs_rec_label_set(OBSO,el, True)
         el.btn_connect.configure(text= 'No Connection!')
         return
+    el.btn_connect.configure(text= 'Disconnect')
+    el.btn_connect.state(["!disabled"])
     while OBSO.isconnected:
-        el.btn_connect.configure(text= 'Connection established')
+        if el.close_connection:
+            OBSO.client.disconnect()
+            el.btn_connect.configure(text= 'Connection closed!')
+            return
         try:
-            id = SQLAccess.get_lp_names().index(el.lp_option_var.get())
+            id = SQLAccess.read_letsplay_names().index(el.lp_option_var.get())
             if OBSO.time_in_seconds:
-                el.recording_information_label.configure(text= f'Recording - {SQLAccess.get_episode_ammount(id)} Episodes\n{OBSO.timecode}')
+                el.recording_information_label.configure(text= f'Recording - {SQLAccess.read_episode_ammount(id)} Episodes\n{OBSO.timecode}')
                 obs_rec_label_set(OBSO,el)
             else:
                 obs_rec_label_set(OBSO,el, True)
-                el.recording_information_label.configure(text= f'Waiting - {SQLAccess.get_episode_ammount(id)} Episodes')
+                el.recording_information_label.configure(text= f'Waiting - {SQLAccess.read_episode_ammount(id)} Episodes')
             OBSO.update(id)
         except Exception as E:
             obs_rec_label_set(OBSO,el, True)
@@ -94,7 +99,7 @@ class GenericWorkFlow:
         self.auto_create_folder_path = folder
         self.finish_message = finish_message
         self.lpid,self.epr = lpid,epr
-        self.lp_name = SQLAccess.get_lp_name(self.lpid)
+        self.lp_name = SQLAccess.read_letsplay_name(self.lpid)
 
     @property
     def rng(self) -> tuple[int,int]:
@@ -110,7 +115,7 @@ class GenericWorkFlow:
                              for the workflow.
         """
         return self.epr[0],self.epr[1]+(1 if self.epr[0] == self.epr[1] else 0)
-        
+    
     def user_workflow(self):
         """
         Executes the primary user-facing part of the workflow.
@@ -138,7 +143,7 @@ class GenerateThumbnailWF(GenericWorkFlow):
         try:
             TG = ThumbnailGenerator()
             TP = ThumbnailPreview()
-            tad = SQLAccess.get_tad_path(self.lpid)
+            tad = SQLAccess.read_tad_path(self.lpid)
             
             reoc(not tad, ERROR_009)
             reoc(not isfile(TAD_FOLDER + tad),ERROR_007 + '\nTAD Path does not exist!')
@@ -172,7 +177,7 @@ class GenerateThumbnailWF(GenericWorkFlow):
                         ok = True
                 app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
 
-                SQLAccess.update_episodes(self.lpid, i,thumbnail_path=p)
+                SQLAccess.update_episode(self.lpid, i,thumbnail_path=p)
 
             super().user_workflow()
         except AutomationError as AE:
@@ -235,7 +240,7 @@ class ExtractAudioWF(GenericWorkFlow):
                 
                 app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
                 
-                SQLAccess.update_episodes(self.lpid,i, audio_mic_path=mic_track_path, audio_desktop_path=desktop_track_path) # Saves the updated episode metadata.
+                SQLAccess.update_episode(self.lpid,i, audio_mic_path=mic_track_path, audio_desktop_path=desktop_track_path) # Saves the updated episode metadata.
             super().user_workflow()
         except AutomationError as AE:
             msgbox.showerror('Automation Error',str(AE))
@@ -264,6 +269,7 @@ class FixAudioWF(GenericWorkFlow):
         Executes the audio fixing process for each microphone audio track
         within the defined episode range.
         """
+        
         try:
             cnef(FIXED_AUDIO_FOLDER)
             episodes = SQLAccess.read_episodes(self.lpid)
@@ -279,12 +285,12 @@ class FixAudioWF(GenericWorkFlow):
                 
                 rie(audio_mic_edit1_path)
                 
-                ffmpeg_run(FFMPEG_AUDIO_PF_LN_L,{'__IN__': audio_mic_path,'__OUT__':audio_mic_edit1_path})
+                ffmpeg_run(FFMPEG_AUDIO_PF_LN_L,{'__IN__': audio_mic_path,'__OUT__':audio_mic_edit1_path, '__FILTERS__': app.get_ffmpeg_audio_filter_string()})
                 
                 reoc(not isfile(audio_mic_edit1_path), ERROR_014) # In case ffmpeg did not create the file
                 
                 app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
-                SQLAccess.update_episodes(self.lpid, i, audio_mic_edit1_path=audio_mic_edit1_path)
+                SQLAccess.update_episode(self.lpid, i, audio_mic_edit1_path=audio_mic_edit1_path)
             
             super().user_workflow()
         except AutomationError as AE:
@@ -358,7 +364,7 @@ class SendToAudacityWF(GenericWorkFlow):
                 ffmpeg_run(FFMPEG_CONVERT_AUDIO_TYPE,{'__IN__': old, '__OUT__': new})
                 reoc(not isfile(new),ERROR_007)
                 #remove()
-                SQLAccess.update_episodes(self.lpid,rng_list[ep],audio_mic_edit2_path=new)
+                SQLAccess.update_episode(self.lpid,rng_list[ep],audio_mic_edit2_path=new)
             app.start_btn.state(['!disabled'])
             super().user_workflow()
         except AutomationError as AE:
@@ -405,10 +411,13 @@ class CompareAndRenderWF(GenericWorkFlow):
             
             paths = [[i, episodes[i].audio_mic_edit2_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*self.rng)]
 
-            volap = AudioPlayer(paths)
-            while not volap.isfinished:
-                pass
-            stop_audio()
+            volap = AudioPlayer(paths,self)
+            
+            while volap.winfo_exists():
+                sleep(1)
+            if not volap.isfinished:
+                msgbox.showerror('ERROR','User interrupt!')
+                return
             result = volap.audio_list
             
             cnef(TEMP_FOLDER)
@@ -439,7 +448,7 @@ class CompareAndRenderWF(GenericWorkFlow):
 
             
             
-            path_ending = f'_{SQLAccess.get_lp_game_name(self.lpid)}_final.mp4'
+            path_ending = f'_{SQLAccess.read_letsplay_game_name(self.lpid)}_final.mp4'
             cnef(VIDEO_FOLDER)
             ci = 0
             for video, audio, index in rendering_queue:
@@ -456,9 +465,11 @@ class CompareAndRenderWF(GenericWorkFlow):
                 reoc(not isfile(final_path),ERROR_007)
                 app.progress_label.configure(text = f'Audio Combine\n{((ci+1)/len(result))*100:.1f}%\n{ci+1}/{len(result)}')
                 ci += 1
-                SQLAccess.update_episodes(self.lpid, index, final_video_path=final_path)
+                SQLAccess.update_episode(self.lpid, index, final_video_path=final_path)
             super().user_workflow()
         except AutomationError as AE:
+            if 'volap' in locals(): # This will fix issue #234
+                volap.destroy()
             msgbox.showerror('Automation Error',str(AE))
         # After processing all episodes, we re-enabling the application's start button
         # and calling the parent `user_workflow` to display the completion message.
@@ -481,7 +492,12 @@ class TitleSetWF(GenericWorkFlow):
         """
         app.start_btn.state(['disabled'])
         
-        VideoPlayer([i + 1 for i in range(*self.rng)],self.lpid,app)
+
+        video_player = VideoPlayer([i + 1 for i in range(*self.rng)],self.lpid,app)
+        while video_player.winfo_exists(): # Fix for issue #234
+            sleep(1)
+
+        
 
 class DeployWF(GenericWorkFlow):
     """
@@ -503,12 +519,20 @@ class DeployWF(GenericWorkFlow):
         After that the corresponding error message will be displayed.
         """
         try:
-            DEST = askdirectory()
+            data_deletion = msgbox.askyesno('Question','Do you want to delete temp files?')
+            move_files = msgbox.askyesno('Question','Do you want to move the files to another path?')
+            if move_files:
+                DEST = askdirectory()
+            else:
+                DEST = f'{DEPLOY_FOLDER}{SQLAccess.read_letsplay_name(self.lpid)}\\'
+                cnef(DEST)
             reoc(not DEST,ERROR_006)
             ALL = []
             episodes = SQLAccess.read_episodes(self.lpid)
 
             for i in range(*self.rng):
+                
+                
                 old_thumbnail_path = episodes[i].thumbnail_path
                 reoc(old_thumbnail_path is None,ERROR_013)
                 reoc(not isfile(old_thumbnail_path),ERROR_007)
@@ -522,7 +546,7 @@ class DeployWF(GenericWorkFlow):
                 
                 new_video_path = old_video_path.replace('/','\\').split('\\')[-1]
                 
-                description = SQLAccess.get_lp_description(self.lpid) #! This feature will be enhanced in 1.0
+                description = SQLAccess.read_letsplay_description(self.lpid) #! This feature will be enhanced in 1.0
 
                 copyfile(old_video_path,f'{DEST}\\{new_video_path}')
                 copyfile(old_thumbnail_path,f'{DEST}\\{new_thumbnail_path}')
@@ -533,9 +557,25 @@ class DeployWF(GenericWorkFlow):
                     "thumbnail_path": new_thumbnail_path,
                     "upload_at": ''
                     }
+                
+                #! Delete Temps
+                if data_deletion:
+                    ep = episodes[i]
+                    for file in [
+                                    ep.thumbnail_path,
+                                    ep.audio_mic_edit1_path,
+                                    ep.audio_mic_edit2_path,
+                                    ep.audio_desktop_path,
+                                    ep.audio_mic_path,
+                                    ep.final_video_path
+                                ]:
+                        try_delete_file(file)
+                
+                    
                 ALL.append(REP)
             deploy_render(f'{DEST}\\view.html',episodes=ALL,title=self.lp_name,description=description)
             file_write(f'{DEST}\\style.css', DEPLOY_CSS)
+            Popen(f'explorer {DEST}')
             super().user_workflow()
         except AutomationError as AE:
             msgbox.showerror('Automation Error',str(AE))
