@@ -19,7 +19,7 @@ ctk.set_appearance_mode('light')
 
 on_start()
 
-
+import bin.ffmpeg
 
 class TkinterApp(tk.Tk):
     """
