@@ -1,3 +1,9 @@
-from bin.download_file import download_file
 
-download_file('https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip','ffmpeg.zip')
+
+from bin.download_file import download_ffmpeg
+
+
+
+print('Start downloading file')
+
+download_ffmpeg()
