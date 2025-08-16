@@ -26,7 +26,7 @@ def download_ffmpeg():
     file = download_file(url)
     
     zip = zipfile.ZipFile(file)
-    print(zip.getinfo()[0])
+
     with open('ffmpeg.exe','wb') as f:
         
-        f.write(zip.read(f'{zip.getinfo()[0].filename}/bin/ffmpeg.exe'))
+        f.write(zip.read(f'{zip.infolist()[0].filename}/bin/ffmpeg.exe'))
