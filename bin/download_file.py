@@ -4,10 +4,15 @@ from io import BytesIO
 
 def download_file(url: str, filepath: str | None = None, mode: bool = False) -> BytesIO | None:
     """
-    
+    Downloads a file from the Internet.
+
     Mode:
-        True: Returns None & saves file to disk
-        False: Returns BytesIO
+        True: 
+            Returns None & saves file to disk
+            filepath must be specified
+        False: 
+            Returns BytesIO
+            filepath can be all. It is never used anyway
     """
     r = requests.get(url)
     if mode:
@@ -18,15 +23,12 @@ def download_file(url: str, filepath: str | None = None, mode: bool = False) -> 
 
 
 def download_ffmpeg():
+    """
+    Downloads FFMPEG from gyan.dev
+    """
     url = 'https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip'
-    ffmpeg_path = 'ffmpeg.exe'
-    ffprobe_path = 'ffprobe.exe'
-    ffplay_path = 'ffplay.exe'
-    fetch_from = 'bin\\'
     file = download_file(url)
-    
     zip = zipfile.ZipFile(file)
-
-    with open('ffmpeg.exe','wb') as f:
-        
-        f.write(zip.read(f'{zip.infolist()[0].filename}/bin/ffmpeg.exe'))
+    for ext in ['ffmpeg.exe','ffprobe.exe','ffplay.exe']:
+        with open(ext,'wb') as f:
+            f.write(zip.read(f'{zip.infolist()[0].filename}bin/{ext}'))
