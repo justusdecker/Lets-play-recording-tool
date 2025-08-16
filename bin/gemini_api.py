@@ -36,7 +36,7 @@ def create_payload(text: str) -> dict[str, list[dict[str, list[dict[str, str]]]]
         ]
     }
 
-def send_gemini(payload: dict[str, list[dict[str, list[dict[str, str]]]]]) -> str | None:
+def send_gemini(text: str) -> str | None:
     """
     Sends a POST Request to gemini & receives the generated text from it.
     
@@ -45,6 +45,9 @@ def send_gemini(payload: dict[str, list[dict[str, list[dict[str, str]]]]]) -> st
     If a error occoures: 
         A msgbox pops up that shows you the Error, after that the Function returns `None`
     """
+    
+    payload = create_payload(text)
+    
     try:
         response = requests.post(API_ENDPOINT, json=payload, timeout=10)
         response.raise_for_status()  # Raises an exception for HTTP error status codes (4xx or 5xx)
