@@ -1472,13 +1472,8 @@ class GeminiTest(tk.Frame):
             
     def run(self,*args):
 
-        self.start_btn.state(['disabled'])
-        change_states(self.menu,'disabled')
-        change_states([self.label, self.lp_options],'disabled')
-        change_states([self.label2, self.label3,self.ep_end, self.ep_start],'disabled')
-        a, b = int(self.epstart_option_var.get()) , int(self.epend_option_var.get())
-        
-        lp = SQLAccess.read_letsplay_by_option_var(self)
+        self.media_player.data = self.epnums
+        self.epnums
             
 class About(tk.Frame):
     """

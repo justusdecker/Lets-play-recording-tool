@@ -22,6 +22,7 @@ def convert_to_entities(text: str) -> str:
     Returns:
         str: The string with German characters replaced by HTML entities.
     """
+    if text is None: return ''
     converted_text = text
     for char, entity in GERMAN_CHAR_TO_ENTITY.items():
         converted_text = converted_text.replace(char, entity)
@@ -38,6 +39,7 @@ def convert_from_entities(text: str) -> str:
     Returns:
         str: The string with HTML entities replaced by German characters.
     """
+    if text is None: return ''
     for phrase in ENTITY_TO_GERMAN_CHAR:
         text = text.replace(phrase, ENTITY_TO_GERMAN_CHAR[phrase])
     return text
