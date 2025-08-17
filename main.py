@@ -39,7 +39,7 @@ class TkinterApp(tk.Tk):
         self.geometry('800x600')
         # initializing frames to an empty array
         self.frames = {}
-        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender,SetTitle,GeminiTest,Deploy, TadEditor,FileManager, Settings, About):
+        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender,SetTitle,Deploy, TadEditor,FileManager, Settings, About):
  
             frame = F(container, self)
             
@@ -82,7 +82,6 @@ def get_menu(parent,controller) -> list[ttk.Button]:
         ("Send2Audacity", lambda : controller.show_frame(Send2Audacity)),
         ("CompAndRender", lambda : controller.show_frame(CompAndRender)),
         ("SetTitle", lambda : controller.show_frame(SetTitle)),
-        ("GeminiTest", lambda : controller.show_frame(GeminiTest)),
         ("Deploy", lambda : controller.show_frame(Deploy)),
         ("TadEditor", lambda : controller.show_frame(TadEditor)),
         ("FileManager", lambda : controller.show_frame(FileManager)),
@@ -550,11 +549,6 @@ class Send2Audacity(AutomationFrame):
         super().__init__(parent, controller, 'Send2Audacity')
         self.automation_callback = SendToAudacityWF
 
-class CompAndRender(AutomationFrame):
-    def __init__(self, parent, controller):
-        super().__init__(parent, controller,'Compare & Render')
-        self.automation_callback = CompareAndRenderWF
-    
 class Deploy(AutomationFrame):
     def __init__(self, parent, controller):
         super().__init__(parent, controller, 'Deploy')
@@ -1345,7 +1339,7 @@ class TadEditor(tk.Frame):
         
         self.tw.update_image(f'{TEMP_FOLDER}preview.png',None)
 
-class GeminiTest(tk.Frame):
+class CompAndRender(tk.Frame):
     """
     Displays information about the application, including its license.
 
@@ -1360,7 +1354,7 @@ class GeminiTest(tk.Frame):
         
         self.normal_options = ttk.Frame(AUTOMATION_ROOT)
         
-        automation_root_header = ttk.Label(W,text='Title Set',font=Font(W,size=16))
+        automation_root_header = ttk.Label(W,text='Audio Compare & Render',font=Font(W,size=16))
 
         self.AUTOMATION_ROOT = AUTOMATION_ROOT
         
@@ -1432,6 +1426,7 @@ class GeminiTest(tk.Frame):
             self.start_btn.state(['disabled'])
         else:
             self.start_btn.state(['!disabled'])
+    
     def run_automation(self,*args):
         if self.thread is None and self.media_player.audio_list:
             #! Deactivate menus see issue #287
