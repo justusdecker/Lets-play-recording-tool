@@ -17,9 +17,9 @@ class NewAudioPlayer(NewMediaPlayer):
         self.desktop_vol = 1.
         super().__init__(parent, app, True)
         
-        self.finished_button = Button(self.bar,text='Apply Volume', command=self.save_destroy)
+        self.finished_button = Button(self.bar,text='Apply Volume', command=app.run_automation)
         self.finished_button.pack(side=LEFT)
-        self.finished_all_button = Button(self.bar,text='Apply Volume to\nall episodes!', command=self.apply_vol_to_all_and_destroy)
+        self.finished_all_button = Button(self.bar,text='Set Volume for\nall episodes!', command=self.apply_vol_to_all)
         self.finished_all_button.pack(side=LEFT)
         
         self.desktop_volume_slider = Scale(
@@ -30,12 +30,18 @@ class NewAudioPlayer(NewMediaPlayer):
         
         self.desktop_volume_slider.set(50)  # Set the default volume to 50%
         self.desktop_volume_slider.pack(side=LEFT, padx=5)
+    def get_ui(self):
+        return [self.finished_all_button,self.finished_button, self.last_button,self.next_button,self.play_button,self.pause_button,self.stop_button]
     @property
     def current_media(self) -> list:
-        return self.audio_list[self.current_episode]
+        if self.audio_list:
+            return self.audio_list[self.current_episode]
+        else:
+            return []
     
     @property
     def media(self) -> str:
+        if not self.audio_list: return ''
         ffmpeg_run(FFMPEG_AUDIO_COMBINE_TRUNCATED,{
             '__IN1__':self.current_media[1],
             '__IN2__': self.current_media[2],
@@ -80,18 +86,11 @@ class NewAudioPlayer(NewMediaPlayer):
         return super().open_file(self.media)
     
     def set_volume_desktop(self, value):
+        if not self.audio_list: return
         self.desktop_vol = int(value)
         self.current_media[4] = self.desktop_vol / 100 if self.desktop_vol else 0
         
-    def apply_vol_to_all_and_destroy(self):
+    def apply_vol_to_all(self):
+        if not self.audio_list: return
         for media in self.audio_list:
             media[4] = self.desktop_vol
-        self.save_destroy()
-        
-    def save_destroy(self):
-        self.isfinished = True
-        self.destroyed = True
-        self.destroy()
-
-        
-  

@@ -1373,20 +1373,11 @@ class GeminiTest(tk.Frame):
         self.normal_options.pack()
         automation_root_header.pack(pady=10)
         AUTOMATION_ROOT.pack()
-        
-        #! Run automationcallback
-        
-        
+        self.thread = None
         self.menu = get_menu(self, controller)
         self.media_player = NewAudioPlayer(W,
-                       [[0,'C:\\Users\\Justus\\lprt\\audio\\11_minecraft_desktop.aac','C:\\Users\\Justus\\lprt\\audio_fixed\\14_minecraft_track_mic_fixed.aac','C:\\Users\\Justus\\Videos\\2025-08-07 22-29-10.mp4',1]],
+                       [],
                        self)
-        
-        img = AsciiImage(ICO_RUN)
-    
-        start_automation_btn = ttk.Button(parent, image=img.image,command=self.run_automation)
-        start_automation_btn.image = img.image
-        start_automation_btn.pack()
         W.grid(row=0,column=1)
     
     def update_ui(self):
@@ -1442,12 +1433,38 @@ class GeminiTest(tk.Frame):
         else:
             self.start_btn.state(['!disabled'])
     def run_automation(self,*args):
-        pass
+        if self.thread is None and self.media_player.audio_list:
+            #! Deactivate menus see issue #287
+            print('Automation Start')
+            change_states(self.menu,'disabled')
+            change_states([self.start_btn,*self.media_player.get_ui()],'disabled')
+            self.thread = Thread(target=self.__ra)
+            self.thread.start()
+            
+        
+    def __ra(self):
+        render(self.media_player.audio_list,self,SQLAccess.read_letsplay_by_option_var(self))
+        
+        change_states(self.menu,'!disabled')
+        change_states([self.start_btn,*self.media_player.get_ui()],'!disabled')
+        self.thread = None
+        
     def run(self,*args):
         a, b = int(self.epstart_option_var.get())-1, int(self.epend_option_var.get())
-        rng = [i + 1 for i in range(a,b+(1 if a == b else 0))]
+        rng = [a,b]
         
-        self.media_player.audio_list = [i + 1 for i in range(a,b+(1 if a == b else 0))]     
+        episodes = SQLAccess.read_episodes(SQLAccess.read_letsplay_by_option_var(self)) #!<--
+        from bin.data_access import Episodes
+        episodes : list[Episodes]
+        for i in range(*rng):
+            reoc(episodes[i].audio_mic_edit2_path is None,ERROR_013)
+            reoc(episodes[i].audio_desktop_path is None,ERROR_013)
+            reoc(episodes[i].video_path is None,ERROR_013)
+            
+            reoc(not isfile(episodes[i].audio_mic_edit2_path),ERROR_007)
+            reoc(not isfile(episodes[i].audio_desktop_path),ERROR_007)
+            reoc(not isfile(episodes[i].video_path),ERROR_007)
+        self.media_player.audio_list = [[i, episodes[i].audio_mic_edit2_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*rng)]
 
 class SetTitle(tk.Frame):
     """

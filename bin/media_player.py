@@ -85,9 +85,9 @@ class NewMediaPlayer(tk.Frame):
         
         # Stop button
         img = AsciiImage(ICO_STOP)
-        self.pause_button = ttk.Button(self.controls, command=self.stop_video,image=img.image)
-        self.pause_button.pack(side=tk.LEFT, padx=2)
-        self.pause_button.image = img.image
+        self.stop_button = ttk.Button(self.controls, command=self.stop_video,image=img.image)
+        self.stop_button.pack(side=tk.LEFT, padx=2)
+        self.stop_button.image = img.image
         
         # Volume control slider.
         # This slider controls the player's volume in real time.
