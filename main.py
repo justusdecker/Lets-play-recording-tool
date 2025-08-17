@@ -14,12 +14,11 @@ from zipfile import ZipFile
 from tkinter.colorchooser import askcolor
 from tkinter.filedialog import askopenfilename
 from subprocess import Popen
+from bin.gemini_api import send_gemini
 LARGEFONT = ("Verdana", 35)
 ctk.set_appearance_mode('light')
 
 on_start()
-
-import bin.ffmpeg
 
 class TkinterApp(tk.Tk):
     """
@@ -38,7 +37,7 @@ class TkinterApp(tk.Tk):
         self.geometry('800x600')
         # initializing frames to an empty array
         self.frames = {}
-        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender,SetTitle,Deploy, TadEditor,FileManager, Settings, About):
+        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender,SetTitle,GeminiTest,Deploy, TadEditor,FileManager, Settings, About):
  
             frame = F(container, self)
             
@@ -81,6 +80,7 @@ def get_menu(parent,controller) -> list[ttk.Button]:
         ("Send2Audacity", lambda : controller.show_frame(Send2Audacity)),
         ("CompAndRender", lambda : controller.show_frame(CompAndRender)),
         ("SetTitle", lambda : controller.show_frame(SetTitle)),
+        ("GeminiTest", lambda : controller.show_frame(GeminiTest)),
         ("Deploy", lambda : controller.show_frame(Deploy)),
         ("TadEditor", lambda : controller.show_frame(TadEditor)),
         ("FileManager", lambda : controller.show_frame(FileManager)),
@@ -1358,7 +1358,24 @@ class GeminiTest(tk.Frame):
     """
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
-
+        
+        W = ctk.CTkScrollableFrame(self,width=600,height=400)
+        self.menu = get_menu(self, controller)
+        self.text = tk.StringVar()
+        self.gemini_entry = ttk.Entry(W,textvariable=self.text)
+        self.send_btn = ttk.Button(W,text='Send',command=self.send_and_receive)
+        self.result_lbl = ttk.Label(W)
+        self.gemini_entry.pack(side=tk.LEFT)
+        self.send_btn.pack(side=tk.LEFT)
+        self.result_lbl.pack()
+        W.grid(row=0,column=1)
+    def send_and_receive(self,*args):
+        change_states([self.gemini_entry, self.send_btn],'disabled')
+        Thread(target=self.__sar).start()
+    def __sar(self):
+        self.result_lbl.configure(text=str(send_gemini(self.text.get())))
+        change_states([self.gemini_entry, self.send_btn],'!disabled')
+        
 class About(tk.Frame):
     """
     Displays information about the application, including its license.
