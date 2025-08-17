@@ -10,12 +10,12 @@ from bin.constants import TEMP_FOLDER
 from bin.media_player import NewMediaPlayer
 
 class NewAudioPlayer(NewMediaPlayer):
-    def __init__(self, paths, app):
+    def __init__(self, parent, paths, app):
         self.audio_list = paths
         self.current_episode = 0
         self.isfinished = False
         self.desktop_vol = 1.
-        super().__init__(app, True)
+        super().__init__(parent, app, True)
         
         self.finished_button = Button(self.bar,text='Apply Volume', command=self.save_destroy)
         self.finished_button.pack(side=LEFT)
