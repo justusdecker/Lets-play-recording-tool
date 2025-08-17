@@ -112,7 +112,7 @@ class NewVideoPlayer(NewMediaPlayer):
         """ Sets the video title & updates the database. """
         new_title = ''.join([convert_char(c) for c in self.title_var.get()])
         SQLAccess.update_episode(self.lpid, self.rel_id,title=convert_to_entities(new_title))
-        
+    
     def episode_down(self,*args):
         """ Change the selected episode. One down. """
         new_location = self.current_episode - 1
@@ -126,7 +126,7 @@ class NewVideoPlayer(NewMediaPlayer):
 
             self.open_file(self.video_path)
             self.play_video()
-            self.current_media_label.configure(text=f'{self.rel_id}_{SQLAccess.read_letsplay_name(self.lpid)}')
+            self.current_media_label.configure(text=f'{self.rel_id+1}_{SQLAccess.read_letsplay_name(self.lpid)}')
             
     def episode_up(self,*args):
         """ Change the selected episode. One up. """
@@ -142,7 +142,7 @@ class NewVideoPlayer(NewMediaPlayer):
 
             self.open_file(self.video_path)
             self.play_video()
-            self.current_media_label.configure(text=f'{self.rel_id}_{SQLAccess.read_letsplay_name(self.lpid)}')
+            self.current_media_label.configure(text=f'{self.rel_id+1}_{SQLAccess.read_letsplay_name(self.lpid)}')
 
 
 

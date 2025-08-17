@@ -1386,7 +1386,7 @@ class GeminiTest(tk.Frame):
     """
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
-        W = ctk.CTkScrollableFrame(self,width=600,height=400)
+        W = ctk.CTkScrollableFrame(self,width=600,height=500)
         
         AUTOMATION_ROOT = ttk.Frame(W)
         
@@ -1471,7 +1471,7 @@ class GeminiTest(tk.Frame):
             self.start_btn.state(['!disabled'])
             
     def run(self,*args):
-        a, b = int(self.epstart_option_var.get()), int(self.epend_option_var.get())
+        a, b = int(self.epstart_option_var.get())-1, int(self.epend_option_var.get())
         
         self.media_player.data = [i + 1 for i in range(a,b+(1 if a == b else 0))]
             
