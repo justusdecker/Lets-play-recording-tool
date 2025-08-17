@@ -430,6 +430,7 @@ class ThumbnailGenerate(AutomationFrame):
      def __init__(self, parent, controller):
         super().__init__(parent, controller,'Thumbnail Generator')
         self.automation_callback = GenerateThumbnailWF
+        #! Change the Class Inheritance etc.
         
 class FetchAudio(AutomationFrame):
     def __init__(self, parent, controller):
