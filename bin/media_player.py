@@ -37,7 +37,8 @@ class NewMediaPlayer(tk.Frame):
         self.video_panel = tk.Canvas(self.video_and_bar, bg="black")
         self.video_panel.pack(fill=tk.BOTH, expand=1,padx=2,pady=(2,0))
         
-        
+        self.current_media_label = ttk.Label(self.video_and_bar,text='None')
+        self.current_media_label.pack()
         # Set title each episode
         # Create a progress frame that holds the progress slider.
         self.progress_frame = tk.Frame(self.video_and_bar)
@@ -115,6 +116,7 @@ class NewMediaPlayer(tk.Frame):
             media = self.instance.media_new(videopath)
             self.player.set_media(media)
             self.set_video_panel()
+            
             
     def episode_down(self,*args):
         pass
@@ -226,6 +228,8 @@ class MediaPlayer(tk.Toplevel):
         # Create the video panel where the video will be displayed.
         self.video_panel = tk.Frame(self, bg="black")
         self.video_panel.pack(fill=tk.BOTH, expand=1)
+        
+        
         
         self.bar = tk.Frame(self)
         

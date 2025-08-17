@@ -126,6 +126,7 @@ class NewVideoPlayer(NewMediaPlayer):
 
             self.open_file(self.video_path)
             self.play_video()
+            self.current_media_label.configure(text=f'{self.rel_id}_{SQLAccess.read_letsplay_name(self.lpid)}')
             
     def episode_up(self,*args):
         """ Change the selected episode. One up. """
@@ -141,6 +142,7 @@ class NewVideoPlayer(NewMediaPlayer):
 
             self.open_file(self.video_path)
             self.play_video()
+            self.current_media_label.configure(text=f'{self.rel_id}_{SQLAccess.read_letsplay_name(self.lpid)}')
 
 
 

@@ -1386,13 +1386,100 @@ class GeminiTest(tk.Frame):
     """
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent)
-        W = ttk.Frame(self)
+        W = ctk.CTkScrollableFrame(self,width=600,height=400)
+        
+        AUTOMATION_ROOT = ttk.Frame(W)
+        
+        self.normal_options = ttk.Frame(AUTOMATION_ROOT)
+        
+        automation_root_header = ttk.Label(W,text='Title Set',font=Font(W,size=16))
+
+        self.AUTOMATION_ROOT = AUTOMATION_ROOT
+        
+        self.label, self.lp_options, self.lp_option_var= get_lets_play(self.normal_options, self.lp_changed)
+        
+        
+        self.update_ui()
+        
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.normal_options,self.run,self.check_last_id,self.epnums)
+        
+        self.normal_options.pack()
+        automation_root_header.pack(pady=10)
+        AUTOMATION_ROOT.pack()
+        
         
         self.menu = get_menu(self, controller)
-        self.media_player = NewVideoPlayer(W, [15,16,17,18],0,self)
+        self.media_player = NewVideoPlayer(W, [],0,self)
         self.media_player.pack()
         W.grid(row=0,column=1)
+        #!Deactivate:
+        #- Update
+        #- Generate Thumbnail
+        #- All Control Buttons
+    
+    def update_ui(self):
+        """
+        Updates the UI elements based on the selected 'Let's Play' series.
 
+        This method dynamically calculates the available episode numbers
+        based on the currently selected 'Let's Play' value and updates
+        the internal `epnums` list.
+        """
+        lp = self.lp_option_var.get()
+        if lp != 'None':
+            self.epnums = [i+1 for i in range(SQLAccess.read_episode_ammount(SQLAccess.read_letsplay_by_option_var(self)))]
+        else:
+            self.epnums = []
+    
+    def lp_changed(self,*args):
+        """
+        Callback function executed when the 'Let's Play' selection changes.
+
+        This method updates the UI based on the new 'Let's Play' selection,
+        recalculates available episode numbers, and dynamically rebuilds
+        the episode range selection widgets. It also adjusts the state
+        of the start button.
+        """
+        self.update_ui()
+        
+        if not self.epnums:
+            self.start_btn.state(['disabled'])
+        else:
+            self.start_btn.state(['!disabled'])
+        
+        self.ep_start.destroy()
+        self.ep_end.destroy()
+        self.label2.destroy()
+        self.label3.destroy()
+        self.start_btn.destroy()
+        del self.epstart_option_var
+        del self.epend_option_var
+        
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.normal_options,self.run,self.check_last_id,self.epnums)
+        
+    def check_last_id(self,*args):
+        """
+        Validates the selected episode range.
+
+        This callback is triggered when either the start or end episode
+        selection changes. It disables the start button if the end episode
+        is numerically less than the start episode, ensuring valid range selection.
+        """
+        if int(self.epend_option_var.get()) < int(self.epstart_option_var.get()):
+            self.start_btn.state(['disabled'])
+        else:
+            self.start_btn.state(['!disabled'])
+            
+    def run(self,*args):
+
+        self.start_btn.state(['disabled'])
+        change_states(self.menu,'disabled')
+        change_states([self.label, self.lp_options],'disabled')
+        change_states([self.label2, self.label3,self.ep_end, self.ep_start],'disabled')
+        a, b = int(self.epstart_option_var.get()) , int(self.epend_option_var.get())
+        
+        lp = SQLAccess.read_letsplay_by_option_var(self)
+            
 class About(tk.Frame):
     """
     Displays information about the application, including its license.
