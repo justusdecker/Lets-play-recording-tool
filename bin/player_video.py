@@ -141,16 +141,6 @@ class NewVideoPlayer(NewMediaPlayer):
 
             self.open_file(self.video_path)
             self.play_video()
-            
-    def destroy(self):
-        self.app.start_btn.state(['!disabled'])
-        for element in self.app.menu:
-
-            element.state(['!disabled'])
-        for element in [self.app.label, self.app.lp_options,self.app.label2, self.app.label3,self.app.ep_end, self.app.ep_start]:
-            element.state(['!disabled'])
-        self.isfinished = True
-        return super().destroy()
 
 
 

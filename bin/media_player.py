@@ -200,10 +200,6 @@ class NewMediaPlayer(tk.Frame):
                 self.progress_slider.set(current_time)
 
         self.after(500, self.update_progress)
-    
-    def destroy(self):
-        self.stop_video()
-        return super().destroy()
 
 
 class MediaPlayer(tk.Toplevel):
