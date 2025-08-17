@@ -1491,7 +1491,7 @@ class GeminiTest(tk.Frame):
         change_states([self.gemini_entry, self.send_btn],'disabled')
         Thread(target=self.__sar).start()
     def __sar(self):
-        self.result_lbl.configure(text=str(send_gemini(f'Generate me a youtube title for: {self.text.get()}')))
+        self.result_lbl.configure(text=str(send_gemini(f'Generate me a youtube title(gaming / lets play) for: {self.text.get()}')))
         change_states([self.gemini_entry, self.send_btn],'!disabled')
             
 class About(tk.Frame):
