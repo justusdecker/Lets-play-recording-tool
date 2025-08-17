@@ -15,6 +15,8 @@ from tkinter.colorchooser import askcolor
 from tkinter.filedialog import askopenfilename
 from subprocess import Popen
 from bin.gemini_api import send_gemini
+from bin.player_video import NewVideoPlayer
+from bin.player_audio import NewAudioPlayer
 LARGEFONT = ("Verdana", 35)
 ctk.set_appearance_mode('light')
 
@@ -37,7 +39,7 @@ class TkinterApp(tk.Tk):
         self.geometry('800x600')
         # initializing frames to an empty array
         self.frames = {}
-        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender,SetTitle,GeminiTest,Deploy, TadEditor,FileManager, Settings, About):
+        for F in (Main, Recording, ThumbnailGenerate, FetchAudio, FixAudio, Send2Audacity, CompAndRender,SetTitle,Deploy, TadEditor,FileManager, Settings, About):
  
             frame = F(container, self)
             
@@ -80,7 +82,6 @@ def get_menu(parent,controller) -> list[ttk.Button]:
         ("Send2Audacity", lambda : controller.show_frame(Send2Audacity)),
         ("CompAndRender", lambda : controller.show_frame(CompAndRender)),
         ("SetTitle", lambda : controller.show_frame(SetTitle)),
-        ("GeminiTest", lambda : controller.show_frame(GeminiTest)),
         ("Deploy", lambda : controller.show_frame(Deploy)),
         ("TadEditor", lambda : controller.show_frame(TadEditor)),
         ("FileManager", lambda : controller.show_frame(FileManager)),
@@ -430,13 +431,6 @@ class ThumbnailGenerate(AutomationFrame):
         super().__init__(parent, controller,'Thumbnail Generator')
         self.automation_callback = GenerateThumbnailWF
         
-class SetTitle(AutomationFrame):
-     def __init__(self, parent, controller):
-        
-        super().__init__(parent, controller,'Set Title')
-        self.should_not_reset = True
-        self.automation_callback = TitleSetWF
-    
 class FetchAudio(AutomationFrame):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,'Fetch Audio')
@@ -555,11 +549,6 @@ class Send2Audacity(AutomationFrame):
         super().__init__(parent, controller, 'Send2Audacity')
         self.automation_callback = SendToAudacityWF
 
-class CompAndRender(AutomationFrame):
-    def __init__(self, parent, controller):
-        super().__init__(parent, controller,'Compare & Render')
-        self.automation_callback = CompareAndRenderWF
-    
 class Deploy(AutomationFrame):
     def __init__(self, parent, controller):
         super().__init__(parent, controller, 'Deploy')
@@ -1350,7 +1339,7 @@ class TadEditor(tk.Frame):
         
         self.tw.update_image(f'{TEMP_FOLDER}preview.png',None)
 
-class GeminiTest(tk.Frame):
+class CompAndRender(tk.Frame):
     """
     Displays information about the application, including its license.
 
@@ -1360,22 +1349,231 @@ class GeminiTest(tk.Frame):
         tk.Frame.__init__(self, parent)
         
         W = ctk.CTkScrollableFrame(self,width=600,height=400)
+        
+        AUTOMATION_ROOT = ttk.Frame(W)
+        
+        self.normal_options = ttk.Frame(AUTOMATION_ROOT)
+        
+        automation_root_header = ttk.Label(W,text='Audio Compare & Render',font=Font(W,size=16))
+
+        self.AUTOMATION_ROOT = AUTOMATION_ROOT
+        
+        self.label, self.lp_options, self.lp_option_var= get_lets_play(self.normal_options, self.lp_changed)
+        
+        self.update_ui()
+        
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.normal_options,self.run,self.check_last_id,self.epnums)
+        
+        self.normal_options.pack()
+        automation_root_header.pack(pady=10)
+        AUTOMATION_ROOT.pack()
+        self.thread = None
         self.menu = get_menu(self, controller)
-        self.text = tk.StringVar()
-        self.gemini_entry = ttk.Entry(W,textvariable=self.text)
-        self.send_btn = ttk.Button(W,text='Send',command=self.send_and_receive)
-        self.result_lbl = ttk.Label(W)
-        self.gemini_entry.pack(side=tk.LEFT)
-        self.send_btn.pack(side=tk.LEFT)
-        self.result_lbl.pack()
+        self.media_player = NewAudioPlayer(W,
+                       [],
+                       self)
         W.grid(row=0,column=1)
+    
+    def update_ui(self):
+        """
+        Updates the UI elements based on the selected 'Let's Play' series.
+
+        This method dynamically calculates the available episode numbers
+        based on the currently selected 'Let's Play' value and updates
+        the internal `epnums` list.
+        """
+        lp = self.lp_option_var.get()
+        if lp != 'None':
+            self.epnums = [i+1 for i in range(SQLAccess.read_episode_ammount(SQLAccess.read_letsplay_by_option_var(self)))]
+        else:
+            self.epnums = []
+    
+    def lp_changed(self,*args):
+        """
+        Callback function executed when the 'Let's Play' selection changes.
+
+        This method updates the UI based on the new 'Let's Play' selection,
+        recalculates available episode numbers, and dynamically rebuilds
+        the episode range selection widgets. It also adjusts the state
+        of the start button.
+        """
+        self.update_ui()
+        
+        if not self.epnums:
+            self.start_btn.state(['disabled'])
+        else:
+            self.start_btn.state(['!disabled'])
+        
+        self.ep_start.destroy()
+        self.ep_end.destroy()
+        self.label2.destroy()
+        self.label3.destroy()
+        self.start_btn.destroy()
+        del self.epstart_option_var
+        del self.epend_option_var
+        
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.normal_options,self.run,self.check_last_id,self.epnums)
+        
+    def check_last_id(self,*args):
+        """
+        Validates the selected episode range.
+
+        This callback is triggered when either the start or end episode
+        selection changes. It disables the start button if the end episode
+        is numerically less than the start episode, ensuring valid range selection.
+        """
+        if int(self.epend_option_var.get()) < int(self.epstart_option_var.get()):
+            self.start_btn.state(['disabled'])
+        else:
+            self.start_btn.state(['!disabled'])
+    
+    def run_automation(self,*args):
+        if self.thread is None and self.media_player.audio_list:
+            #! Deactivate menus see issue #287
+            print('Automation Start')
+            change_states(self.menu,'disabled')
+            change_states([self.start_btn,*self.media_player.get_ui()],'disabled')
+            self.thread = Thread(target=self.__ra)
+            self.thread.start()
+            
+        
+    def __ra(self):
+        render(self.media_player.audio_list,self,SQLAccess.read_letsplay_by_option_var(self))
+        
+        change_states(self.menu,'!disabled')
+        change_states([self.start_btn,*self.media_player.get_ui()],'!disabled')
+        self.thread = None
+        
+    def run(self,*args):
+        a, b = int(self.epstart_option_var.get())-1, int(self.epend_option_var.get())
+        rng = [a,b]
+        
+        episodes = SQLAccess.read_episodes(SQLAccess.read_letsplay_by_option_var(self)) #!<--
+        from bin.data_access import Episodes
+        episodes : list[Episodes]
+        for i in range(*rng):
+            reoc(episodes[i].audio_mic_edit2_path is None,ERROR_013)
+            reoc(episodes[i].audio_desktop_path is None,ERROR_013)
+            reoc(episodes[i].video_path is None,ERROR_013)
+            
+            reoc(not isfile(episodes[i].audio_mic_edit2_path),ERROR_007)
+            reoc(not isfile(episodes[i].audio_desktop_path),ERROR_007)
+            reoc(not isfile(episodes[i].video_path),ERROR_007)
+        self.media_player.audio_list = [[i, episodes[i].audio_mic_edit2_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*rng)]
+
+class SetTitle(tk.Frame):
+    """
+    Displays information about the application, including its license.
+
+    Provides a scrollable text area to show the full license text.
+    """
+    def __init__(self, parent, controller): 
+        tk.Frame.__init__(self, parent)
+        W = ctk.CTkScrollableFrame(self,width=600,height=500)
+        
+        self.menu = get_menu(self, controller)
+        
+        
+        AUTOMATION_ROOT = ttk.Frame(W)
+        
+        self.normal_options = ttk.Frame(AUTOMATION_ROOT)
+        
+        automation_root_header = ttk.Label(W,text='Title Set',font=Font(W,size=16))
+
+        self.AUTOMATION_ROOT = AUTOMATION_ROOT
+        
+        self.label, self.lp_options, self.lp_option_var= get_lets_play(self.normal_options, self.lp_changed)
+        
+        self.update_ui()
+        
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.normal_options,self.run,self.check_last_id,self.epnums)
+        
+        self.normal_options.pack()
+        automation_root_header.pack(pady=10)
+        AUTOMATION_ROOT.pack()
+        
+        self.media_player = NewVideoPlayer(W, [],0,self)
+        self.media_player.pack()
+        
+        ttk.Label(W,text='Ask Gemini for a hint',font=Font(W,size=16)).pack()
+        ttk.Label(W,text='Only input keywords! e.g. Gaming, Mining...',font=Font(W,size=12)).pack()
+        gemini_stuff = ttk.Frame(W)
+        self.text = tk.StringVar()
+        self.gemini_entry = ttk.Entry(gemini_stuff,textvariable=self.text)
+        self.send_btn = ttk.Button(gemini_stuff,text='Send',command=self.send_and_receive)
+        self.result_lbl = ttk.Label(gemini_stuff)
+        self.gemini_entry.pack(fill=tk.X)
+        self.send_btn.pack()
+        self.result_lbl.pack()
+        gemini_stuff.pack()
+        
+        W.grid(row=0,column=1)
+    
+    def update_ui(self):
+        """
+        Updates the UI elements based on the selected 'Let's Play' series.
+
+        This method dynamically calculates the available episode numbers
+        based on the currently selected 'Let's Play' value and updates
+        the internal `epnums` list.
+        """
+        lp = self.lp_option_var.get()
+        if lp != 'None':
+            self.epnums = [i+1 for i in range(SQLAccess.read_episode_ammount(SQLAccess.read_letsplay_by_option_var(self)))]
+        else:
+            self.epnums = []
+    
+    def lp_changed(self,*args):
+        """
+        Callback function executed when the 'Let's Play' selection changes.
+
+        This method updates the UI based on the new 'Let's Play' selection,
+        recalculates available episode numbers, and dynamically rebuilds
+        the episode range selection widgets. It also adjusts the state
+        of the start button.
+        """
+        self.update_ui()
+        
+        if not self.epnums:
+            self.start_btn.state(['disabled'])
+        else:
+            self.start_btn.state(['!disabled'])
+        
+        self.ep_start.destroy()
+        self.ep_end.destroy()
+        self.label2.destroy()
+        self.label3.destroy()
+        self.start_btn.destroy()
+        del self.epstart_option_var
+        del self.epend_option_var
+        
+        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.normal_options,self.run,self.check_last_id,self.epnums)
+        
+    def check_last_id(self,*args):
+        """
+        Validates the selected episode range.
+
+        This callback is triggered when either the start or end episode
+        selection changes. It disables the start button if the end episode
+        is numerically less than the start episode, ensuring valid range selection.
+        """
+        if int(self.epend_option_var.get()) < int(self.epstart_option_var.get()):
+            self.start_btn.state(['disabled'])
+        else:
+            self.start_btn.state(['!disabled'])
+            
+    def run(self,*args):
+        a, b = int(self.epstart_option_var.get())-1, int(self.epend_option_var.get())
+        
+        self.media_player.data = [i + 1 for i in range(a,b+(1 if a == b else 0))]
+    
     def send_and_receive(self,*args):
         change_states([self.gemini_entry, self.send_btn],'disabled')
         Thread(target=self.__sar).start()
     def __sar(self):
-        self.result_lbl.configure(text=str(send_gemini(self.text.get())))
+        self.result_lbl.configure(text=str(send_gemini(f'Generate me a youtube title(gaming / lets play) for: {self.text.get()}')))
         change_states([self.gemini_entry, self.send_btn],'!disabled')
-        
+            
 class About(tk.Frame):
     """
     Displays information about the application, including its license.
