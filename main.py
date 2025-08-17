@@ -1375,7 +1375,24 @@ class GeminiTest(tk.Frame):
     def __sar(self):
         self.result_lbl.configure(text=str(send_gemini(self.text.get())))
         change_states([self.gemini_entry, self.send_btn],'!disabled')
+
+from bin.media_player import NewMediaPlayer
+
+class GeminiTest(tk.Frame):
+    """
+    Displays information about the application, including its license.
+
+    Provides a scrollable text area to show the full license text.
+    """
+    def __init__(self, parent, controller): 
+        tk.Frame.__init__(self, parent)
+        W = ttk.Frame(self)
         
+        self.menu = get_menu(self, controller)
+        self.media_player = NewMediaPlayer(W,self)
+        self.media_player.pack()
+        W.grid(row=0,column=1)
+
 class About(tk.Frame):
     """
     Displays information about the application, including its license.
