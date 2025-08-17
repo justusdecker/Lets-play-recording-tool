@@ -30,17 +30,19 @@ class NewMediaPlayer(tk.Frame):
         self.comp_panel = tk.Frame(parent)
         self.comp_panel.pack()
         
+        self.video_and_bar = tk.Frame(self.comp_panel)
+        self.video_and_bar.pack()
+        
         # Create the video panel where the video will be displayed.
-        self.video_panel = tk.Frame(self.comp_panel, bg="black")
-        self.video_panel.pack(fill=tk.BOTH, expand=1)
+        self.video_panel = tk.Canvas(self.video_and_bar, bg="black")
+        self.video_panel.pack(fill=tk.BOTH, expand=1,padx=2,pady=(2,0))
         
-        self.bar = tk.Frame(self.comp_panel)
         
-        self.bar.pack(side=tk.LEFT, pady=5)
         # Set title each episode
         # Create a progress frame that holds the progress slider.
-        self.progress_frame = tk.Frame(self.comp_panel)
-        self.progress_frame.pack(fill=tk.X, padx=10, pady=5)
+        self.progress_frame = tk.Frame(self.video_and_bar)
+        self.progress_frame.pack(fill=tk.X, pady=2)
+        
         
         # Create the progress slider.
         # This slider's range will be updated dynamically to match the video's duration.
@@ -56,34 +58,34 @@ class NewMediaPlayer(tk.Frame):
 
         # Create the control panel with playback buttons and volume control.
         self.controls = ttk.Frame(self.comp_panel)
-        self.controls.pack(fill=tk.X, padx=10, pady=5)
+        self.controls.pack(fill=tk.X, padx=5, pady=2)
 
         # Last button.
         img = AsciiImage(ICO_BACKWARD)
         self.last_button = ttk.Button(self.controls, command=self.episode_down,image=img.image)
-        self.last_button.pack(side=tk.LEFT, padx=5)
+        self.last_button.pack(side=tk.LEFT, padx=2)
         self.last_button.image = img.image
         # Next button.
         img = AsciiImage(ICO_FORWARD)
         self.next_button = ttk.Button(self.controls, command=self.episode_up,image=img.image)
-        self.next_button.pack(side=tk.LEFT, padx=5)
+        self.next_button.pack(side=tk.LEFT, padx=2)
         self.next_button.image = img.image
         # Play button.
         img = AsciiImage(ICO_PLAY)
         self.play_button = ttk.Button(self.controls, command=self.play_video,image=img.image)
-        self.play_button.pack(side=tk.LEFT, padx=5)
+        self.play_button.pack(side=tk.LEFT, padx=2)
 
         self.play_button.image = img.image
         # Pause button.
         img = AsciiImage(ICO_PAUSE)
         self.pause_button = ttk.Button(self.controls, command=self.pause_video,image=img.image)
-        self.pause_button.pack(side=tk.LEFT, padx=5)
+        self.pause_button.pack(side=tk.LEFT, padx=2)
         self.pause_button.image = img.image
         
         # Stop button
         img = AsciiImage(ICO_STOP)
         self.pause_button = ttk.Button(self.controls, command=self.stop_video,image=img.image)
-        self.pause_button.pack(side=tk.LEFT, padx=5)
+        self.pause_button.pack(side=tk.LEFT, padx=2)
         self.pause_button.image = img.image
         
         # Volume control slider.
@@ -96,7 +98,11 @@ class NewMediaPlayer(tk.Frame):
         
         self.volume_slider.set(50)  # Set the default volume to 50%
         self.volume_slider.pack(side=tk.LEFT, padx=5)
-
+        
+        self.bar = tk.Frame(self.comp_panel)
+        
+        self.bar.pack(side=tk.LEFT, pady=2)
+        
         # Begin updating the progress slider periodically.
         self.update_progress()
         
@@ -123,6 +129,7 @@ class NewMediaPlayer(tk.Frame):
         using platform-specific method: set_hwnd.
         """
         self.player.set_hwnd(self.video_panel.winfo_id())
+        self.video_panel.update_idletasks()
         
     def play_video(self):
         """
