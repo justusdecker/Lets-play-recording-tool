@@ -1381,6 +1381,12 @@ class GeminiTest(tk.Frame):
         self.media_player = NewAudioPlayer(W,
                        [[0,'C:\\Users\\Justus\\lprt\\audio\\11_minecraft_desktop.aac','C:\\Users\\Justus\\lprt\\audio_fixed\\14_minecraft_track_mic_fixed.aac','C:\\Users\\Justus\\Videos\\2025-08-07 22-29-10.mp4',1]],
                        self)
+        
+        img = AsciiImage(ICO_RUN)
+    
+        start_automation_btn = ttk.Button(parent, image=img.image,command=self.run_automation)
+        start_automation_btn.image = img.image
+        start_automation_btn.pack()
         W.grid(row=0,column=1)
     
     def update_ui(self):
@@ -1435,9 +1441,12 @@ class GeminiTest(tk.Frame):
             self.start_btn.state(['disabled'])
         else:
             self.start_btn.state(['!disabled'])
+    def run_automation(self,*args):
+        pass
     def run(self,*args):
         a, b = int(self.epstart_option_var.get())-1, int(self.epend_option_var.get())
         rng = [i + 1 for i in range(a,b+(1 if a == b else 0))]
+        
         self.media_player.audio_list = [i + 1 for i in range(a,b+(1 if a == b else 0))]     
 
 class SetTitle(tk.Frame):
