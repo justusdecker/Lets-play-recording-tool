@@ -39,6 +39,8 @@ WELCOME.update_message('Instanciate VLC')
 VLC_INSTANCE = vlc.Instance()
 from bin.media_player import MediaPlayer, NewMediaPlayer
 
+
+
 class NewVideoPlayer(NewMediaPlayer):
     def __init__(self,parent, data: list[int],lpid,app):
         

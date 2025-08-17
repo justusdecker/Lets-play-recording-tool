@@ -1361,6 +1361,8 @@ class GeminiTest(tk.Frame):
         
         W = ctk.CTkScrollableFrame(self,width=600,height=400)
         self.menu = get_menu(self, controller)
+        
+        ttk.Label(W,text='Ask Gemini for a hint',font=Font(W,size=16))
         self.text = tk.StringVar()
         self.gemini_entry = ttk.Entry(W,textvariable=self.text)
         self.send_btn = ttk.Button(W,text='Send',command=self.send_and_receive)
@@ -1368,6 +1370,7 @@ class GeminiTest(tk.Frame):
         self.gemini_entry.pack(side=tk.LEFT)
         self.send_btn.pack(side=tk.LEFT)
         self.result_lbl.pack()
+        
         W.grid(row=0,column=1)
     def send_and_receive(self,*args):
         change_states([self.gemini_entry, self.send_btn],'disabled')
@@ -1388,6 +1391,9 @@ class GeminiTest(tk.Frame):
         tk.Frame.__init__(self, parent)
         W = ctk.CTkScrollableFrame(self,width=600,height=500)
         
+        self.menu = get_menu(self, controller)
+        
+        
         AUTOMATION_ROOT = ttk.Frame(W)
         
         self.normal_options = ttk.Frame(AUTOMATION_ROOT)
@@ -1398,7 +1404,6 @@ class GeminiTest(tk.Frame):
         
         self.label, self.lp_options, self.lp_option_var= get_lets_play(self.normal_options, self.lp_changed)
         
-        
         self.update_ui()
         
         self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.normal_options,self.run,self.check_last_id,self.epnums)
@@ -1407,15 +1412,22 @@ class GeminiTest(tk.Frame):
         automation_root_header.pack(pady=10)
         AUTOMATION_ROOT.pack()
         
-        
-        self.menu = get_menu(self, controller)
         self.media_player = NewVideoPlayer(W, [],0,self)
         self.media_player.pack()
+        
+        ttk.Label(W,text='Ask Gemini for a hint',font=Font(W,size=16)).pack()
+        ttk.Label(W,text='Only input keywords! e.g. Gaming, Mining...',font=Font(W,size=12)).pack()
+        gemini_stuff = ttk.Frame(W)
+        self.text = tk.StringVar()
+        self.gemini_entry = ttk.Entry(gemini_stuff,textvariable=self.text)
+        self.send_btn = ttk.Button(gemini_stuff,text='Send',command=self.send_and_receive)
+        self.result_lbl = ttk.Label(gemini_stuff)
+        self.gemini_entry.pack(fill=tk.X)
+        self.send_btn.pack()
+        self.result_lbl.pack()
+        gemini_stuff.pack()
+        
         W.grid(row=0,column=1)
-        #!Deactivate:
-        #- Update
-        #- Generate Thumbnail
-        #- All Control Buttons
     
     def update_ui(self):
         """
@@ -1474,6 +1486,13 @@ class GeminiTest(tk.Frame):
         a, b = int(self.epstart_option_var.get())-1, int(self.epend_option_var.get())
         
         self.media_player.data = [i + 1 for i in range(a,b+(1 if a == b else 0))]
+    
+    def send_and_receive(self,*args):
+        change_states([self.gemini_entry, self.send_btn],'disabled')
+        Thread(target=self.__sar).start()
+    def __sar(self):
+        self.result_lbl.configure(text=str(send_gemini(f'Generate me a youtube title for: {self.text.get()}')))
+        change_states([self.gemini_entry, self.send_btn],'!disabled')
             
 class About(tk.Frame):
     """
