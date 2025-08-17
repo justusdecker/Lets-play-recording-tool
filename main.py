@@ -1350,6 +1350,15 @@ class TadEditor(tk.Frame):
         
         self.tw.update_image(f'{TEMP_FOLDER}preview.png',None)
 
+class GeminiTest(tk.Frame):
+    """
+    Displays information about the application, including its license.
+
+    Provides a scrollable text area to show the full license text.
+    """
+    def __init__(self, parent, controller): 
+        tk.Frame.__init__(self, parent)
+
 class About(tk.Frame):
     """
     Displays information about the application, including its license.
