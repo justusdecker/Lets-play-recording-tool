@@ -15,6 +15,7 @@ from tkinter.colorchooser import askcolor
 from tkinter.filedialog import askopenfilename
 from subprocess import Popen
 from bin.gemini_api import send_gemini
+from bin.player_video import NewVideoPlayer
 LARGEFONT = ("Verdana", 35)
 ctk.set_appearance_mode('light')
 
@@ -430,13 +431,6 @@ class ThumbnailGenerate(AutomationFrame):
         super().__init__(parent, controller,'Thumbnail Generator')
         self.automation_callback = GenerateThumbnailWF
         
-class SetTitle(AutomationFrame):
-     def __init__(self, parent, controller):
-        
-        super().__init__(parent, controller,'Set Title')
-        self.should_not_reset = True
-        self.automation_callback = TitleSetWF
-    
 class FetchAudio(AutomationFrame):
     def __init__(self, parent, controller):
         super().__init__(parent, controller,'Fetch Audio')
@@ -1379,9 +1373,9 @@ class GeminiTest(tk.Frame):
         self.result_lbl.configure(text=str(send_gemini(self.text.get())))
         change_states([self.gemini_entry, self.send_btn],'!disabled')
 
-from bin.player_video import NewVideoPlayer
 
-class GeminiTest(tk.Frame):
+
+class SetTitle(tk.Frame):
     """
     Displays information about the application, including its license.
 
