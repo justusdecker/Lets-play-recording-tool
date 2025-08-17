@@ -16,6 +16,7 @@ from tkinter.filedialog import askopenfilename
 from subprocess import Popen
 from bin.gemini_api import send_gemini
 from bin.player_video import NewVideoPlayer
+from bin.player_audio import NewAudioPlayer
 LARGEFONT = ("Verdana", 35)
 ctk.set_appearance_mode('light')
 
@@ -1354,24 +1355,7 @@ class GeminiTest(tk.Frame):
         tk.Frame.__init__(self, parent)
         
         W = ctk.CTkScrollableFrame(self,width=600,height=400)
-        self.menu = get_menu(self, controller)
-        
-        ttk.Label(W,text='Ask Gemini for a hint',font=Font(W,size=16))
-        self.text = tk.StringVar()
-        self.gemini_entry = ttk.Entry(W,textvariable=self.text)
-        self.send_btn = ttk.Button(W,text='Send',command=self.send_and_receive)
-        self.result_lbl = ttk.Label(W)
-        self.gemini_entry.pack(side=tk.LEFT)
-        self.send_btn.pack(side=tk.LEFT)
-        self.result_lbl.pack()
-        
-        W.grid(row=0,column=1)
-    def send_and_receive(self,*args):
-        change_states([self.gemini_entry, self.send_btn],'disabled')
-        Thread(target=self.__sar).start()
-    def __sar(self):
-        self.result_lbl.configure(text=str(send_gemini(self.text.get())))
-        change_states([self.gemini_entry, self.send_btn],'!disabled')
+        NewAudioPlayer([[0,'C:\\Users\\Justus\\lprt\\audio\\11_minecraft_desktop.aac','C:\\Users\\Justus\\lprt\\audio_fixed\\14_minecraft_track_mic_fixed.aac','C:\\Users\\Justus\\Videos\\2025-08-07 22-29-10.mp4',1]],self)
 
 
 

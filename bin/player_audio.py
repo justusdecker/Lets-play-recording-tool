@@ -1,22 +1,15 @@
 from bin.welcome_popup import WELCOME
 WELCOME.update_message(f'Load: {__name__}')
 
-from tkinter import Toplevel, DoubleVar, LEFT, Scale, HORIZONTAL
-from tkinter.ttk import Button, Label, LabeledScale
+from tkinter import LEFT, Scale, HORIZONTAL
+from tkinter.ttk import Button
 from bin.ffmpeg import ffmpeg_run, FFMPEG_AUDIO_COMBINE_TRUNCATED
 from bin.constants import TEMP_FOLDER
 
-try: #Fix for issue: #126
-    from pygame.mixer import init, music
-except:
-    from tkinter.messagebox import showerror
-    from bin.constants import ERROR_008
-    showerror('ERROR', ERROR_008 + '\npygame')
-    quit()
 
-init()
-from bin.media_player import MediaPlayer
-class AudioPlayer(MediaPlayer):
+from bin.media_player import NewMediaPlayer
+
+class NewAudioPlayer(NewMediaPlayer):
     def __init__(self, paths, app):
         self.audio_list = paths
         self.current_episode = 0
@@ -60,9 +53,10 @@ class AudioPlayer(MediaPlayer):
         else:
             self.current_episode = new_location
 
-            self.set_title()
+
             self.open_file()
             self.play_video()
+            self.current_media_label.configure(text=f'{self.current_media}')
             
     def episode_up(self,*args):
         """ Change the selected episode. One up. """
@@ -74,9 +68,10 @@ class AudioPlayer(MediaPlayer):
             self.current_episode = l - 1
         else:
             self.current_episode = new_location
-            self.set_title()
+
             self.open_file()
             self.play_video()
+            self.current_media_label.configure(text=f'{self.current_media}')
     def play_video(self):
         self.open_file()
         return super().play_video()
@@ -99,3 +94,4 @@ class AudioPlayer(MediaPlayer):
         self.destroy()
 
         
+  

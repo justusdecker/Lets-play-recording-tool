@@ -12,8 +12,7 @@ from os import listdir
 from bin.constants import *
 from bin.thumbnail import ThumbnailGenerator
 from tkinter.messagebox import showerror
-from bin.player_video import VideoPlayer
-from bin.player_audio import AudioPlayer
+
 from bin.player_thumbnail import ThumbnailPreview
 from shutil import copyfile
 from bin.data_access import SQLAccess, cnef,rie, file_write, try_delete_file
@@ -476,26 +475,7 @@ class CompareAndRenderWF(GenericWorkFlow):
         # It does not matter whether the automation was completed or canceled.
         app.start_btn.state(['!disabled'])
 
-class TitleSetWF(GenericWorkFlow):
-    """
-    A workflow class responsible for allowing the user to change the title & take a thumbnail.
-    """
-    def __init__(self,lpid, epr,app):
-        
-        super().__init__(folder = FIXED_AUDIO_FOLDER, finish_message = 'Title Set',lpid=lpid, epr=epr)
-        self.user_workflow(app)
-    def user_workflow(self, app):
-        """
-        Executes the main logic for title setting & taking thumbnails.
-        
-        For more Information look up: `bin.video_player.VideoPlayer`
-        """
-        app.start_btn.state(['disabled'])
-        
 
-        video_player = VideoPlayer([i + 1 for i in range(*self.rng)],self.lpid,app)
-        while video_player.winfo_exists(): # Fix for issue #234
-            sleep(1)
 
         
 
