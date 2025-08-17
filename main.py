@@ -1471,9 +1471,9 @@ class GeminiTest(tk.Frame):
             self.start_btn.state(['!disabled'])
             
     def run(self,*args):
-
-        self.media_player.data = self.epnums
-        self.epnums
+        a, b = int(self.epstart_option_var.get()), int(self.epend_option_var.get())
+        
+        self.media_player.data = [i + 1 for i in range(a,b+(1 if a == b else 0))]
             
 class About(tk.Frame):
     """
