@@ -1376,7 +1376,7 @@ class GeminiTest(tk.Frame):
         self.result_lbl.configure(text=str(send_gemini(self.text.get())))
         change_states([self.gemini_entry, self.send_btn],'!disabled')
 
-from bin.media_player import NewMediaPlayer
+from bin.player_video import NewVideoPlayer
 
 class GeminiTest(tk.Frame):
     """
@@ -1389,7 +1389,7 @@ class GeminiTest(tk.Frame):
         W = ttk.Frame(self)
         
         self.menu = get_menu(self, controller)
-        self.media_player = NewMediaPlayer(W,self)
+        self.media_player = NewVideoPlayer(W, [15,16,17,18],0,self)
         self.media_player.pack()
         W.grid(row=0,column=1)
 

@@ -295,10 +295,6 @@ class MediaPlayer(tk.Toplevel):
         # Begin updating the progress slider periodically.
         self.update_progress()
         
-    def set_title(self):
-        """ Set the window title """
-        self.title(f'LPRT - MediaPlayer')
-        
     def open_file(self, videopath: str):
         """
         Sets media to `video_path` in the VLC media player instance. Finally, it calls the method to embed
@@ -308,7 +304,6 @@ class MediaPlayer(tk.Toplevel):
             media = self.instance.media_new(videopath)
             self.player.set_media(media)
             self.set_video_panel()
-            self.set_title()
             
     def episode_down(self,*args):
         pass
