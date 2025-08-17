@@ -57,6 +57,6 @@ def send_gemini(text: str) -> str | None:
     except HTTPError as http_err:
         showerror('HTTPError - Gemini', f'{http_err.response.status_code}\nPlease check your API key.')
     except RequestException as req_err:
-        showerror('RequestException - Gemini', f'{req_err.response.status_code}\nPossibly a connection issue or DNS error.')
+        showerror('RequestException - Gemini', f'Possibly a connection issue or DNS error.')
     except (KeyError, IndexError) as parse_err:
         showerror('ParseException - Gemini', f'Error parsing the API response\nThe structure of the API response may have changed or the response was unexpected.')
