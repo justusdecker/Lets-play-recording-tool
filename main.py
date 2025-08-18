@@ -430,6 +430,8 @@ class ThumbnailGenerate(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         
+        self.menu = get_menu(self, controller)
+        
         W = ctk.CTkScrollableFrame(self,width=600,height=400)
         
         AUTOMATION_ROOT = ttk.Frame(W)
@@ -449,7 +451,9 @@ class ThumbnailGenerate(tk.Frame):
         self.normal_options.pack()
         automation_root_header.pack(pady=10)
         AUTOMATION_ROOT.pack()
-    
+        W.grid(row=0,column=1)
+    def run(self):
+        pass
     def update_ui(self):
         """
         Updates the UI elements based on the selected 'Let's Play' series.
