@@ -1,5 +1,5 @@
 from tkinter.messagebox import showerror
-from requests import get
+from requests import get, post
 from requests.exceptions import HTTPError, RequestException
 import zipfile
 from io import BytesIO
@@ -49,4 +49,12 @@ def get_newest_version_number():
         return r.json()
     except (HTTPError, RequestException) as E:
         return {'version': ''.join(VERSION.split('.')[0:2])}
-        
+    
+def send_heartbeat():
+    
+    try:
+        r = post('https://justusdecker.pythonanywhere.com/api/heartbeat')
+        print(r.text)
+        r.raise_for_status()
+    except (HTTPError, RequestException) as E:
+        print(E)
