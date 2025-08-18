@@ -6,6 +6,7 @@ from bin.constants import DISCLAIMER, __LICENSE__
 from bin.data_access import on_start, SQLAccess, json_write, json_read, AsciiImage, try_delete_file
 from threading import Thread
 from os.path import getsize
+from os import system
 import tkinter as tk
 import customtkinter as ctk
 from tkinter import ttk
@@ -21,9 +22,11 @@ import sys
 from bin.download_file import send_heartbeat, get_newest_version_number
 send_heartbeat()
 def check_version():
-    if not get_newest_version_number()['version'] != '_'.join(VERSION.split('.')[0:2]):
+    if get_newest_version_number()['version'] != '_'.join(VERSION.split('.')[0:2]):
         if msgbox.askyesno('New Update avaiable','Do you want to visit the update website?'):
-            Popen('https://github.com/justusdecker/Lets-play-recording-tool/releases')
+
+            system('start https://github.com/justusdecker/Lets-play-recording-tool/releases')
+
         
 check_version()
 LARGEFONT = ("Verdana", 35)
