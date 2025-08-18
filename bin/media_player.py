@@ -9,7 +9,9 @@ except:
     showerror('ERROR', ERROR_008 + '\nvlc')
     quit()
 VLC_INSTANCE = vlc.Instance()
-
+class Vip:
+    ISPLAYING = False
+__VIP = Vip()
 class NewMediaPlayer(tk.Frame):
     """
     The Mediaplayer can play both video & audio.
@@ -138,7 +140,9 @@ class NewMediaPlayer(tk.Frame):
         Once the media is loaded via the open_file function, clicking the Play button 
         will trigger this function to begin playback.
         """
-        self.player.play()
+        if not __VIP.ISPLAYING:
+            self.player.play()
+        __VIP.ISPLAYING = True
 
     def pause_video(self):#! Not in use
         """
@@ -152,6 +156,7 @@ class NewMediaPlayer(tk.Frame):
         The stop_video function stops the video playback completely and resets the playback state.
         """
         self.player.stop()
+        __VIP.ISPLAYING = False
 
     def set_volume(self, value):
         """
