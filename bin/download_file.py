@@ -48,7 +48,7 @@ def get_newest_version_number():
         r.raise_for_status()
         return r.json()
     except (HTTPError, RequestException) as E:
-        return {'version': ''.join(VERSION.split('.')[0:2])}
+        return {'version': '_'.join(VERSION.split('.')[0:2])}
     
 def send_heartbeat():
     
