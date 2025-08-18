@@ -24,7 +24,7 @@ class ThumbnailPreview(Frame):
         
         self.label = Label(parent)
         self.label.pack(pady=20)
-        self.update_image(f'bin\\data\\img\\logo.ico',-1)
+        
 
     def update_image(self,path: str,i:int | None):
         """
