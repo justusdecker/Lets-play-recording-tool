@@ -1,7 +1,7 @@
 from bin.welcome_popup import WELCOME
 WELCOME.update_message(f'Load: {__name__}')
 
-from tkinter import Frame
+from tkinter import Frame, X
 from tkinter.ttk import Label
 from tkinter.messagebox import showerror
 
@@ -22,7 +22,7 @@ class ThumbnailPreview(Frame):
     def __init__(self,parent):
         super().__init__()
         self.label = Label(parent)
-        self.label.pack(pady=20,expand=1)
+        self.label.pack(pady=20,fill=X)
         self.update_image(f'bin\\data\\img\\logo.ico',-1)
 
     def update_image(self,path: str,i:int | None):
