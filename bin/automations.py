@@ -233,7 +233,8 @@ class GenerateThumbnailWF(OverhauledWorkFlow):
         """
         try:
             TG = ThumbnailGenerator()
-            TP = ThumbnailPreview()
+            
+            TP = app.tp #+ This will be the thumbnail preview
             tad = SQLAccess.read_tad_path(self.lpid)
             
             reoc(not tad, ERROR_009)
@@ -266,7 +267,7 @@ class GenerateThumbnailWF(OverhauledWorkFlow):
                         ok = msgbox.askyesno('LPRT Result Check','Thumbnail Result Okay?')
                     else:
                         ok = True
-                app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
+                #!app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
 
                 SQLAccess.update_episode(self.lpid, i,thumbnail_path=p)
 

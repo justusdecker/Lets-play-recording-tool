@@ -512,11 +512,11 @@ class ThumbnailGenerate(TKFrameWithLPControls):
     def __init__(self, parent, controller):
         super().__init__(parent, controller)
         
-        check_for_each_option_var = tk.BooleanVar(value=False)
+        self.check_for_each_option_var = tk.BooleanVar(value=False)
         
         ttk.Label(self.W,text='Options',font=Font(self.W,size=14)).pack()
         
-        self.check_for_each_option = ttk.Checkbutton(self.W, text='Check each', variable=check_for_each_option_var)
+        self.check_for_each_option = ttk.Checkbutton(self.W, text='Check each', variable=self.check_for_each_option_var)
         self.check_for_each_option.pack()
         
         self.thread = None
@@ -528,61 +528,25 @@ class ThumbnailGenerate(TKFrameWithLPControls):
             self.thread = Thread(target=self.__run)
             self.thread.start()
         
-    def __run():
-        pass
-    
-    def update_ui(self):
-        """
-        Updates the UI elements based on the selected 'Let's Play' series.
-
-        This method dynamically calculates the available episode numbers
-        based on the currently selected 'Let's Play' value and updates
-        the internal `epnums` list.
-        """
-        lp = self.lp_option_var.get()
-        if lp != 'None':
-            self.epnums = [i+1 for i in range(SQLAccess.read_episode_ammount(SQLAccess.read_letsplay_by_option_var(self)))]
-        else:
-            self.epnums = []
-    
-    def lp_changed(self,*args):
-        """
-        Callback function executed when the 'Let's Play' selection changes.
-
-        This method updates the UI based on the new 'Let's Play' selection,
-        recalculates available episode numbers, and dynamically rebuilds
-        the episode range selection widgets. It also adjusts the state
-        of the start button.
-        """
-        self.update_ui()
+    def __run(self):
+        print(f'run automation with cfe set as [{self.check_for_each_option_var.get()}]. In range: [{self.epstart_option_var.get()} - {self.epend_option_var.get()}]')
         
-        if not self.epnums:
-            self.start_btn.state(['disabled'])
-        else:
-            self.start_btn.state(['!disabled'])
         
-        self.ep_start.destroy()
-        self.ep_end.destroy()
-        self.label2.destroy()
-        self.label3.destroy()
-        self.start_btn.destroy()
-        del self.epstart_option_var
-        del self.epend_option_var
+        self.start_btn.state(['disabled'])
+        change_states(self.menu,'disabled')
+        change_states([self.label, self.lp_options],'disabled')
+        change_states([self.label2, self.label3,self.ep_end, self.ep_start],'disabled')
+        a, b = int(self.epstart_option_var.get()) , int(self.epend_option_var.get())
         
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.normal_options,self.run,self.check_last_id,self.epnums)
+        lp = SQLAccess.read_letsplay_by_option_var(self)
         
-    def check_last_id(self,*args):
-        """
-        Validates the selected episode range.
-
-        This callback is triggered when either the start or end episode
-        selection changes. It disables the start button if the end episode
-        is numerically less than the start episode, ensuring valid range selection.
-        """
-        if int(self.epend_option_var.get()) < int(self.epstart_option_var.get()):
-            self.start_btn.state(['disabled'])
-        else:
-            self.start_btn.state(['!disabled'])
+        #GenerateThumbnailWF(lp,[a-1,b],self)
+        
+        change_states(self.menu,'!disabled')
+        change_states([self.label, self.lp_options],'!disabled')
+        change_states([self.label2, self.label3,self.ep_end, self.ep_start],'!disabled')
+        
+        self.thread = None
     
 class FetchAudio(AutomationFrame):
     def __init__(self, parent, controller):
