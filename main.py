@@ -1,6 +1,11 @@
 from bin.welcome_popup import WELCOME
 WELCOME.update_message(f'Load: {__name__}')
-
+from bin.download_file import send_heartbeat, get_newest_version_number
+send_heartbeat()
+def check_version():
+    print(get_newest_version_number())
+    print(''.join(VERSION.split('.')[0:2]))
+check_version()
 from bin.automations import *
 from bin.constants import DISCLAIMER, __LICENSE__
 from bin.data_access import on_start, SQLAccess, json_write, json_read, AsciiImage, try_delete_file
