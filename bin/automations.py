@@ -12,8 +12,7 @@ from os import listdir
 from bin.constants import *
 from bin.thumbnail import ThumbnailGenerator
 from tkinter.messagebox import showerror
-from bin.player_video import VideoPlayer
-from bin.player_audio import AudioPlayer
+
 from bin.player_thumbnail import ThumbnailPreview
 from shutil import copyfile
 from bin.data_access import SQLAccess, cnef,rie, file_write, try_delete_file
@@ -124,8 +123,38 @@ class GenericWorkFlow:
         the workflow has finished, using the provided `finish_message`
         """
         toast_finished(self.finish_message)
+
+class OverhauledWorkFlow:
+    def __init__(self, folder: str, finish_message: str,lpid,epr):
+        self.auto_create_folder_path = folder
+        self.finish_message = finish_message
+        self.lpid,self.epr = lpid,epr
+        self.lp_name = SQLAccess.read_letsplay_name(self.lpid)
+    @property
+    def rng(self) -> tuple[int,int]:
+        """
+        Returns the effective episode range as a tuple (start, end).
+
+        The end of the range is inclusive. If the start and end episodes
+        in `epr` are the same, the end of the returned range is incremented by 1
+        to ensure a valid range for iteration (e.g., (5,5) becomes (5,6)).
+
+        Returns:
+            tuple[int, int]: A tuple representing the (start_episode, end_episode)
+                             for the workflow.
+        """
+        return self.epr[0],self.epr[1]+(1 if self.epr[0] == self.epr[1] else 0)
     
-class GenerateThumbnailWF(GenericWorkFlow):
+    def user_workflow(self):
+        """
+        Executes the primary user-facing part of the workflow.
+
+        This method currently triggers a 'toast' notification indicating
+        the workflow has finished, using the provided `finish_message`
+        """
+        toast_finished(self.finish_message)
+        
+class GenerateThumbnailWF(OverhauledWorkFlow):
     """
     Generating Thumbnails based on the thumbnail automation data
     """
@@ -142,7 +171,8 @@ class GenerateThumbnailWF(GenericWorkFlow):
         """
         try:
             TG = ThumbnailGenerator()
-            TP = ThumbnailPreview()
+            
+            TP = app.tp #+ This will be the thumbnail preview
             tad = SQLAccess.read_tad_path(self.lpid)
             
             reoc(not tad, ERROR_009)
@@ -175,7 +205,7 @@ class GenerateThumbnailWF(GenericWorkFlow):
                         ok = msgbox.askyesno('LPRT Result Check','Thumbnail Result Okay?')
                     else:
                         ok = True
-                app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
+                #!app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
 
                 SQLAccess.update_episode(self.lpid, i,thumbnail_path=p)
 
@@ -379,125 +409,58 @@ class SendToAudacityWF(GenericWorkFlow):
         except Exception as E:
             pass
 
-class CompareAndRenderWF(GenericWorkFlow):
+def render(result,app, lpid):
     """
-    A workflow class responsible for allowing the user to compare and adjust audio
-    levels for episodes, then combining these adjusted audio tracks with
-    their respective video files to produce final rendered videos.
-    
-    If the user has done something wrong. A AutomationError will be thrown & catched. 
-    After that the corresponding error message will be displayed.
+    Currently a workaround. Will be refactored into Compare&Render ASAP
     """
-    def __init__(self,lpid, epr,app):
-        super().__init__(folder=TEMP_FOLDER, finish_message="CAAR",lpid=lpid, epr=epr)
-        self.user_workflow(app)
-    def user_workflow(self,app):
-        """
-        Executes the main logic for audio comparison, combination, and video rendering.
-        """
-        try:
-            rendering_queue = []
-            episodes = SQLAccess.read_episodes(self.lpid)
-            from bin.data_access import Episodes
-            episodes : list[Episodes]
-            for i in range(*self.rng):
-                reoc(episodes[i].audio_mic_edit2_path is None,ERROR_013)
-                reoc(episodes[i].audio_desktop_path is None,ERROR_013)
-                reoc(episodes[i].video_path is None,ERROR_013)
-                
-                reoc(not isfile(episodes[i].audio_mic_edit2_path),ERROR_007)
-                reoc(not isfile(episodes[i].audio_desktop_path),ERROR_007)
-                reoc(not isfile(episodes[i].video_path),ERROR_007)
+    rendering_queue = []
+    try:
+        ci = 0
+        for i, mic, desk, vid, vol in result:
+            tmp_audio_path = f'{TEMP_FOLDER}temp_{i+1}_audio_final.mp3'
             
-            paths = [[i, episodes[i].audio_mic_edit2_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*self.rng)]
-
-            volap = AudioPlayer(paths,self)
+            rie(tmp_audio_path)
             
-            while volap.winfo_exists():
-                sleep(1)
-            if not volap.isfinished:
-                msgbox.showerror('ERROR','User interrupt!')
-                return
-            result = volap.audio_list
-            
-            cnef(TEMP_FOLDER)
-            
-            ci = 0
-            for i, mic, desk, vid, vol in result:
-                tmp_audio_path = f'{TEMP_FOLDER}temp_{i+1}_audio_final.mp3'
-                
-                rie(tmp_audio_path)
-                
-                ffmpeg_run(
-                    FFMPEG_AUDIO_COMBINE,
-                    {
-                        '__IN1__':mic,
-                        '__IN2__': desk,
-                        '__VOLUME1__': str(1.0),
-                        '__VOLUME2__': str(vol),
-                        '__OUT__':tmp_audio_path
-                        }
-                    )
-                
-                reoc(not isfile(tmp_audio_path),ERROR_007)
-                
-                app.progress_label.configure(text = f'Audio Combine\n{((ci+1)/len(result))*100:.1f}%\n{ci+1}/{len(result)}')
-                ci += 1
-                rendering_queue.append((vid, tmp_audio_path, i))
-            toast_finished("[1/2] Audio combine")
-
-            
-            
-            path_ending = f'_{SQLAccess.read_letsplay_game_name(self.lpid)}_final.mp4'
-            cnef(VIDEO_FOLDER)
-            ci = 0
-            for video, audio, index in rendering_queue:
-                final_path = f'{VIDEO_FOLDER}{index+1}{path_ending}'
-                rie(final_path)
-                ffmpeg_run(
-                    FFMPEG_VIDEO_RENDER,
-                    {
-                        '__VIDEO__': video,
-                        '__AUDIO__': audio,
-                        '__OUTPUT__': final_path
+            ffmpeg_run(
+                FFMPEG_AUDIO_COMBINE,
+                {
+                    '__IN1__':mic,
+                    '__IN2__': desk,
+                    '__VOLUME1__': str(1.0),
+                    '__VOLUME2__': str(vol),
+                    '__OUT__':tmp_audio_path
                     }
                 )
-                reoc(not isfile(final_path),ERROR_007)
-                app.progress_label.configure(text = f'Audio Combine\n{((ci+1)/len(result))*100:.1f}%\n{ci+1}/{len(result)}')
-                ci += 1
-                SQLAccess.update_episode(self.lpid, index, final_video_path=final_path)
-            super().user_workflow()
-        except AutomationError as AE:
-            if 'volap' in locals(): # This will fix issue #234
-                volap.destroy()
-            msgbox.showerror('Automation Error',str(AE))
-        # After processing all episodes, we re-enabling the application's start button
-        # and calling the parent `user_workflow` to display the completion message.
-        # It does not matter whether the automation was completed or canceled.
-        app.start_btn.state(['!disabled'])
-
-class TitleSetWF(GenericWorkFlow):
-    """
-    A workflow class responsible for allowing the user to change the title & take a thumbnail.
-    """
-    def __init__(self,lpid, epr,app):
-        
-        super().__init__(folder = FIXED_AUDIO_FOLDER, finish_message = 'Title Set',lpid=lpid, epr=epr)
-        self.user_workflow(app)
-    def user_workflow(self, app):
-        """
-        Executes the main logic for title setting & taking thumbnails.
-        
-        For more Information look up: `bin.video_player.VideoPlayer`
-        """
-        app.start_btn.state(['disabled'])
-        
-
-        video_player = VideoPlayer([i + 1 for i in range(*self.rng)],self.lpid,app)
-        while video_player.winfo_exists(): # Fix for issue #234
-            sleep(1)
+            
+            reoc(not isfile(tmp_audio_path),ERROR_007)
+            
+            #app.progress_label.configure(text = f'Audio Combine\n{((ci+1)/len(result))*100:.1f}%\n{ci+1}/{len(result)}')
+            ci += 1
+            rendering_queue.append((vid, tmp_audio_path, i))
+        toast_finished("[1/2] Audio combine")
 
         
+        
+        path_ending = f'_{SQLAccess.read_letsplay_game_name(lpid)}_final.mp4'
+        cnef(VIDEO_FOLDER)
+        ci = 0
+        for video, audio, index in rendering_queue:
+            final_path = f'{VIDEO_FOLDER}{index+1}{path_ending}'
+            rie(final_path)
+            ffmpeg_run(
+                FFMPEG_VIDEO_RENDER,
+                {
+                    '__VIDEO__': video,
+                    '__AUDIO__': audio,
+                    '__OUTPUT__': final_path
+                }
+            )
+            reoc(not isfile(final_path),ERROR_007)
+            #app.progress_label.configure(text = f'Audio Combine\n{((ci+1)/len(result))*100:.1f}%\n{ci+1}/{len(result)}')
+            ci += 1
+            SQLAccess.update_episode(lpid, index, final_video_path=final_path)
+    except AutomationError as AE:
+        msgbox.showerror('Automation Error',str(AE))
 
 class DeployWF(GenericWorkFlow):
     """

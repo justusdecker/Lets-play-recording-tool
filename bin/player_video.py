@@ -10,6 +10,7 @@ from bin.thumbnail import ThumbnailGenerator
 from bin.constants import *
 from bin.ffmpeg import *
 from bin.other import convert_from_entities, convert_to_entities
+
 try:
     import vlc
 except:
@@ -37,9 +38,12 @@ def convert_char(c: str):
 WELCOME.update_message('Instanciate VLC')
 
 VLC_INSTANCE = vlc.Instance()
-from bin.media_player import MediaPlayer
-class VideoPlayer(MediaPlayer):
-    def __init__(self, data: list[int],lpid,app):
+from bin.media_player import NewMediaPlayer
+
+
+
+class NewVideoPlayer(NewMediaPlayer):
+    def __init__(self,parent, data: list[int],lpid,app):
         
         self.tg = ThumbnailGenerator()
         self.data: list[int] = data
@@ -48,7 +52,7 @@ class VideoPlayer(MediaPlayer):
         self.title_var = StringVar()
         self.lpid = lpid
 
-        super().__init__(app, audio_only=False)
+        super().__init__(parent, app, audio_only=False)
         
         ttk.Label(self.bar,text='Title: ').pack(side=LEFT, padx=5)
         self.title_setter = ttk.Entry(self.bar,textvariable=self.title_var)
@@ -111,7 +115,7 @@ class VideoPlayer(MediaPlayer):
         """ Sets the video title & updates the database. """
         new_title = ''.join([convert_char(c) for c in self.title_var.get()])
         SQLAccess.update_episode(self.lpid, self.rel_id,title=convert_to_entities(new_title))
-        
+    
     def episode_down(self,*args):
         """ Change the selected episode. One down. """
         new_location = self.current_episode - 1
@@ -122,9 +126,10 @@ class VideoPlayer(MediaPlayer):
             self.current_episode = new_location
 
             self.title_var.set(f'{self.video_title}')
-            self.set_title()
+
             self.open_file(self.video_path)
             self.play_video()
+            self.current_media_label.configure(text=f'{self.rel_id+1}_{SQLAccess.read_letsplay_name(self.lpid)}')
             
     def episode_up(self,*args):
         """ Change the selected episode. One up. """
@@ -137,16 +142,7 @@ class VideoPlayer(MediaPlayer):
         else:
             self.current_episode = new_location
             self.title_var.set(f'{self.video_title}')
-            self.set_title()
+
             self.open_file(self.video_path)
             self.play_video()
-            
-    def destroy(self):
-        self.app.start_btn.state(['!disabled'])
-        for element in self.app.menu:
-
-            element.state(['!disabled'])
-        for element in [self.app.label, self.app.lp_options,self.app.label2, self.app.label3,self.app.ep_end, self.app.ep_start]:
-            element.state(['!disabled'])
-        self.isfinished = True
-        return super().destroy()
+            self.current_media_label.configure(text=f'{self.rel_id+1}_{SQLAccess.read_letsplay_name(self.lpid)}')

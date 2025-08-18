@@ -9,38 +9,43 @@ except:
     showerror('ERROR', ERROR_008 + '\nvlc')
     quit()
 VLC_INSTANCE = vlc.Instance()
-class MediaPlayer(tk.Toplevel):
+class Vip:
+    ISPLAYING = False
+VIP = Vip()
+class NewMediaPlayer(tk.Frame):
     """
     The Mediaplayer can play both video & audio.
     This class is a wrapper for `python-vlc`
     """
     
-    def __init__(self,app,audio_only: bool = False):
+    def __init__(self,parent,app,audio_only: bool = False):
         self.app = app
         self.current_episode = 0
         super().__init__()
         self.isfinished = False
-        if audio_only:
-            self.geometry('640x300')
-        else:
-            self.geometry('640x600')
 
         
         self.instance = VLC_INSTANCE
         # Create a VLC instance and media player.
         self.player = self.instance.media_player_new()
         
+        self.comp_panel = tk.Frame(parent)
+        self.comp_panel.pack()
+        
+        self.video_and_bar = tk.Frame(self.comp_panel)
+        self.video_and_bar.pack()
+        
         # Create the video panel where the video will be displayed.
-        self.video_panel = tk.Frame(self, bg="black")
-        self.video_panel.pack(fill=tk.BOTH, expand=1)
+        self.video_panel = tk.Canvas(self.video_and_bar, bg="black")
+        self.video_panel.pack(fill=tk.BOTH, expand=1,padx=2,pady=(2,0))
         
-        self.bar = tk.Frame(self)
-        
-        self.bar.pack(side=tk.LEFT, pady=5)
+        self.current_media_label = ttk.Label(self.video_and_bar,text='None')
+        self.current_media_label.pack()
         # Set title each episode
         # Create a progress frame that holds the progress slider.
-        self.progress_frame = tk.Frame(self)
-        self.progress_frame.pack(fill=tk.X, padx=10, pady=5)
+        self.progress_frame = tk.Frame(self.video_and_bar)
+        self.progress_frame.pack(fill=tk.X, pady=2)
+        
         
         # Create the progress slider.
         # This slider's range will be updated dynamically to match the video's duration.
@@ -55,36 +60,36 @@ class MediaPlayer(tk.Toplevel):
         self.slider_dragging = False
 
         # Create the control panel with playback buttons and volume control.
-        self.controls = ttk.Frame(self)
-        self.controls.pack(fill=tk.X, padx=10, pady=5)
+        self.controls = ttk.Frame(self.comp_panel)
+        self.controls.pack(fill=tk.X, padx=5, pady=2)
 
         # Last button.
         img = AsciiImage(ICO_BACKWARD)
         self.last_button = ttk.Button(self.controls, command=self.episode_down,image=img.image)
-        self.last_button.pack(side=tk.LEFT, padx=5)
+        self.last_button.pack(side=tk.LEFT, padx=2)
         self.last_button.image = img.image
         # Next button.
         img = AsciiImage(ICO_FORWARD)
         self.next_button = ttk.Button(self.controls, command=self.episode_up,image=img.image)
-        self.next_button.pack(side=tk.LEFT, padx=5)
+        self.next_button.pack(side=tk.LEFT, padx=2)
         self.next_button.image = img.image
         # Play button.
         img = AsciiImage(ICO_PLAY)
         self.play_button = ttk.Button(self.controls, command=self.play_video,image=img.image)
-        self.play_button.pack(side=tk.LEFT, padx=5)
+        self.play_button.pack(side=tk.LEFT, padx=2)
 
         self.play_button.image = img.image
         # Pause button.
         img = AsciiImage(ICO_PAUSE)
         self.pause_button = ttk.Button(self.controls, command=self.pause_video,image=img.image)
-        self.pause_button.pack(side=tk.LEFT, padx=5)
+        self.pause_button.pack(side=tk.LEFT, padx=2)
         self.pause_button.image = img.image
         
         # Stop button
         img = AsciiImage(ICO_STOP)
-        self.pause_button = ttk.Button(self.controls, command=self.stop_video,image=img.image)
-        self.pause_button.pack(side=tk.LEFT, padx=5)
-        self.pause_button.image = img.image
+        self.stop_button = ttk.Button(self.controls, command=self.stop_video,image=img.image)
+        self.stop_button.pack(side=tk.LEFT, padx=2)
+        self.stop_button.image = img.image
         
         # Volume control slider.
         # This slider controls the player's volume in real time.
@@ -96,13 +101,13 @@ class MediaPlayer(tk.Toplevel):
         
         self.volume_slider.set(50)  # Set the default volume to 50%
         self.volume_slider.pack(side=tk.LEFT, padx=5)
-
+        
+        self.bar = tk.Frame(self.comp_panel)
+        
+        self.bar.pack(side=tk.LEFT, pady=2)
+        
         # Begin updating the progress slider periodically.
         self.update_progress()
-        
-    def set_title(self):
-        """ Set the window title """
-        self.title(f'LPRT - MediaPlayer')
         
     def open_file(self, videopath: str):
         """
@@ -113,7 +118,7 @@ class MediaPlayer(tk.Toplevel):
             media = self.instance.media_new(videopath)
             self.player.set_media(media)
             self.set_video_panel()
-            self.set_title()
+            
             
     def episode_down(self,*args):
         pass
@@ -128,13 +133,16 @@ class MediaPlayer(tk.Toplevel):
         using platform-specific method: set_hwnd.
         """
         self.player.set_hwnd(self.video_panel.winfo_id())
+        self.video_panel.update_idletasks()
         
     def play_video(self):
         """
         Once the media is loaded via the open_file function, clicking the Play button 
         will trigger this function to begin playback.
         """
-        self.player.play()
+        if not VIP.ISPLAYING:
+            self.player.play()
+        VIP.ISPLAYING = True
 
     def pause_video(self):#! Not in use
         """
@@ -148,6 +156,7 @@ class MediaPlayer(tk.Toplevel):
         The stop_video function stops the video playback completely and resets the playback state.
         """
         self.player.stop()
+        VIP.ISPLAYING = False
 
     def set_volume(self, value):
         """
@@ -198,7 +207,3 @@ class MediaPlayer(tk.Toplevel):
                 self.progress_slider.set(current_time)
 
         self.after(500, self.update_progress)
-    
-    def destroy(self):
-        self.stop_video()
-        return super().destroy()
