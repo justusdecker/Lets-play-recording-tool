@@ -1,7 +1,7 @@
 from bin.welcome_popup import WELCOME
 WELCOME.update_message(f'Load: {__name__}')
 
-from tkinter import Toplevel
+from tkinter import Frame
 from tkinter.ttk import Label
 from tkinter.messagebox import showerror
 
@@ -12,7 +12,7 @@ except:
     showerror('ERROR', ERROR_008 + '\nPIL')
     quit()
 
-class ThumbnailPreview(Toplevel):
+class ThumbnailPreview(Frame):
     """
     A Toplevel window for displaying a thumbnail preview.
 
@@ -21,10 +21,8 @@ class ThumbnailPreview(Toplevel):
     """
     def __init__(self):
         super().__init__()
-        self.isfinished = False
-        self.geometry('640x400')
         self.label = Label(self)
-        self.label.pack(pady=20)
+        self.label.pack(pady=20,expand=1)
         self.update_image(f'bin\\data\\img\\logo.ico',-1)
 
     def update_image(self,path: str,i:int | None):
@@ -39,12 +37,8 @@ class ThumbnailPreview(Toplevel):
             i (int | None): An optional index for the image, used in the window title.
                             If None, "TADEditor" is used in the title.
         """
-        self.title(f'Thumbnail Preview: {i+1 if i is not None else "TADEditor"}')
+        f'Thumbnail Preview: {i+1 if i is not None else "TADEditor"}' #! Title set currently not avaiable
         self.image = Image.open(path).resize((640,360))
         self.image = ImageTk.PhotoImage(self.image)
         self.label.configure(image=self.image,border=2,relief="raised")
-        
-    def byebye(self, *args):
-        """Closes the ThumbnailPreview window."""
-        self.destroy()
    
