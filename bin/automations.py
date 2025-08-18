@@ -123,8 +123,38 @@ class GenericWorkFlow:
         the workflow has finished, using the provided `finish_message`
         """
         toast_finished(self.finish_message)
+
+class OverhauledWorkFlow:
+    def __init__(self, folder: str, finish_message: str,lpid,epr):
+        self.auto_create_folder_path = folder
+        self.finish_message = finish_message
+        self.lpid,self.epr = lpid,epr
+        self.lp_name = SQLAccess.read_letsplay_name(self.lpid)
+    @property
+    def rng(self) -> tuple[int,int]:
+        """
+        Returns the effective episode range as a tuple (start, end).
+
+        The end of the range is inclusive. If the start and end episodes
+        in `epr` are the same, the end of the returned range is incremented by 1
+        to ensure a valid range for iteration (e.g., (5,5) becomes (5,6)).
+
+        Returns:
+            tuple[int, int]: A tuple representing the (start_episode, end_episode)
+                             for the workflow.
+        """
+        return self.epr[0],self.epr[1]+(1 if self.epr[0] == self.epr[1] else 0)
     
-class GenerateThumbnailWF(GenericWorkFlow):
+    def user_workflow(self):
+        """
+        Executes the primary user-facing part of the workflow.
+
+        This method currently triggers a 'toast' notification indicating
+        the workflow has finished, using the provided `finish_message`
+        """
+        toast_finished(self.finish_message)
+        
+class GenerateThumbnailWF(OverhauledWorkFlow):
     """
     Generating Thumbnails based on the thumbnail automation data
     """
@@ -141,7 +171,8 @@ class GenerateThumbnailWF(GenericWorkFlow):
         """
         try:
             TG = ThumbnailGenerator()
-            TP = ThumbnailPreview()
+            
+            TP = app.tp #+ This will be the thumbnail preview
             tad = SQLAccess.read_tad_path(self.lpid)
             
             reoc(not tad, ERROR_009)
@@ -174,7 +205,7 @@ class GenerateThumbnailWF(GenericWorkFlow):
                         ok = msgbox.askyesno('LPRT Result Check','Thumbnail Result Okay?')
                     else:
                         ok = True
-                app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
+                #!app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
 
                 SQLAccess.update_episode(self.lpid, i,thumbnail_path=p)
 
