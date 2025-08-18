@@ -1,0 +1,2 @@
+from bin.download_file import get_newest_version_number
+print(get_newest_version_number())
