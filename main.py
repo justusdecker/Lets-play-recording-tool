@@ -516,6 +516,8 @@ class ThumbnailGenerate(TKFrameWithLPControls):
         
         ttk.Label(self.W,text='Options',font=Font(self.W,size=14)).pack()
         
+        self.tp = ThumbnailPreview()
+        
         self.check_for_each_option = ttk.Checkbutton(self.W, text='Check each', variable=self.check_for_each_option_var)
         self.check_for_each_option.pack()
         
@@ -540,7 +542,7 @@ class ThumbnailGenerate(TKFrameWithLPControls):
         
         lp = SQLAccess.read_letsplay_by_option_var(self)
         
-        #GenerateThumbnailWF(lp,[a-1,b],self)
+        GenerateThumbnailWF(lp,[a-1,b],self)
         
         change_states(self.menu,'!disabled')
         change_states([self.label, self.lp_options],'!disabled')
