@@ -433,7 +433,7 @@ class TKFrameWithLPControls(tk.Frame):
         
         self.menu = get_menu(self, controller)
         
-        W = ctk.CTkScrollableFrame(self,width=600,height=400)
+        W = ctk.CTkScrollableFrame(self,width=600,height=550)
         
         AUTOMATION_ROOT = ttk.Frame(W)
         
@@ -516,11 +516,15 @@ class ThumbnailGenerate(TKFrameWithLPControls):
         
         ttk.Label(self.W,text='Options',font=Font(self.W,size=14)).pack()
         
-        self.tp = ThumbnailPreview(self.W)
-        self.tp.pack()
+        
         
         self.check_for_each_option = ttk.Checkbutton(self.W, text='Check each', variable=self.check_for_each_option_var)
         self.check_for_each_option.pack()
+        
+        ttk.Label(self.W,text='Preview',font=Font(self.W,size=14)).pack()
+        
+        self.tp = ThumbnailPreview(self.W)
+        self.tp.pack()
         
         self.thread = None
         

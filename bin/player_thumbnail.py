@@ -21,8 +21,9 @@ class ThumbnailPreview(Frame):
     """
     def __init__(self,parent):
         super().__init__()
+        
         self.label = Label(parent)
-        self.label.pack(pady=20,fill=X)
+        self.label.pack(pady=20)
         self.update_image(f'bin\\data\\img\\logo.ico',-1)
 
     def update_image(self,path: str,i:int | None):
@@ -38,7 +39,7 @@ class ThumbnailPreview(Frame):
                             If None, "TADEditor" is used in the title.
         """
         f'Thumbnail Preview: {i+1 if i is not None else "TADEditor"}' #! Title set currently not avaiable
-        self.image = Image.open(path).resize((640,360))
+        self.image = Image.open(path).resize((512,288))
         self.image = ImageTk.PhotoImage(self.image)
         self.label.configure(image=self.image,border=2,relief="raised")
    
