@@ -19,9 +19,9 @@ class ThumbnailPreview(Frame):
     This window shows an image, typically a thumbnail, updates its title
     and displayed image based on the provided path and index.
     """
-    def __init__(self):
+    def __init__(self,parent):
         super().__init__()
-        self.label = Label(self)
+        self.label = Label(parent)
         self.label.pack(pady=20,expand=1)
         self.update_image(f'bin\\data\\img\\logo.ico',-1)
 
