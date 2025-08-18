@@ -521,7 +521,7 @@ class ThumbnailGenerate(TKFrameWithLPControls):
         
         self.thread = None
         
-        #- Image Canvas to render on
+        #- Image Canvas to render on <- comes after refactoring player_thumbnail
         
     def run(self):
         if self.thread is None:
