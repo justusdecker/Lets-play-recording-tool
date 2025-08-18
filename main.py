@@ -17,6 +17,7 @@ from subprocess import Popen
 from bin.gemini_api import send_gemini
 from bin.player_video import NewVideoPlayer
 from bin.player_audio import NewAudioPlayer
+import sys
 LARGEFONT = ("Verdana", 35)
 ctk.set_appearance_mode('light')
 
@@ -938,7 +939,7 @@ class FileManager(tk.Frame):
             change_states(self.menu,'disabled')
             SQLAccess.create_letsplay(self.name_var.get(), self.game_name_var.get(),int(self.episode_length_var.get().split(' ')[0])*60)
             msgbox.showinfo('Success', 'Lets Play created\nYou must restart the app!')
-            exit()
+            sys.exit()
             
     def delete_lets_play(self,*args):
         """
@@ -966,7 +967,7 @@ class FileManager(tk.Frame):
                     #print(ep.lpid, ep.id, )
         change_states(self.menu,'disabled')
         msgbox.showinfo('Success', 'Lets Play deleted\nYou must restart the app!')
-        exit()
+        sys.exit()
     
     def on_detect(self,*args):
         """
