@@ -271,10 +271,9 @@ def ffmpeg_run(cmd: list[list], replacer: dict[str,str]={},nr: bool = False):
         except FileNotFoundError:
             return None
 from tkinter.messagebox import showerror
-from bin.constants import ERROR_010, ERROR_011, ERROR_012     
-if ffmpeg_run(['ffmpeg']) is None:
-    showerror('ERROR', ERROR_010)
-    quit()
-if ffmpeg_run(['ffplay']) is None:
-    showerror('ERROR', ERROR_011)
+from bin.constants import ERROR_010, ERROR_011, ERROR_012
+from bin.download_file import download_ffmpeg  
+if ffmpeg_run(['ffmpeg']) is None or ffmpeg_run(['ffplay']) is None or ffmpeg_run(['ffprobe']) is None:
+    showerror('ERROR', 'No FFMPEG found!\nStart download!')
+    download_ffmpeg()
     quit()
