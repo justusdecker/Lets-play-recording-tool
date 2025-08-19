@@ -425,7 +425,7 @@ class Recording(tk.Frame):
         self.lp_options.state(['!disabled'])
      
 class TKFrameWithLPControls(tk.Frame):
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, name: str):
         tk.Frame.__init__(self, parent)
         
         self.menu = get_menu(self, controller)
@@ -434,7 +434,7 @@ class TKFrameWithLPControls(tk.Frame):
         
         AUTOMATION_ROOT = ttk.Frame(W)
         
-        self.normal_options = ttk.LabelFrame(AUTOMATION_ROOT,text='Thumbnail Generate')
+        self.normal_options = ttk.LabelFrame(AUTOMATION_ROOT,text=f'LP & EP Selection - {name}')
 
         self.AUTOMATION_ROOT = AUTOMATION_ROOT
         
@@ -504,22 +504,22 @@ class TKFrameWithLPControls(tk.Frame):
          
 class ThumbnailGenerate(TKFrameWithLPControls):
     def __init__(self, parent, controller):
-        super().__init__(parent, controller)
+        super().__init__(parent, controller, 'ThumbnailGenerator')
         
         self.check_for_each_option_var = tk.BooleanVar(value=False)
         
-        ttk.Label(self.W,text='Options',font=Font(self.W,size=14)).pack()
+        options = ttk.LabelFrame(self.W,text='Options')
         
         
-        
-        self.check_for_each_option = ttk.Checkbutton(self.W, text='Check each', variable=self.check_for_each_option_var)
+        self.check_for_each_option = ttk.Checkbutton(options, text='Check each', variable=self.check_for_each_option_var)
         self.check_for_each_option.pack()
         
-        ttk.Label(self.W,text='Preview',font=Font(self.W,size=14)).pack()
+        preview = ttk.LabelFrame(self.W,text='Preview')
         
-        self.tp = ThumbnailPreview(self.W)
+        self.tp = ThumbnailPreview(preview)
         self.tp.pack()
-        
+        options.pack()
+        preview.pack()
         self.thread = None
         
         #- Image Canvas to render on <- comes after refactoring player_thumbnail
@@ -1316,20 +1316,15 @@ class TadEditor(tk.Frame):
         TAD_EDITOR = ttk.Frame(W)
         tad_editor_header = ttk.Label(W,text='TAD Editor',font=Font(W,size=16))
         
-        LETSPLAY = ttk.Frame(W)
-        letsplay_header = ttk.Label(W,text='Lets Play',font=Font(W,size=14))
+        LETSPLAY = ttk.LabelFrame(W,text='Lets Play')
         
-        BACKGROUND = ttk.Frame(W)
-        background_header = ttk.Label(W,text='Background',font=Font(W,size=14))
+        BACKGROUND = ttk.LabelFrame(W,text='Background')
         
-        LOGO = ttk.Frame(W)
-        logo_header = ttk.Label(W,text='Logo',font=Font(W,size=14))
+        LOGO = ttk.LabelFrame(W,text='Logo')
 
-        TEXT = ttk.Frame(W)
-        text_header = ttk.Label(W,text='Text',font=Font(W,size=14))
+        TEXT = ttk.LabelFrame(W,text='Text')
         
-        SAVE = ttk.Frame(W)
-        save_header = ttk.Label(W,text='Save',font=Font(W,size=14))
+        SAVE = ttk.LabelFrame(W,text='Save')
         
         _, self.lp_options, self.lp_option_var= get_lets_play(LETSPLAY, self.lp_changed)
         
@@ -1346,23 +1341,18 @@ class TadEditor(tk.Frame):
         #tad_editor_header.grid(row=0,column=1,pady=10,sticky='N')
         #TAD_EDITOR.grid(row=1,column=0,sticky='N')
         
-        letsplay_header.grid(row=0,column=0,pady=10,sticky='N')
-        LETSPLAY.grid(row=1,column=0,sticky='N')
+        LETSPLAY.grid(row=0,column=0,sticky='N')
         
-        background_header.grid(row=0,column=1,pady=10,sticky='N')
-        BACKGROUND.grid(row=1,column=1,sticky='N')
+        BACKGROUND.grid(row=0,column=1,sticky='N')
         
-        logo_header.grid(row=0,column=2,pady=10,sticky='N')
-        LOGO.grid(row=1,column=2,sticky='N')
+        LOGO.grid(row=0,column=2,sticky='N')
         
-        text_header.grid(row=0,column=3,pady=10,sticky='N')
-        TEXT.grid(row=1,column=3,sticky='N')
+        TEXT.grid(row=0,column=3,sticky='N')
         
         self.save_btn = ttk.Button(SAVE,text='save',command=self.save_tad)
         self.save_btn.grid(row=0,column=5)
         
-        save_header.grid(row=0,column=4,pady=10,sticky='N')
-        SAVE.grid(row=1,column=4,sticky='N')
+        SAVE.grid(row=0,column=4,sticky='N')
         self.save_btn.state(['disabled'])
         
         W.grid(row=0,column=1)
