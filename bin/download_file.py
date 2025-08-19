@@ -1,5 +1,5 @@
 from tkinter.messagebox import showerror
-from requests import get
+from requests import get, post
 from requests.exceptions import HTTPError, RequestException
 import zipfile
 from io import BytesIO
@@ -26,8 +26,7 @@ def download_file(url: str, filepath: str | None = None, mode: bool = False) -> 
             return BytesIO(r.content)
     except (HTTPError, RequestException) as E:
         return E
-        
-        
+          
 def download_ffmpeg():
     """
     Downloads FFMPEG from gyan.dev
@@ -41,3 +40,21 @@ def download_ffmpeg():
     for ext in ['ffmpeg.exe','ffprobe.exe','ffplay.exe']:
         with open(ext,'wb') as f:
             f.write(zip.read(f'{zip.infolist()[0].filename}bin/{ext}'))
+from bin.constants import VERSION 
+def get_newest_version_number():
+    """ Gets the newest version number Major.Minor Format """
+    try:
+        r = get('https://justusdecker.pythonanywhere.com/api/version')
+        r.raise_for_status()
+        return r.json()
+    except (HTTPError, RequestException) as E:
+        return {'version': '_'.join(VERSION.split('.')[0:2])}
+    
+def send_heartbeat():
+    
+    try:
+        r = post('https://justusdecker.pythonanywhere.com/api/heartbeat')
+        print(r.text)
+        r.raise_for_status()
+    except (HTTPError, RequestException) as E:
+        print(E)

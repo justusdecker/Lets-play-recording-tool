@@ -65,3 +65,11 @@ Information about what you can do and be found in the [wiki](https://github.com/
 
 You have an idea or suggestions? Make sure to file an issue & wait for replies!
 Maybe there are different ideas, improvements, or hints or maybe your feature is not welcome/need at the moment.
+
+## This Application uses:
+|libpng16-16.dll|From libpng - used for image rendering on screen|
+
+## How to compile yourself
+run `compile.bat` from the `./tools` directory.
+
+You must change the paths for images etc. in the spec file yourself.

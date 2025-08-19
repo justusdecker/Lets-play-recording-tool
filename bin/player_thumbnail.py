@@ -1,7 +1,7 @@
 from bin.welcome_popup import WELCOME
 WELCOME.update_message(f'Load: {__name__}')
 
-from tkinter import Frame, X
+from tkinter import Canvas, X
 from tkinter.ttk import Label
 from tkinter.messagebox import showerror
 
@@ -12,7 +12,7 @@ except:
     showerror('ERROR', ERROR_008 + '\nPIL')
     quit()
 
-class ThumbnailPreview(Frame):
+class ThumbnailPreview(Canvas):
     """
     A Toplevel window for displaying a thumbnail preview.
 
@@ -38,8 +38,10 @@ class ThumbnailPreview(Frame):
             i (int | None): An optional index for the image, used in the window title.
                             If None, "TADEditor" is used in the title.
         """
+
         f'Thumbnail Preview: {i+1 if i is not None else "TADEditor"}' #! Title set currently not avaiable
         self.image = Image.open(path).resize((512,288))
         self.image = ImageTk.PhotoImage(self.image)
         self.label.configure(image=self.image,border=2,relief="raised")
+
    

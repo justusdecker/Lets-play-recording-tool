@@ -6,6 +6,7 @@ from bin.constants import DISCLAIMER, __LICENSE__
 from bin.data_access import on_start, SQLAccess, json_write, json_read, AsciiImage, try_delete_file
 from threading import Thread
 from os.path import getsize
+from os import system
 import tkinter as tk
 import customtkinter as ctk
 from tkinter import ttk
@@ -18,6 +19,15 @@ from bin.gemini_api import send_gemini
 from bin.player_video import NewVideoPlayer
 from bin.player_audio import NewAudioPlayer
 import sys
+from bin.download_file import send_heartbeat, get_newest_version_number
+send_heartbeat()
+def check_version():
+    if get_newest_version_number()['version'] != '_'.join(VERSION.split('.')[0:2]):
+        if msgbox.askyesno('New Update avaiable','Do you want to visit the update website?'):
+            system('start https://github.com/justusdecker/Lets-play-recording-tool/releases')
+
+        
+check_version()
 LARGEFONT = ("Verdana", 35)
 ctk.set_appearance_mode('light')
 
@@ -538,8 +548,7 @@ class ThumbnailGenerate(TKFrameWithLPControls):
         
     def __run(self):
         print(f'run automation with cfe set as [{self.check_for_each_option_var.get()}]. In range: [{self.epstart_option_var.get()} - {self.epend_option_var.get()}]')
-        
-        
+
         self.start_btn.state(['disabled'])
         change_states(self.menu,'disabled')
         change_states([self.label, self.lp_options],'disabled')
@@ -553,7 +562,6 @@ class ThumbnailGenerate(TKFrameWithLPControls):
         change_states(self.menu,'!disabled')
         change_states([self.label, self.lp_options],'!disabled')
         change_states([self.label2, self.label3,self.ep_end, self.ep_start],'!disabled')
-        
         self.thread = None
     
 class FetchAudio(AutomationFrame):
