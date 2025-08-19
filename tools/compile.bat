@@ -1,0 +1,1 @@
+pyinstaller --noconfirm --onefile --windowed --icon "C:\Users\Justus\Lets-play-recording-tool\bin\data\img\logo.ico"  "C:\Users\Justus\Lets-play-recording-tool\main.py"
