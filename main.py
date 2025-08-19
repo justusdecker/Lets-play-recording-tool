@@ -548,8 +548,7 @@ class ThumbnailGenerate(TKFrameWithLPControls):
         
     def __run(self):
         print(f'run automation with cfe set as [{self.check_for_each_option_var.get()}]. In range: [{self.epstart_option_var.get()} - {self.epend_option_var.get()}]')
-        
-        
+
         self.start_btn.state(['disabled'])
         change_states(self.menu,'disabled')
         change_states([self.label, self.lp_options],'disabled')
@@ -563,7 +562,6 @@ class ThumbnailGenerate(TKFrameWithLPControls):
         change_states(self.menu,'!disabled')
         change_states([self.label, self.lp_options],'!disabled')
         change_states([self.label2, self.label3,self.ep_end, self.ep_start],'!disabled')
-        
         self.thread = None
     
 class FetchAudio(AutomationFrame):

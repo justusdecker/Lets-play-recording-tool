@@ -1,1 +1,5 @@
-pyinstaller --noconfirm --onefile --windowed --icon "C:\Users\Justus\Lets-play-recording-tool\bin\data\img\logo.ico"  "C:\Users\Justus\Lets-play-recording-tool\main.py"
+:: Takes the main.spec file & compiles the project into onefile
+:: Upside: Simple to use
+:: Downside: The Windows Defender nukes the zip! 
+pyinstaller main.spec
+python zipit.py
