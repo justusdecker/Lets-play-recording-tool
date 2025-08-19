@@ -67,7 +67,7 @@ You have an idea or suggestions? Make sure to file an issue & wait for replies!
 Maybe there are different ideas, improvements, or hints or maybe your feature is not welcome/need at the moment.
 
 ## This Application uses:
-|libpng16-16.dll|From libpng - used for image rendering on screen|
+|libpng16-16.dll|From libpng - used for image rendering on screen|Lookup [this](https://github.com/pnggroup/libpng) for more information|
 
 ## How to compile yourself
 run `compile.bat` from the `./tools` directory.
