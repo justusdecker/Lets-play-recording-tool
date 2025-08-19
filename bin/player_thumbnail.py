@@ -38,8 +38,11 @@ class ThumbnailPreview(Canvas):
             i (int | None): An optional index for the image, used in the window title.
                             If None, "TADEditor" is used in the title.
         """
-        f'Thumbnail Preview: {i+1 if i is not None else "TADEditor"}' #! Title set currently not avaiable
-        self.image = Image.open(path).resize((512,288))
-        self.image = ImageTk.PhotoImage(self.image)
-        self.label.configure(image=self.image,border=2,relief="raised")
+        try:
+            f'Thumbnail Preview: {i+1 if i is not None else "TADEditor"}' #! Title set currently not avaiable
+            self.image = Image.open(path).resize((512,288))
+            self.image = ImageTk.PhotoImage(self.image)
+            self.label.configure(image=self.image,border=2,relief="raised")
+        except Exception as E:
+            showerror('Error',f'{E}')
    
