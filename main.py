@@ -197,17 +197,13 @@ class Main(tk.Frame):
         self.menu = get_menu(self, controller)
         
         # Create Headers
-        MAIN = ttk.Frame(W)
-        main_header = ttk.Label(W,text='MAIN',font=Font(W,size=16))
-        
-        
+        MAIN = ttk.LabelFrame(W,text='Welcome')
         
         label = ttk.Label(MAIN, text =DISCLAIMER)
 
         label.grid(row = 0, column = 1, padx = 10, pady = 10)
 
         # Packing
-        main_header.pack(pady=10)
         MAIN.pack()
 
         W.grid(row=0,column=1)
@@ -252,9 +248,6 @@ class AutomationFrame(tk.Frame):
         
         self.progress_label = ttk.Label(self,)
         self.progress_label.grid(sticky='SE',row = 0, column = 2)
-        
-        
-        
         
         W = ttk.Frame(self)
         self.menu = get_menu(self, controller)
@@ -378,11 +371,10 @@ class Recording(tk.Frame):
         self.menu = get_menu(self, controller)
         
         # Create Headers
-        RECORDING = ttk.Frame(W)
-        recording_header = ttk.Label(W,text='Recording',font=Font(W,size=16))
+        RECORDING = ttk.LabelFrame(W,text='Recording')
         
-        INFORMATION = ttk.Frame(W)
-        information_header = ttk.Label(W,text='Information',font=Font(W,size=16))
+        INFORMATION = ttk.LabelFrame(W,text='Information')
+
         
         # Recording
         self.btn_connect = ttk.Button(RECORDING, text ="Connect to obs",command=self.get_connection)
@@ -397,10 +389,7 @@ class Recording(tk.Frame):
         self.recording_information_label.grid(row = 0, column = 1)
         
         # Packing
-        recording_header.pack(pady=10)
         RECORDING.pack()
-        
-        information_header.pack(pady=10)
         INFORMATION.pack()
         
         W.grid(row=0,column=1)
@@ -434,21 +423,18 @@ class Recording(tk.Frame):
             self.btn_connect.configure(text='Error occured! Try again')
         self.thread = None
         self.lp_options.state(['!disabled'])
-
-            
+     
 class TKFrameWithLPControls(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         
         self.menu = get_menu(self, controller)
         
-        W = ctk.CTkScrollableFrame(self,width=600,height=550)
+        W = tk.Frame(self,width=600,height=550)
         
         AUTOMATION_ROOT = ttk.Frame(W)
         
-        self.normal_options = ttk.Frame(AUTOMATION_ROOT)
-        
-        automation_root_header = ttk.Label(W,text='Thumbnail Generate',font=Font(W,size=16))
+        self.normal_options = ttk.LabelFrame(AUTOMATION_ROOT,text='Thumbnail Generate')
 
         self.AUTOMATION_ROOT = AUTOMATION_ROOT
         
@@ -459,7 +445,6 @@ class TKFrameWithLPControls(tk.Frame):
         self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.normal_options,self.run,self.check_last_id,self.epnums)
         
         self.normal_options.pack()
-        automation_root_header.pack(pady=10)
         AUTOMATION_ROOT.pack()
         W.grid(row=0,column=1)
         self.W = W
@@ -1073,8 +1058,7 @@ class Settings(tk.Frame):
         self.menu = get_menu(self, controller)
         
         # Create Headers
-        SETTINGS = ttk.Frame(W)
-        settings_header = ttk.Label(W,text='OBS Settings',font=Font(W,size=16))
+        SETTINGS = ttk.LabelFrame(W,text='OBS Settings')
         
         self.IP = tk.StringVar()
         self.PORT = tk.StringVar()
@@ -1096,16 +1080,16 @@ class Settings(tk.Frame):
         
         self.set_settings_obs_btn = ttk.Button(SETTINGS,text='Set',command=self.set_obs_settings)
         
-        self.show_pw = ttk.Checkbutton(SETTINGS,variable=self.PW_TOGGLE,command=self.toggle_pw_view)
+        self.show_pw = ttk.Checkbutton(SETTINGS,variable=self.PW_TOGGLE,text='show',command=self.toggle_pw_view)
         
         obs_ip_label.grid(row=0,column=0)
         self.obs_ip.grid(row=0,column=1)
-        obs_port_label.grid(row=0,column=2)
-        self.obs_port.grid(row=0,column=3)
-        obs_password_label.grid(row=0,column=4)
-        self.obs_password.grid(row=0,column=5)
-        self.show_pw.grid(row=0,column=6)
-        self.set_settings_obs_btn.grid(row=0,column=7)
+        obs_port_label.grid(row=1,column=0)
+        self.obs_port.grid(row=1,column=1)
+        obs_password_label.grid(row=2,column=0)
+        self.obs_password.grid(row=2,column=1)
+        self.show_pw.grid(row=2,column=2)
+        self.set_settings_obs_btn.grid(row=3,column=0)
         
         if isfile(ROOT+'obs_settings.json'):
             OBS_SETTINGS = json_read(ROOT+'obs_settings.json')
@@ -1115,7 +1099,6 @@ class Settings(tk.Frame):
         self.obs_something_changed()
         
         # Packing
-        settings_header.pack(pady=10)
         SETTINGS.pack()
 
         W.grid(row=0,column=1)
