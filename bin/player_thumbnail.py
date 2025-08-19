@@ -1,7 +1,7 @@
 from bin.welcome_popup import WELCOME
 WELCOME.update_message(f'Load: {__name__}')
 
-from tkinter import Frame, X
+from tkinter import Canvas, X
 from tkinter.ttk import Label
 from tkinter.messagebox import showerror
 
@@ -12,7 +12,7 @@ except:
     showerror('ERROR', ERROR_008 + '\nPIL')
     quit()
 
-class ThumbnailPreview(Frame):
+class ThumbnailPreview(Canvas):
     """
     A Toplevel window for displaying a thumbnail preview.
 
