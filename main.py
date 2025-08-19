@@ -1153,7 +1153,7 @@ class TBO:
         self.key: str = key
         self.type: tk.IntVar | tk.StringVar | tk.DoubleVar = type
         
-        self.uie: ttk.Button | ttk.LabeledScale | ttk.Entry | ttk.Checkbutton = uie
+        self.uie: ttk.Button | ttk.Spinbox | ttk.Entry | ttk.Checkbutton = uie
 
         self.var: tk.IntVar | tk.StringVar | tk.DoubleVar = self.type()
         self.cond = cond
@@ -1165,9 +1165,9 @@ class TBO:
 
         Also binds validation checks for Entry widgets.
         """
-        if self.uie is ttk.LabeledScale:
+        if self.uie is ttk.Spinbox:
             ttk.Label(self.master,text=f'{self.name}:').pack()
-            self.ui = self.uie(self.master,from_=self.condition[0][1:],to=self.condition[1][1:],variable=self.var)
+            self.ui = self.uie(self.master,from_=self.condition[0][1:],to=self.condition[1][1:],textvariable=self.var,width=12)
         elif self.uie is ttk.Entry:
             ttk.Label(self.master,text=f'{self.name}:').pack()
             self.ui = self.uie(self.master,textvariable=self.var)
