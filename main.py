@@ -1165,18 +1165,21 @@ class TBO:
 
         Also binds validation checks for Entry widgets.
         """
+        f = tk.Frame(self.master)
         if self.uie is ttk.Spinbox:
-            ttk.Label(self.master,text=f'{self.name}:').pack()
-            self.ui = self.uie(self.master,from_=self.condition[0][1:],to=self.condition[1][1:],textvariable=self.var,width=12)
+            ttk.Label(f,text=f'{self.name}:').grid(column=0, sticky='w')
+            
+            self.ui = self.uie(f,from_=self.condition[0][1:],to=self.condition[1][1:],textvariable=self.var,width=8,increment=0.1 if self.type is tk.DoubleVar else 1.0)
         elif self.uie is ttk.Entry:
-            ttk.Label(self.master,text=f'{self.name}:').pack()
-            self.ui = self.uie(self.master,textvariable=self.var)
+            ttk.Label(f,text=f'{self.name}:').grid(column=0, sticky='w')
+            self.ui = self.uie(f,textvariable=self.var)
             self.ui.bind('<KeyRelease>',self.check)
         elif self.uie is ttk.Checkbutton:
-            self.ui = self.uie(self.master,variable=self.var,text=self.name)
+            self.ui = self.uie(f,variable=self.var,text=self.name)
         elif self.uie is ttk.Button:
-            self.ui = self.uie(self.master,text=self.name,command=self.btn_cb)
-        self.ui.pack()
+            self.ui = self.uie(f,text=self.name,command=self.btn_cb)
+        self.ui.grid(column=1,row=0, sticky='w')
+        f.pack()
     
     @property
     def name(self) -> str:
@@ -1309,7 +1312,7 @@ class TadEditor(tk.Frame):
         self.tg = ThumbnailGenerator()
         
         #W = ttk.Frame(self)
-        W = ctk.CTkScrollableFrame(self,width=600,height=400)
+        W = tk.Frame(self)
         self.menu = get_menu(self, controller)
         
         # Create Headers
