@@ -262,9 +262,7 @@ class AutomationFrame(tk.Frame):
         # Create Headers
         AUTOMATION_ROOT = ttk.Frame(W)
         
-        self.normal_options = ttk.Frame(AUTOMATION_ROOT)
-        
-        automation_root_header = ttk.Label(W,text=name,font=Font(W,size=16))
+        self.normal_options = ttk.LabelFrame(AUTOMATION_ROOT,text=f'LP & EP Selection - {name}')
 
         self.AUTOMATION_ROOT = AUTOMATION_ROOT
         
@@ -276,7 +274,7 @@ class AutomationFrame(tk.Frame):
         self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.normal_options,self.run,self.check_last_id,self.epnums)
         
         self.normal_options.pack()
-        automation_root_header.pack(pady=10)
+
         AUTOMATION_ROOT.pack()
         
         W.grid(row=0,column=1)
