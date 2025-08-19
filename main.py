@@ -689,17 +689,13 @@ class FileManager(tk.Frame):
         # Data Detection
         open_folder_btn = ttk.Button(W,text='Open lprt folder',command=lambda *x: Popen(f'explorer {ROOT}'))
         open_folder_btn.pack()
-        DATA_DETECTION = ttk.Frame(W)
-        data_detection_header = ttk.Label(W,text='Data Detection',font=Font(W,size=16))
+        DATA_DETECTION = ttk.LabelFrame(W,text='Data Detection')
+        
         self.detect_btn = ttk.Button(DATA_DETECTION, text='Detect',command=self.on_detect)
         self.label = ttk.Label(DATA_DETECTION,text='')
         
-        
-        
         self.detect_btn.grid(row=0,column=0)
         self.label.grid(row=0,column=1)
-        
-        data_detection_header.pack(pady=10)
         DATA_DETECTION.pack()
         
 
@@ -708,33 +704,23 @@ class FileManager(tk.Frame):
         
         # Data Deletion
         
-        DATA_DELETION = ttk.Frame(W)
+        DATA_DELETION = ttk.LabelFrame(W,text='Data Deletion')
         self.DATA_DELETION = DATA_DELETION
-        data_deletion_header = ttk.Label(W,text='Data Deletion',font=Font(W,size=16))
-        # lp get
-        # ep get
         
         self.simdel_lp_label, self.simdel_lp_options, self.simdel_lp_option_var= get_lets_play(DATA_DELETION, self.lp_changed)
         
         self.simdel_label2, self.simdel_label3, self.start_btn, self.simdel_ep_start, self.simdel_ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(DATA_DELETION,lambda x: None,self.check_last_id,[])
         self.start_btn.destroy()
-        #self.label, self.lp_options, self.lp_option_var= get_lets_play(self, self.lp_changed)
-        
-        #self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self,self.run,self.check_last_id,self.epnums)
-        
-        #! This will only delete some video_paths etc.
         
         self.delete_btn = ttk.Button(DATA_DELETION, text='Delete',command=self.delete_files)
         
         self.delete_btn.grid(row=0,column=7,pady=5)
         
-        data_deletion_header.pack(pady=10)
         DATA_DELETION.pack()
         
         
         # Lets Play Delete
-        LP_DELETE = ttk.Frame(W)
-        data_lp_delete_header = ttk.Label(W,text='Lets Play Delete',font=Font(W,size=16))
+        LP_DELETE = ttk.LabelFrame(W,text='Lets Play Delete')
         
         self.delete_lp_option = tk.IntVar(value=0)
         
@@ -745,14 +731,12 @@ class FileManager(tk.Frame):
         
         self.delete_files_del_lp.grid(row=0,column=3)
         self.btn_lp_delete.grid(row=0,column=4)
-        
-        data_lp_delete_header.pack(pady=10)
+
         LP_DELETE.pack()
         
         # Lets Play Create
         
-        LP_CREATE = ttk.Frame(W)
-        data_lp_create_header = ttk.Label(W,text='Lets Play Create',font=Font(W,size=16))
+        LP_CREATE = ttk.LabelFrame(W,text='Lets Play Create')
         
         self.name_var = tk.StringVar()
         self.game_name_var = tk.StringVar()
@@ -777,20 +761,17 @@ class FileManager(tk.Frame):
         game_name.grid(row = 0, column = 5)
         episode_length.grid(row=0,column=6)
         self.btn_lp_create.grid(row=0,column=7)
-        
-        data_lp_create_header.pack(pady=10)
+    
         LP_CREATE.pack()
         
-        BACKUP = ttk.Frame(W)
-        backup_header = ttk.Label(W,text='Lets Play Backup',font=Font(W,size=16))
+        BACKUP = ttk.LabelFrame(W,text='Lets Play Backup')
         
         self.backup_lp_label, self.backup_lp_options, self.backup_lp_option_var= get_lets_play(BACKUP, self.something_changed_backup)
         
         self.backup_btn = ttk.Button(BACKUP,text='Backup',command=self.create_video_backup)
         self.backup_btn.grid(row=0,column=3)
         self.backup_btn.state(['disabled']) 
-        
-        backup_header.pack(pady=10)
+
         BACKUP.pack()
         
         W.grid(row=0,column=1)
