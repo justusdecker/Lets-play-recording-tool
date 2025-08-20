@@ -141,6 +141,7 @@ class TkinterApp(tk.Tk):
             'TadEditor',
             'CompAndRender',
             'SetTitle',
+            'Settings',
             'About',
         ]
     def build_ui(self):
@@ -156,6 +157,7 @@ class TkinterApp(tk.Tk):
             (Deploy,'Deploy'),
             (TadEditor,'TadEditor'),
             (FileManager,'FileManager'),
+            (Settings,'Settings'),
             (About, 'About')
         ]
         for ui,name in ELEMENTS:
@@ -1320,6 +1322,96 @@ class TadEditor(tk.Frame):
         )
         
         self.tw.update_image(f'{TEMP_FOLDER}preview.png',None)
+
+
+
+class Settings(tk.Frame):
+    """
+    Manages application settings, particularly for OBS (Open Broadcaster Software) integration.
+
+    Provides UI elements for configuring OBS connection details (IP, Port, Password)
+    and allows saving these settings to a JSON file.
+    """
+    def __init__(self, parent): 
+        tk.Frame.__init__(self, parent)
+        
+        W = ttk.Frame(self)
+        
+        self.menu = parent.master
+        
+        # Create Headers
+        SETTINGS = ttk.LabelFrame(W,text='OBS Settings')
+        
+        self.IP = tk.StringVar()
+        self.PORT = tk.StringVar()
+        self.PW = tk.StringVar()
+        self.PW_TOGGLE = tk.IntVar()
+        
+        obs_ip_label = ttk.Label(SETTINGS,text='IP:')
+        self.obs_ip = ttk.Entry(SETTINGS,textvariable=self.IP)
+        
+        obs_port_label = ttk.Label(SETTINGS,text='Port:')
+        self.obs_port = ttk.Entry(SETTINGS,textvariable=self.PORT)
+        
+        obs_password_label = ttk.Label(SETTINGS,text='Password:')
+        self.obs_password = ttk.Entry(SETTINGS,show='*',textvariable=self.PW)
+        
+        self.obs_ip.bind('<KeyPress>',self.obs_something_changed)
+        self.obs_port.bind('<KeyPress>',self.obs_something_changed)
+        self.obs_password.bind('<KeyPress>',self.obs_something_changed)
+        
+        self.set_settings_obs_btn = ttk.Button(SETTINGS,text='Set',command=self.set_obs_settings)
+        
+        self.show_pw = ttk.Checkbutton(SETTINGS,variable=self.PW_TOGGLE,text='show',command=self.toggle_pw_view)
+        
+        obs_ip_label.grid(row=0,column=0)
+        self.obs_ip.grid(row=0,column=1)
+        obs_port_label.grid(row=1,column=0)
+        self.obs_port.grid(row=1,column=1)
+        obs_password_label.grid(row=2,column=0)
+        self.obs_password.grid(row=2,column=1)
+        self.show_pw.grid(row=2,column=2)
+        self.set_settings_obs_btn.grid(row=3,column=0)
+        
+        if isfile(ROOT+'obs_settings.json'):
+            OBS_SETTINGS = json_read(ROOT+'obs_settings.json')
+            self.IP.set(OBS_SETTINGS['ip'])
+            self.PORT.set(OBS_SETTINGS['port'])
+            self.PW.set(OBS_SETTINGS['pw'])
+        self.obs_something_changed()
+        
+        # Packing
+        SETTINGS.pack()
+
+        W.grid(row=0,column=1)
+        
+    def toggle_pw_view(self,*args):
+        """ Toggles the visibility of the password in the OBS password entry field. """
+        if self.PW_TOGGLE.get():
+            self.obs_password.configure(show="")
+        else:
+            self.obs_password.configure(show="*")
+    
+    def obs_something_changed(self,*args):
+        """
+        Callback for changes in OBS setting input fields.
+
+        Enables or disables the 'Set' button based on whether all OBS
+        connection details (IP, Port, Password) are filled.
+        """
+        if self.PW.get() and self.PORT.get() and self.IP.get():
+            self.set_settings_obs_btn.state(['!disabled'])
+        else:
+            self.set_settings_obs_btn.state(['disabled'])
+            
+    def set_obs_settings(self,*args):
+        """ Saves the current OBS connection settings to a JSON file. """
+        
+        NEW_OBS_SETTINGS = {key: DEFAULT_OBS_SETTINGS[key] for key in DEFAULT_OBS_SETTINGS}
+        NEW_OBS_SETTINGS['ip'] = self.IP.get()
+        NEW_OBS_SETTINGS['port'] = self.PORT.get()
+        NEW_OBS_SETTINGS['pw'] = self.PW.get()
+        json_write(ROOT+'obs_settings.json',NEW_OBS_SETTINGS)
 
 
 class CompAndRender(tk.Frame):
