@@ -162,6 +162,26 @@ class TkinterApp(tk.Tk):
         ]
         for ui,name in ELEMENTS:
             ui(self.menu.get_root_for(name))
+        STYLE = ttk.Style()
+        STYLE.theme_create('dark')
+        STYLE.theme_settings("dark", {
+           "TButton": {
+               "map": {
+                   "background": [("active", "#343434"),
+                                  ("!disabled", "#272727")],
+                   "foreground": [("focus", "#ffffff"),
+                                  ("active", "#dddddd"),
+                                  ("!disabled", "#bbbbbb")]
+               }
+           },
+           "TFrame": {
+               "map": {
+                   "background": [("active", "#272727"),
+                                  ("!disabled", "#121212")],
+               }
+           }
+        })
+        STYLE.theme_use('dark')
 
 class Main(tk.Frame):
     """
@@ -1681,7 +1701,3 @@ class About(tk.Frame):
         LICENSE.pack()
         
         W.pack()
-
-if __name__ == '__main__':
-    APP = TkinterApp()
-    APP.mainloop()

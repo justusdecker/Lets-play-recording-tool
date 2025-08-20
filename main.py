@@ -19,3 +19,5 @@ if __name__ == '__main__':
     WELCOME.update_message('Create App')
     APP = TkinterApp()
     APP.mainloop()
+    
+    
