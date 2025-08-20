@@ -13,10 +13,6 @@ def check_version():
         if msgbox.askyesno('New Update avaiable','Do you want to visit the update website?'):
             system('start https://github.com/justusdecker/Lets-play-recording-tool/releases')
 
-from tkinter import ttk
-
-
-
 if __name__ == '__main__':
     on_start()
     send_heartbeat()
