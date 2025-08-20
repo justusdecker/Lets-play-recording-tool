@@ -1,6 +1,6 @@
 from bin.version import VERSION
-
-COPYRIGHT = f"LPRT {VERSION} | GPL 3.0 - (c) Justus Decker 2024 - 2025"
+from bin.commit_hash import HASH
+COPYRIGHT = f"LPRT {VERSION} - {HASH} | GPL 3.0 - (c) Justus Decker 2024 - 2025"
 
 DISCLAIMER = f"""
 {COPYRIGHT}
