@@ -127,6 +127,8 @@ class TkinterApp(tk.Tk):
             'ThumbnailGenerate',
             'FetchAudio',
             'FixAudio',
+            'Send2Audacity',
+            'Deploy',
             'About',
         ]
     def build_ui(self):
@@ -136,6 +138,8 @@ class TkinterApp(tk.Tk):
             (ThumbnailGenerate,'ThumbnailGenerate'),
             (FetchAudio,'FetchAudio'),
             (FixAudio,'FixAudio'),
+            (Send2Audacity,'Send2Audacity'),
+            (Deploy,'Deploy'),
             (About, 'About')
         ]
         for ui,name in ELEMENTS:
@@ -513,7 +517,6 @@ class FetchAudio(AutomationFrame):
         super().__init__(parent)
         self.automation_callback = ExtractAudioWF
 
-
 class FixAudio(AutomationFrame):
     def __init__(self, parent):
         super().__init__(parent)
@@ -622,7 +625,16 @@ class FixAudio(AutomationFrame):
         
         return ", ".join(filters)
 
+
+class Send2Audacity(AutomationFrame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.automation_callback = SendToAudacityWF
         
+class Deploy(AutomationFrame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.automation_callback = DeployWF
 class About(tk.Frame):
     """
     Displays information about the application, including its license.
