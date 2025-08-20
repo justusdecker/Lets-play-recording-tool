@@ -1,5 +1,7 @@
 from tkinter import ttk
 import tkinter as tk
+from tkinter.font import Font
+from bin.constants import __LICENSE__, DISCLAIMER
 
 class Notebook:
     def __init__(self, 
@@ -38,9 +40,82 @@ class TkinterApp(tk.Tk):
         
         # __init__ function for class Tk
         tk.Tk.__init__(self, *args, **kwargs)
-        self.menu = Notebook(self,['test','hello','world'])
+        self.menu = Notebook(self,self.get_ui_names())
         self.geometry('800x600')
+        self.build_ui()
+    def get_ui_names(self) -> list[str]:
+        return [
+            'Main',
+            'Recording',
+            'About'
+        ]
+    def build_ui(self):
+        ELEMENTS = [
+            (Main, 'Main'),
+            (About, 'About')
+        ]
+        for ui,name in ELEMENTS:
+            ui(self.menu.get_root_for(name))
 
+
+
+class Main(tk.Frame):
+    """
+    Represents the main start page of the application.
+
+    This frame serves as the initial view for the application,
+    displaying a welcome message and a disclaimer, and integrating the
+    navigation menu for other application pages.
+    """
+    def __init__(self, parent): 
+        tk.Frame.__init__(self, parent)
+        
+        W = ttk.Frame(parent)
+        
+        # Create Headers
+        MAIN = ttk.LabelFrame(W,text='Welcome')
+        
+        label = ttk.Label(MAIN, text =DISCLAIMER)
+
+        label.grid(row = 0, column = 1, padx = 10, pady = 10)
+
+        # Packing
+        MAIN.pack()
+
+        W.pack()
+
+class About(tk.Frame):
+    """
+    Displays information about the application, including its license.
+
+    Provides a scrollable text area to show the full license text.
+    """
+    def __init__(self, parent): 
+        tk.Frame.__init__(self, parent)
+        
+        W = ttk.Frame(parent)
+        
+        # Create Headers
+        LICENSE = ttk.Frame(W)
+        license_header = ttk.Label(W,text='License',font=Font(W,size=16))
+        
+        scrollbar = ttk.Scrollbar(W,orient='vertical')
+        scrollbar.pack(side=tk.RIGHT,fill=tk.Y)
+        
+        text = tk.Text(LICENSE, width = 80, height = 25, wrap = tk.NONE,
+                 yscrollcommand = scrollbar.set)
+        
+        for i in __LICENSE__.splitlines():
+            text.insert(tk.END, f'{i}\n')
+            
+        text.pack(side=tk.TOP, fill=tk.X)
+        scrollbar.config(command=text.yview)
+        
+        # Packing
+        license_header.pack(pady=10)
+        LICENSE.pack()
+        
+        W.pack()
 
 
 if __name__ == '__main__':
