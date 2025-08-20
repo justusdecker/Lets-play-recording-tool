@@ -16,6 +16,8 @@ from bin.player_video import NewVideoPlayer
 from bin.player_audio import NewAudioPlayer
 from bin.gemini_api import send_gemini
 
+
+
 def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,tk.StringVar]:
     """
     Creates and configures Tkinter UI elements for selecting a "Let's Play" item.
@@ -162,26 +164,6 @@ class TkinterApp(tk.Tk):
         ]
         for ui,name in ELEMENTS:
             ui(self.menu.get_root_for(name))
-        STYLE = ttk.Style()
-        STYLE.theme_create('dark')
-        STYLE.theme_settings("dark", {
-           "TButton": {
-               "map": {
-                   "background": [("active", "#343434"),
-                                  ("!disabled", "#272727")],
-                   "foreground": [("focus", "#ffffff"),
-                                  ("active", "#dddddd"),
-                                  ("!disabled", "#bbbbbb")]
-               }
-           },
-           "TFrame": {
-               "map": {
-                   "background": [("active", "#272727"),
-                                  ("!disabled", "#121212")],
-               }
-           }
-        })
-        STYLE.theme_use('dark')
 
 class Main(tk.Frame):
     """
@@ -717,6 +699,7 @@ class FileManager(tk.Frame):
         self.start_btn.destroy()
         
         self.delete_btn = ttk.Button(DATA_DELETION, text='Delete',command=self.delete_files)
+        self.delete_btn.state(['disabled'])
         
         self.delete_btn.grid(row=0,column=7,pady=5)
         
@@ -729,8 +712,8 @@ class FileManager(tk.Frame):
         self.delete_lp_option = tk.IntVar(value=0)
         
         self.lp_label, self.lp_options, self.lp_option_var= get_lets_play(LP_DELETE, self.something_changed_delete)
-        self.btn_lp_delete = ttk.Button(LP_DELETE,text='delete',command=self.delete_lets_play)
-        
+        self.btn_lp_delete = ttk.Button(LP_DELETE,text='Delete',command=self.delete_lets_play)
+        self.btn_lp_delete.state(['disabled'])
         self.delete_files_del_lp = ttk.Checkbutton(LP_DELETE,text='Delete Files?',variable=self.delete_lp_option, onvalue=1, offvalue=0)
         
         self.delete_files_del_lp.grid(row=0,column=3)
@@ -977,8 +960,8 @@ class FileManager(tk.Frame):
                 video_raw_files += 1
             if ep.thumbnail_path is not None:
                 if isfile(ep.thumbnail_path):
-                    thumbnail_files += getsize(ep.thumbnail_path)
-                    thumbnail_files_size += 1
+                    thumbnail_files += 1
+                    thumbnail_files_size += getsize(ep.thumbnail_path)
         
         TEXT = f"""
         LPRT created Data(Audio, FixedAudio, Video):  {files_size/1024/1024/1024:.2f}GB in {files} files
@@ -1701,3 +1684,7 @@ class About(tk.Frame):
         LICENSE.pack()
         
         W.pack()
+
+if __name__ == '__main__':
+    APP = TkinterApp()
+    APP.mainloop()
