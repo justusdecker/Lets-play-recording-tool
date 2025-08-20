@@ -126,11 +126,13 @@ class TkinterApp(tk.Tk):
             'Main',
             'Recording',
             'FetchAudio',
-            'About'
+            'About',
+            'Recording'
         ]
     def build_ui(self):
         ELEMENTS = [
             (Main, 'Main'),
+            (Recording, 'Recording'),
             (FetchAudio,'FetchAudio'),
             (About, 'About')
         ]
@@ -162,6 +164,68 @@ class Main(tk.Frame):
 
         W.pack()
        
+class Recording(tk.Frame):
+    def __init__(self, parent): 
+        tk.Frame.__init__(self, parent)
+        self.thread = None
+        W = ttk.Frame(parent)
+        
+        self.menu = parent.master
+        
+        # Create Headers
+        RECORDING = ttk.LabelFrame(W,text='Recording')
+        
+        INFORMATION = ttk.LabelFrame(W,text='Information')
+
+        
+        # Recording
+        self.btn_connect = ttk.Button(RECORDING, text ="Connect to obs",command=self.get_connection)
+
+        self.btn_connect.grid(row = 0, column=4)
+        
+        self.label, self.lp_options, self.lp_option_var= get_lets_play(RECORDING, self.lp_changed)
+        
+        # Information
+        self.recording_information_label = ttk.Label(INFORMATION, text ="No Connection",font=Font(W,size=12))
+
+        self.recording_information_label.grid(row = 0, column = 1)
+        
+        # Packing
+        RECORDING.pack()
+        INFORMATION.pack()
+        
+        W.grid(row=0,column=1)
+
+        # Disable connect button
+        self.btn_connect.state(["disabled"])
+        
+    def lp_changed(self,*args):
+        self.btn_connect.state(["!disabled"])
+    def get_connection(self):
+        if self.thread:
+            self.close_connection = True
+        self.lp_options.state(['disabled'])
+        if self.thread is None:
+            self.close_connection = False
+            self.thread = Thread(target=self.__get_connection)
+            self.thread.start()
+    def __get_connection(self):
+        
+        change_states([self.menu],'disabled') # Deactivates all menu buttons for safety reasons
+        
+        ep = SQLAccess.read_episodes(SQLAccess.read_letsplay_names().index(self.lp_option_var.get()))
+        self.btn_connect.state(["disabled"])
+        self.btn_connect.configure(text='Try connection to OBS...')
+        #! Currently Disconnecting only works by closing OBS <- mainly for safety reasons!
+        obs_connect(self)
+
+        self.btn_connect.state(["!disabled"])
+        change_states([self.menu],'!disabled') # Reactivating
+        if not self.close_connection:
+            self.btn_connect.configure(text='Error occured! Try again')
+        self.thread = None
+        self.lp_options.state(['!disabled'])
+
 class AutomationFrame(tk.Frame):
     """
     A base class for frames that perform automated tasks, such as thumbnail generation
