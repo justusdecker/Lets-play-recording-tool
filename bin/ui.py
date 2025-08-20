@@ -151,11 +151,11 @@ class TkinterApp(tk.Tk):
             (FetchAudio,'FetchAudio'),
             (FixAudio,'FixAudio'),
             (Send2Audacity,'Send2Audacity'),
-            (FileManager,'FileManager'),
-            (TadEditor,'TadEditor'),
             (CompAndRender,'CompAndRender'),
             (SetTitle,'SetTitle'),
             (Deploy,'Deploy'),
+            (TadEditor,'TadEditor'),
+            (FileManager,'FileManager'),
             (About, 'About')
         ]
         for ui,name in ELEMENTS:
