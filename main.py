@@ -26,8 +26,6 @@ def check_version():
         if msgbox.askyesno('New Update avaiable','Do you want to visit the update website?'):
             system('start https://github.com/justusdecker/Lets-play-recording-tool/releases')
 
-        
-check_version()
 LARGEFONT = ("Verdana", 35)
 ctk.set_appearance_mode('light')
 
@@ -60,6 +58,7 @@ class TkinterApp(tk.Tk):
  
         self.show_frame(Main)
         WELCOME.destroy()
+        check_version()
     def show_frame(self, cont):
         """
         Brings the specified application page (frame) to the foreground.
