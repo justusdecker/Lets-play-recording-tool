@@ -22,6 +22,4 @@ if __name__ == '__main__':
     send_heartbeat()
     WELCOME.update_message('Create App')
     APP = TkinterApp()
-    s = ttk.Style()
-    print(s.theme_use('clam'))
     APP.mainloop()
