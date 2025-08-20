@@ -1,9 +1,12 @@
 from tkinter import ttk
 import tkinter as tk
 from tkinter.font import Font
-from bin.constants import __LICENSE__, DISCLAIMER
+from bin.constants import *
+from bin.constants import __LICENSE__
 from bin.data_access import SQLAccess, AsciiImage
 from threading import Thread
+from bin.welcome_popup import WELCOME
+from bin.automations import *
 
 
 def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,tk.StringVar]:
@@ -117,21 +120,22 @@ class TkinterApp(tk.Tk):
         self.menu = Notebook(self,self.get_ui_names())
         self.geometry('800x600')
         self.build_ui()
+        WELCOME.destroy()
     def get_ui_names(self) -> list[str]:
         return [
             'Main',
             'Recording',
+            'FetchAudio',
             'About'
         ]
     def build_ui(self):
         ELEMENTS = [
             (Main, 'Main'),
+            (FetchAudio,'FetchAudio'),
             (About, 'About')
         ]
         for ui,name in ELEMENTS:
             ui(self.menu.get_root_for(name))
-
-
 
 class Main(tk.Frame):
     """
@@ -157,8 +161,7 @@ class Main(tk.Frame):
         MAIN.pack()
 
         W.pack()
-
-        
+       
 class AutomationFrame(tk.Frame):
     """
     A base class for frames that perform automated tasks, such as thumbnail generation
@@ -193,6 +196,8 @@ class AutomationFrame(tk.Frame):
     """
     def __init__(self, parent): 
         tk.Frame.__init__(self, parent)
+        
+        self.menu = parent.master
         self.should_not_reset = False
         self.thread = None
         self.automation_callback = None
@@ -220,7 +225,7 @@ class AutomationFrame(tk.Frame):
 
         AUTOMATION_ROOT.pack()
         
-        W.grid(row=0,column=1)
+        W.pack()
         
     def update_ui(self):
         """
@@ -257,7 +262,7 @@ class AutomationFrame(tk.Frame):
         re-enables the UI elements upon completion unless `should_not_reset` is True.
         """
         self.start_btn.state(['disabled'])
-        change_states(self.menu,'disabled')
+        change_states([self.menu],'disabled')
         change_states([self.label, self.lp_options],'disabled')
         change_states([self.label2, self.label3,self.ep_end, self.ep_start],'disabled')
         a, b = int(self.epstart_option_var.get()) , int(self.epend_option_var.get())
@@ -267,7 +272,7 @@ class AutomationFrame(tk.Frame):
         
         if not self.should_not_reset:
             
-            change_states(self.menu,'!disabled')
+            change_states([self.menu],'!disabled')
             change_states([self.label, self.lp_options],'!disabled')
             change_states([self.label2, self.label3,self.ep_end, self.ep_start],'!disabled')
 
@@ -312,7 +317,11 @@ class AutomationFrame(tk.Frame):
         else:
             self.start_btn.state(['!disabled'])
 
-
+class FetchAudio(AutomationFrame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.automation_callback = ExtractAudioWF
+        
 class About(tk.Frame):
     """
     Displays information about the application, including its license.
@@ -345,7 +354,6 @@ class About(tk.Frame):
         LICENSE.pack()
         
         W.pack()
-
 
 if __name__ == '__main__':
     APP = TkinterApp()
