@@ -1,6 +1,6 @@
 from bin.version import VERSION
-
-COPYRIGHT = f"LPRT {VERSION} | GPL 3.0 - (c) Justus Decker 2024 - 2025"
+from bin.commit_hash import HASH
+COPYRIGHT = f"LPRT {VERSION} - {HASH} | GPL 3.0 - (c) Justus Decker 2024 - 2025"
 
 DISCLAIMER = f"""
 {COPYRIGHT}
@@ -76,11 +76,11 @@ DEFAULT_TAD = {
     "text::center": True
 }
 from tkinter import IntVar, DoubleVar, StringVar
-from tkinter.ttk import LabeledScale, Checkbutton, Button
+from tkinter.ttk import Spinbox, Checkbutton, Button
 from tkinter.colorchooser import askcolor
-INPUT_INT_NV = (IntVar,LabeledScale, '>-2048::<2048')
-INPUT_SCALE = (DoubleVar,LabeledScale, '>0::<3.5')
-INPUT_ROT = (DoubleVar,LabeledScale, '>-359::<359')
+INPUT_INT_NV = (IntVar,Spinbox, '>-2048::<2048')
+INPUT_SCALE = (DoubleVar,Spinbox, '>0::<3.5')
+INPUT_ROT = (DoubleVar,Spinbox, '>-359::<359')
 INPUT_CB = (IntVar,Checkbutton, '')
 FDS_TBO = {
     "bg::pos::x": INPUT_INT_NV,
