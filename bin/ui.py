@@ -140,7 +140,7 @@ class TkinterApp(tk.Tk):
             'FileManager',
             'TadEditor',
             'CompAndRender',
-            'SetTitle'
+            'SetTitle',
             'About',
         ]
     def build_ui(self):
