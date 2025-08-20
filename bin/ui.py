@@ -154,7 +154,7 @@ class TkinterApp(tk.Tk):
             (FileManager,'FileManager'),
             (TadEditor,'TadEditor'),
             (CompAndRender,'CompAndRender'),
-            (SetTitle,'SetTitle')
+            (SetTitle,'SetTitle'),
             (Deploy,'Deploy'),
             (About, 'About')
         ]
