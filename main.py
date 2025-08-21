@@ -18,6 +18,7 @@ if __name__ == '__main__':
     send_heartbeat()
     WELCOME.update_message('Create App')
     APP = TkinterApp()
+    check_version()
     APP.mainloop()
     
     
