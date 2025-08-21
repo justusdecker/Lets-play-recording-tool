@@ -1338,7 +1338,7 @@ class Settings(tk.Frame):
     def __init__(self, parent): 
         tk.Frame.__init__(self, parent)
         
-        W = ttk.Frame(self)
+        W = ttk.Frame(parent)
         
         self.menu = parent.master
         
