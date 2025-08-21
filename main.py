@@ -8,6 +8,7 @@ from os import system
 from bin.download_file import send_heartbeat, get_newest_version_number
 from bin.ui import TkinterApp
 from bin.dll_loader import create_libpng16_16_ine
+
 def check_version():
     if get_newest_version_number()['version'] != '_'.join(VERSION.split('.')[0:2]):
         if msgbox.askyesno('New Update avaiable','Do you want to visit the update website?'):
