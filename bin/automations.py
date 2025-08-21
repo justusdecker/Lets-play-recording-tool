@@ -485,7 +485,7 @@ class DeployWF(GenericWorkFlow):
             data_deletion = msgbox.askyesno('Question','Do you want to delete temp files?')
             move_files = msgbox.askyesno('Question','Do you want to move the files to another path?')
             if move_files:
-                DEST = askdirectory()
+                DEST = askdirectory().replace('/','\\')
             else:
                 DEST = f'{DEPLOY_FOLDER}{SQLAccess.read_letsplay_name(self.lpid)}\\'
                 cnef(DEST)
