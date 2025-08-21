@@ -384,6 +384,8 @@ class SendToAudacityWF(GenericWorkFlow):
 
             
             files = listdir(AC_RESULT_FOLDER)
+            while not msgbox.askquestion(message='Did you finished exporting the files?'):
+                pass
             reoc(all_eps < len(files),'Do you forget to clear the output folder?')
             reoc(all_eps > len(files),'Did you miss some episodes?')
             rng_list = list(rng)
