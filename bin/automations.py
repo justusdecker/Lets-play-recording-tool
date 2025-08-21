@@ -361,6 +361,11 @@ class SendToAudacityWF(GenericWorkFlow):
             return
         
         try:
+            files = listdir(AC_RESULT_FOLDER)
+            if files and msgbox.askyesno('Question','Clear Audacity Export Folder?'):
+                for file in files:
+                    try_delete_file(AC_RESULT_FOLDER+file)
+                
             ui = msgbox.askyesno('LPRT to AC','Do you want to send data to Audacity?')
             rng = range(*self.rng)
             all_eps = len(rng)
@@ -376,12 +381,14 @@ class SendToAudacityWF(GenericWorkFlow):
             
             toast_finished('Finished Importing')
             #! See issue #303
-            results_path = askdirectory() + '/'
+
             
-            files = listdir(results_path)
+            files = listdir(AC_RESULT_FOLDER)
             reoc(all_eps < len(files),'Do you forget to clear the output folder?')
             reoc(all_eps > len(files),'Did you miss some episodes?')
             rng_list = list(rng)
+            cnef(AC_RESULT_FOLDER)
+            
             
             for file in files:
                 
@@ -391,7 +398,7 @@ class SendToAudacityWF(GenericWorkFlow):
                 
                 ep = int(file.split('_-')[1].split('.')[0]) - 1
                 print(rng_list[ep])
-                old = results_path + file
+                old = AC_RESULT_FOLDER + file
                 new = FIXED_AUDIO_FOLDER+f'{rng_list[ep]}_track_mic_fixed_ac.aac'
                 rie(new)
                 ffmpeg_run(FFMPEG_CONVERT_AUDIO_TYPE,{'__IN__': old, '__OUT__': new})
