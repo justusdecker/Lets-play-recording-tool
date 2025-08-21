@@ -258,8 +258,7 @@ class Recording(tk.Frame):
             self.btn_connect.configure(text='Error occured! Try again')
         self.thread = None
         self.lp_options.state(['!disabled'])
-
-     
+ 
 class TKFrameWithLPControls(tk.Frame):
     def __init__(self, parent):
         tk.Frame.__init__(self, parent)
@@ -383,7 +382,6 @@ class ThumbnailGenerate(TKFrameWithLPControls):
         change_states([self.label2, self.label3,self.ep_end, self.ep_start],'!disabled')
         self.thread = None
     
-
 class AutomationFrame(tk.Frame):
     """
     A base class for frames that perform automated tasks, such as thumbnail generation
@@ -662,7 +660,6 @@ class Deploy(AutomationFrame):
         super().__init__(parent)
         self.automation_callback = DeployWF
        
-
 class FileManager(tk.Frame):
     """
     Manages file-related operations within the application, including:
@@ -1333,8 +1330,6 @@ class TadEditor(tk.Frame):
         
         self.tw.update_image(f'{TEMP_FOLDER}preview.png',None)
 
-
-
 class Settings(tk.Frame):
     """
     Manages application settings, particularly for OBS (Open Broadcaster Software) integration.
@@ -1422,7 +1417,6 @@ class Settings(tk.Frame):
         NEW_OBS_SETTINGS['port'] = self.PORT.get()
         NEW_OBS_SETTINGS['pw'] = self.PW.get()
         json_write(ROOT+'obs_settings.json',NEW_OBS_SETTINGS)
-
 
 class CompAndRender(tk.Frame):
     """
@@ -1691,7 +1685,3 @@ class About(tk.Frame):
         LICENSE.pack()
         
         W.pack()
-
-if __name__ == '__main__':
-    APP = TkinterApp()
-    APP.mainloop()
