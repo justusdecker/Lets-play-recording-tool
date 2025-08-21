@@ -132,6 +132,10 @@ class TkinterApp(tk.Tk):
         self.geometry('1024x768')
         self.build_ui()
         WELCOME.destroy()
+        
+        AI = AsciiImage(IMG_LOGO)
+    
+        self.wm_iconphoto(False,AI.image)
     def get_ui_names(self) -> list[str]:
         return [
             'Main',
