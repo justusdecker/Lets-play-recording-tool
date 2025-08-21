@@ -375,9 +375,12 @@ class SendToAudacityWF(GenericWorkFlow):
                     app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
             
             toast_finished('Finished Importing')
+            #! See issue #303
             results_path = askdirectory() + '/'
+            
             files = listdir(results_path)
-            reoc(all_eps != len(files),'Did you miss some episodes?')
+            reoc(all_eps < len(files),'Do you forget to clear the output folder?')
+            reoc(all_eps > len(files),'Did you miss some episodes?')
             rng_list = list(rng)
             
             for file in files:
