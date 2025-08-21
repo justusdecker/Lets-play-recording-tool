@@ -129,6 +129,7 @@ class TkinterApp(tk.Tk):
         
         
         self.menu = Notebook(self,self.get_ui_names())
+        self.title(f'LPRT - {VERSION}:{HASH}')
         self.geometry('1024x768')
         self.build_ui()
         WELCOME.destroy()
