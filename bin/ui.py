@@ -126,6 +126,8 @@ class TkinterApp(tk.Tk):
         
         # __init__ function for class Tk
         tk.Tk.__init__(self, *args, **kwargs)
+        
+        
         self.menu = Notebook(self,self.get_ui_names())
         self.geometry('1024x768')
         self.build_ui()
