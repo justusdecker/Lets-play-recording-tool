@@ -1203,16 +1203,21 @@ class TadEditor(tk.Frame):
         TAD_EDITOR = ttk.Frame(W)
         tad_editor_header = ttk.Label(W,text='TAD Editor',font=Font(W,size=16))
         
-        LETSPLAY = ttk.LabelFrame(W,text='Lets Play')
+        OPTIONS = tk.Frame(W)
+        OPTIONS.pack()
+        LETSPLAY = ttk.LabelFrame(OPTIONS,text='Lets Play')
         
-        BACKGROUND = ttk.LabelFrame(W,text='Background')
+        BACKGROUND = ttk.LabelFrame(OPTIONS,text='Background')
         
-        LOGO = ttk.LabelFrame(W,text='Logo')
+        LOGO = ttk.LabelFrame(OPTIONS,text='Logo')
 
-        TEXT = ttk.LabelFrame(W,text='Text')
+        TEXT = ttk.LabelFrame(OPTIONS,text='Text')
         
-        SAVE = ttk.LabelFrame(W,text='Save')
+        SAVE = ttk.LabelFrame(OPTIONS,text='Save')
         
+        PREVIEW = ttk.LabelFrame(W,text='Preview')
+        PREVIEW.pack()
+        self.tw = ThumbnailPreview(PREVIEW)
         _, self.lp_options, self.lp_option_var= get_lets_play(LETSPLAY, self.lp_changed)
         
         self.tbos = []
@@ -1310,8 +1315,6 @@ class TadEditor(tk.Frame):
         """
         #- Check final
         #- Write TAD File into TAD_FOLDER/lp_name.json
-        if not hasattr(self,'tw'):
-            self.tw = ThumbnailPreview()
         DATA = {key: ui.var.get() for ui, key in zip(self.ui_elements, DEFAULT_TAD)}
         lpid = SQLAccess.read_letsplay_by_option_var(self)
         lpname = SQLAccess.read_letsplay_name(lpid)
