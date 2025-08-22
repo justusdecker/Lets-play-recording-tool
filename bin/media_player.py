@@ -3,6 +3,7 @@ import tkinter as tk
 from bin.constants import *
 from bin.data_access import AsciiImage
 from tkinter.messagebox import showerror
+from tools.log import *
 try:
     import vlc
 except:
@@ -20,11 +21,12 @@ class NewMediaPlayer(tk.Frame):
     
     def __init__(self,parent,app,audio_only: bool = False):
         self.app = app
+        self.parent = parent
         self.current_episode = 0
         super().__init__()
         self.isfinished = False
 
-        
+        self.currentfile = ''
         self.instance = VLC_INSTANCE
         # Create a VLC instance and media player.
         self.player = self.instance.media_player_new()
@@ -114,10 +116,15 @@ class NewMediaPlayer(tk.Frame):
         Sets media to `video_path` in the VLC media player instance. Finally, it calls the method to embed
         the VLC video output into the Tkinter video panel.
         """
+        
         if videopath:
+            LOG('Open file: $',[videopath],LOG_INFO)
+            self.stop_video()
             media = self.instance.media_new(videopath)
             self.player.set_media(media)
             self.set_video_panel()
+        else:
+            LOG('Cannot open file: $',[videopath],LOG_WARNING)
             
             
     def episode_down(self,*args):
@@ -141,20 +148,23 @@ class NewMediaPlayer(tk.Frame):
         will trigger this function to begin playback.
         """
         if not VIP.ISPLAYING:
+            LOG('Play - MediaPlayer',logtype=LOG_INFO)
             self.player.play()
-        VIP.ISPLAYING = True
+            VIP.ISPLAYING = True
 
     def pause_video(self):#! Not in use
         """
         The pause_video function toggles the current playback state. If the video is playing,
         it pauses the playback; if it's paused, it resumes playing. 
         """
+        LOG('Pause - MediaPlayer',logtype=LOG_INFO)
         self.player.pause()
 
     def stop_video(self):
         """
         The stop_video function stops the video playback completely and resets the playback state.
         """
+        LOG('Stop - MediaPlayer',logtype=LOG_INFO)
         self.player.stop()
         VIP.ISPLAYING = False
 

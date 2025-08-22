@@ -126,10 +126,17 @@ class TkinterApp(tk.Tk):
         
         # __init__ function for class Tk
         tk.Tk.__init__(self, *args, **kwargs)
+        
+        
         self.menu = Notebook(self,self.get_ui_names())
+        self.title(f'LPRT - {VERSION}:{HASH}')
         self.geometry('1024x768')
         self.build_ui()
         WELCOME.destroy()
+        
+        AI = AsciiImage(IMG_LOGO)
+    
+        self.wm_iconphoto(False,AI.image)
     def get_ui_names(self) -> list[str]:
         return [
             'Main',
@@ -251,8 +258,7 @@ class Recording(tk.Frame):
             self.btn_connect.configure(text='Error occured! Try again')
         self.thread = None
         self.lp_options.state(['!disabled'])
-
-     
+ 
 class TKFrameWithLPControls(tk.Frame):
     def __init__(self, parent):
         tk.Frame.__init__(self, parent)
@@ -376,7 +382,6 @@ class ThumbnailGenerate(TKFrameWithLPControls):
         change_states([self.label2, self.label3,self.ep_end, self.ep_start],'!disabled')
         self.thread = None
     
-
 class AutomationFrame(tk.Frame):
     """
     A base class for frames that perform automated tasks, such as thumbnail generation
@@ -655,7 +660,6 @@ class Deploy(AutomationFrame):
         super().__init__(parent)
         self.automation_callback = DeployWF
        
-
 class FileManager(tk.Frame):
     """
     Manages file-related operations within the application, including:
@@ -1199,16 +1203,21 @@ class TadEditor(tk.Frame):
         TAD_EDITOR = ttk.Frame(W)
         tad_editor_header = ttk.Label(W,text='TAD Editor',font=Font(W,size=16))
         
-        LETSPLAY = ttk.LabelFrame(W,text='Lets Play')
+        OPTIONS = tk.Frame(W)
+        OPTIONS.pack()
+        LETSPLAY = ttk.LabelFrame(OPTIONS,text='Lets Play')
         
-        BACKGROUND = ttk.LabelFrame(W,text='Background')
+        BACKGROUND = ttk.LabelFrame(OPTIONS,text='Background')
         
-        LOGO = ttk.LabelFrame(W,text='Logo')
+        LOGO = ttk.LabelFrame(OPTIONS,text='Logo')
 
-        TEXT = ttk.LabelFrame(W,text='Text')
+        TEXT = ttk.LabelFrame(OPTIONS,text='Text')
         
-        SAVE = ttk.LabelFrame(W,text='Save')
+        SAVE = ttk.LabelFrame(OPTIONS,text='Save')
         
+        PREVIEW = ttk.LabelFrame(W,text='Preview')
+        PREVIEW.pack()
+        self.tw = ThumbnailPreview(PREVIEW)
         _, self.lp_options, self.lp_option_var= get_lets_play(LETSPLAY, self.lp_changed)
         
         self.tbos = []
@@ -1306,8 +1315,6 @@ class TadEditor(tk.Frame):
         """
         #- Check final
         #- Write TAD File into TAD_FOLDER/lp_name.json
-        if not hasattr(self,'tw'):
-            self.tw = ThumbnailPreview()
         DATA = {key: ui.var.get() for ui, key in zip(self.ui_elements, DEFAULT_TAD)}
         lpid = SQLAccess.read_letsplay_by_option_var(self)
         lpname = SQLAccess.read_letsplay_name(lpid)
@@ -1326,8 +1333,6 @@ class TadEditor(tk.Frame):
         
         self.tw.update_image(f'{TEMP_FOLDER}preview.png',None)
 
-
-
 class Settings(tk.Frame):
     """
     Manages application settings, particularly for OBS (Open Broadcaster Software) integration.
@@ -1338,7 +1343,7 @@ class Settings(tk.Frame):
     def __init__(self, parent): 
         tk.Frame.__init__(self, parent)
         
-        W = ttk.Frame(self)
+        W = ttk.Frame(parent)
         
         self.menu = parent.master
         
@@ -1415,7 +1420,6 @@ class Settings(tk.Frame):
         NEW_OBS_SETTINGS['port'] = self.PORT.get()
         NEW_OBS_SETTINGS['pw'] = self.PW.get()
         json_write(ROOT+'obs_settings.json',NEW_OBS_SETTINGS)
-
 
 class CompAndRender(tk.Frame):
     """
@@ -1537,8 +1541,8 @@ class CompAndRender(tk.Frame):
             reoc(not isfile(episodes[i].audio_mic_edit2_path),ERROR_007)
             reoc(not isfile(episodes[i].audio_desktop_path),ERROR_007)
             reoc(not isfile(episodes[i].video_path),ERROR_007)
-        self.media_player.audio_list = [[i, episodes[i].audio_mic_edit2_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*rng)]
-
+        audio_list = [[i, episodes[i].audio_mic_edit2_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*rng)]
+        self.media_player.reset(audio_list)
 class SetTitle(tk.Frame):
     """
     Displays information about the application, including its license.
@@ -1641,10 +1645,11 @@ class SetTitle(tk.Frame):
             self.start_btn.state(['!disabled'])
             
     def run(self,*args):
+        
         a, b = int(self.epstart_option_var.get())-1, int(self.epend_option_var.get())
         
-        self.media_player.data = [i + 1 for i in range(a,b+(1 if a == b else 0))]
-    
+        data = [i + 1 for i in range(a,b+(1 if a == b else 0))]
+        self.media_player.reset(data, SQLAccess.read_letsplay_by_option_var(self))
     def send_and_receive(self,*args):
         change_states([self.gemini_entry, self.send_btn],'disabled')
         Thread(target=self.__sar).start()
@@ -1684,7 +1689,3 @@ class About(tk.Frame):
         LICENSE.pack()
         
         W.pack()
-
-if __name__ == '__main__':
-    APP = TkinterApp()
-    APP.mainloop()

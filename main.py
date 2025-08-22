@@ -7,6 +7,7 @@ from bin.data_access import on_start
 from os import system
 from bin.download_file import send_heartbeat, get_newest_version_number
 from bin.ui import TkinterApp
+from bin.dll_loader import create_libpng16_16_ine
 
 def check_version():
     if get_newest_version_number()['version'] != '_'.join(VERSION.split('.')[0:2]):
@@ -14,10 +15,12 @@ def check_version():
             system('start https://github.com/justusdecker/Lets-play-recording-tool/releases')
 
 if __name__ == '__main__':
+    create_libpng16_16_ine()
     on_start()
     send_heartbeat()
     WELCOME.update_message('Create App')
     APP = TkinterApp()
+    check_version()
     APP.mainloop()
     
     
