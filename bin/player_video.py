@@ -10,7 +10,7 @@ from bin.thumbnail import ThumbnailGenerator
 from bin.constants import *
 from bin.ffmpeg import *
 from bin.other import convert_from_entities, convert_to_entities
-from bin.ui import change_states
+
 try:
     import vlc
 except:
@@ -39,11 +39,10 @@ WELCOME.update_message('Instanciate VLC')
 
 VLC_INSTANCE = vlc.Instance()
 from bin.media_player import NewMediaPlayer
-
-
-
 class NewVideoPlayer(NewMediaPlayer):
     def __init__(self,parent, data: list[int],lpid,app):
+        global change_states
+        from bin.ui import change_states
         self.tg = ThumbnailGenerator()
         self.data: list[int] = data
         self.current_episode = 0
