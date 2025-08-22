@@ -1541,8 +1541,8 @@ class CompAndRender(tk.Frame):
             reoc(not isfile(episodes[i].audio_mic_edit2_path),ERROR_007)
             reoc(not isfile(episodes[i].audio_desktop_path),ERROR_007)
             reoc(not isfile(episodes[i].video_path),ERROR_007)
-        self.media_player.audio_list = [[i, episodes[i].audio_mic_edit2_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*rng)]
-
+        audio_list = [[i, episodes[i].audio_mic_edit2_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*rng)]
+        self.media_player.reset(audio_list)
 class SetTitle(tk.Frame):
     """
     Displays information about the application, including its license.
@@ -1645,10 +1645,11 @@ class SetTitle(tk.Frame):
             self.start_btn.state(['!disabled'])
             
     def run(self,*args):
+        
         a, b = int(self.epstart_option_var.get())-1, int(self.epend_option_var.get())
         
-        self.media_player.data = [i + 1 for i in range(a,b+(1 if a == b else 0))]
-    
+        data = [i + 1 for i in range(a,b+(1 if a == b else 0))]
+        self.media_player.reset(data, SQLAccess.read_letsplay_by_option_var(self))
     def send_and_receive(self,*args):
         change_states([self.gemini_entry, self.send_btn],'disabled')
         Thread(target=self.__sar).start()
