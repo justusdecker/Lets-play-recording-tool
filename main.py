@@ -13,7 +13,7 @@ def check_version():
     if get_newest_version_number()['version'] != '_'.join(VERSION.split('.')[0:2]):
         if msgbox.askyesno('New Update avaiable','Do you want to visit the update website?'):
             system('start https://github.com/justusdecker/Lets-play-recording-tool/releases')
-
+            
 if __name__ == '__main__':
     create_libpng16_16_ine()
     on_start()
