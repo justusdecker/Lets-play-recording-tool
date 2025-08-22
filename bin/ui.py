@@ -1541,8 +1541,8 @@ class CompAndRender(tk.Frame):
             reoc(not isfile(episodes[i].audio_mic_edit2_path),ERROR_007)
             reoc(not isfile(episodes[i].audio_desktop_path),ERROR_007)
             reoc(not isfile(episodes[i].video_path),ERROR_007)
-        self.media_player.audio_list = [[i, episodes[i].audio_mic_edit2_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*rng)]
-
+        audio_list = [[i, episodes[i].audio_mic_edit2_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*rng)]
+        self.media_player.reset(audio_list)
 class SetTitle(tk.Frame):
     """
     Displays information about the application, including its license.

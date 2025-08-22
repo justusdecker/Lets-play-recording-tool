@@ -14,6 +14,7 @@ class NewAudioPlayer(NewMediaPlayer):
         self.audio_list = paths
         self.current_episode = 0
         self.isfinished = False
+        self.busy_state = False
         self.desktop_vol = 1.
         super().__init__(parent, app, True)
         
@@ -30,6 +31,14 @@ class NewAudioPlayer(NewMediaPlayer):
         
         self.desktop_volume_slider.set(50)  # Set the default volume to 50%
         self.desktop_volume_slider.pack(side=LEFT, padx=5)
+    def reset(self,al):
+        self.player.stop()
+        self.audio_list = al
+        self.current_episode = 0
+        self.isfinished = False
+        self.busy_state = False
+        self.desktop_vol = 1.
+        self.play_video()
     def get_ui(self):
         return [self.finished_all_button,self.finished_button, self.last_button,self.next_button,self.play_button,self.pause_button,self.stop_button]
     @property
@@ -43,7 +52,8 @@ class NewAudioPlayer(NewMediaPlayer):
     def media(self) -> str:
         if not self.audio_list: return ''
         from bin.ui import change_states
-        change_states([self.stop_button,self.play_button, self.pause_button, self.next_button, self.last_button,self.finished_all_button, self.finished_button, self.volume_slider, self.desktop_volume_slider],'disabled')
+        change_states([self.stop_button,self.play_button, self.pause_button, self.next_button, self.last_button,self.finished_all_button, self.finished_button],'disabled')
+        self.busy_state = True
         LOG('Start combining $($) & $($)',[self.current_media[1],1.0,self.current_media[2],self.current_media[4]])
         ffmpeg_run(FFMPEG_AUDIO_COMBINE_TRUNCATED,{
             '__IN1__':self.current_media[1],
@@ -52,7 +62,8 @@ class NewAudioPlayer(NewMediaPlayer):
             '__VOLUME2__': str(self.current_media[4]),
             '__OUT__':f'{TEMP_FOLDER}temp.mp3'})
         LOG(f'Finished combining $',[f'{TEMP_FOLDER}temp.mp3'])
-        change_states([self.stop_button,self.play_button, self.pause_button, self.next_button, self.last_button,self.finished_all_button, self.finished_button, self.volume_slider, self.desktop_volume_slider],'!disabled')
+        change_states([self.stop_button,self.play_button, self.pause_button, self.next_button, self.last_button,self.finished_all_button, self.finished_button],'!disabled')
+        self.busy_state = False
         return f'{TEMP_FOLDER}temp.mp3'
     
     def episode_down(self,*args):
@@ -99,6 +110,7 @@ class NewAudioPlayer(NewMediaPlayer):
         return super().open_file(self.media)
     
     def set_volume_desktop(self, value):
+        if self.busy_state: return
         if not self.audio_list: return
         self.desktop_vol = int(value)
         self.current_media[4] = self.desktop_vol / 100 if self.desktop_vol else 0

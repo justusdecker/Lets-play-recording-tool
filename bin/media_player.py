@@ -21,6 +21,7 @@ class NewMediaPlayer(tk.Frame):
     
     def __init__(self,parent,app,audio_only: bool = False):
         self.app = app
+        self.parent = parent
         self.current_episode = 0
         super().__init__()
         self.isfinished = False
