@@ -6,7 +6,7 @@ from tkinter.ttk import Button
 from bin.ffmpeg import ffmpeg_run, FFMPEG_AUDIO_COMBINE_TRUNCATED
 from bin.constants import TEMP_FOLDER
 from tools.log import *
-
+from bin.ui import change_states
 from bin.media_player import NewMediaPlayer
 
 class NewAudioPlayer(NewMediaPlayer):
@@ -31,6 +31,7 @@ class NewAudioPlayer(NewMediaPlayer):
         
         self.desktop_volume_slider.set(50)  # Set the default volume to 50%
         self.desktop_volume_slider.pack(side=LEFT, padx=5)
+    
     def reset(self,al):
         self.player.stop()
         self.audio_list = al
@@ -39,8 +40,10 @@ class NewAudioPlayer(NewMediaPlayer):
         self.busy_state = False
         self.desktop_vol = 1.
         self.play_video()
+    
     def get_ui(self):
         return [self.finished_all_button,self.finished_button, self.last_button,self.next_button,self.play_button,self.pause_button,self.stop_button]
+    
     @property
     def current_media(self) -> list:
         if self.audio_list:
@@ -51,7 +54,7 @@ class NewAudioPlayer(NewMediaPlayer):
     @property
     def media(self) -> str:
         if not self.audio_list: return ''
-        from bin.ui import change_states
+        
         change_states([self.stop_button,self.play_button, self.pause_button, self.next_button, self.last_button,self.finished_all_button, self.finished_button],'disabled')
         self.busy_state = True
         LOG('Start combining $($) & $($)',[self.current_media[1],1.0,self.current_media[2],self.current_media[4]])
@@ -78,8 +81,7 @@ class NewAudioPlayer(NewMediaPlayer):
             self.current_episode = new_location
             LOG(f'Changed episode to {new_location}')
             self.play_video()
-            
-        
+             
     def episode_up(self,*args):
         """ Change the selected episode. One up. """
         new_location = self.current_episode + 1
@@ -93,6 +95,7 @@ class NewAudioPlayer(NewMediaPlayer):
             self.current_episode = new_location
             LOG(f'Changed episode to {new_location}')
             self.play_video()
+            
     def play_video(self):
         self.open_file()
         LOG('Start playing',logtype=LOG_INFO)

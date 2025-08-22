@@ -1645,10 +1645,11 @@ class SetTitle(tk.Frame):
             self.start_btn.state(['!disabled'])
             
     def run(self,*args):
+        
         a, b = int(self.epstart_option_var.get())-1, int(self.epend_option_var.get())
         
-        self.media_player.data = [i + 1 for i in range(a,b+(1 if a == b else 0))]
-    
+        data = [i + 1 for i in range(a,b+(1 if a == b else 0))]
+        self.media_player.reset(data, SQLAccess.__cvtid(self))
     def send_and_receive(self,*args):
         change_states([self.gemini_entry, self.send_btn],'disabled')
         Thread(target=self.__sar).start()
