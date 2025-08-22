@@ -5,7 +5,7 @@ from tkinter import LEFT, Scale, HORIZONTAL
 from tkinter.ttk import Button
 from bin.ffmpeg import ffmpeg_run, FFMPEG_AUDIO_COMBINE_TRUNCATED
 from bin.constants import TEMP_FOLDER
-
+from tools.log import *
 
 from bin.media_player import NewMediaPlayer
 
@@ -42,12 +42,14 @@ class NewAudioPlayer(NewMediaPlayer):
     @property
     def media(self) -> str:
         if not self.audio_list: return ''
+        LOG('Start combining $($) & $($)',[self.current_media[1],1.0,self.current_media[2],self.current_media[4]])
         ffmpeg_run(FFMPEG_AUDIO_COMBINE_TRUNCATED,{
             '__IN1__':self.current_media[1],
             '__IN2__': self.current_media[2],
             '__VOLUME1__': str(1.0),
             '__VOLUME2__': str(self.current_media[4]),
             '__OUT__':f'{TEMP_FOLDER}temp.mp3'})
+        LOG(f'Finished combining $',[f'{TEMP_FOLDER}temp.mp3'])
         return f'{TEMP_FOLDER}temp.mp3'
     
     def episode_down(self,*args):
