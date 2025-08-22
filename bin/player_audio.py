@@ -77,10 +77,7 @@ class NewAudioPlayer(NewMediaPlayer):
         else:
             self.current_episode = new_location
             LOG(f'Changed episode to {new_location}')
-
-            self.open_file()
             self.play_video()
-            self.current_media_label.configure(text=f'{self.current_media}')
             
         
     def episode_up(self,*args):
@@ -95,14 +92,11 @@ class NewAudioPlayer(NewMediaPlayer):
         else:
             self.current_episode = new_location
             LOG(f'Changed episode to {new_location}')
-
-
-            self.open_file()
             self.play_video()
-            self.current_media_label.configure(text=f'{self.current_media}')
     def play_video(self):
         self.open_file()
         LOG('Start playing',logtype=LOG_INFO)
+        self.current_media_label.configure(text=f'{self.current_media[0]+1}')
         return super().play_video()
     
     def open_file(self):
