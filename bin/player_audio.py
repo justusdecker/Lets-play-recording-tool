@@ -54,18 +54,21 @@ class NewAudioPlayer(NewMediaPlayer):
     
     def episode_down(self,*args):
         """ Change the selected episode. One down. """
+        
         new_location = self.current_episode - 1
 
         if new_location < 0:
             self.current_episode = 0
+            LOG('Cannot change episode',logtype=LOG_WARNING)
         else:
             self.current_episode = new_location
-
+            LOG(f'Changed episode to {new_location}')
 
             self.open_file()
             self.play_video()
             self.current_media_label.configure(text=f'{self.current_media}')
             
+        
     def episode_up(self,*args):
         """ Change the selected episode. One up. """
         new_location = self.current_episode + 1
@@ -74,17 +77,22 @@ class NewAudioPlayer(NewMediaPlayer):
         
         if new_location > l - 1:
             self.current_episode = l - 1
+            LOG('Cannot change episode',logtype=LOG_WARNING)
         else:
             self.current_episode = new_location
+            LOG(f'Changed episode to {new_location}')
+
 
             self.open_file()
             self.play_video()
             self.current_media_label.configure(text=f'{self.current_media}')
     def play_video(self):
         self.open_file()
+        LOG('Start playing',logtype=LOG_INFO)
         return super().play_video()
     
     def open_file(self):
+        
         return super().open_file(self.media)
     
     def set_volume_desktop(self, value):
