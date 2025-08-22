@@ -25,7 +25,7 @@ class NewMediaPlayer(tk.Frame):
         super().__init__()
         self.isfinished = False
 
-        
+        self.currentfile = ''
         self.instance = VLC_INSTANCE
         # Create a VLC instance and media player.
         self.player = self.instance.media_player_new()
@@ -118,6 +118,7 @@ class NewMediaPlayer(tk.Frame):
         
         if videopath:
             LOG('Open file: $',[videopath],LOG_INFO)
+            self.stop_video()
             media = self.instance.media_new(videopath)
             self.player.set_media(media)
             self.set_video_panel()

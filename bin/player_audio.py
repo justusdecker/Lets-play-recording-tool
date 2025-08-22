@@ -42,6 +42,8 @@ class NewAudioPlayer(NewMediaPlayer):
     @property
     def media(self) -> str:
         if not self.audio_list: return ''
+        from bin.ui import change_states
+        change_states([self.stop_button,self.play_button, self.pause_button, self.next_button, self.last_button,self.finished_all_button, self.finished_button, self.volume_slider, self.desktop_volume_slider],'disabled')
         LOG('Start combining $($) & $($)',[self.current_media[1],1.0,self.current_media[2],self.current_media[4]])
         ffmpeg_run(FFMPEG_AUDIO_COMBINE_TRUNCATED,{
             '__IN1__':self.current_media[1],
@@ -50,6 +52,7 @@ class NewAudioPlayer(NewMediaPlayer):
             '__VOLUME2__': str(self.current_media[4]),
             '__OUT__':f'{TEMP_FOLDER}temp.mp3'})
         LOG(f'Finished combining $',[f'{TEMP_FOLDER}temp.mp3'])
+        change_states([self.stop_button,self.play_button, self.pause_button, self.next_button, self.last_button,self.finished_all_button, self.finished_button, self.volume_slider, self.desktop_volume_slider],'!disabled')
         return f'{TEMP_FOLDER}temp.mp3'
     
     def episode_down(self,*args):
