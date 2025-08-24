@@ -15,7 +15,7 @@ from tkinter.filedialog import askopenfilename
 from bin.player_video import NewVideoPlayer
 from bin.player_audio import NewAudioPlayer
 from bin.gemini_api import send_gemini
-
+from tools.log import LOG
 
 
 def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,tk.StringVar]:
@@ -911,6 +911,7 @@ class FileManager(tk.Frame):
         Prompts for confirmation, disables UI, deletes files if opted,
         removes the 'Let's Play' entry, shows a success message, and exits the application.
         """
+        
         ok = msgbox.askyesno('Attention','You are trying to delete all files in the selected lets play & \nthe lets play itself!\nThis step is irreversible!\nContinue?')
         if not ok: return
         lpid = SQLAccess.read_letsplay_names.index(self.lp_option_var.get())
@@ -926,7 +927,8 @@ class FileManager(tk.Frame):
                     ep.audio_mic_path,
                     ep.final_video_path
                     ]:
-                    try_delete_file(file)
+                    LOG(f'Removing: $ - of $ | $',[file, lpid, SQLAccess.read_letsplay_game_name(lpid)])
+                    #try_delete_file(file)
                     #print(ep.lpid, ep.id, )
         change_states([self.menu],'disabled')
         msgbox.showinfo('Success', 'Lets Play deleted\nYou must restart the app!')
@@ -1000,7 +1002,7 @@ class FileManager(tk.Frame):
                     ep.audio_mic_path,
                     ep.final_video_path
                     ]:
-                print(ep.lpid)
+                LOG(f'Removing: $ - of $ | $',[file, lpid, SQLAccess.read_letsplay_game_name(lpid)])
                 #try_delete_file(file)
     
     @property
