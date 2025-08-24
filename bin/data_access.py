@@ -23,7 +23,7 @@ from io import BytesIO
 def try_delete_file(filepath: str | None) -> bool:
     if filepath is not None:
         if isfile(filepath):
-            #remove(filepath)
+            remove(filepath)
             return True
     return False
 

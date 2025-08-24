@@ -911,7 +911,7 @@ class FileManager(tk.Frame):
         Prompts for confirmation, disables UI, deletes files if opted,
         removes the 'Let's Play' entry, shows a success message, and exits the application.
         """
-        
+        raise NotImplementedError
         ok = msgbox.askyesno('Attention','You are trying to delete all files in the selected lets play & \nthe lets play itself!\nThis step is irreversible!\nContinue?')
         if not ok: return
         lpid = SQLAccess.read_letsplay_names().index(self.lp_option_var.get())
@@ -1009,11 +1009,11 @@ class FileManager(tk.Frame):
                     ]:
                 try:
                     if try_delete_file(file):
-                        LOG(f'($)Removed: $ - of $ | $',[i, file, lpid, SQLAccess.read_letsplay_game_name(lpid)],LOG_INFO)
+                        LOG(f'($)Removed: $ - of $ | $',[i+1, file, lpid, SQLAccess.read_letsplay_game_name(lpid)],LOG_INFO)
                     else:
-                        LOG(f'($)Does not exist(skip): $ - of $ | $',[i, file, lpid, SQLAccess.read_letsplay_game_name(lpid)],LOG_WARNING)
+                        LOG(f'($)Does not exist(skip): $ - of $ | $',[i+1, file, lpid, SQLAccess.read_letsplay_game_name(lpid)],LOG_WARNING)
                 except Exception as E:
-                    LOG(f'($)Failed: $ - of $ | $ - $',[i, file, lpid, SQLAccess.read_letsplay_game_name(lpid), E],LOG_ERROR)
+                    LOG(f'($)Failed: $ - of $ | $ - $',[i+1, file, lpid, SQLAccess.read_letsplay_game_name(lpid), E],LOG_ERROR)
     
     @property
     def rng(self) -> list:
