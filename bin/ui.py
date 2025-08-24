@@ -17,6 +17,31 @@ from bin.player_audio import NewAudioPlayer
 from bin.gemini_api import send_gemini
 from tools.log import *
 
+class LPEPPicker(ttk.LabelFrame):
+    def __init__(self, 
+                 parent,
+                 callback,
+                 _to: bool= True):
+        self.obj = ttk.LabelFrame(parent)
+        
+        self.lp_option_var = tk.StringVar(parent)
+        
+        ttk.Label(parent, text ="Lets Play").pack(side='left')
+        
+        names = SQLAccess.read_letsplay_names()
+        self.options = ttk.OptionMenu(parent,self.lp_option_var,'None',*names,command=callback)
+        
+        
+        self.options.pack(side='left')
+        
+    def reset(self):
+        pass
+    def destroy(self):
+        self.obj.destroy()
+        
+        return super().destroy()
+        
+
 
 def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,tk.StringVar]:
     """
@@ -688,26 +713,6 @@ class FileManager(tk.Frame):
         self.label.grid(row=0,column=1)
         DATA_DETECTION.pack()
         
-
-        # change episode data
-        
-        CED = ttk.LabelFrame(W,text='Episode Editor')
-        self.CED = CED
-        
-        self.ced_lp_label, self.ced_lp_options, self.ced_lp_option_var= get_lets_play(CED, self.lp_changed_ced)
-        
-        self.ced_label2, _2, _1, self.ced_ep_start, self.ced_ep_end, self.ced_epstart_option_var, _ = get_episode_range(CED,lambda : None,lambda : None,[])
-        _1.destroy()
-        _2.destroy()
-        self.ced_ep_end.destroy()
-        
-        self.set_ced_ep_btn = ttk.Button(CED, text='Load',command=self.load_ep_ced)
-        self.set_ced_ep_btn.state(['disabled'])
-        
-        self.set_ced_ep_btn.grid(row=0,column=7,pady=5)
-        
-        CED.pack()
-        
         
         # Data Deletion
         
@@ -716,8 +721,8 @@ class FileManager(tk.Frame):
         
         self.simdel_lp_label, self.simdel_lp_options, self.simdel_lp_option_var= get_lets_play(DATA_DELETION, self.lp_changed)
         
-        self.simdel_label2, self.simdel_label3, _1, self.simdel_ep_start, self.simdel_ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(DATA_DELETION,lambda x: None,self.check_last_id,[])
-        _1.destroy()
+        self.simdel_label2, self.simdel_label3, self.start_btn, self.simdel_ep_start, self.simdel_ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(DATA_DELETION,lambda x: None,self.check_last_id,[])
+        self.start_btn.destroy()
         
         self.delete_btn = ttk.Button(DATA_DELETION, text='Delete',command=self.delete_files)
         self.delete_btn.state(['disabled'])
@@ -783,12 +788,6 @@ class FileManager(tk.Frame):
         BACKUP.pack()
         
         W.pack()
-    def load_ep_ced(self):
-        lpid = SQLAccess.read_letsplay_names().index(self.ced_lp_option_var.get())
-        ep = int(self.ced_epstart_option_var.get())
-        data = SQLAccess.read_episodes(lpid)[ep]
-        LOG('Episode load: $ - $, $',[lpid, ep,data.video_path])
-    
     def load_video_backup(self,*args):
         pass
     def create_video_backup(self,*args):
@@ -846,30 +845,7 @@ class FileManager(tk.Frame):
             self.epnums = [i+1 for i in range(SQLAccess.read_episode_ammount(SQLAccess.read_letsplay_names().index(self.simdel_lp_option_var.get())))]
         else:
             self.epnums = []
-          
-          
-    def lp_changed_ced(self,*args):
-        """
-        Callback for changes in the 'Let's Play' selection for data deletion.
-
-        Updates the UI to reflect episode numbers for deletion, re-creates
-        episode range selection widgets, and controls the state of the delete button.
-        """
-        self.update_ui()
-        
-        if not self.epnums:
-            self.delete_btn.state(['disabled'])
-        else:
-            self.delete_btn.state(['!disabled'])
-        
-        self.ced_label2.destroy()
-        del self.ced_epstart_option_var
-        
-        self.ced_label2, _2, _1, self.ced_ep_start, self.ced_ep_end, self.ced_epstart_option_var, _ = get_episode_range(self.DATA_DELETION,lambda x: None,self.check_last_id,self.epnums)
-        _1.destroy() 
-        _2.destroy()
-        self.ced_ep_end.destroy()
-         
+            
     def lp_changed(self,*args):
         """
         Callback for changes in the 'Let's Play' selection for data deletion.
@@ -888,11 +864,12 @@ class FileManager(tk.Frame):
         self.simdel_ep_end.destroy()
         self.simdel_label2.destroy()
         self.simdel_label3.destroy()
+        self.start_btn.destroy()
         del self.epstart_option_var
         del self.epend_option_var
         
-        self.simdel_label2, self.simdel_label3, _1, self.simdel_ep_start, self.simdel_ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.DATA_DELETION,lambda x: None,self.check_last_id,self.epnums)
-        _1.destroy()
+        self.simdel_label2, self.simdel_label3, self.start_btn, self.simdel_ep_start, self.simdel_ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.DATA_DELETION,lambda x: None,self.check_last_id,self.epnums)
+        self.start_btn.destroy()
     
     def check_last_id(self,*args):
         """
