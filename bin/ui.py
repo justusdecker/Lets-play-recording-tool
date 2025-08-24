@@ -18,17 +18,25 @@ from bin.gemini_api import send_gemini
 from tools.log import *
 
 class LPEPPicker(ttk.LabelFrame):
+    #! Add a option to change the image of the run button
+    #! activate/deactivate all
+    
     def __init__(self, 
                  parent,
                  callback,
-                 values: list[str],
                  both: bool= True):
+        
         self.both = both
-        self.values = values
         self.parent = parent
         self.callback = callback
         self.obj = ttk.LabelFrame(self.parent, text ="LP - EP Selector")
         self.obj.pack()
+        self.values = []
+        
+        self.v_epstart = tk.StringVar(self.obj)
+        self.v_epend = tk.StringVar(self.obj)
+        self.v_lp = tk.StringVar(self.obj)
+        
         self.lp_create_ui()
         self.ep_create_ui()
         
@@ -43,10 +51,10 @@ class LPEPPicker(ttk.LabelFrame):
         """
         names = SQLAccess.read_letsplay_names()
         
-        self.lp_option_var = tk.StringVar(self.obj)
+        
 
         self.lp_label = ttk.Label(self.obj, text ="Lets Play")
-        self.options = ttk.OptionMenu(self.obj,self.lp_option_var,'None',*names,command=self.callback)
+        self.options = ttk.OptionMenu(self.obj,self.v_lp,'None' if not self.v_lp.get() else self.v_lp.get(),*names,command=self.lp_changed)
         
         self.lp_label.pack(side='left')
         self.options.pack(side='left')
@@ -63,13 +71,12 @@ class LPEPPicker(ttk.LabelFrame):
         """
         img = AsciiImage(ICO_RUN)
         
-        self.v_epstart = tk.StringVar(self.obj)
-        self.v_epend = tk.StringVar(self.obj)
-        
         self.lbl_start = ttk.Label(self.obj, text ="Episode start")
-        if self.both: self.lbl_end = ttk.Label(self.obj, text ="Episode end")
-        self.opm_start = ttk.OptionMenu(self.obj,self.v_epstart,str(self.values[-1] if self.values else 'None'),*self.values,command=self.check)
-        self.opm_end = ttk.OptionMenu(self.obj,self.v_epend,str(self.values[0] if self.values else 'None'),*self.values,command=self.check)
+        
+        self.opm_start = ttk.OptionMenu(self.obj,self.v_epstart,str(self.values[0] if self.values else 'None'),*self.values,command=self.check)
+        if self.both: 
+            self.lbl_end = ttk.Label(self.obj, text ="Episode end")
+            self.opm_end = ttk.OptionMenu(self.obj,self.v_epend,str(self.values[-1] if self.values else 'None'),*self.values,command=self.check)
         self.btn_run = ttk.Button(self.obj, image=img.image,command=self.callback)
         
         self.btn_run.image = img.image
@@ -78,9 +85,10 @@ class LPEPPicker(ttk.LabelFrame):
             self.btn_run.state(['disabled'])
         
         self.lbl_start.pack(side='left')
-        if self.both: self.lbl_end.pack(side='left')
         self.opm_start.pack(side='left')
-        self.opm_end.pack(side='left')
+        if self.both: 
+            self.lbl_end.pack(side='left')
+            self.opm_end.pack(side='left')
         self.btn_run.pack(side='left')
     
     def check(self,*_):
@@ -90,10 +98,11 @@ class LPEPPicker(ttk.LabelFrame):
             else:
                 self.btn_run.state(['!disabled'])
     
-    def reset(self,values: list[str]):
-        self.values: list[str] = values
+    def reset(self):
         self.destroy_lp()
         self.lp_create_ui()
+        self.destroy_ep()
+        self.ep_create_ui()
     
     def destroy_ep(self):
         self.lbl_start.destroy()
@@ -111,7 +120,37 @@ class LPEPPicker(ttk.LabelFrame):
         self.destroy_lp()
         self.destroy_ep()
         return super().destroy()
+    
+    
+    
+    def update_ui(self):
+        """
+        Updates UI elements related to episode range for data deletion.
+
+        Recalculates available episode numbers based on the selected 'Let's Play'
+        for the data deletion section.
+        """
+        lp = self.v_lp.get()
+        if lp != 'None':
+            self.values = [i+1 for i in range(SQLAccess.read_episode_ammount(SQLAccess.read_letsplay_names().index(self.v_lp.get())))]
+        else:
+            self.values = []
+    
+    def lp_changed(self,*_):
+        """
+        Callback for changes in the 'Let's Play' selection for data deletion.
+
+        Updates the UI to reflect episode numbers for deletion, re-creates
+        episode range selection widgets, and controls the state of the delete button.
+        """
+        self.update_ui()
         
+        if not self.values:
+            self.btn_run.state(['disabled'])
+        else:
+            self.btn_run.state(['!disabled'])
+        
+        self.reset()
 
 
 def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,tk.StringVar]:
