@@ -914,9 +914,9 @@ class FileManager(tk.Frame):
         
         ok = msgbox.askyesno('Attention','You are trying to delete all files in the selected lets play & \nthe lets play itself!\nThis step is irreversible!\nContinue?')
         if not ok: return
-        lpid = SQLAccess.read_letsplay_names.index(self.lp_option_var.get())
+        lpid = SQLAccess.read_letsplay_names().index(self.lp_option_var.get())
         if self.delete_lp_option.get():
-            for ep in SQLAccess.read_episodes(lpid):#BUG
+            for i, ep in enumerate(SQLAccess.read_episodes(lpid)):#BUG
                 
                 for file in [
                     ep.video_path,
@@ -929,11 +929,12 @@ class FileManager(tk.Frame):
                     ]:
                     try:
                         if try_delete_file(file):
-                            LOG(f'Removed: $ - of $ | $',[file, lpid, SQLAccess.read_letsplay_game_name(lpid)],LOG_INFO)
+                            LOG(f'($)Removed: $ - of $ | $',[i+1, file, lpid, SQLAccess.read_letsplay_game_name(lpid)],LOG_INFO)
                         else:
-                            LOG(f'Does not exist(skip): $ - of $ | $',[file, lpid, SQLAccess.read_letsplay_game_name(lpid)],LOG_WARNING)
+                            LOG(f'($)Does not exist(skip): $ - of $ | $',[i+1, file, lpid, SQLAccess.read_letsplay_game_name(lpid)],LOG_WARNING)
                     except Exception as E:
-                        LOG(f'Failed: $ - of $ | $ - $',[file, lpid, SQLAccess.read_letsplay_game_name(lpid), E],LOG_ERROR)
+                        LOG(f'($)Failed: $ - of $ | $ - $',[i+1, file, lpid, SQLAccess.read_letsplay_game_name(lpid), E],LOG_ERROR)
+        # See issue #322
         change_states([self.menu],'disabled')
         msgbox.showinfo('Success', 'Lets Play deleted\nYou must restart the app!')
         sys.exit()
@@ -1008,11 +1009,11 @@ class FileManager(tk.Frame):
                     ]:
                 try:
                     if try_delete_file(file):
-                        LOG(f'Removed: $ - of $ | $',[file, lpid, SQLAccess.read_letsplay_game_name(lpid)],LOG_INFO)
+                        LOG(f'($)Removed: $ - of $ | $',[i, file, lpid, SQLAccess.read_letsplay_game_name(lpid)],LOG_INFO)
                     else:
-                        LOG(f'Does not exist(skip): $ - of $ | $',[file, lpid, SQLAccess.read_letsplay_game_name(lpid)],LOG_WARNING)
+                        LOG(f'($)Does not exist(skip): $ - of $ | $',[i, file, lpid, SQLAccess.read_letsplay_game_name(lpid)],LOG_WARNING)
                 except Exception as E:
-                    LOG(f'Failed: $ - of $ | $ - $',[file, lpid, SQLAccess.read_letsplay_game_name(lpid), E],LOG_ERROR)
+                    LOG(f'($)Failed: $ - of $ | $ - $',[i, file, lpid, SQLAccess.read_letsplay_game_name(lpid), E],LOG_ERROR)
     
     @property
     def rng(self) -> list:
