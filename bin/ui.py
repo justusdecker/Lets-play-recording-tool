@@ -21,24 +21,95 @@ class LPEPPicker(ttk.LabelFrame):
     def __init__(self, 
                  parent,
                  callback,
-                 _to: bool= True):
-        self.obj = ttk.LabelFrame(parent)
+                 values: list[str],
+                 both: bool= True):
+        self.both = both
+        self.values = values
+        self.parent = parent
+        self.callback = callback
+        self.obj = ttk.LabelFrame(self.parent, text ="LP - EP Selector")
+        self.obj.pack()
+        self.lp_create_ui()
+        self.ep_create_ui()
         
-        self.lp_option_var = tk.StringVar(parent)
-        
-        ttk.Label(parent, text ="Lets Play").pack(side='left')
-        
+    def lp_create_ui(self):
+        """
+        Creates and configures Tkinter UI elements for selecting a "Let's Play" item.
+
+        This method sets up a label and an option menu (dropdown) for users
+        to select from a list of "Let's Play" names. The names are sourced
+        from the lprt database.
+        When a selection is made, the provided `self.callback` function is executed.
+        """
         names = SQLAccess.read_letsplay_names()
-        self.options = ttk.OptionMenu(parent,self.lp_option_var,'None',*names,command=callback)
         
+        self.lp_option_var = tk.StringVar(self.obj)
+
+        self.lp_label = ttk.Label(self.obj, text ="Lets Play")
+        self.options = ttk.OptionMenu(self.obj,self.lp_option_var,'None',*names,command=self.callback)
         
+        self.lp_label.pack(side='left')
         self.options.pack(side='left')
+    
+    def ep_create_ui(self):
+        """
+        Creates and configures Tkinter UI elements for selecting an episode range.
+
+        This method sets up two lab els ("Episode start", "Episode end" <- only if self.both is true!),
+        two option menus for selecting start and end episode numbers, and an
+        "Run" button. The button is initially disabled(if ft is none <- No data exists) and its state
+        can be managed by `self.check`. The `run_callback` is
+        executed when the "Run" button is clicked.
+        """
+        img = AsciiImage(ICO_RUN)
         
-    def reset(self):
-        pass
+        self.v_epstart = tk.StringVar(self.obj)
+        self.v_epend = tk.StringVar(self.obj)
+        
+        self.lbl_start = ttk.Label(self.obj, text ="Episode start")
+        if self.both: self.lbl_end = ttk.Label(self.obj, text ="Episode end")
+        self.opm_start = ttk.OptionMenu(self.obj,self.v_epstart,str(self.values[-1] if self.values else 'None'),*self.values,command=self.check)
+        self.opm_end = ttk.OptionMenu(self.obj,self.v_epend,str(self.values[0] if self.values else 'None'),*self.values,command=self.check)
+        self.btn_run = ttk.Button(self.obj, image=img.image,command=self.callback)
+        
+        self.btn_run.image = img.image
+        
+        if not self.values:
+            self.btn_run.state(['disabled'])
+        
+        self.lbl_start.pack(side='left')
+        if self.both: self.lbl_end.pack(side='left')
+        self.opm_start.pack(side='left')
+        self.opm_end.pack(side='left')
+        self.btn_run.pack(side='left')
+    
+    def check(self,*_):
+        if self.both:
+            if int(self.v_epend.get()) < int(self.v_epstart.get()):
+                self.btn_run.state(['disabled'])
+            else:
+                self.btn_run.state(['!disabled'])
+    
+    def reset(self,values: list[str]):
+        self.values: list[str] = values
+        self.destroy_lp()
+        self.lp_create_ui()
+    
+    def destroy_ep(self):
+        self.lbl_start.destroy()
+        if self.both: self.lbl_end.destroy()
+        self.opm_start.destroy()
+        self.opm_end.destroy()
+        self.btn_run.destroy()
+    
+    def destroy_lp(self):
+        self.lp_label.destroy()
+        self.options.destroy()
+        
     def destroy(self):
         self.obj.destroy()
-        
+        self.destroy_lp()
+        self.destroy_ep()
         return super().destroy()
         
 
@@ -712,6 +783,9 @@ class FileManager(tk.Frame):
         self.detect_btn.grid(row=0,column=0)
         self.label.grid(row=0,column=1)
         DATA_DETECTION.pack()
+
+        testing_lpep = LPEPPicker(W,lambda x:None,['1','2','3'])
+
         
         
         # Data Deletion
