@@ -15,7 +15,7 @@ from tkinter.filedialog import askopenfilename
 from bin.player_video import NewVideoPlayer
 from bin.player_audio import NewAudioPlayer
 from bin.gemini_api import send_gemini
-from tools.log import LOG
+from tools.log import *
 
 
 def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,tk.StringVar]:
@@ -927,9 +927,13 @@ class FileManager(tk.Frame):
                     ep.audio_mic_path,
                     ep.final_video_path
                     ]:
-                    LOG(f'Removing: $ - of $ | $',[file, lpid, SQLAccess.read_letsplay_game_name(lpid)])
-                    #try_delete_file(file)
-                    #print(ep.lpid, ep.id, )
+                    try:
+                        if try_delete_file(file):
+                            LOG(f'Removed: $ - of $ | $',[file, lpid, SQLAccess.read_letsplay_game_name(lpid)],LOG_INFO)
+                        else:
+                            LOG(f'Does not exist(skip): $ - of $ | $',[file, lpid, SQLAccess.read_letsplay_game_name(lpid)],LOG_WARNING)
+                    except Exception as E:
+                        LOG(f'Failed: $ - of $ | $ - $',[file, lpid, SQLAccess.read_letsplay_game_name(lpid), E],LOG_ERROR)
         change_states([self.menu],'disabled')
         msgbox.showinfo('Success', 'Lets Play deleted\nYou must restart the app!')
         sys.exit()
@@ -1002,8 +1006,13 @@ class FileManager(tk.Frame):
                     ep.audio_mic_path,
                     ep.final_video_path
                     ]:
-                LOG(f'Removing: $ - of $ | $',[file, lpid, SQLAccess.read_letsplay_game_name(lpid)])
-                #try_delete_file(file)
+                try:
+                    if try_delete_file(file):
+                        LOG(f'Removed: $ - of $ | $',[file, lpid, SQLAccess.read_letsplay_game_name(lpid)],LOG_INFO)
+                    else:
+                        LOG(f'Does not exist(skip): $ - of $ | $',[file, lpid, SQLAccess.read_letsplay_game_name(lpid)],LOG_WARNING)
+                except Exception as E:
+                    LOG(f'Failed: $ - of $ | $ - $',[file, lpid, SQLAccess.read_letsplay_game_name(lpid), E],LOG_ERROR)
     
     @property
     def rng(self) -> list:
