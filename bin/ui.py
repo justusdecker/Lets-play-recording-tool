@@ -1543,6 +1543,7 @@ class CompAndRender(tk.Frame):
             reoc(not isfile(episodes[i].video_path),ERROR_007)
         audio_list = [[i, episodes[i].audio_mic_edit2_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*rng)]
         self.media_player.reset(audio_list)
+
 class SetTitle(tk.Frame):
     """
     Displays information about the application, including its license.
@@ -1656,7 +1657,7 @@ class SetTitle(tk.Frame):
     def __sar(self):
         self.result_lbl.configure(text=str(send_gemini(f'Generate me a youtube title(gaming / lets play) for: {self.text.get()}')))
         change_states([self.gemini_entry, self.send_btn],'!disabled')
-  
+
 class About(tk.Frame):
     """
     Displays information about the application, including its license.
