@@ -17,7 +17,7 @@ from bin.player_audio import NewAudioPlayer
 from bin.gemini_api import send_gemini
 from tools.log import *
 
-class LPEPPicker(ttk.LabelFrame):
+class LPEPPicker:
     #! Add a option to change the image of the run button
     #! activate/deactivate all
     
