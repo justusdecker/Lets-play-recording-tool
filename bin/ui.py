@@ -732,6 +732,38 @@ class FileManager(tk.Frame):
     
         LP_CREATE.pack()
         
+        LP_EDIT = ttk.LabelFrame(W,text='Lets Play Create')
+        
+        self.lp_edit_name_var = tk.StringVar()
+        self.lp_edit_game_name_var = tk.StringVar()
+        self.lp_edit_episode_length_var = tk.StringVar()
+        
+        lp_edit_new_label = ttk.Label(LP_EDIT,text='Create a new Lets Play')
+        lp_edit_name_label = ttk.Label(LP_EDIT,text='Name')
+        lp_edit_game_name_label = ttk.Label(LP_EDIT,text='Gamename')
+        lp_edit_name = ttk.Entry(LP_EDIT,textvariable=self.name_var)
+        lp_edit_game_name = ttk.Entry(LP_EDIT,textvariable=self.game_name_var)
+        lp_edit_episode_length = ttk.OptionMenu(LP_EDIT,self.episode_length_var,'None',*[f'{i} Minutes' for i in range(10,65,5)],command=self.something_changed)
+        img = AsciiImage(ICO_NEW)
+        self.btn_lp_edit = ttk.Button(LP_EDIT,image=img.image,command=self.create_lets_play)
+        self.btn_lp_edit.image = img.image
+        self.btn_lp_edit.state(['disabled'])
+        
+        new_label.grid(row=0,column=1)
+        name_label.grid(row = 0, column = 2)
+        name.grid(row = 0, column = 3)
+        game_name_label.grid(row = 0, column = 4)
+        game_name.grid(row = 0, column = 5)
+        episode_length.grid(row=0,column=6)
+        self.btn_lp_create.grid(row=0,column=7)
+    
+        LP_CREATE.pack()
+        
+        
+        
+        
+        
+        
         BACKUP = ttk.LabelFrame(W,text='Lets Play Backup')
         
         self.backup_lpep = LPEPPicker(BACKUP,self.create_video_backup,'lp', ICO_BACKUP)
