@@ -198,9 +198,11 @@ WELCOME.update_message(f'Load: {__name__}')
 from subprocess import run, CREATE_NO_WINDOW
 from bin.constants import TEMP_FOLDER
 
-FFMPEG_DEFAULT = ['ffmpeg', '-y']
+#['ffmpeg', '-y'] <- default debug
 
-FFMPEG_DEFAULT_PRODUCTION = ['ffmpeg', '-v', 'quiet', '-stats' , '-loglevel', 'error', '-y']
+FFMPEG_DEFAULT_PRODUCTION = ['ffmpeg', '-y']
+
+FFMPEG_DEFAULT = ['ffmpeg', '-v', 'quiet', '-stats' , '-loglevel', 'error', '-y']
 
 FFMPEG_CONVERT_AUDIO_TYPE = [*FFMPEG_DEFAULT, '-i', '__IN__', '__OUT__']
 
