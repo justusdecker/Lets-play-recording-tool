@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter.font import Font
 from bin.constants import *
 from bin.constants import __LICENSE__
-from bin.data_access import SQLAccess, AsciiImage, json_write, json_read, try_delete_file
+from bin.data_access import SQLAccess, AsciiImage, json_write, json_read, try_delete_file, file_read
 from threading import Thread
 from bin.welcome_popup import WELCOME
 from bin.automations import *
@@ -1289,6 +1289,7 @@ class Settings(tk.Frame):
         
         # Create Headers
         SETTINGS = ttk.LabelFrame(W,text='OBS Settings')
+        API_GEMINI_SETTINGS = ttk.LabelFrame(W,text='Gemini Settings')
         
         self.IP = tk.StringVar()
         self.PORT = tk.StringVar()
@@ -1304,9 +1305,9 @@ class Settings(tk.Frame):
         obs_password_label = ttk.Label(SETTINGS,text='Password:')
         self.obs_password = ttk.Entry(SETTINGS,show='*',textvariable=self.PW)
         
-        self.obs_ip.bind('<KeyPress>',self.obs_something_changed)
-        self.obs_port.bind('<KeyPress>',self.obs_something_changed)
-        self.obs_password.bind('<KeyPress>',self.obs_something_changed)
+        self.obs_ip.bind('<KeyPress>',self.something_changed)
+        self.obs_port.bind('<KeyPress>',self.something_changed)
+        self.obs_password.bind('<KeyPress>',self.something_changed)
         
         self.set_settings_obs_btn = ttk.Button(SETTINGS,text='Set',command=self.set_obs_settings)
         
@@ -1326,12 +1327,39 @@ class Settings(tk.Frame):
             self.IP.set(OBS_SETTINGS['ip'])
             self.PORT.set(OBS_SETTINGS['port'])
             self.PW.set(OBS_SETTINGS['pw'])
-        self.obs_something_changed()
+        
+        
+        self.APIKEY = tk.StringVar()
+        self.language = tk.StringVar()
+        self.PW_TOGGLE_GAPI = tk.IntVar()
+        
+        if isfile('.env'):
+            try:
+                self.APIKEY.set(file_read('.env').split('=')[0])
+            except:
+                pass
+        
+        languages = ['german', 'english', 'dutch']
+        
+        api_key_label = ttk.Label(API_GEMINI_SETTINGS,text='API_KEY:')
+        self.api_key = ttk.Entry(API_GEMINI_SETTINGS,textvariable=self.APIKEY,show='*')
+        self.show_pw_gapi = ttk.Checkbutton(SETTINGS,variable=self.PW_TOGGLE_GAPI,text='show',command=self.toggle_pw_view)
+        language_options = ttk.OptionMenu(API_GEMINI_SETTINGS,self.language,'english',*languages)
+        self.set_settings_api_key = ttk.Button(API_GEMINI_SETTINGS,text='Set',command=self.set_api_settings)
+        self.api_key.bind('<KeyPress>',self.something_changed)
+        
+        api_key_label.grid(row=0,column=0)
+        self.api_key.grid(row=0,column=1)
+        self.show_pw_gapi.grid(row=0,column=2)
+        language_options.grid(row=1,column=0)
+        self.set_settings_api_key.grid(row=1,column=1)
         
         # Packing
         SETTINGS.pack()
+        API_GEMINI_SETTINGS.pack()
 
         W.pack()
+        self.something_changed()
         
     def toggle_pw_view(self,*args):
         """ Toggles the visibility of the password in the OBS password entry field. """
@@ -1339,8 +1367,12 @@ class Settings(tk.Frame):
             self.obs_password.configure(show="")
         else:
             self.obs_password.configure(show="*")
+        if self.PW_TOGGLE_GAPI.get():
+            self.api_key.configure(show="")
+        else:
+            self.api_key.configure(show="*")
     
-    def obs_something_changed(self,*args):
+    def something_changed(self,*args):
         """
         Callback for changes in OBS setting input fields.
 
@@ -1352,6 +1384,11 @@ class Settings(tk.Frame):
         else:
             self.set_settings_obs_btn.state(['disabled'])
             
+        if self.api_key.get():
+            self.set_settings_api_key.state(['!disabled'])
+        else:
+            self.set_settings_api_key.state(['disabled'])
+            
     def set_obs_settings(self,*args):
         """ Saves the current OBS connection settings to a JSON file. """
         
@@ -1360,6 +1397,11 @@ class Settings(tk.Frame):
         NEW_OBS_SETTINGS['port'] = self.PORT.get()
         NEW_OBS_SETTINGS['pw'] = self.PW.get()
         json_write(ROOT+'obs_settings.json',NEW_OBS_SETTINGS)
+    
+    def set_api_settings(self,*args):
+        """ Saves the current OBS connection settings to a JSON file. """
+        
+        file_write('.env',f'API_KEY={self.APIKEY.get()}')
 
 class CompAndRender(tk.Frame):
     """
@@ -1442,7 +1484,7 @@ class SetTitle(tk.Frame):
         gemini_stuff = ttk.LabelFrame(W,text='Ask Gemini for a hint')
         ttk.Label(gemini_stuff,text='Only input keywords! e.g. Gaming, Mining...').pack()
         self.v_t = tk.StringVar()
-        self.gemini_entry = ttk.Entry(gemini_stuff,textvariable=self.text)
+        self.gemini_entry = ttk.Entry(gemini_stuff,textvariable=self.v_t)
         self.send_btn = ttk.Button(gemini_stuff,text='Send',command=self.send_and_receive)
 
         self.gemini_entry.pack(fill=tk.X)
@@ -1462,7 +1504,7 @@ class SetTitle(tk.Frame):
         
         W.grid(row=0,column=1)
     def update_text(self, text):
-        text.delete('1.0',tk.END)
+        self.text.delete('1.0',tk.END)
         for i in text.splitlines():
             self.text.insert(tk.END, f'{i}\n')
             
