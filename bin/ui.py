@@ -849,6 +849,28 @@ class FileManager(tk.Frame):
         msgbox.showinfo('Success', 'Lets Play deleted\nYou must restart the app!')
         sys.exit()
     
+    def det(self,path: str) -> list[int,int]:
+        SIZE = 0
+        AMMOUNT = 0
+        for file in listdir(path):
+            try:
+                if isfile(f'{path}{file}'):
+                    SIZE += getsize(file)
+                    AMMOUNT += 1
+            except:
+                pass
+            
+        return f'{self.gsn(SIZE):.2f} GB in {AMMOUNT} files',SIZE, AMMOUNT
+    def gsn(self,num):
+        typ = ['B','KB','MB','GB','TB']
+        if num:
+            while 1:
+                if int(num/1024):
+                    num /= 1024
+                    typ.pop(0)
+                else:
+                    break
+        return f'{num}{typ[0]}'
     def on_detect(self,*args):
         """
         Collects and displays statistics about files and their sizes
@@ -857,41 +879,31 @@ class FileManager(tk.Frame):
         Calculates total files and sizes for LPRT created data, temporary files,
         raw video files, and thumbnails, then updates a label with this information.
         """
-        files = 0
-        files_size = 0
-        temp_files = 0
-        temp_files_size = 0
-        for folder in (FIXED_AUDIO_FOLDER, AUDIO_FOLDER, VIDEO_FOLDER):
-            for file in listdir(folder):
-                files += 1
-                files_size += getsize(folder+file)
-        for file in listdir(TEMP_FOLDER):
-            temp_files += 1
-            temp_files_size += getsize(TEMP_FOLDER+file)
 
-        video_raw_files = 0
-        video_raw_files_size = 0
-        thumbnail_files = 0
-        thumbnail_files_size = 0
-        
+        results = {
+            'temp': self.det(TEMP_FOLDER),
+            'thumbnails': self.det(THUMBNAIL_FOLDER),
+            'audio': self.det(AUDIO_FOLDER),
+            'audio_fixed': self.det(FIXED_AUDIO_FOLDER),
+            'ac_results': self.det(AC_RESULT_FOLDER),
+            'deploy': self.det(DEPLOY_FOLDER)
+        }
+        video_files = 0
+        video_size = 0
         for ep in SQLAccess.read_all_episodes():
-            
             if isfile(ep.video_path):
-                video_raw_files_size += getsize(ep.video_path)
-                video_raw_files += 1
-            if ep.thumbnail_path is not None:
-                if isfile(ep.thumbnail_path):
-                    thumbnail_files += 1
-                    thumbnail_files_size += getsize(ep.thumbnail_path)
+                video_size += getsize(ep.video_path)
+                video_files += 1
+        results['video_raw'] = f'{self.gsn(video_size):.2f} GB in {video_files} files'
+        ALL = f""        
+        tot_f, tot_s = 0, 0
+        for key in results:
+            ALL += f'{key:<10} {results[key][0]}\n'
+            tot_f += results[key][2]
+            tot_s += results[key][1]
+        ALL += f'TOTAL: {self.gsn(tot_s)} in {tot_f} files'
         
-        TEXT = f"""
-        LPRT created Data(Audio, FixedAudio, Video):  {files_size/1024/1024/1024:.2f}GB in {files} files
-        Temp Files:         {temp_files_size/1024/1024/1024:.2f}GB in {temp_files} files
-        Video Files(raw):   {video_raw_files_size/1024/1024/1024:.2f}GB in {video_raw_files} files
-        Thumbnails:         {thumbnail_files_size/1024/1024/1024:.2f}GB in {thumbnail_files} files
-        """
-        
-        self.label.configure(text=TEXT)
+        self.label.configure(text=ALL)
         
     def delete_files(self,*args):
         """
@@ -1451,7 +1463,7 @@ class SetTitle(tk.Frame):
         lpid = SQLAccess.read_letsplay_by_option_var(self)
         data = [i + 1 for i in range(a,b+(1 if a == b else 0))]
         for i in data:
-            vp = SQLAccess.read_final_video_path(lpid,i)
+            vp = SQLAccess.read_final_video_path(lpid,i-1)
             if vp is None: 
                 msgbox.showwarning('Failed loading', f'Database entry is NULL.')
                 return
