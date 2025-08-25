@@ -1489,8 +1489,9 @@ class SetTitle(tk.Frame):
         ttk.Label(gemini_stuff,text='Only input keywords! e.g. Gaming, Mining...').pack()
         self.v_t = tk.StringVar()
         self.gemini_entry = ttk.Entry(gemini_stuff,textvariable=self.v_t)
-        self.send_btn = ttk.Button(gemini_stuff,text='Send',command=self.send_and_receive)
-
+        img = AsciiImage(ICO_TAKE_THUMBNAIL)
+        self.send_btn = ttk.Button(gemini_stuff,image=img.image,command=self.send_and_receive)
+        self.send_btn.image = img.image
         self.gemini_entry.pack(fill=tk.X)
         self.send_btn.pack()
         
