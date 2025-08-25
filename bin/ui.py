@@ -1352,20 +1352,13 @@ class CompAndRender(tk.Frame):
         W = tk.Frame(parent)
         
         AUTOMATION_ROOT = ttk.Frame(W)
-        
-        self.normal_options = ttk.Frame(AUTOMATION_ROOT)
+
         
         automation_root_header = ttk.Label(W,text='Audio Compare & Render',font=Font(W,size=16))
 
         self.AUTOMATION_ROOT = AUTOMATION_ROOT
-        
-        self.label, self.lp_options, self.lp_option_var= get_lets_play(self.normal_options, self.lp_changed)
-        
-        self.update_ui()
-        
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.normal_options,self.run,self.check_last_id,self.epnums)
-        
-        self.normal_options.pack()
+        self.lpep_picker = LPEPPicker(AUTOMATION_ROOT,None,'lp-nb',ch_callback=self.lp_changed)
+
         automation_root_header.pack(pady=10)
         AUTOMATION_ROOT.pack()
         self.thread = None
@@ -1383,7 +1376,7 @@ class CompAndRender(tk.Frame):
         based on the currently selected 'Let's Play' value and updates
         the internal `epnums` list.
         """
-        lp = self.lp_option_var.get()
+        lp = self.lpep_picker.v_lp.get()
         if lp != 'None':
             self.epnums = [i+1 for i in range(SQLAccess.read_episode_ammount(SQLAccess.read_letsplay_by_option_var(self)))]
         else:
