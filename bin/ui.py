@@ -17,6 +17,7 @@ from bin.player_audio import NewAudioPlayer
 from bin.gemini_api import send_gemini
 from tools.log import *
 from typing import Callable
+
 class LPEPPicker:
     def __init__(self, 
                  parent: tk.Widget,
@@ -268,11 +269,11 @@ class TkinterApp(tk.Tk):
             'FetchAudio',
             'FixAudio',
             'Send2Audacity',
-            'Deploy',
-            'FileManager',
-            'TadEditor',
             'CompAndRender',
             'SetTitle',
+            'Deploy',
+            'TadEditor',
+            'FileManager',
             'Settings',
             'About',
         ]
