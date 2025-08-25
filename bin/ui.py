@@ -1448,9 +1448,18 @@ class SetTitle(tk.Frame):
     def run(self,*args):
         
         a, b = int(self.lpep_picker.v_epstart.get())-1, int(self.lpep_picker.v_epend.get())
-        
+        lpid = SQLAccess.read_letsplay_by_option_var(self)
         data = [i + 1 for i in range(a,b+(1 if a == b else 0))]
-        self.media_player.reset(data, SQLAccess.read_letsplay_by_option_var(self))
+        for i in data:
+            vp = SQLAccess.read_final_video_path(lpid,i)
+            if vp is None: 
+                msgbox.showwarning('Failed loading', f'Database entry is NULL.')
+                return
+            if not isfile(vp):
+                msgbox.showwarning('Failed loading', f'File:{vp} does not exist.')
+                return
+        
+        self.media_player.reset(data, lpid)
     def send_and_receive(self,*args):
         change_states([self.gemini_entry, self.send_btn],'disabled')
         Thread(target=self.__sar).start()
