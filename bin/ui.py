@@ -732,6 +732,19 @@ class FileManager(tk.Frame):
     
         LP_CREATE.pack()
         
+        LP_EDIT = ttk.LabelFrame(W,text='Lets Play Create')
+        
+        self.lp_edit_lpep = LPEPPicker(LP_EDIT,self.update_lets_play,'lp',ICO_REFRESH)
+
+        self.lp_edit_episode_length_var = tk.StringVar()
+
+        lp_edit_episode_length = ttk.OptionMenu(LP_EDIT,self.lp_edit_episode_length_var,'None',*[f'{i} Minutes' for i in range(10,65,5)])
+        img = AsciiImage(ICO_REFRESH)
+
+        lp_edit_episode_length.pack()
+
+        LP_EDIT.pack()
+        
         BACKUP = ttk.LabelFrame(W,text='Lets Play Backup')
         
         self.backup_lpep = LPEPPicker(BACKUP,self.create_video_backup,'lp', ICO_BACKUP)
@@ -739,6 +752,11 @@ class FileManager(tk.Frame):
         BACKUP.pack()
         
         W.pack()
+        
+    def update_lets_play(self,*_):
+        if self.lp_edit_lpep.v_lp.get() == 'None': return
+        SQLAccess.update_letsplay(SQLAccess.read_letsplay_names().index(self.lp_edit_lpep.v_lp.get()),int(self.lp_edit_episode_length_var.get().split(' ')[0])*60)
+    
     def something_changed(self,*args):
         """
         Callback for changes in input fields for 'Let's Play' creation.
@@ -746,6 +764,7 @@ class FileManager(tk.Frame):
         Enables or disables the 'create' button based on whether all required
         fields are filled and the 'Let's Play' name is unique.
         """
+        
         for char in self.game_name_var.get(): # See issue #236
             if char not in 'abcdefghijklmnopqrstuvwxyz_':
                 self.btn_lp_create.state(['disabled'])
@@ -756,6 +775,8 @@ class FileManager(tk.Frame):
             
         else:
             self.btn_lp_create.state(['disabled'])
+            
+        
             
     def load_video_backup(self,*args):
         pass
