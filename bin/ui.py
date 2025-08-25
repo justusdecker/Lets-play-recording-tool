@@ -18,15 +18,31 @@ from bin.gemini_api import send_gemini
 from tools.log import *
 
 class LPEPPicker:
-    #! Add a option to change the image of the run button
-    #! activate/deactivate all
-    
     def __init__(self, 
-                 parent,
-                 callback,
-                 both: bool= True):
+                 parent: tk.Widget,
+                 callback: callable,
+                 mode: str = 'lp-ep',
+                 btn_image: str = ICO_RUN):
+        """
+        .. mode::
+            The mode defines the way this class will show the elements of LPEP
+            
+            The mode syntax is the following: lp-ep-nc-ne
+            
+            |mode|description|
+            |---|---|
+            |lp|shows the lets play selecter|
+            |ep|shows the episode selector(start,end)|
+            |nc|no callback|
+            |ne|no end episode selector(one episode selector)|
+        """
         
-        self.both = both
+        self.s_lp = 'lp' in mode
+        self.s_ep = 'ep' in mode
+        self.d_ne = 'ne' in mode
+            
+        self.btn_image = btn_image
+        
         self.parent = parent
         self.callback = callback
         self.obj = ttk.LabelFrame(self.parent, text ="LP - EP Selector")
@@ -39,7 +55,17 @@ class LPEPPicker:
         
         self.lp_create_ui()
         self.ep_create_ui()
+        self.st_create_ui()
         
+    def st_create_ui(self):
+        img = AsciiImage(self.btn_image)
+        self.btn_run = ttk.Button(self.obj, image=img.image,command=self.run)
+        
+        self.btn_run.image = img.image
+        if not self.values:
+            self.btn_run.state(['disabled'])
+        self.btn_run.pack(side='left')
+    
     def lp_create_ui(self):
         """
         Creates and configures Tkinter UI elements for selecting a "Let's Play" item.
@@ -49,9 +75,8 @@ class LPEPPicker:
         from the lprt database.
         When a selection is made, the provided `self.callback` function is executed.
         """
+        if not self.s_lp: return
         names = SQLAccess.read_letsplay_names()
-        
-        
 
         self.lp_label = ttk.Label(self.obj, text ="Lets Play")
         self.options = ttk.OptionMenu(self.obj,self.v_lp,'None' if not self.v_lp.get() else self.v_lp.get(),*names,command=self.lp_changed)
@@ -69,49 +94,48 @@ class LPEPPicker:
         can be managed by `self.check`. The `run_callback` is
         executed when the "Run" button is clicked.
         """
-        img = AsciiImage(ICO_RUN)
+        if not self.s_ep: return
         
         self.lbl_start = ttk.Label(self.obj, text ="Episode start")
         
         self.opm_start = ttk.OptionMenu(self.obj,self.v_epstart,str(self.values[0] if self.values else 'None'),*self.values,command=self.check)
-        if self.both: 
+        if not self.d_ne: 
             self.lbl_end = ttk.Label(self.obj, text ="Episode end")
             self.opm_end = ttk.OptionMenu(self.obj,self.v_epend,str(self.values[-1] if self.values else 'None'),*self.values,command=self.check)
-        self.btn_run = ttk.Button(self.obj, image=img.image,command=self.callback)
-        
-        self.btn_run.image = img.image
-        
-        if not self.values:
-            self.btn_run.state(['disabled'])
         
         self.lbl_start.pack(side='left')
         self.opm_start.pack(side='left')
-        if self.both: 
+        if not self.d_ne: 
             self.lbl_end.pack(side='left')
             self.opm_end.pack(side='left')
-        self.btn_run.pack(side='left')
-    
+
     def check(self,*_):
-        if self.both:
+        if self.s_ep and not self.d_ne:
             if int(self.v_epend.get()) < int(self.v_epstart.get()):
                 self.btn_run.state(['disabled'])
             else:
                 self.btn_run.state(['!disabled'])
     
     def reset(self):
+        self.destroy_st()
         self.destroy_lp()
         self.lp_create_ui()
         self.destroy_ep()
         self.ep_create_ui()
+        self.st_create_ui()
     
-    def destroy_ep(self):
-        self.lbl_start.destroy()
-        if self.both: self.lbl_end.destroy()
-        self.opm_start.destroy()
-        self.opm_end.destroy()
+    def destroy_st(self):
         self.btn_run.destroy()
     
+    def destroy_ep(self):
+        if not self.s_ep: return
+        self.lbl_start.destroy()
+        if not self.d_ne: self.lbl_end.destroy()
+        self.opm_start.destroy()
+        self.opm_end.destroy()
+        
     def destroy_lp(self):
+        if not self.s_lp: return
         self.lp_label.destroy()
         self.options.destroy()
         
@@ -121,7 +145,19 @@ class LPEPPicker:
         self.destroy_ep()
         return super().destroy()
     
+    def run(self,*_):
+        if self.s_ep:
+            if not self.d_ne:
+                variables = [self.v_lp.get(),self.v_epstart.get(),self.v_epend.get()]
+            else:
+                variables = [self.v_lp.get(),self.v_epstart.get()]
+        else:
+            variables = [self.v_lp.get()]
+        LOG('Run - lp: $ eps: $ - $',variables)
+        self.callback()
     
+    def get_ui(self) -> list[Button]:
+        return [self.btn_run]
     
     def update_ui(self):
         """
@@ -151,7 +187,6 @@ class LPEPPicker:
             self.btn_run.state(['!disabled'])
         
         self.reset()
-
 
 def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,tk.StringVar]:
     """
@@ -822,10 +857,6 @@ class FileManager(tk.Frame):
         self.detect_btn.grid(row=0,column=0)
         self.label.grid(row=0,column=1)
         DATA_DETECTION.pack()
-
-        testing_lpep = LPEPPicker(W,lambda x:None,['1','2','3'])
-
-        
         
         # Data Deletion
         
