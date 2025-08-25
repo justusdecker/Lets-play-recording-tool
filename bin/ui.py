@@ -7,7 +7,7 @@ from bin.data_access import SQLAccess, AsciiImage, json_write, json_read, try_de
 from threading import Thread
 from bin.welcome_popup import WELCOME
 from bin.automations import *
-from os.path import getsize
+from os.path import getsize, isdir
 from zipfile import ZipFile
 import sys
 from tkinter.colorchooser import askcolor
@@ -855,12 +855,16 @@ class FileManager(tk.Frame):
         for file in listdir(path):
             try:
                 if isfile(f'{path}{file}'):
-                    SIZE += getsize(file)
+                    SIZE += getsize(f'{path}{file}')
                     AMMOUNT += 1
-            except:
-                pass
+                if isdir(f'{path}{file}'):
+                    for subfile in listdir(f'{path}{file}\\'):
+                        SIZE += getsize(f'{path}{file}\\{subfile}')
+                        AMMOUNT += 1
+            except Exception as E:
+                print(E)
             
-        return f'{self.gsn(SIZE):.2f} GB in {AMMOUNT} files',SIZE, AMMOUNT
+        return f'{self.gsn(SIZE)} in {AMMOUNT} files',SIZE, AMMOUNT
     def gsn(self,num):
         typ = ['B','KB','MB','GB','TB']
         if num:
@@ -870,7 +874,7 @@ class FileManager(tk.Frame):
                     typ.pop(0)
                 else:
                     break
-        return f'{num}{typ[0]}'
+        return f'{num:.2f}{typ[0]}'
     def on_detect(self,*args):
         """
         Collects and displays statistics about files and their sizes
@@ -894,7 +898,7 @@ class FileManager(tk.Frame):
             if isfile(ep.video_path):
                 video_size += getsize(ep.video_path)
                 video_files += 1
-        results['video_raw'] = f'{self.gsn(video_size):.2f} GB in {video_files} files'
+        results['video_raw'] = (f'{self.gsn(video_size)} in {video_files} files', video_size,video_files)
         ALL = f""        
         tot_f, tot_s = 0, 0
         for key in results:
