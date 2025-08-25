@@ -61,7 +61,7 @@ class NewVideoPlayer(NewMediaPlayer):
         img = AsciiImage(ICO_REFRESH)
         self.update_title_button = ttk.Button(self.bar, image=img.image, command=self.set_video_title)
         self.update_title_button.pack(side=LEFT, padx=5)
-        self.take_thumbnail_btn.image = img.image
+        self.update_title_button.image = img.image
         
         
         img = AsciiImage(ICO_TAKE_THUMBNAIL)
