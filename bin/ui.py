@@ -513,20 +513,15 @@ class AutomationFrame(tk.Frame):
         `automation_callback` with the selected parameters, and then
         re-enables the UI elements upon completion unless `should_not_reset` is True.
         """
-        self.start_btn.state(['disabled'])
-        change_states([self.menu],'disabled')
-        change_states([self.label, self.lp_options],'disabled')
-        change_states([self.label2, self.label3,self.ep_end, self.ep_start],'disabled')
-        a, b = int(self.epstart_option_var.get()) , int(self.epend_option_var.get())
+        change_states([*self.lpep_picker.get_ui(), self.menu],'disabled')
+        a, b = int(self.lpep_picker.v_epstart.get()) , int(self.lpep_picker.v_epend.get())
         
         lp = SQLAccess.read_letsplay_by_option_var(self)
         self.automation_callback(lp,[a-1,b],self)
         
         if not self.should_not_reset:
             
-            change_states([self.menu],'!disabled')
-            change_states([self.label, self.lp_options],'!disabled')
-            change_states([self.label2, self.label3,self.ep_end, self.ep_start],'!disabled')
+            change_states([*self.lpep_picker.get_ui(), self.menu],'!disabled')
 
         self.thread = None
         
@@ -686,31 +681,20 @@ class FileManager(tk.Frame):
         DATA_DELETION = ttk.LabelFrame(W,text='Data Deletion')
         self.DATA_DELETION = DATA_DELETION
         
-        self.simdel_lp_label, self.simdel_lp_options, self.simdel_lp_option_var= get_lets_play(DATA_DELETION, self.lp_changed)
-        
-        self.simdel_label2, self.simdel_label3, self.start_btn, self.simdel_ep_start, self.simdel_ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(DATA_DELETION,lambda x: None,self.check_last_id,[])
-        self.start_btn.destroy()
-        
-        self.delete_btn = ttk.Button(DATA_DELETION, text='Delete',command=self.delete_files)
-        self.delete_btn.state(['disabled'])
-        
-        self.delete_btn.grid(row=0,column=7,pady=5)
+        self.simple_delete_lpep = LPEPPicker(DATA_DELETION,self.delete_files,'lp-ep')
         
         DATA_DELETION.pack()
-        
         
         # Lets Play Delete
         LP_DELETE = ttk.LabelFrame(W,text='Lets Play Delete')
         
-        self.delete_lp_option = tk.IntVar(value=0)
+        self.lp_delete_lpep = LPEPPicker(LP_DELETE,self.delete_lets_play,'lp')
         
-        self.lp_label, self.lp_options, self.lp_option_var= get_lets_play(LP_DELETE, self.something_changed_delete)
-        self.btn_lp_delete = ttk.Button(LP_DELETE,text='Delete',command=self.delete_lets_play)
-        self.btn_lp_delete.state(['disabled'])
+        self.delete_lp_option = tk.IntVar(value=0)
+
         self.delete_files_del_lp = ttk.Checkbutton(LP_DELETE,text='Delete Files?',variable=self.delete_lp_option, onvalue=1, offvalue=0)
         
         self.delete_files_del_lp.grid(row=0,column=3)
-        self.btn_lp_delete.grid(row=0,column=4)
 
         LP_DELETE.pack()
         
@@ -745,6 +729,8 @@ class FileManager(tk.Frame):
         LP_CREATE.pack()
         
         BACKUP = ttk.LabelFrame(W,text='Lets Play Backup')
+        
+        self.backup_lpep = LPEPPicker(BACKUP,self.create_video_backup,'lp')
         
         self.backup_lp_label, self.backup_lp_options, self.backup_lp_option_var= get_lets_play(BACKUP, self.something_changed_backup)
         
