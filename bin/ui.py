@@ -35,11 +35,13 @@ class LPEPPicker:
             |ep|shows the episode selector(start,end)|
             |nc|no callback|
             |ne|no end episode selector(one episode selector)|
+            |nb|no button|
         """
         
         self.s_lp = 'lp' in mode
         self.s_ep = 'ep' in mode
         self.d_ne = 'ne' in mode
+        self.d_nb = 'nb' in mode
             
         self.btn_image = btn_image
         
@@ -58,6 +60,7 @@ class LPEPPicker:
         self.st_create_ui()
         
     def st_create_ui(self):
+        if self.d_nb: return
         img = AsciiImage(self.btn_image)
         self.btn_run = ttk.Button(self.obj, image=img.image,command=self.run)
         
@@ -125,6 +128,7 @@ class LPEPPicker:
         self.st_create_ui()
     
     def destroy_st(self):
+        if self.d_nb: return
         self.btn_run.destroy()
     
     def destroy_ep(self):
@@ -157,7 +161,14 @@ class LPEPPicker:
         self.callback()
     
     def get_ui(self) -> list[Button]:
-        return [self.btn_run]
+        _ret = [self.options]
+        if not self.d_nb:
+            _ret.append(self.btn_run)
+        if self.s_ep:
+            _ret.append(self.opm_start)
+            if not self.d_ne:
+                _ret.append(self.opm_end)
+        return _ret
     
     def update_ui(self):
         """
@@ -187,67 +198,6 @@ class LPEPPicker:
             self.btn_run.state(['!disabled'])
         
         self.reset()
-
-def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,tk.StringVar]:
-    """
-    Creates and configures Tkinter UI elements for selecting a "Let's Play" item.
-
-    This function sets up a label and an option menu (dropdown) for users
-    to select from a list of "Let's Play" names. The names are sourced
-    from a `LetsPlay` object which conceptually reads from ROOT/'lets_plays.csv'.
-    When a selection is made, the provided `callback` function is executed.
-    """
-    label = ttk.Label(parent, text ="Lets Play")
-
-    label.grid(row = 0, column = 1) 
-    
-    lp_option_var = tk.StringVar(parent)
-        
-    #lps = LetsPlays
-    names = SQLAccess.read_letsplay_names()
-    options = ttk.OptionMenu(parent,lp_option_var,'None',*names,command=callback)
-    
-    options.grid(row = 0, column = 2)
-    
-    return label, options, lp_option_var
-
-def get_episode_range(parent, run_callback: callable, check_callback: callable,ft) -> tuple[ttk.Label, ttk.Label, ttk.Button, ttk.OptionMenu, ttk.OptionMenu, tk.StringVar, tk.StringVar]:
-    """
-    Creates and configures Tkinter UI elements for selecting an episode range.
-
-    This function sets up two lab els ("Episode start", "Episode end"),
-    two option menus for selecting start and end episode numbers, and an
-    "Run" button. The button is initially disabled(if ft is none <- No data exists) and its state
-    can be managed by the `check_callback`. The `run_callback` is
-    executed when the "Run" button is clicked.
-    """
-    label1 = ttk.Label(parent, text ="Episode start")
-
-    label1.grid(row = 0, column = 3) 
-    
-    label2 = ttk.Label(parent, text ="Episode end")
-
-    label2.grid(row = 0, column = 5) 
-    img = AsciiImage(ICO_RUN)
-    
-    start_btn = ttk.Button(parent, image=img.image,command=run_callback)
-    start_btn.image = img.image
-    if not ft:
-        start_btn.state(['disabled'])
-
-    start_btn.grid(row = 0, column = 7) 
-    
-    epstart_option_var = tk.StringVar(parent)
-    epend_option_var = tk.StringVar(parent)
-    
-    ep_start = ttk.OptionMenu(parent,epstart_option_var,str(ft[0] if ft else 'None'),*ft,command=check_callback)
-    
-    ep_start.grid(row = 0, column = 4) 
-    
-    ep_end = ttk.OptionMenu(parent,epend_option_var,str(ft[-1] if ft else 'None'),*ft,command=check_callback)
-    
-    ep_end.grid(row = 0, column = 6) 
-    return label1, label2, start_btn, ep_start, ep_end, epstart_option_var, epend_option_var
 
 def change_states(elements: list[ttk.Button],state: str):
     """
@@ -386,7 +336,7 @@ class Recording(tk.Frame):
 
         self.btn_connect.grid(row = 0, column=4)
         
-        self.label, self.lp_options, self.lp_option_var= get_lets_play(RECORDING, self.lp_changed)
+        self.lpep_picker = LPEPPicker(RECORDING,False,'lp-nb')
         
         # Information
         self.recording_information_label = ttk.Label(INFORMATION, text ="No Connection",font=Font(W,size=12))
@@ -407,7 +357,7 @@ class Recording(tk.Frame):
     def get_connection(self):
         if self.thread:
             self.close_connection = True
-        self.lp_options.state(['disabled'])
+        change_states([self.lpep_picker.get_ui()],'disabled')
         if self.thread is None:
             self.close_connection = False
             self.thread = Thread(target=self.__get_connection)
@@ -416,7 +366,7 @@ class Recording(tk.Frame):
         
         change_states([self.menu],'disabled') # Deactivates all menu buttons for safety reasons
         
-        ep = SQLAccess.read_episodes(SQLAccess.read_letsplay_names().index(self.lp_option_var.get()))
+        ep = SQLAccess.read_episodes(SQLAccess.read_letsplay_names().index(self.lpep_picker.v_lp.get()))
         self.btn_connect.state(["disabled"])
         self.btn_connect.configure(text='Try connection to OBS...')
         #! Currently Disconnecting only works by closing OBS <- mainly for safety reasons!
