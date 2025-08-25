@@ -1006,7 +1006,7 @@ class TBO:
     @property
     def name(self) -> str:
         """ Extracts and returns the display name for the UI element from its key. """
-        return self.key.split('::')[-1]
+        return '-'.join(self.key.split('::')[1:2])
     
     @property
     def condition(self) -> tuple[str,str]:
