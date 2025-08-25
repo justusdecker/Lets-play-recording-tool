@@ -425,21 +425,15 @@ class ThumbnailGenerate(TKFrameWithLPControls):
             self.thread.start()
         
     def __run(self):
-        print(f'run automation with cfe set as [{self.check_for_each_option_var.get()}]. In range: [{self.lpep_picker.v_epstart.get()} - {self.lpep_picker.v_epend.get()}]')
-
-        self.start_btn.state(['disabled'])
-        change_states([self.menu],'disabled')
-        change_states([self.label, self.lp_options],'disabled')
-        change_states([self.label2, self.label3,self.ep_end, self.ep_start],'disabled')
-        a, b = int(self.epstart_option_var.get()) , int(self.epend_option_var.get())
+        change_states([*self.lpep_picker.get_ui(),self.menu], 'disabled')
+        
+        a, b = int(self.lpep_picker.v_epstart.get()) , int(self.lpep_picker.v_epend.get())
         
         lp = SQLAccess.read_letsplay_by_option_var(self)
         
         GenerateThumbnailWF(lp,[a-1,b],self)
         
-        change_states([self.menu],'!disabled')
-        change_states([self.label, self.lp_options],'!disabled')
-        change_states([self.label2, self.label3,self.ep_end, self.ep_start],'!disabled')
+        change_states([*self.lpep_picker.get_ui(),self.menu], '!disabled')
         self.thread = None
     
 class AutomationFrame(tk.Frame):
@@ -489,37 +483,15 @@ class AutomationFrame(tk.Frame):
         
         # Create Headers
         AUTOMATION_ROOT = ttk.Frame(W)
-        
-        self.normal_options = ttk.LabelFrame(AUTOMATION_ROOT,text=f'LP & EP Selection')
 
         self.AUTOMATION_ROOT = AUTOMATION_ROOT
         
-        self.label, self.lp_options, self.lp_option_var= get_lets_play(self.normal_options, self.lp_changed)
-        
-        
-        self.update_ui()
-        
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.normal_options,self.run,self.check_last_id,self.epnums)
-        
-        self.normal_options.pack()
+        self.lpep_picker = LPEPPicker(AUTOMATION_ROOT,self.run,'lp-ep')
 
         AUTOMATION_ROOT.pack()
         
         W.pack()
         
-    def update_ui(self):
-        """
-        Updates the UI elements based on the selected 'Let's Play' series.
-
-        This method dynamically calculates the available episode numbers
-        based on the currently selected 'Let's Play' value and updates
-        the internal `epnums` list.
-        """
-        lp = self.lp_option_var.get()
-        if lp != 'None':
-            self.epnums = [i+1 for i in range(SQLAccess.read_episode_ammount(SQLAccess.read_letsplay_by_option_var(self)))]
-        else:
-            self.epnums = []
             
     def run(self,*args):
         """
@@ -558,45 +530,6 @@ class AutomationFrame(tk.Frame):
 
         self.thread = None
         
-    def lp_changed(self,*args):
-        """
-        Callback function executed when the 'Let's Play' selection changes.
-
-        This method updates the UI based on the new 'Let's Play' selection,
-        recalculates available episode numbers, and dynamically rebuilds
-        the episode range selection widgets. It also adjusts the state
-        of the start button.
-        """
-        self.update_ui()
-        
-        if not self.epnums:
-            self.start_btn.state(['disabled'])
-        else:
-            self.start_btn.state(['!disabled'])
-        
-        self.ep_start.destroy()
-        self.ep_end.destroy()
-        self.label2.destroy()
-        self.label3.destroy()
-        self.start_btn.destroy()
-        del self.epstart_option_var
-        del self.epend_option_var
-        
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.normal_options,self.run,self.check_last_id,self.epnums)
-        
-    def check_last_id(self,*args):
-        """
-        Validates the selected episode range.
-
-        This callback is triggered when either the start or end episode
-        selection changes. It disables the start button if the end episode
-        is numerically less than the start episode, ensuring valid range selection.
-        """
-        if int(self.epend_option_var.get()) < int(self.epstart_option_var.get()):
-            self.start_btn.state(['disabled'])
-        else:
-            self.start_btn.state(['!disabled'])
-
 class FetchAudio(AutomationFrame):
     def __init__(self, parent):
         super().__init__(parent)
