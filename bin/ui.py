@@ -199,7 +199,8 @@ class LPEPPicker:
                 self.btn_run.state(['!disabled'])
         
         self.reset()
-        self.ch_callback()
+        if self.ch_callback is not None:
+            self.ch_callback()
 
 def change_states(elements: list[ttk.Button],state: str):
     """
@@ -339,7 +340,7 @@ class Recording(tk.Frame):
 
         self.btn_connect.pack(side='bottom')
         
-        self.lpep_picker = LPEPPicker(RECORDING,False,'lp-nb')
+        self.lpep_picker = LPEPPicker(RECORDING,False,'lp-nb',ch_callback=self.lp_changed)
         
         # Information
         self.recording_information_label = ttk.Label(INFORMATION, text ="No Connection",font=Font(W,size=12))

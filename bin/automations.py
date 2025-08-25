@@ -30,7 +30,7 @@ def obs_rec_label_set(OBSO, el,reset:bool = False):
     if reset:
         el.recording_information_label.configure(foreground='black')
         return
-    epl = SQLAccess.read_episode_length(SQLAccess.read_letsplay_names().index(el.lp_option_var.get()))
+    epl = SQLAccess.read_episode_length(SQLAccess.read_letsplay_names().index(el.lpep_picker.v_lp.get()))
     
     if epl is None:
         el.recording_information_label.configure(foreground='black')
@@ -68,7 +68,7 @@ def obs_connect(el):
             el.btn_connect.configure(text= 'Connection closed!')
             return
         try:
-            id = SQLAccess.read_letsplay_names().index(el.lp_option_var.get())
+            id = SQLAccess.read_letsplay_names().index(el.lpep_picker.v_lp.get())
             if OBSO.time_in_seconds:
                 el.recording_information_label.configure(text= f'Recording - {SQLAccess.read_episode_ammount(id)} Episodes\n{OBSO.timecode}')
                 obs_rec_label_set(OBSO,el)
