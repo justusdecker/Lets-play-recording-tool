@@ -549,7 +549,7 @@ class FixAudio(AutomationFrame):
         self.hp_enabled = tk.BooleanVar(value=False)
         self.hp_freq = tk.DoubleVar(value=175.0)
         
-        ttk.Checkbutton(hp_frame, text="Aktivate", variable=self.hp_enabled).grid(row=0, column=0, sticky='w')
+        ttk.Checkbutton(hp_frame, text="Activate", variable=self.hp_enabled).grid(row=0, column=0, sticky='w')
         ttk.Label(hp_frame, text="Frequency (Hz):").grid(row=0, column=1, sticky='w')
         ttk.Spinbox(
             hp_frame,
@@ -567,7 +567,7 @@ class FixAudio(AutomationFrame):
         self.lp_enabled = tk.BooleanVar(value=False)
         self.lp_freq = tk.DoubleVar(value=13000.0)
         
-        ttk.Checkbutton(lp_frame, text="Aktivate", variable=self.lp_enabled).grid(row=0, column=0, sticky='w')
+        ttk.Checkbutton(lp_frame, text="Activate", variable=self.lp_enabled).grid(row=0, column=0, sticky='w')
         ttk.Label(lp_frame, text="Frequency (Hz):").grid(row=0, column=1, sticky='w')
         ttk.Spinbox(
             lp_frame,
@@ -587,7 +587,7 @@ class FixAudio(AutomationFrame):
         self.ln_tp = tk.DoubleVar(value=-1.5)
         self.ln_lra = tk.DoubleVar(value=11.0)
         
-        ttk.Checkbutton(ln_frame, text="Aktivate", variable=self.ln_enabled).grid(row=0, column=0, sticky='w', columnspan=2)
+        ttk.Checkbutton(ln_frame, text="Activate", variable=self.ln_enabled).grid(row=0, column=0, sticky='w', columnspan=2)
         
         ttk.Label(ln_frame, text="Integrated (LUFS):").grid(row=1, column=0, sticky='w')
         ttk.Spinbox(
