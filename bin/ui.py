@@ -192,11 +192,11 @@ class LPEPPicker:
         episode range selection widgets, and controls the state of the delete button.
         """
         self.update_ui()
-        
-        if not self.values:
-            self.btn_run.state(['disabled'])
-        else:
-            self.btn_run.state(['!disabled'])
+        if not self.d_nb:
+            if not self.values:
+                self.btn_run.state(['disabled'])
+            else:
+                self.btn_run.state(['!disabled'])
         
         self.reset()
         self.ch_callback()
@@ -292,6 +292,7 @@ class TkinterApp(tk.Tk):
             (About, 'About')
         ]
         for ui,name in ELEMENTS:
+            LOG('Create: $',[name])
             ui(self.menu.get_root_for(name))
 
 class Main(tk.Frame):
@@ -336,7 +337,7 @@ class Recording(tk.Frame):
         # Recording
         self.btn_connect = ttk.Button(RECORDING, text ="Connect to obs",command=self.get_connection)
 
-        self.btn_connect.grid(row = 0, column=4)
+        self.btn_connect.pack(side='bottom')
         
         self.lpep_picker = LPEPPicker(RECORDING,False,'lp-nb')
         
@@ -349,7 +350,7 @@ class Recording(tk.Frame):
         RECORDING.pack()
         INFORMATION.pack()
         
-        W.grid(row=0,column=1)
+        W.pack()
 
         # Disable connect button
         self.btn_connect.state(["disabled"])
@@ -696,7 +697,7 @@ class FileManager(tk.Frame):
 
         self.delete_files_del_lp = ttk.Checkbutton(LP_DELETE,text='Delete Files?',variable=self.delete_lp_option, onvalue=1, offvalue=0)
         
-        self.delete_files_del_lp.grid(row=0,column=3)
+        self.delete_files_del_lp.pack(side='bottom')
 
         LP_DELETE.pack()
         
