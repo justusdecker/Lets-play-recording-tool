@@ -14,7 +14,7 @@ from tkinter.colorchooser import askcolor
 from tkinter.filedialog import askopenfilename
 from bin.player_video import NewVideoPlayer
 from bin.player_audio import NewAudioPlayer
-from bin.gemini_api import send_gemini
+from bin.gemini_api import send_gemini, os
 from tools.log import *
 from typing import Callable
 
@@ -1533,7 +1533,8 @@ class SetTitle(tk.Frame):
         change_states([self.gemini_entry, self.send_btn],'disabled')
         Thread(target=self.__sar).start()
     def __sar(self):
-        self.update_text(str(send_gemini(f'Generate me a youtube title(gaming / lets play) for: {self.v_t.get()}')))
+        __lang: str | None = os.getenv("LANG")
+        self.update_text(str(send_gemini(f'Please answer me in [{__lang}]. Generate me a youtube title(gaming / lets play) in the language=[\"{__lang}\"] for: {self.v_t.get()}')))
         change_states([self.gemini_entry, self.send_btn],'!disabled')
 
 class About(tk.Frame):
