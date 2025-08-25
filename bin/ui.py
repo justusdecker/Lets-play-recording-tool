@@ -690,19 +690,6 @@ class FileManager(tk.Frame):
         
         DATA_DELETION.pack()
         
-        # Lets Play Delete
-        LP_DELETE = ttk.LabelFrame(W,text='Lets Play Delete')
-        
-        self.lp_delete_lpep = LPEPPicker(LP_DELETE,self.delete_lets_play,'lp',ICO_TRASH)
-        
-        self.delete_lp_option = tk.IntVar(value=0)
-
-        self.delete_files_del_lp = ttk.Checkbutton(LP_DELETE,text='Delete Files?',variable=self.delete_lp_option, onvalue=1, offvalue=0)
-        
-        self.delete_files_del_lp.pack(side='bottom')
-
-        LP_DELETE.pack()
-        
         # Lets Play Create
         
         LP_CREATE = ttk.LabelFrame(W,text='Lets Play Create')
@@ -835,41 +822,6 @@ class FileManager(tk.Frame):
             SQLAccess.create_letsplay(self.name_var.get(), self.game_name_var.get(),int(self.episode_length_var.get().split(' ')[0])*60)
             msgbox.showinfo('Success', 'Lets Play created\nYou must restart the app!')
             sys.exit()
-            
-    def delete_lets_play(self,*args):
-        """
-        Deletes a selected 'Let's Play' from the database and optionally its associated files.
-
-        Prompts for confirmation, disables UI, deletes files if opted,
-        removes the 'Let's Play' entry, shows a success message, and exits the application.
-        """
-        raise NotImplementedError
-        ok = msgbox.askyesno('Attention','You are trying to delete all files in the selected lets play & \nthe lets play itself!\nThis step is irreversible!\nContinue?')
-        if not ok: return
-        lpid = SQLAccess.read_letsplay_names().index(self.lp_option_var.get())
-        if self.delete_lp_option.get():
-            for i, ep in enumerate(SQLAccess.read_episodes(lpid)):#BUG
-                
-                for file in [
-                    ep.video_path,
-                    ep.thumbnail_path,
-                    ep.audio_mic_edit1_path,
-                    ep.audio_mic_edit2_path,
-                    ep.audio_desktop_path,
-                    ep.audio_mic_path,
-                    ep.final_video_path
-                    ]:
-                    try:
-                        if try_delete_file(file):
-                            LOG(f'($)Removed: $ - of $ | $',[i+1, file, lpid, SQLAccess.read_letsplay_game_name(lpid)],LOG_INFO)
-                        else:
-                            LOG(f'($)Does not exist(skip): $ - of $ | $',[i+1, file, lpid, SQLAccess.read_letsplay_game_name(lpid)],LOG_WARNING)
-                    except Exception as E:
-                        LOG(f'($)Failed: $ - of $ | $ - $',[i+1, file, lpid, SQLAccess.read_letsplay_game_name(lpid), E],LOG_ERROR)
-        # See issue #322
-        change_states([self.menu],'disabled')
-        msgbox.showinfo('Success', 'Lets Play deleted\nYou must restart the app!')
-        sys.exit()
     
     def det(self,path: str) -> list[int,int]:
         SIZE = 0
