@@ -117,4 +117,4 @@ class NewAudioPlayer(NewMediaPlayer):
     def apply_vol_to_all(self):
         if not self.audio_list: return
         for media in self.audio_list:
-            media[4] = self.desktop_vol
+            media[4] = self.desktop_vol / 100 if self.desktop_vol else 0

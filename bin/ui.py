@@ -15,8 +15,178 @@ from tkinter.filedialog import askopenfilename
 from bin.player_video import NewVideoPlayer
 from bin.player_audio import NewAudioPlayer
 from bin.gemini_api import send_gemini
+from tools.log import *
 
+class LPEPPicker:
+    def __init__(self, 
+                 parent: tk.Widget,
+                 callback: callable,
+                 mode: str = 'lp-ep',
+                 btn_image: str = ICO_RUN):
+        """
+        .. mode::
+            The mode defines the way this class will show the elements of LPEP
+            
+            The mode syntax is the following: lp-ep-nc-ne
+            
+            |mode|description|
+            |---|---|
+            |lp|shows the lets play selecter|
+            |ep|shows the episode selector(start,end)|
+            |nc|no callback|
+            |ne|no end episode selector(one episode selector)|
+        """
+        
+        self.s_lp = 'lp' in mode
+        self.s_ep = 'ep' in mode
+        self.d_ne = 'ne' in mode
+            
+        self.btn_image = btn_image
+        
+        self.parent = parent
+        self.callback = callback
+        self.obj = ttk.LabelFrame(self.parent, text ="LP - EP Selector")
+        self.obj.pack()
+        self.values = []
+        
+        self.v_epstart = tk.StringVar(self.obj)
+        self.v_epend = tk.StringVar(self.obj)
+        self.v_lp = tk.StringVar(self.obj)
+        
+        self.lp_create_ui()
+        self.ep_create_ui()
+        self.st_create_ui()
+        
+    def st_create_ui(self):
+        img = AsciiImage(self.btn_image)
+        self.btn_run = ttk.Button(self.obj, image=img.image,command=self.run)
+        
+        self.btn_run.image = img.image
+        if not self.values:
+            self.btn_run.state(['disabled'])
+        self.btn_run.pack(side='left')
+    
+    def lp_create_ui(self):
+        """
+        Creates and configures Tkinter UI elements for selecting a "Let's Play" item.
 
+        This method sets up a label and an option menu (dropdown) for users
+        to select from a list of "Let's Play" names. The names are sourced
+        from the lprt database.
+        When a selection is made, the provided `self.callback` function is executed.
+        """
+        if not self.s_lp: return
+        names = SQLAccess.read_letsplay_names()
+
+        self.lp_label = ttk.Label(self.obj, text ="Lets Play")
+        self.options = ttk.OptionMenu(self.obj,self.v_lp,'None' if not self.v_lp.get() else self.v_lp.get(),*names,command=self.lp_changed)
+        
+        self.lp_label.pack(side='left')
+        self.options.pack(side='left')
+    
+    def ep_create_ui(self):
+        """
+        Creates and configures Tkinter UI elements for selecting an episode range.
+
+        This method sets up two lab els ("Episode start", "Episode end" <- only if self.both is true!),
+        two option menus for selecting start and end episode numbers, and an
+        "Run" button. The button is initially disabled(if ft is none <- No data exists) and its state
+        can be managed by `self.check`. The `run_callback` is
+        executed when the "Run" button is clicked.
+        """
+        if not self.s_ep: return
+        
+        self.lbl_start = ttk.Label(self.obj, text ="Episode start")
+        
+        self.opm_start = ttk.OptionMenu(self.obj,self.v_epstart,str(self.values[0] if self.values else 'None'),*self.values,command=self.check)
+        if not self.d_ne: 
+            self.lbl_end = ttk.Label(self.obj, text ="Episode end")
+            self.opm_end = ttk.OptionMenu(self.obj,self.v_epend,str(self.values[-1] if self.values else 'None'),*self.values,command=self.check)
+        
+        self.lbl_start.pack(side='left')
+        self.opm_start.pack(side='left')
+        if not self.d_ne: 
+            self.lbl_end.pack(side='left')
+            self.opm_end.pack(side='left')
+
+    def check(self,*_):
+        if self.s_ep and not self.d_ne:
+            if int(self.v_epend.get()) < int(self.v_epstart.get()):
+                self.btn_run.state(['disabled'])
+            else:
+                self.btn_run.state(['!disabled'])
+    
+    def reset(self):
+        self.destroy_st()
+        self.destroy_lp()
+        self.lp_create_ui()
+        self.destroy_ep()
+        self.ep_create_ui()
+        self.st_create_ui()
+    
+    def destroy_st(self):
+        self.btn_run.destroy()
+    
+    def destroy_ep(self):
+        if not self.s_ep: return
+        self.lbl_start.destroy()
+        if not self.d_ne: self.lbl_end.destroy()
+        self.opm_start.destroy()
+        self.opm_end.destroy()
+        
+    def destroy_lp(self):
+        if not self.s_lp: return
+        self.lp_label.destroy()
+        self.options.destroy()
+        
+    def destroy(self):
+        self.obj.destroy()
+        self.destroy_lp()
+        self.destroy_ep()
+        return super().destroy()
+    
+    def run(self,*_):
+        if self.s_ep:
+            if not self.d_ne:
+                variables = [self.v_lp.get(),self.v_epstart.get(),self.v_epend.get()]
+            else:
+                variables = [self.v_lp.get(),self.v_epstart.get()]
+        else:
+            variables = [self.v_lp.get()]
+        LOG('Run - lp: $ eps: $ - $',variables)
+        self.callback()
+    
+    def get_ui(self) -> list[Button]:
+        return [self.btn_run]
+    
+    def update_ui(self):
+        """
+        Updates UI elements related to episode range for data deletion.
+
+        Recalculates available episode numbers based on the selected 'Let's Play'
+        for the data deletion section.
+        """
+        lp = self.v_lp.get()
+        if lp != 'None':
+            self.values = [i+1 for i in range(SQLAccess.read_episode_ammount(SQLAccess.read_letsplay_names().index(self.v_lp.get())))]
+        else:
+            self.values = []
+    
+    def lp_changed(self,*_):
+        """
+        Callback for changes in the 'Let's Play' selection for data deletion.
+
+        Updates the UI to reflect episode numbers for deletion, re-creates
+        episode range selection widgets, and controls the state of the delete button.
+        """
+        self.update_ui()
+        
+        if not self.values:
+            self.btn_run.state(['disabled'])
+        else:
+            self.btn_run.state(['!disabled'])
+        
+        self.reset()
 
 def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,tk.StringVar]:
     """
@@ -688,10 +858,6 @@ class FileManager(tk.Frame):
         self.label.grid(row=0,column=1)
         DATA_DETECTION.pack()
         
-
-        
-        
-        
         # Data Deletion
         
         DATA_DELETION = ttk.LabelFrame(W,text='Data Deletion')
@@ -911,11 +1077,12 @@ class FileManager(tk.Frame):
         Prompts for confirmation, disables UI, deletes files if opted,
         removes the 'Let's Play' entry, shows a success message, and exits the application.
         """
+        raise NotImplementedError
         ok = msgbox.askyesno('Attention','You are trying to delete all files in the selected lets play & \nthe lets play itself!\nThis step is irreversible!\nContinue?')
         if not ok: return
-        lpid = SQLAccess.read_letsplay_names.index(self.lp_option_var.get())
+        lpid = SQLAccess.read_letsplay_names().index(self.lp_option_var.get())
         if self.delete_lp_option.get():
-            for ep in SQLAccess.read_episodes(lpid):#BUG
+            for i, ep in enumerate(SQLAccess.read_episodes(lpid)):#BUG
                 
                 for file in [
                     ep.video_path,
@@ -926,8 +1093,14 @@ class FileManager(tk.Frame):
                     ep.audio_mic_path,
                     ep.final_video_path
                     ]:
-                    try_delete_file(file)
-                    #print(ep.lpid, ep.id, )
+                    try:
+                        if try_delete_file(file):
+                            LOG(f'($)Removed: $ - of $ | $',[i+1, file, lpid, SQLAccess.read_letsplay_game_name(lpid)],LOG_INFO)
+                        else:
+                            LOG(f'($)Does not exist(skip): $ - of $ | $',[i+1, file, lpid, SQLAccess.read_letsplay_game_name(lpid)],LOG_WARNING)
+                    except Exception as E:
+                        LOG(f'($)Failed: $ - of $ | $ - $',[i+1, file, lpid, SQLAccess.read_letsplay_game_name(lpid), E],LOG_ERROR)
+        # See issue #322
         change_states([self.menu],'disabled')
         msgbox.showinfo('Success', 'Lets Play deleted\nYou must restart the app!')
         sys.exit()
@@ -1000,8 +1173,13 @@ class FileManager(tk.Frame):
                     ep.audio_mic_path,
                     ep.final_video_path
                     ]:
-                print(ep.lpid)
-                #try_delete_file(file)
+                try:
+                    if try_delete_file(file):
+                        LOG(f'($)Removed: $ - of $ | $',[i+1, file, lpid, SQLAccess.read_letsplay_game_name(lpid)],LOG_INFO)
+                    else:
+                        LOG(f'($)Does not exist(skip): $ - of $ | $',[i+1, file, lpid, SQLAccess.read_letsplay_game_name(lpid)],LOG_WARNING)
+                except Exception as E:
+                    LOG(f'($)Failed: $ - of $ | $ - $',[i+1, file, lpid, SQLAccess.read_letsplay_game_name(lpid), E],LOG_ERROR)
     
     @property
     def rng(self) -> list:
@@ -1543,6 +1721,7 @@ class CompAndRender(tk.Frame):
             reoc(not isfile(episodes[i].video_path),ERROR_007)
         audio_list = [[i, episodes[i].audio_mic_edit2_path, episodes[i].audio_desktop_path, episodes[i].video_path,1.0] for i in range(*rng)]
         self.media_player.reset(audio_list)
+
 class SetTitle(tk.Frame):
     """
     Displays information about the application, including its license.
@@ -1656,7 +1835,7 @@ class SetTitle(tk.Frame):
     def __sar(self):
         self.result_lbl.configure(text=str(send_gemini(f'Generate me a youtube title(gaming / lets play) for: {self.text.get()}')))
         change_states([self.gemini_entry, self.send_btn],'!disabled')
-  
+
 class About(tk.Frame):
     """
     Displays information about the application, including its license.
