@@ -159,7 +159,7 @@ class LPEPPicker:
         else:
             variables = [self.v_lp.get()]
         LOG('Run - lp: $ eps: $ - $',variables)
-        #!self.callback()
+        self.callback()
     
     def get_ui(self) -> list[Button]:
         _ret = [self.options]
