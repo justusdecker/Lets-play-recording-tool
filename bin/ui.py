@@ -989,7 +989,7 @@ class TBO:
         """
         f = tk.Frame(self.master)
         if self.uie is ttk.Spinbox:
-            ttk.Label(f,text=f'{self.name}:').grid(column=0, sticky='w')
+            ttk.Label(f,text='-'.join(self.key.split('::')[1:])).grid(column=0, sticky='w')
             
             self.ui = self.uie(f,from_=self.condition[0][1:],to=self.condition[1][1:],textvariable=self.var,width=8,increment=0.1 if self.type is tk.DoubleVar else 1.0)
         elif self.uie is ttk.Entry:
@@ -1006,7 +1006,7 @@ class TBO:
     @property
     def name(self) -> str:
         """ Extracts and returns the display name for the UI element from its key. """
-        return '-'.join(self.key.split('::')[1:2])
+        return self.key.split('::')[-1]
     
     @property
     def condition(self) -> tuple[str,str]:
