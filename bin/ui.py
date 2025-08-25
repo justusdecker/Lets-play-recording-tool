@@ -1219,7 +1219,9 @@ class TadEditor(tk.Frame):
             
             #! No JSONDecodError catch
             #! No wrong type catch[case: only if user change the data outside of lprt!]
-            
+            if filepath is None:
+                [ui.var.set(DEFAULT_TAD[entry]) for entry, ui in zip(DEFAULT_TAD,self.ui_elements)]
+                return
             if isfile(filepath):
                 DATA = json_read(filepath)
                 [ui.var.set(DATA[entry]) for entry, ui in zip(DATA,self.ui_elements)]
