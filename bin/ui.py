@@ -717,7 +717,7 @@ class FileManager(tk.Frame):
         name = ttk.Entry(LP_CREATE,textvariable=self.name_var)
         game_name = ttk.Entry(LP_CREATE,textvariable=self.game_name_var)
         episode_length = ttk.OptionMenu(LP_CREATE,self.episode_length_var,'None',*[f'{i} Minutes' for i in range(10,65,5)],command=self.something_changed)
-        img = AsciiImage(ICO_SEARCH)
+        img = AsciiImage(ICO_NEW)
         self.btn_lp_create = ttk.Button(LP_CREATE,image=img.image,command=self.create_lets_play)
         self.btn_lp_create.image = img.image
         self.btn_lp_create.state(['disabled'])
