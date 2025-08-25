@@ -20,6 +20,7 @@ This tool includes features like filemanagement to make your life as a lets play
 - Thumbnail generation will watching the preview of your video & title setting to make the upload process easier.
 - Deploying - Provides an easy to use HMTL File(with all the upload essential data) and Exporting your data to an external drive(optional)
 - Easy to use in-built Filemanagement
+- AI generated title suggestions
 
 ## What do you need? - (Standalone)
 > [!NOTE]
@@ -49,13 +50,7 @@ You can get the current state [here](https://github.com/justusdecker/Lets-play-r
 
 ## Planned Stuff for the future
 
-- AI generated titles - This titles will not used directly. These should serve as a suggestion!
-- Video trim / cut
-- Audio Peak Normalisation
-- Noise Reduction
-- UI quality increase
-- Image editing - e.g. cutout
-- Modules to disable unwanted features
+look into [this](https://github.com/justusdecker/Lets-play-recording-tool/issues)
 
 ## Join LPRT-development
 

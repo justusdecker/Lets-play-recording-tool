@@ -5,4 +5,3 @@ winotify == 1.1.0
 python-vlc == 3.0.21203
 jinja2 == 3.1.6
 sqlalchemy == 2.0.41
-customtkinter == 5.2.2

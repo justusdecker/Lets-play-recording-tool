@@ -39,19 +39,18 @@ WELCOME.update_message('Instanciate VLC')
 
 VLC_INSTANCE = vlc.Instance()
 from bin.media_player import NewMediaPlayer
-
-
-
 class NewVideoPlayer(NewMediaPlayer):
     def __init__(self,parent, data: list[int],lpid,app):
-        
+        global change_states
+        from bin.ui import change_states
         self.tg = ThumbnailGenerator()
         self.data: list[int] = data
         self.current_episode = 0
         self.isfinished = False
-        self.title_var = StringVar()
         self.lpid = lpid
-
+        self.blocked = False
+        self.title_var = StringVar()
+        
         super().__init__(parent, app, audio_only=False)
         
         ttk.Label(self.bar,text='Title: ').pack(side=LEFT, padx=5)
@@ -63,7 +62,17 @@ class NewVideoPlayer(NewMediaPlayer):
         
         self.take_thumbnail_btn = ttk.Button(self.bar,text='Generate Thumbnail',command=self.gen_thumbnail)
         self.take_thumbnail_btn.pack(side=LEFT, padx=5)
+        
+    def reset(self,data,lpid):
+        change_states([self.stop_button,self.play_button, self.pause_button, self.next_button, self.last_button, self.take_thumbnail_btn, self.update_title_button],'disabled')
+        self.stop_video()
+        self.data: list[int] = data
+        self.current_episode = 0
+        self.isfinished = False
+        self.lpid = lpid
         self.blocked = False
+        self.play_video()
+        change_states([self.stop_button,self.play_button, self.pause_button, self.next_button, self.last_button, self.take_thumbnail_btn, self.update_title_button],'!disabled')
         
     @property
     def rel_id(self) -> int:
@@ -110,7 +119,13 @@ class NewVideoPlayer(NewMediaPlayer):
         
         print('finished generating')
         self.blocked = False
-
+    
+    def play_video(self):
+        self.open_file(self.video_path)
+        self.title_var.set(f'{self.video_title}')
+        self.current_media_label.configure(text=f'{self.rel_id+1}_{SQLAccess.read_letsplay_name(self.lpid)}')
+        return super().play_video()
+    
     def set_video_title(self,*args):
         """ Sets the video title & updates the database. """
         new_title = ''.join([convert_char(c) for c in self.title_var.get()])
@@ -124,12 +139,7 @@ class NewVideoPlayer(NewMediaPlayer):
             self.current_episode = 0
         else:
             self.current_episode = new_location
-
-            self.title_var.set(f'{self.video_title}')
-
-            self.open_file(self.video_path)
             self.play_video()
-            self.current_media_label.configure(text=f'{self.rel_id+1}_{SQLAccess.read_letsplay_name(self.lpid)}')
             
     def episode_up(self,*args):
         """ Change the selected episode. One up. """
@@ -141,8 +151,5 @@ class NewVideoPlayer(NewMediaPlayer):
             self.current_episode = l - 1
         else:
             self.current_episode = new_location
-            self.title_var.set(f'{self.video_title}')
-
-            self.open_file(self.video_path)
             self.play_video()
-            self.current_media_label.configure(text=f'{self.rel_id+1}_{SQLAccess.read_letsplay_name(self.lpid)}')
+            
