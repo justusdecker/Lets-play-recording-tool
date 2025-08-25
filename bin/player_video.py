@@ -119,8 +119,14 @@ class NewVideoPlayer(NewMediaPlayer):
         
         print('finished generating')
         self.blocked = False
-    
+    def pause_video(self):
+        if not self.data: return
+        return super().pause_video()
+    def stop_video(self):
+        if not self.data: return
+        return super().stop_video()
     def play_video(self):
+        if not self.data: return
         self.open_file(self.video_path)
         self.title_var.set(f'{self.video_title}')
         self.current_media_label.configure(text=f'{self.rel_id+1}_{SQLAccess.read_letsplay_name(self.lpid)}')

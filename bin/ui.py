@@ -3,20 +3,21 @@ import tkinter as tk
 from tkinter.font import Font
 from bin.constants import *
 from bin.constants import __LICENSE__
-from bin.data_access import SQLAccess, AsciiImage, json_write, json_read, try_delete_file
+from bin.data_access import SQLAccess, AsciiImage, json_write, json_read, try_delete_file, file_read
 from threading import Thread
 from bin.welcome_popup import WELCOME
 from bin.automations import *
-from os.path import getsize
+from os.path import getsize, isdir
 from zipfile import ZipFile
 import sys
 from tkinter.colorchooser import askcolor
 from tkinter.filedialog import askopenfilename
 from bin.player_video import NewVideoPlayer
 from bin.player_audio import NewAudioPlayer
-from bin.gemini_api import send_gemini
+from bin.gemini_api import send_gemini, os
 from tools.log import *
 from typing import Callable
+
 class LPEPPicker:
     def __init__(self, 
                  parent: tk.Widget,
@@ -268,11 +269,11 @@ class TkinterApp(tk.Tk):
             'FetchAudio',
             'FixAudio',
             'Send2Audacity',
-            'Deploy',
-            'FileManager',
-            'TadEditor',
             'CompAndRender',
             'SetTitle',
+            'Deploy',
+            'TadEditor',
+            'FileManager',
             'Settings',
             'About',
         ]
@@ -548,7 +549,7 @@ class FixAudio(AutomationFrame):
         self.hp_enabled = tk.BooleanVar(value=False)
         self.hp_freq = tk.DoubleVar(value=175.0)
         
-        ttk.Checkbutton(hp_frame, text="Aktivate", variable=self.hp_enabled).grid(row=0, column=0, sticky='w')
+        ttk.Checkbutton(hp_frame, text="Activate", variable=self.hp_enabled).grid(row=0, column=0, sticky='w')
         ttk.Label(hp_frame, text="Frequency (Hz):").grid(row=0, column=1, sticky='w')
         ttk.Spinbox(
             hp_frame,
@@ -566,7 +567,7 @@ class FixAudio(AutomationFrame):
         self.lp_enabled = tk.BooleanVar(value=False)
         self.lp_freq = tk.DoubleVar(value=13000.0)
         
-        ttk.Checkbutton(lp_frame, text="Aktivate", variable=self.lp_enabled).grid(row=0, column=0, sticky='w')
+        ttk.Checkbutton(lp_frame, text="Activate", variable=self.lp_enabled).grid(row=0, column=0, sticky='w')
         ttk.Label(lp_frame, text="Frequency (Hz):").grid(row=0, column=1, sticky='w')
         ttk.Spinbox(
             lp_frame,
@@ -586,7 +587,7 @@ class FixAudio(AutomationFrame):
         self.ln_tp = tk.DoubleVar(value=-1.5)
         self.ln_lra = tk.DoubleVar(value=11.0)
         
-        ttk.Checkbutton(ln_frame, text="Aktivate", variable=self.ln_enabled).grid(row=0, column=0, sticky='w', columnspan=2)
+        ttk.Checkbutton(ln_frame, text="Activate", variable=self.ln_enabled).grid(row=0, column=0, sticky='w', columnspan=2)
         
         ttk.Label(ln_frame, text="Integrated (LUFS):").grid(row=1, column=0, sticky='w')
         ttk.Spinbox(
@@ -848,6 +849,32 @@ class FileManager(tk.Frame):
         msgbox.showinfo('Success', 'Lets Play deleted\nYou must restart the app!')
         sys.exit()
     
+    def det(self,path: str) -> list[int,int]:
+        SIZE = 0
+        AMMOUNT = 0
+        for file in listdir(path):
+            try:
+                if isfile(f'{path}{file}'):
+                    SIZE += getsize(f'{path}{file}')
+                    AMMOUNT += 1
+                if isdir(f'{path}{file}'):
+                    for subfile in listdir(f'{path}{file}\\'):
+                        SIZE += getsize(f'{path}{file}\\{subfile}')
+                        AMMOUNT += 1
+            except Exception as E:
+                print(E)
+            
+        return f'{self.gsn(SIZE)} in {AMMOUNT} files',SIZE, AMMOUNT
+    def gsn(self,num):
+        typ = ['B','KB','MB','GB','TB']
+        if num:
+            while 1:
+                if int(num/1024):
+                    num /= 1024
+                    typ.pop(0)
+                else:
+                    break
+        return f'{num:.2f}{typ[0]}'
     def on_detect(self,*args):
         """
         Collects and displays statistics about files and their sizes
@@ -856,41 +883,31 @@ class FileManager(tk.Frame):
         Calculates total files and sizes for LPRT created data, temporary files,
         raw video files, and thumbnails, then updates a label with this information.
         """
-        files = 0
-        files_size = 0
-        temp_files = 0
-        temp_files_size = 0
-        for folder in (FIXED_AUDIO_FOLDER, AUDIO_FOLDER, VIDEO_FOLDER):
-            for file in listdir(folder):
-                files += 1
-                files_size += getsize(folder+file)
-        for file in listdir(TEMP_FOLDER):
-            temp_files += 1
-            temp_files_size += getsize(TEMP_FOLDER+file)
 
-        video_raw_files = 0
-        video_raw_files_size = 0
-        thumbnail_files = 0
-        thumbnail_files_size = 0
-        
+        results = {
+            'temp': self.det(TEMP_FOLDER),
+            'thumbnails': self.det(THUMBNAIL_FOLDER),
+            'audio': self.det(AUDIO_FOLDER),
+            'audio_fixed': self.det(FIXED_AUDIO_FOLDER),
+            'ac_results': self.det(AC_RESULT_FOLDER),
+            'deploy': self.det(DEPLOY_FOLDER)
+        }
+        video_files = 0
+        video_size = 0
         for ep in SQLAccess.read_all_episodes():
-            
             if isfile(ep.video_path):
-                video_raw_files_size += getsize(ep.video_path)
-                video_raw_files += 1
-            if ep.thumbnail_path is not None:
-                if isfile(ep.thumbnail_path):
-                    thumbnail_files += 1
-                    thumbnail_files_size += getsize(ep.thumbnail_path)
+                video_size += getsize(ep.video_path)
+                video_files += 1
+        results['video_raw'] = (f'{self.gsn(video_size)} in {video_files} files', video_size,video_files)
+        ALL = f""        
+        tot_f, tot_s = 0, 0
+        for key in results:
+            ALL += f'{key:<10} {results[key][0]}\n'
+            tot_f += results[key][2]
+            tot_s += results[key][1]
+        ALL += f'TOTAL: {self.gsn(tot_s)} in {tot_f} files'
         
-        TEXT = f"""
-        LPRT created Data(Audio, FixedAudio, Video):  {files_size/1024/1024/1024:.2f}GB in {files} files
-        Temp Files:         {temp_files_size/1024/1024/1024:.2f}GB in {temp_files} files
-        Video Files(raw):   {video_raw_files_size/1024/1024/1024:.2f}GB in {video_raw_files} files
-        Thumbnails:         {thumbnail_files_size/1024/1024/1024:.2f}GB in {thumbnail_files} files
-        """
-        
-        self.label.configure(text=TEXT)
+        self.label.configure(text=ALL)
         
     def delete_files(self,*args):
         """
@@ -972,7 +989,7 @@ class TBO:
         """
         f = tk.Frame(self.master)
         if self.uie is ttk.Spinbox:
-            ttk.Label(f,text=f'{self.name}:').grid(column=0, sticky='w')
+            ttk.Label(f,text='-'.join(self.key.split('::')[1:])).grid(column=0, sticky='w')
             
             self.ui = self.uie(f,from_=self.condition[0][1:],to=self.condition[1][1:],textvariable=self.var,width=8,increment=0.1 if self.type is tk.DoubleVar else 1.0)
         elif self.uie is ttk.Entry:
@@ -1272,6 +1289,7 @@ class Settings(tk.Frame):
         
         # Create Headers
         SETTINGS = ttk.LabelFrame(W,text='OBS Settings')
+        API_GEMINI_SETTINGS = ttk.LabelFrame(W,text='Gemini Settings')
         
         self.IP = tk.StringVar()
         self.PORT = tk.StringVar()
@@ -1287,9 +1305,9 @@ class Settings(tk.Frame):
         obs_password_label = ttk.Label(SETTINGS,text='Password:')
         self.obs_password = ttk.Entry(SETTINGS,show='*',textvariable=self.PW)
         
-        self.obs_ip.bind('<KeyPress>',self.obs_something_changed)
-        self.obs_port.bind('<KeyPress>',self.obs_something_changed)
-        self.obs_password.bind('<KeyPress>',self.obs_something_changed)
+        self.obs_ip.bind('<KeyPress>',self.something_changed)
+        self.obs_port.bind('<KeyPress>',self.something_changed)
+        self.obs_password.bind('<KeyPress>',self.something_changed)
         
         self.set_settings_obs_btn = ttk.Button(SETTINGS,text='Set',command=self.set_obs_settings)
         
@@ -1309,12 +1327,43 @@ class Settings(tk.Frame):
             self.IP.set(OBS_SETTINGS['ip'])
             self.PORT.set(OBS_SETTINGS['port'])
             self.PW.set(OBS_SETTINGS['pw'])
-        self.obs_something_changed()
+        
+        
+        self.APIKEY = tk.StringVar()
+        self.language = tk.StringVar()
+        self.PW_TOGGLE_GAPI = tk.IntVar()
+        
+        lang = ''
+        if isfile('.env'):
+            try:
+                api_key, lang = file_read('.env').splitlines()
+                api_key, lang = api_key.split('=')[1][1:-1], lang.split('=')[1][1:-1]
+                self.APIKEY.set(api_key)
+                self.language.set(lang)
+            except:
+                pass
+        
+        languages = ['german', 'english', 'dutch']
+        
+        api_key_label = ttk.Label(API_GEMINI_SETTINGS,text='API_KEY:')
+        self.api_key = ttk.Entry(API_GEMINI_SETTINGS,textvariable=self.APIKEY,show='*')
+        self.show_pw_gapi = ttk.Checkbutton(API_GEMINI_SETTINGS,variable=self.PW_TOGGLE_GAPI,text='show',command=self.toggle_pw_view)
+        language_options = ttk.OptionMenu(API_GEMINI_SETTINGS,self.language,lang,*languages)
+        self.set_settings_api_key = ttk.Button(API_GEMINI_SETTINGS,text='Set',command=self.set_api_settings)
+        self.api_key.bind('<KeyPress>',self.something_changed)
+        
+        api_key_label.grid(row=0,column=0)
+        self.api_key.grid(row=0,column=1)
+        self.show_pw_gapi.grid(row=0,column=2)
+        language_options.grid(row=1,column=0)
+        self.set_settings_api_key.grid(row=1,column=1)
         
         # Packing
         SETTINGS.pack()
+        API_GEMINI_SETTINGS.pack()
 
-        W.grid(row=0,column=1)
+        W.pack()
+        self.something_changed()
         
     def toggle_pw_view(self,*args):
         """ Toggles the visibility of the password in the OBS password entry field. """
@@ -1322,8 +1371,12 @@ class Settings(tk.Frame):
             self.obs_password.configure(show="")
         else:
             self.obs_password.configure(show="*")
+        if self.PW_TOGGLE_GAPI.get():
+            self.api_key.configure(show="")
+        else:
+            self.api_key.configure(show="*")
     
-    def obs_something_changed(self,*args):
+    def something_changed(self,*args):
         """
         Callback for changes in OBS setting input fields.
 
@@ -1335,6 +1388,11 @@ class Settings(tk.Frame):
         else:
             self.set_settings_obs_btn.state(['disabled'])
             
+        if self.api_key.get():
+            self.set_settings_api_key.state(['!disabled'])
+        else:
+            self.set_settings_api_key.state(['disabled'])
+            
     def set_obs_settings(self,*args):
         """ Saves the current OBS connection settings to a JSON file. """
         
@@ -1343,6 +1401,11 @@ class Settings(tk.Frame):
         NEW_OBS_SETTINGS['port'] = self.PORT.get()
         NEW_OBS_SETTINGS['pw'] = self.PW.get()
         json_write(ROOT+'obs_settings.json',NEW_OBS_SETTINGS)
+    
+    def set_api_settings(self,*args):
+        """ Saves the current OBS connection settings to a JSON file. """
+        
+        file_write('.env',f'GOOGLE_API_KEY=\"{self.APIKEY.get()}\"\nLANG=\"{self.language.get()}\"')
 
 class CompAndRender(tk.Frame):
     """
@@ -1356,14 +1419,8 @@ class CompAndRender(tk.Frame):
         W = tk.Frame(parent)
         
         AUTOMATION_ROOT = ttk.Frame(W)
-
-        
-        automation_root_header = ttk.Label(W,text='Audio Compare & Render',font=Font(W,size=16))
-
         self.AUTOMATION_ROOT = AUTOMATION_ROOT
         self.lpep_picker = LPEPPicker(AUTOMATION_ROOT,self.run,'lp-ep')
-
-        automation_root_header.pack(pady=10)
         AUTOMATION_ROOT.pack()
         self.thread = None
         self.menu = parent.master
@@ -1418,43 +1475,66 @@ class SetTitle(tk.Frame):
         
         
         AUTOMATION_ROOT = ttk.Frame(W)
-        
-        automation_root_header = ttk.Label(W,text='Title Set',font=Font(W,size=16))
 
         self.AUTOMATION_ROOT = AUTOMATION_ROOT
         self.lpep_picker = LPEPPicker(AUTOMATION_ROOT,self.run,'lp-ep')
 
-        automation_root_header.pack(pady=10)
         AUTOMATION_ROOT.pack()
         
         self.media_player = NewVideoPlayer(W, [],0,self)
         self.media_player.pack()
         
-        ttk.Label(W,text='Ask Gemini for a hint',font=Font(W,size=16)).pack()
-        ttk.Label(W,text='Only input keywords! e.g. Gaming, Mining...',font=Font(W,size=12)).pack()
-        gemini_stuff = ttk.Frame(W)
-        self.text = tk.StringVar()
-        self.gemini_entry = ttk.Entry(gemini_stuff,textvariable=self.text)
+        
+        gemini_stuff = ttk.LabelFrame(W,text='Ask Gemini for a hint')
+        ttk.Label(gemini_stuff,text='Only input keywords! e.g. Gaming, Mining...').pack()
+        self.v_t = tk.StringVar()
+        self.gemini_entry = ttk.Entry(gemini_stuff,textvariable=self.v_t)
         self.send_btn = ttk.Button(gemini_stuff,text='Send',command=self.send_and_receive)
-        self.result_lbl = ttk.Label(gemini_stuff)
+
         self.gemini_entry.pack(fill=tk.X)
         self.send_btn.pack()
-        self.result_lbl.pack()
+        
+        scrollbar = ttk.Scrollbar(gemini_stuff,orient='vertical')
+        scrollbar.pack(side=tk.RIGHT,fill=tk.Y)
+        
+        self.text = tk.Text(gemini_stuff, width = 80, height = 5, wrap = tk.NONE,
+                 yscrollcommand = scrollbar.set)
+        
+        
+        self.text.pack(fill=tk.X)
+        scrollbar.config(command=self.text.yview)
+        
         gemini_stuff.pack()
         
         W.grid(row=0,column=1)
+    def update_text(self, text):
+        self.text.delete('1.0',tk.END)
+        for i in text.splitlines():
+            self.text.insert(tk.END, f'{i}\n')
+            
+        
 
     def run(self,*args):
         
         a, b = int(self.lpep_picker.v_epstart.get())-1, int(self.lpep_picker.v_epend.get())
-        
+        lpid = SQLAccess.read_letsplay_by_option_var(self)
         data = [i + 1 for i in range(a,b+(1 if a == b else 0))]
-        self.media_player.reset(data, SQLAccess.read_letsplay_by_option_var(self))
+        for i in data:
+            vp = SQLAccess.read_final_video_path(lpid,i-1)
+            if vp is None: 
+                msgbox.showwarning('Failed loading', f'Database entry is NULL.')
+                return
+            if not isfile(vp):
+                msgbox.showwarning('Failed loading', f'File:{vp} does not exist.')
+                return
+        
+        self.media_player.reset(data, lpid)
     def send_and_receive(self,*args):
         change_states([self.gemini_entry, self.send_btn],'disabled')
         Thread(target=self.__sar).start()
     def __sar(self):
-        self.result_lbl.configure(text=str(send_gemini(f'Generate me a youtube title(gaming / lets play) for: {self.text.get()}')))
+        __lang: str | None = os.getenv("LANG")
+        self.update_text(str(send_gemini(f'Please answer me in [{__lang}]. Generate me a youtube title(gaming / lets play) in the language=[\"{__lang}\"] for: {self.v_t.get()}')))
         change_states([self.gemini_entry, self.send_btn],'!disabled')
 
 class About(tk.Frame):
@@ -1469,8 +1549,7 @@ class About(tk.Frame):
         W = ttk.Frame(parent)
         
         # Create Headers
-        LICENSE = ttk.Frame(W)
-        license_header = ttk.Label(W,text='License',font=Font(W,size=16))
+        LICENSE = ttk.LabelFrame(W,text='license')
         
         scrollbar = ttk.Scrollbar(W,orient='vertical')
         scrollbar.pack(side=tk.RIGHT,fill=tk.Y)
@@ -1484,8 +1563,6 @@ class About(tk.Frame):
         text.pack(side=tk.TOP, fill=tk.X)
         scrollbar.config(command=text.yview)
         
-        # Packing
-        license_header.pack(pady=10)
         LICENSE.pack()
         
         W.pack()

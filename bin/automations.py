@@ -70,7 +70,7 @@ def obs_connect(el):
         try:
             id = SQLAccess.read_letsplay_names().index(el.lpep_picker.v_lp.get())
             if OBSO.time_in_seconds:
-                el.recording_information_label.configure(text= f'Recording - {SQLAccess.read_episode_ammount(id)} Episodes\n{OBSO.timecode}')
+                el.recording_information_label.configure(text= f'Recording - {SQLAccess.read_episode_ammount(id)} Episodes\n{OBSO.timecode.split(".")[0]}')
                 obs_rec_label_set(OBSO,el)
             else:
                 obs_rec_label_set(OBSO,el, True)
@@ -80,6 +80,7 @@ def obs_connect(el):
             obs_rec_label_set(OBSO,el, True)
             el.btn_connect.configure(text= 'Unexpected Error happened')
             print(f'Unexpected Error happened [{E}]')
+        sleep(0.3)
 
 class GenericWorkFlow:
     """
