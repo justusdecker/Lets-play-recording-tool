@@ -16,14 +16,14 @@ from bin.player_video import NewVideoPlayer
 from bin.player_audio import NewAudioPlayer
 from bin.gemini_api import send_gemini
 from tools.log import *
-
+from typing import Callable
 class LPEPPicker:
     def __init__(self, 
                  parent: tk.Widget,
                  callback: callable,
                  mode: str = 'lp-ep',
                  btn_image: str = ICO_RUN,
-                 ch_callback: callable | None = None):
+                 ch_callback: Callable | None = None):
         """
         .. mode::
             The mode defines the way this class will show the elements of LPEP
