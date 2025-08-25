@@ -1333,9 +1333,13 @@ class Settings(tk.Frame):
         self.language = tk.StringVar()
         self.PW_TOGGLE_GAPI = tk.IntVar()
         
+        lang = ''
         if isfile('.env'):
             try:
-                self.APIKEY.set(file_read('.env').split('=')[0])
+                api_key, lang = file_read('.env').splitlines()
+                api_key, lang = api_key.split('=')[1][1:-1], lang.split('=')[1][1:-1]
+                self.APIKEY.set(api_key)
+                self.language.set(lang)
             except:
                 pass
         
@@ -1343,8 +1347,8 @@ class Settings(tk.Frame):
         
         api_key_label = ttk.Label(API_GEMINI_SETTINGS,text='API_KEY:')
         self.api_key = ttk.Entry(API_GEMINI_SETTINGS,textvariable=self.APIKEY,show='*')
-        self.show_pw_gapi = ttk.Checkbutton(SETTINGS,variable=self.PW_TOGGLE_GAPI,text='show',command=self.toggle_pw_view)
-        language_options = ttk.OptionMenu(API_GEMINI_SETTINGS,self.language,'english',*languages)
+        self.show_pw_gapi = ttk.Checkbutton(API_GEMINI_SETTINGS,variable=self.PW_TOGGLE_GAPI,text='show',command=self.toggle_pw_view)
+        language_options = ttk.OptionMenu(API_GEMINI_SETTINGS,self.language,lang,*languages)
         self.set_settings_api_key = ttk.Button(API_GEMINI_SETTINGS,text='Set',command=self.set_api_settings)
         self.api_key.bind('<KeyPress>',self.something_changed)
         
@@ -1401,7 +1405,7 @@ class Settings(tk.Frame):
     def set_api_settings(self,*args):
         """ Saves the current OBS connection settings to a JSON file. """
         
-        file_write('.env',f'API_KEY={self.APIKEY.get()}')
+        file_write('.env',f'GOOGLE_API_KEY=\"{self.APIKEY.get()}\"\nLANG=\"{self.language.get()}\"')
 
 class CompAndRender(tk.Frame):
     """
