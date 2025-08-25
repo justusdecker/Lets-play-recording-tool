@@ -734,7 +734,7 @@ class FileManager(tk.Frame):
         
         BACKUP = ttk.LabelFrame(W,text='Lets Play Backup')
         
-        self.backup_lpep = LPEPPicker(BACKUP,self.create_video_backup,'lp')
+        self.backup_lpep = LPEPPicker(BACKUP,self.create_video_backup,'lp', ICO_BACKUP)
 
         BACKUP.pack()
         
