@@ -57,12 +57,17 @@ class NewVideoPlayer(NewMediaPlayer):
         self.title_setter = ttk.Entry(self.bar,textvariable=self.title_var)
         self.title_setter.pack(side=LEFT, padx=5)
         
-        self.update_title_button = ttk.Button(self.bar, text="Update", command=self.set_video_title)
+        
+        img = AsciiImage(ICO_REFRESH)
+        self.update_title_button = ttk.Button(self.bar, image=img.image, command=self.set_video_title)
         self.update_title_button.pack(side=LEFT, padx=5)
+        self.take_thumbnail_btn.image = img.image
         
-        self.take_thumbnail_btn = ttk.Button(self.bar,text='Generate Thumbnail',command=self.gen_thumbnail)
+        
+        img = AsciiImage(ICO_TAKE_THUMBNAIL)
+        self.take_thumbnail_btn = ttk.Button(self.bar,image=img.image,command=self.gen_thumbnail)
         self.take_thumbnail_btn.pack(side=LEFT, padx=5)
-        
+        self.take_thumbnail_btn.image = img.image
     def reset(self,data,lpid):
         change_states([self.stop_button,self.play_button, self.pause_button, self.next_button, self.last_button, self.take_thumbnail_btn, self.update_title_button],'disabled')
         self.stop_video()
