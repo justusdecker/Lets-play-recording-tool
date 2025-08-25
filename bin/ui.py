@@ -673,10 +673,10 @@ class FileManager(tk.Frame):
         open_folder_btn = ttk.Button(W,text='Open lprt folder',command=lambda *x: Popen(f'explorer {ROOT}'))
         open_folder_btn.pack()
         DATA_DETECTION = ttk.LabelFrame(W,text='Data Detection')
-        
-        self.detect_btn = ttk.Button(DATA_DETECTION, text='Detect',command=self.on_detect)
+        img = AsciiImage(ICO_SEARCH)
+        self.detect_btn = ttk.Button(DATA_DETECTION, image=img.image,command=self.on_detect)
         self.label = ttk.Label(DATA_DETECTION,text='')
-        
+        self.label.image = img.image
         self.detect_btn.grid(row=0,column=0)
         self.label.grid(row=0,column=1)
         DATA_DETECTION.pack()
@@ -1507,7 +1507,7 @@ class SetTitle(tk.Frame):
         
         gemini_stuff.pack()
         
-        W.grid(row=0,column=1)
+        W.pack()
     def update_text(self, text):
         self.text.delete('1.0',tk.END)
         for i in text.splitlines():
