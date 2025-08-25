@@ -1331,7 +1331,7 @@ class Settings(tk.Frame):
         # Packing
         SETTINGS.pack()
 
-        W.grid(row=0,column=1)
+        W.pack()
         
     def toggle_pw_view(self,*args):
         """ Toggles the visibility of the password in the OBS password entry field. """
@@ -1438,19 +1438,35 @@ class SetTitle(tk.Frame):
         self.media_player = NewVideoPlayer(W, [],0,self)
         self.media_player.pack()
         
-        ttk.Label(W,text='Ask Gemini for a hint',font=Font(W,size=16)).pack()
-        ttk.Label(W,text='Only input keywords! e.g. Gaming, Mining...',font=Font(W,size=12)).pack()
-        gemini_stuff = ttk.Frame(W)
+        
+        gemini_stuff = ttk.LabelFrame(W,text='Ask Gemini for a hint')
+        ttk.Label(gemini_stuff,text='Only input keywords! e.g. Gaming, Mining...').pack()
         self.text = tk.StringVar()
         self.gemini_entry = ttk.Entry(gemini_stuff,textvariable=self.text)
         self.send_btn = ttk.Button(gemini_stuff,text='Send',command=self.send_and_receive)
-        self.result_lbl = ttk.Label(gemini_stuff)
+
         self.gemini_entry.pack(fill=tk.X)
         self.send_btn.pack()
-        self.result_lbl.pack()
+        
+        scrollbar = ttk.Scrollbar(gemini_stuff,orient='vertical')
+        scrollbar.pack(side=tk.RIGHT,fill=tk.Y)
+        
+        self.text = tk.Text(gemini_stuff, width = 80, height = 5, wrap = tk.NONE,
+                 yscrollcommand = scrollbar.set)
+        
+        
+        self.text.pack(fill=tk.X)
+        scrollbar.config(command=self.text.yview)
+        
         gemini_stuff.pack()
         
         W.grid(row=0,column=1)
+    def update_text(self, text):
+        text.delete('1.0',tk.END)
+        for i in text.splitlines():
+            self.text.insert(tk.END, f'{i}\n')
+            
+        
 
     def run(self,*args):
         
@@ -1471,7 +1487,7 @@ class SetTitle(tk.Frame):
         change_states([self.gemini_entry, self.send_btn],'disabled')
         Thread(target=self.__sar).start()
     def __sar(self):
-        self.result_lbl.configure(text=str(send_gemini(f'Generate me a youtube title(gaming / lets play) for: {self.text.get()}')))
+        self.update_text(str(send_gemini(f'Generate me a youtube title(gaming / lets play) for: {self.text.get()}')))
         change_states([self.gemini_entry, self.send_btn],'!disabled')
 
 class About(tk.Frame):
@@ -1486,7 +1502,7 @@ class About(tk.Frame):
         W = ttk.Frame(parent)
         
         # Create Headers
-        LICENSE = ttk.LabelFrame(W)
+        LICENSE = ttk.LabelFrame(W,text='license')
         
         scrollbar = ttk.Scrollbar(W,orient='vertical')
         scrollbar.pack(side=tk.RIGHT,fill=tk.Y)
