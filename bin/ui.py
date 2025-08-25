@@ -686,14 +686,14 @@ class FileManager(tk.Frame):
         DATA_DELETION = ttk.LabelFrame(W,text='Data Deletion')
         self.DATA_DELETION = DATA_DELETION
         
-        self.simple_delete_lpep = LPEPPicker(DATA_DELETION,self.delete_files,'lp-ep')
+        self.simple_delete_lpep = LPEPPicker(DATA_DELETION,self.delete_files,'lp-ep',ICO_TRASH)
         
         DATA_DELETION.pack()
         
         # Lets Play Delete
         LP_DELETE = ttk.LabelFrame(W,text='Lets Play Delete')
         
-        self.lp_delete_lpep = LPEPPicker(LP_DELETE,self.delete_lets_play,'lp')
+        self.lp_delete_lpep = LPEPPicker(LP_DELETE,self.delete_lets_play,'lp',ICO_TRASH)
         
         self.delete_lp_option = tk.IntVar(value=0)
 
@@ -717,8 +717,9 @@ class FileManager(tk.Frame):
         name = ttk.Entry(LP_CREATE,textvariable=self.name_var)
         game_name = ttk.Entry(LP_CREATE,textvariable=self.game_name_var)
         episode_length = ttk.OptionMenu(LP_CREATE,self.episode_length_var,'None',*[f'{i} Minutes' for i in range(10,65,5)],command=self.something_changed)
-        self.btn_lp_create = ttk.Button(LP_CREATE,text='create',command=self.create_lets_play)
-  
+        img = AsciiImage(ICO_SEARCH)
+        self.btn_lp_create = ttk.Button(LP_CREATE,image=img.image,command=self.create_lets_play)
+        self.btn_lp_create.image = img.image
         self.btn_lp_create.state(['disabled'])
         
         new_label.grid(row=0,column=1)
