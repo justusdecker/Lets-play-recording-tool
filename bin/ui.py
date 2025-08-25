@@ -1441,7 +1441,7 @@ class SetTitle(tk.Frame):
         
         gemini_stuff = ttk.LabelFrame(W,text='Ask Gemini for a hint')
         ttk.Label(gemini_stuff,text='Only input keywords! e.g. Gaming, Mining...').pack()
-        self.text = tk.StringVar()
+        self.v_t = tk.StringVar()
         self.gemini_entry = ttk.Entry(gemini_stuff,textvariable=self.text)
         self.send_btn = ttk.Button(gemini_stuff,text='Send',command=self.send_and_receive)
 
@@ -1487,7 +1487,7 @@ class SetTitle(tk.Frame):
         change_states([self.gemini_entry, self.send_btn],'disabled')
         Thread(target=self.__sar).start()
     def __sar(self):
-        self.update_text(str(send_gemini(f'Generate me a youtube title(gaming / lets play) for: {self.text.get()}')))
+        self.update_text(str(send_gemini(f'Generate me a youtube title(gaming / lets play) for: {self.v_t.get()}')))
         change_states([self.gemini_entry, self.send_btn],'!disabled')
 
 class About(tk.Frame):
