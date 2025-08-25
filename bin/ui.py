@@ -22,7 +22,8 @@ class LPEPPicker:
                  parent: tk.Widget,
                  callback: callable,
                  mode: str = 'lp-ep',
-                 btn_image: str = ICO_RUN):
+                 btn_image: str = ICO_RUN,
+                 ch_callback: callable | None = None):
         """
         .. mode::
             The mode defines the way this class will show the elements of LPEP
@@ -37,7 +38,7 @@ class LPEPPicker:
             |ne|no end episode selector(one episode selector)|
             |nb|no button|
         """
-        
+        self.ch_callback = ch_callback
         self.s_lp = 'lp' in mode
         self.s_ep = 'ep' in mode
         self.d_ne = 'ne' in mode
@@ -158,7 +159,7 @@ class LPEPPicker:
         else:
             variables = [self.v_lp.get()]
         LOG('Run - lp: $ eps: $ - $',variables)
-        self.callback()
+        #!self.callback()
     
     def get_ui(self) -> list[Button]:
         _ret = [self.options]
@@ -198,6 +199,7 @@ class LPEPPicker:
             self.btn_run.state(['!disabled'])
         
         self.reset()
+        self.ch_callback()
 
 def change_states(elements: list[ttk.Button],state: str):
     """
@@ -713,9 +715,7 @@ class FileManager(tk.Frame):
         game_name = ttk.Entry(LP_CREATE,textvariable=self.game_name_var)
         episode_length = ttk.OptionMenu(LP_CREATE,self.episode_length_var,'None',*[f'{i} Minutes' for i in range(10,65,5)],command=self.something_changed)
         self.btn_lp_create = ttk.Button(LP_CREATE,text='create',command=self.create_lets_play)
-        
-        name.bind('<KeyRelease>',self.something_changed)
-        game_name.bind('<KeyRelease>',self.something_changed)
+  
         self.btn_lp_create.state(['disabled'])
         
         new_label.grid(row=0,column=1)
@@ -731,16 +731,28 @@ class FileManager(tk.Frame):
         BACKUP = ttk.LabelFrame(W,text='Lets Play Backup')
         
         self.backup_lpep = LPEPPicker(BACKUP,self.create_video_backup,'lp')
-        
-        self.backup_lp_label, self.backup_lp_options, self.backup_lp_option_var= get_lets_play(BACKUP, self.something_changed_backup)
-        
-        self.backup_btn = ttk.Button(BACKUP,text='Backup',command=self.create_video_backup)
-        self.backup_btn.grid(row=0,column=3)
-        self.backup_btn.state(['disabled']) 
 
         BACKUP.pack()
         
         W.pack()
+    def something_changed(self,*args):
+        """
+        Callback for changes in input fields for 'Let's Play' creation.
+
+        Enables or disables the 'create' button based on whether all required
+        fields are filled and the 'Let's Play' name is unique.
+        """
+        for char in self.game_name_var.get(): # See issue #236
+            if char not in 'abcdefghijklmnopqrstuvwxyz_':
+                self.btn_lp_create.state(['disabled'])
+                return 
+        
+        if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.read_letsplay_names():
+            self.btn_lp_create.state(['!disabled'])
+            
+        else:
+            self.btn_lp_create.state(['disabled'])
+            
     def load_video_backup(self,*args):
         pass
     def create_video_backup(self,*args):
@@ -752,7 +764,7 @@ class FileManager(tk.Frame):
         'Let's Play' series.
         """
         change_states([self.menu],'disabled')
-        lpid = SQLAccess.read_letsplay_names().index(self.backup_lp_option_var.get())
+        lpid = SQLAccess.read_letsplay_names().index(self.backup_lpep.v_lp.get())
         lpname = SQLAccess.read_letsplay_names()[lpid]
         cnef(BACKUP_FOLDER)
         ZIP = ZipFile(f'{BACKUP_FOLDER}{lpname}.7z','w',)
@@ -773,57 +785,7 @@ class FileManager(tk.Frame):
                         print(file)
                         ZIP.write(file,file.replace('\\','/').split('/')[-1])
         change_states([self.menu],'!disabled')
-    
-    def something_changed_backup(self, *args):
-        """
-        Callback for changes in the backup 'Let's Play' selection.
 
-        Enables or disables the backup button based on whether a 'Let's Play'
-        is selected.
-        """
-        if self.backup_lp_option_var.get() != 'None':
-            self.backup_btn.state(['!disabled'])
-        else:
-            self.backup_btn.state(['disabled']) 
-    
-    def update_ui(self):
-        """
-        Updates UI elements related to episode range for data deletion.
-
-        Recalculates available episode numbers based on the selected 'Let's Play'
-        for the data deletion section.
-        """
-        lp = self.simdel_lp_option_var.get()
-        if lp != 'None':
-            self.epnums = [i+1 for i in range(SQLAccess.read_episode_ammount(SQLAccess.read_letsplay_names().index(self.simdel_lp_option_var.get())))]
-        else:
-            self.epnums = []
-            
-    def lp_changed(self,*args):
-        """
-        Callback for changes in the 'Let's Play' selection for data deletion.
-
-        Updates the UI to reflect episode numbers for deletion, re-creates
-        episode range selection widgets, and controls the state of the delete button.
-        """
-        self.update_ui()
-        
-        if not self.epnums:
-            self.delete_btn.state(['disabled'])
-        else:
-            self.delete_btn.state(['!disabled'])
-        
-        self.simdel_ep_start.destroy()
-        self.simdel_ep_end.destroy()
-        self.simdel_label2.destroy()
-        self.simdel_label3.destroy()
-        self.start_btn.destroy()
-        del self.epstart_option_var
-        del self.epend_option_var
-        
-        self.simdel_label2, self.simdel_label3, self.start_btn, self.simdel_ep_start, self.simdel_ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.DATA_DELETION,lambda x: None,self.check_last_id,self.epnums)
-        self.start_btn.destroy()
-    
     def check_last_id(self,*args):
         """
         Validates the episode range for data deletion.
@@ -835,37 +797,7 @@ class FileManager(tk.Frame):
             self.delete_btn.state(['disabled'])
         else:
             self.delete_btn.state(['!disabled'])
-    
-    def something_changed(self,*args):
-        """
-        Callback for changes in input fields for 'Let's Play' creation.
 
-        Enables or disables the 'create' button based on whether all required
-        fields are filled and the 'Let's Play' name is unique.
-        """
-        for char in self.game_name_var.get(): # See issue #236
-            if char not in 'abcdefghijklmnopqrstuvwxyz_':
-                self.btn_lp_create.state(['disabled'])
-                return 
-        
-        if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.read_letsplay_names():
-            self.btn_lp_create.state(['!disabled'])
-            
-        else:
-            self.btn_lp_create.state(['disabled'])
-            
-    def something_changed_delete(self, *args):
-        """
-        Callback for changes in the 'Let's Play' selection for LP deletion.
-
-        Enables or disables the 'delete LP' button based on whether a 'Let's Play'
-        is selected.
-        """
-        if self.lp_option_var.get() != 'None':
-            self.btn_lp_delete.state(['!disabled'])
-        else:
-            self.btn_lp_delete.state(['disabled']) 
-            
     def create_lets_play(self,*args):
         """
         Creates a new 'Let's Play' entry in the database.
@@ -967,8 +899,8 @@ class FileManager(tk.Frame):
         """
         ok = msgbox.askyesno('Attention','You are trying to delete all files in the selected lets play\nThis step is irreversible!\nContinue?')
         if not ok: return
-        lpid = SQLAccess.read_letsplay_names().index(self.simdel_lp_option_var.get())
-        print(SQLAccess.read_letsplay_names().index(self.simdel_lp_option_var.get()),self.simdel_lp_option_var.get())
+        lpid = SQLAccess.read_letsplay_names().index(self.simple_delete_lpep.v_lp.get())
+        print(SQLAccess.read_letsplay_names().index(self.simple_delete_lpep.v_lp.get()),self.simple_delete_lpep.v_lp.get())
         episodes = SQLAccess.read_episodes(lpid)
 
         for i in range(*self.rng): #! Test first
@@ -999,7 +931,7 @@ class FileManager(tk.Frame):
             tuple: A tuple containing the start index (0-based) and end index
                    (exclusive, 0-based) for the selected episode range.
         """
-        a,b = int(self.epstart_option_var.get())-1, int(self.epend_option_var.get())
+        a,b = int(self.simple_delete_lpep.v_epstart.get())-1, int(self.simple_delete_lpep.v_epend.get())
         return a,b+(1 if a == b else 0)
 
 class TBO:
@@ -1205,7 +1137,7 @@ class TadEditor(tk.Frame):
         PREVIEW = ttk.LabelFrame(W,text='Preview')
         PREVIEW.pack()
         self.tw = ThumbnailPreview(PREVIEW)
-        _, self.lp_options, self.lp_option_var= get_lets_play(LETSPLAY, self.lp_changed)
+        self.lpep_picker = LPEPPicker(LETSPLAY,None,'lp-nb',ch_callback=self.lp_changed)
         
         self.tbos = []
         self.ui_elements = []
@@ -1277,7 +1209,7 @@ class TadEditor(tk.Frame):
         Enables/disables UI elements, loads existing TAD data for the selected
         'Let's Play' (if available), or sets default values.
         """
-        if self.lp_option_var.get() != 'None':
+        if self.lpep_picker.v_lp.get() != 'None':
             self.save_btn.state(['!disabled'])
             change_states([ui.ui for ui in self.ui_elements],'!disabled')
             lpid = SQLAccess.read_letsplay_by_option_var(self)
