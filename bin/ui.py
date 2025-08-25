@@ -1373,14 +1373,8 @@ class CompAndRender(tk.Frame):
         W = tk.Frame(parent)
         
         AUTOMATION_ROOT = ttk.Frame(W)
-
-        
-        automation_root_header = ttk.Label(W,text='Audio Compare & Render',font=Font(W,size=16))
-
         self.AUTOMATION_ROOT = AUTOMATION_ROOT
         self.lpep_picker = LPEPPicker(AUTOMATION_ROOT,self.run,'lp-ep')
-
-        automation_root_header.pack(pady=10)
         AUTOMATION_ROOT.pack()
         self.thread = None
         self.menu = parent.master
@@ -1435,13 +1429,10 @@ class SetTitle(tk.Frame):
         
         
         AUTOMATION_ROOT = ttk.Frame(W)
-        
-        automation_root_header = ttk.Label(W,text='Title Set',font=Font(W,size=16))
 
         self.AUTOMATION_ROOT = AUTOMATION_ROOT
         self.lpep_picker = LPEPPicker(AUTOMATION_ROOT,self.run,'lp-ep')
 
-        automation_root_header.pack(pady=10)
         AUTOMATION_ROOT.pack()
         
         self.media_player = NewVideoPlayer(W, [],0,self)
@@ -1495,8 +1486,7 @@ class About(tk.Frame):
         W = ttk.Frame(parent)
         
         # Create Headers
-        LICENSE = ttk.Frame(W)
-        license_header = ttk.Label(W,text='License',font=Font(W,size=16))
+        LICENSE = ttk.LabelFrame(W)
         
         scrollbar = ttk.Scrollbar(W,orient='vertical')
         scrollbar.pack(side=tk.RIGHT,fill=tk.Y)
@@ -1510,8 +1500,6 @@ class About(tk.Frame):
         text.pack(side=tk.TOP, fill=tk.X)
         scrollbar.config(command=text.yview)
         
-        # Packing
-        license_header.pack(pady=10)
         LICENSE.pack()
         
         W.pack()
