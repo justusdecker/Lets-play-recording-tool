@@ -511,4 +511,4 @@ class SQLAccess:
         Returns:
             int: The index of the letsplay name.
         """
-        return SQLAccess.read_letsplay_names().index(parent.lp_option_var.get())
+        return SQLAccess.read_letsplay_names().index(parent.lpep_picker.v_lp.get())

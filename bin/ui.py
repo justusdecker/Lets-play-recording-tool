@@ -16,13 +16,14 @@ from bin.player_video import NewVideoPlayer
 from bin.player_audio import NewAudioPlayer
 from bin.gemini_api import send_gemini
 from tools.log import *
-
+from typing import Callable
 class LPEPPicker:
     def __init__(self, 
                  parent: tk.Widget,
                  callback: callable,
                  mode: str = 'lp-ep',
-                 btn_image: str = ICO_RUN):
+                 btn_image: str = ICO_RUN,
+                 ch_callback: Callable | None = None):
         """
         .. mode::
             The mode defines the way this class will show the elements of LPEP
@@ -35,11 +36,13 @@ class LPEPPicker:
             |ep|shows the episode selector(start,end)|
             |nc|no callback|
             |ne|no end episode selector(one episode selector)|
+            |nb|no button|
         """
-        
+        self.ch_callback = ch_callback
         self.s_lp = 'lp' in mode
         self.s_ep = 'ep' in mode
         self.d_ne = 'ne' in mode
+        self.d_nb = 'nb' in mode
             
         self.btn_image = btn_image
         
@@ -58,6 +61,7 @@ class LPEPPicker:
         self.st_create_ui()
         
     def st_create_ui(self):
+        if self.d_nb: return
         img = AsciiImage(self.btn_image)
         self.btn_run = ttk.Button(self.obj, image=img.image,command=self.run)
         
@@ -125,6 +129,7 @@ class LPEPPicker:
         self.st_create_ui()
     
     def destroy_st(self):
+        if self.d_nb: return
         self.btn_run.destroy()
     
     def destroy_ep(self):
@@ -157,7 +162,14 @@ class LPEPPicker:
         self.callback()
     
     def get_ui(self) -> list[Button]:
-        return [self.btn_run]
+        _ret = [self.options]
+        if not self.d_nb:
+            _ret.append(self.btn_run)
+        if self.s_ep:
+            _ret.append(self.opm_start)
+            if not self.d_ne:
+                _ret.append(self.opm_end)
+        return _ret
     
     def update_ui(self):
         """
@@ -180,74 +192,15 @@ class LPEPPicker:
         episode range selection widgets, and controls the state of the delete button.
         """
         self.update_ui()
-        
-        if not self.values:
-            self.btn_run.state(['disabled'])
-        else:
-            self.btn_run.state(['!disabled'])
+        if not self.d_nb:
+            if not self.values:
+                self.btn_run.state(['disabled'])
+            else:
+                self.btn_run.state(['!disabled'])
         
         self.reset()
-
-def get_lets_play(parent,callback: callable) -> tuple[ttk.Label, ttk.OptionMenu,tk.StringVar]:
-    """
-    Creates and configures Tkinter UI elements for selecting a "Let's Play" item.
-
-    This function sets up a label and an option menu (dropdown) for users
-    to select from a list of "Let's Play" names. The names are sourced
-    from a `LetsPlay` object which conceptually reads from ROOT/'lets_plays.csv'.
-    When a selection is made, the provided `callback` function is executed.
-    """
-    label = ttk.Label(parent, text ="Lets Play")
-
-    label.grid(row = 0, column = 1) 
-    
-    lp_option_var = tk.StringVar(parent)
-        
-    #lps = LetsPlays
-    names = SQLAccess.read_letsplay_names()
-    options = ttk.OptionMenu(parent,lp_option_var,'None',*names,command=callback)
-    
-    options.grid(row = 0, column = 2)
-    
-    return label, options, lp_option_var
-
-def get_episode_range(parent, run_callback: callable, check_callback: callable,ft) -> tuple[ttk.Label, ttk.Label, ttk.Button, ttk.OptionMenu, ttk.OptionMenu, tk.StringVar, tk.StringVar]:
-    """
-    Creates and configures Tkinter UI elements for selecting an episode range.
-
-    This function sets up two lab els ("Episode start", "Episode end"),
-    two option menus for selecting start and end episode numbers, and an
-    "Run" button. The button is initially disabled(if ft is none <- No data exists) and its state
-    can be managed by the `check_callback`. The `run_callback` is
-    executed when the "Run" button is clicked.
-    """
-    label1 = ttk.Label(parent, text ="Episode start")
-
-    label1.grid(row = 0, column = 3) 
-    
-    label2 = ttk.Label(parent, text ="Episode end")
-
-    label2.grid(row = 0, column = 5) 
-    img = AsciiImage(ICO_RUN)
-    
-    start_btn = ttk.Button(parent, image=img.image,command=run_callback)
-    start_btn.image = img.image
-    if not ft:
-        start_btn.state(['disabled'])
-
-    start_btn.grid(row = 0, column = 7) 
-    
-    epstart_option_var = tk.StringVar(parent)
-    epend_option_var = tk.StringVar(parent)
-    
-    ep_start = ttk.OptionMenu(parent,epstart_option_var,str(ft[0] if ft else 'None'),*ft,command=check_callback)
-    
-    ep_start.grid(row = 0, column = 4) 
-    
-    ep_end = ttk.OptionMenu(parent,epend_option_var,str(ft[-1] if ft else 'None'),*ft,command=check_callback)
-    
-    ep_end.grid(row = 0, column = 6) 
-    return label1, label2, start_btn, ep_start, ep_end, epstart_option_var, epend_option_var
+        if self.ch_callback is not None:
+            self.ch_callback()
 
 def change_states(elements: list[ttk.Button],state: str):
     """
@@ -340,6 +293,7 @@ class TkinterApp(tk.Tk):
             (About, 'About')
         ]
         for ui,name in ELEMENTS:
+            LOG('Create: $',[name])
             ui(self.menu.get_root_for(name))
 
 class Main(tk.Frame):
@@ -384,9 +338,9 @@ class Recording(tk.Frame):
         # Recording
         self.btn_connect = ttk.Button(RECORDING, text ="Connect to obs",command=self.get_connection)
 
-        self.btn_connect.grid(row = 0, column=4)
+        self.btn_connect.pack(side='bottom')
         
-        self.label, self.lp_options, self.lp_option_var= get_lets_play(RECORDING, self.lp_changed)
+        self.lpep_picker = LPEPPicker(RECORDING,False,'lp-nb',ch_callback=self.lp_changed)
         
         # Information
         self.recording_information_label = ttk.Label(INFORMATION, text ="No Connection",font=Font(W,size=12))
@@ -397,7 +351,7 @@ class Recording(tk.Frame):
         RECORDING.pack()
         INFORMATION.pack()
         
-        W.grid(row=0,column=1)
+        W.pack()
 
         # Disable connect button
         self.btn_connect.state(["disabled"])
@@ -407,7 +361,7 @@ class Recording(tk.Frame):
     def get_connection(self):
         if self.thread:
             self.close_connection = True
-        self.lp_options.state(['disabled'])
+        change_states(self.lpep_picker.get_ui(),'disabled')
         if self.thread is None:
             self.close_connection = False
             self.thread = Thread(target=self.__get_connection)
@@ -416,7 +370,7 @@ class Recording(tk.Frame):
         
         change_states([self.menu],'disabled') # Deactivates all menu buttons for safety reasons
         
-        ep = SQLAccess.read_episodes(SQLAccess.read_letsplay_names().index(self.lp_option_var.get()))
+        ep = SQLAccess.read_episodes(SQLAccess.read_letsplay_names().index(self.lpep_picker.v_lp.get()))
         self.btn_connect.state(["disabled"])
         self.btn_connect.configure(text='Try connection to OBS...')
         #! Currently Disconnecting only works by closing OBS <- mainly for safety reasons!
@@ -427,7 +381,7 @@ class Recording(tk.Frame):
         if not self.close_connection:
             self.btn_connect.configure(text='Error occured! Try again')
         self.thread = None
-        self.lp_options.state(['!disabled'])
+        change_states(self.lpep_picker.get_ui(),'!disabled')
  
 class TKFrameWithLPControls(tk.Frame):
     def __init__(self, parent):
@@ -438,74 +392,15 @@ class TKFrameWithLPControls(tk.Frame):
         W = tk.Frame(parent)
         
         AUTOMATION_ROOT = ttk.Frame(W)
-        
-        self.normal_options = ttk.LabelFrame(AUTOMATION_ROOT,text=f'LP & EP Selection')
 
         self.AUTOMATION_ROOT = AUTOMATION_ROOT
         
-        self.label, self.lp_options, self.lp_option_var= get_lets_play(self.normal_options, self.lp_changed)
-        
-        self.update_ui()
-        
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.normal_options,self.run,self.check_last_id,self.epnums)
-        
-        self.normal_options.pack()
+        self.lpep_picker = LPEPPicker(AUTOMATION_ROOT,self.run,'lp-ep')
+
         AUTOMATION_ROOT.pack()
         W.pack()
         self.W = W
     
-    def update_ui(self):
-        """
-        Updates the UI elements based on the selected 'Let's Play' series.
-
-        This method dynamically calculates the available episode numbers
-        based on the currently selected 'Let's Play' value and updates
-        the internal `epnums` list.
-        """
-        lp = self.lp_option_var.get()
-        if lp != 'None':
-            self.epnums = [i+1 for i in range(SQLAccess.read_episode_ammount(SQLAccess.read_letsplay_by_option_var(self)))]
-        else:
-            self.epnums = []
-    
-    def lp_changed(self,*args):
-        """
-        Callback function executed when the 'Let's Play' selection changes.
-
-        This method updates the UI based on the new 'Let's Play' selection,
-        recalculates available episode numbers, and dynamically rebuilds
-        the episode range selection widgets. It also adjusts the state
-        of the start button.
-        """
-        self.update_ui()
-        
-        if not self.epnums:
-            self.start_btn.state(['disabled'])
-        else:
-            self.start_btn.state(['!disabled'])
-        
-        self.ep_start.destroy()
-        self.ep_end.destroy()
-        self.label2.destroy()
-        self.label3.destroy()
-        self.start_btn.destroy()
-        del self.epstart_option_var
-        del self.epend_option_var
-        
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.normal_options,self.run,self.check_last_id,self.epnums)
-        
-    def check_last_id(self,*args):
-        """
-        Validates the selected episode range.
-
-        This callback is triggered when either the start or end episode
-        selection changes. It disables the start button if the end episode
-        is numerically less than the start episode, ensuring valid range selection.
-        """
-        if int(self.epend_option_var.get()) < int(self.epstart_option_var.get()):
-            self.start_btn.state(['disabled'])
-        else:
-            self.start_btn.state(['!disabled'])
          
 class ThumbnailGenerate(TKFrameWithLPControls):
     def __init__(self, parent):
@@ -514,7 +409,6 @@ class ThumbnailGenerate(TKFrameWithLPControls):
         self.check_for_each_option_var = tk.BooleanVar(value=False)
         
         options = ttk.LabelFrame(self.W,text='Options')
-        
         
         self.check_for_each_option = ttk.Checkbutton(options, text='Check each', variable=self.check_for_each_option_var)
         self.check_for_each_option.pack()
@@ -535,21 +429,15 @@ class ThumbnailGenerate(TKFrameWithLPControls):
             self.thread.start()
         
     def __run(self):
-        print(f'run automation with cfe set as [{self.check_for_each_option_var.get()}]. In range: [{self.epstart_option_var.get()} - {self.epend_option_var.get()}]')
-
-        self.start_btn.state(['disabled'])
-        change_states([self.menu],'disabled')
-        change_states([self.label, self.lp_options],'disabled')
-        change_states([self.label2, self.label3,self.ep_end, self.ep_start],'disabled')
-        a, b = int(self.epstart_option_var.get()) , int(self.epend_option_var.get())
+        change_states([*self.lpep_picker.get_ui(),self.menu], 'disabled')
+        
+        a, b = int(self.lpep_picker.v_epstart.get()) , int(self.lpep_picker.v_epend.get())
         
         lp = SQLAccess.read_letsplay_by_option_var(self)
         
         GenerateThumbnailWF(lp,[a-1,b],self)
         
-        change_states([self.menu],'!disabled')
-        change_states([self.label, self.lp_options],'!disabled')
-        change_states([self.label2, self.label3,self.ep_end, self.ep_start],'!disabled')
+        change_states([*self.lpep_picker.get_ui(),self.menu], '!disabled')
         self.thread = None
     
 class AutomationFrame(tk.Frame):
@@ -599,37 +487,15 @@ class AutomationFrame(tk.Frame):
         
         # Create Headers
         AUTOMATION_ROOT = ttk.Frame(W)
-        
-        self.normal_options = ttk.LabelFrame(AUTOMATION_ROOT,text=f'LP & EP Selection')
 
         self.AUTOMATION_ROOT = AUTOMATION_ROOT
         
-        self.label, self.lp_options, self.lp_option_var= get_lets_play(self.normal_options, self.lp_changed)
-        
-        
-        self.update_ui()
-        
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.normal_options,self.run,self.check_last_id,self.epnums)
-        
-        self.normal_options.pack()
+        self.lpep_picker = LPEPPicker(AUTOMATION_ROOT,self.run,'lp-ep')
 
         AUTOMATION_ROOT.pack()
         
         W.pack()
         
-    def update_ui(self):
-        """
-        Updates the UI elements based on the selected 'Let's Play' series.
-
-        This method dynamically calculates the available episode numbers
-        based on the currently selected 'Let's Play' value and updates
-        the internal `epnums` list.
-        """
-        lp = self.lp_option_var.get()
-        if lp != 'None':
-            self.epnums = [i+1 for i in range(SQLAccess.read_episode_ammount(SQLAccess.read_letsplay_by_option_var(self)))]
-        else:
-            self.epnums = []
             
     def run(self,*args):
         """
@@ -651,62 +517,18 @@ class AutomationFrame(tk.Frame):
         `automation_callback` with the selected parameters, and then
         re-enables the UI elements upon completion unless `should_not_reset` is True.
         """
-        self.start_btn.state(['disabled'])
-        change_states([self.menu],'disabled')
-        change_states([self.label, self.lp_options],'disabled')
-        change_states([self.label2, self.label3,self.ep_end, self.ep_start],'disabled')
-        a, b = int(self.epstart_option_var.get()) , int(self.epend_option_var.get())
+        change_states([*self.lpep_picker.get_ui(), self.menu],'disabled')
+        a, b = int(self.lpep_picker.v_epstart.get()) , int(self.lpep_picker.v_epend.get())
         
         lp = SQLAccess.read_letsplay_by_option_var(self)
         self.automation_callback(lp,[a-1,b],self)
         
         if not self.should_not_reset:
             
-            change_states([self.menu],'!disabled')
-            change_states([self.label, self.lp_options],'!disabled')
-            change_states([self.label2, self.label3,self.ep_end, self.ep_start],'!disabled')
+            change_states([*self.lpep_picker.get_ui(), self.menu],'!disabled')
 
         self.thread = None
         
-    def lp_changed(self,*args):
-        """
-        Callback function executed when the 'Let's Play' selection changes.
-
-        This method updates the UI based on the new 'Let's Play' selection,
-        recalculates available episode numbers, and dynamically rebuilds
-        the episode range selection widgets. It also adjusts the state
-        of the start button.
-        """
-        self.update_ui()
-        
-        if not self.epnums:
-            self.start_btn.state(['disabled'])
-        else:
-            self.start_btn.state(['!disabled'])
-        
-        self.ep_start.destroy()
-        self.ep_end.destroy()
-        self.label2.destroy()
-        self.label3.destroy()
-        self.start_btn.destroy()
-        del self.epstart_option_var
-        del self.epend_option_var
-        
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.normal_options,self.run,self.check_last_id,self.epnums)
-        
-    def check_last_id(self,*args):
-        """
-        Validates the selected episode range.
-
-        This callback is triggered when either the start or end episode
-        selection changes. It disables the start button if the end episode
-        is numerically less than the start episode, ensuring valid range selection.
-        """
-        if int(self.epend_option_var.get()) < int(self.epstart_option_var.get()):
-            self.start_btn.state(['disabled'])
-        else:
-            self.start_btn.state(['!disabled'])
-
 class FetchAudio(AutomationFrame):
     def __init__(self, parent):
         super().__init__(parent)
@@ -863,31 +685,20 @@ class FileManager(tk.Frame):
         DATA_DELETION = ttk.LabelFrame(W,text='Data Deletion')
         self.DATA_DELETION = DATA_DELETION
         
-        self.simdel_lp_label, self.simdel_lp_options, self.simdel_lp_option_var= get_lets_play(DATA_DELETION, self.lp_changed)
-        
-        self.simdel_label2, self.simdel_label3, self.start_btn, self.simdel_ep_start, self.simdel_ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(DATA_DELETION,lambda x: None,self.check_last_id,[])
-        self.start_btn.destroy()
-        
-        self.delete_btn = ttk.Button(DATA_DELETION, text='Delete',command=self.delete_files)
-        self.delete_btn.state(['disabled'])
-        
-        self.delete_btn.grid(row=0,column=7,pady=5)
+        self.simple_delete_lpep = LPEPPicker(DATA_DELETION,self.delete_files,'lp-ep')
         
         DATA_DELETION.pack()
-        
         
         # Lets Play Delete
         LP_DELETE = ttk.LabelFrame(W,text='Lets Play Delete')
         
-        self.delete_lp_option = tk.IntVar(value=0)
+        self.lp_delete_lpep = LPEPPicker(LP_DELETE,self.delete_lets_play,'lp')
         
-        self.lp_label, self.lp_options, self.lp_option_var= get_lets_play(LP_DELETE, self.something_changed_delete)
-        self.btn_lp_delete = ttk.Button(LP_DELETE,text='Delete',command=self.delete_lets_play)
-        self.btn_lp_delete.state(['disabled'])
+        self.delete_lp_option = tk.IntVar(value=0)
+
         self.delete_files_del_lp = ttk.Checkbutton(LP_DELETE,text='Delete Files?',variable=self.delete_lp_option, onvalue=1, offvalue=0)
         
-        self.delete_files_del_lp.grid(row=0,column=3)
-        self.btn_lp_delete.grid(row=0,column=4)
+        self.delete_files_del_lp.pack(side='bottom')
 
         LP_DELETE.pack()
         
@@ -906,9 +717,7 @@ class FileManager(tk.Frame):
         game_name = ttk.Entry(LP_CREATE,textvariable=self.game_name_var)
         episode_length = ttk.OptionMenu(LP_CREATE,self.episode_length_var,'None',*[f'{i} Minutes' for i in range(10,65,5)],command=self.something_changed)
         self.btn_lp_create = ttk.Button(LP_CREATE,text='create',command=self.create_lets_play)
-        
-        name.bind('<KeyRelease>',self.something_changed)
-        game_name.bind('<KeyRelease>',self.something_changed)
+  
         self.btn_lp_create.state(['disabled'])
         
         new_label.grid(row=0,column=1)
@@ -923,15 +732,29 @@ class FileManager(tk.Frame):
         
         BACKUP = ttk.LabelFrame(W,text='Lets Play Backup')
         
-        self.backup_lp_label, self.backup_lp_options, self.backup_lp_option_var= get_lets_play(BACKUP, self.something_changed_backup)
-        
-        self.backup_btn = ttk.Button(BACKUP,text='Backup',command=self.create_video_backup)
-        self.backup_btn.grid(row=0,column=3)
-        self.backup_btn.state(['disabled']) 
+        self.backup_lpep = LPEPPicker(BACKUP,self.create_video_backup,'lp')
 
         BACKUP.pack()
         
         W.pack()
+    def something_changed(self,*args):
+        """
+        Callback for changes in input fields for 'Let's Play' creation.
+
+        Enables or disables the 'create' button based on whether all required
+        fields are filled and the 'Let's Play' name is unique.
+        """
+        for char in self.game_name_var.get(): # See issue #236
+            if char not in 'abcdefghijklmnopqrstuvwxyz_':
+                self.btn_lp_create.state(['disabled'])
+                return 
+        
+        if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.read_letsplay_names():
+            self.btn_lp_create.state(['!disabled'])
+            
+        else:
+            self.btn_lp_create.state(['disabled'])
+            
     def load_video_backup(self,*args):
         pass
     def create_video_backup(self,*args):
@@ -943,7 +766,7 @@ class FileManager(tk.Frame):
         'Let's Play' series.
         """
         change_states([self.menu],'disabled')
-        lpid = SQLAccess.read_letsplay_names().index(self.backup_lp_option_var.get())
+        lpid = SQLAccess.read_letsplay_names().index(self.backup_lpep.v_lp.get())
         lpname = SQLAccess.read_letsplay_names()[lpid]
         cnef(BACKUP_FOLDER)
         ZIP = ZipFile(f'{BACKUP_FOLDER}{lpname}.7z','w',)
@@ -964,57 +787,7 @@ class FileManager(tk.Frame):
                         print(file)
                         ZIP.write(file,file.replace('\\','/').split('/')[-1])
         change_states([self.menu],'!disabled')
-    
-    def something_changed_backup(self, *args):
-        """
-        Callback for changes in the backup 'Let's Play' selection.
 
-        Enables or disables the backup button based on whether a 'Let's Play'
-        is selected.
-        """
-        if self.backup_lp_option_var.get() != 'None':
-            self.backup_btn.state(['!disabled'])
-        else:
-            self.backup_btn.state(['disabled']) 
-    
-    def update_ui(self):
-        """
-        Updates UI elements related to episode range for data deletion.
-
-        Recalculates available episode numbers based on the selected 'Let's Play'
-        for the data deletion section.
-        """
-        lp = self.simdel_lp_option_var.get()
-        if lp != 'None':
-            self.epnums = [i+1 for i in range(SQLAccess.read_episode_ammount(SQLAccess.read_letsplay_names().index(self.simdel_lp_option_var.get())))]
-        else:
-            self.epnums = []
-            
-    def lp_changed(self,*args):
-        """
-        Callback for changes in the 'Let's Play' selection for data deletion.
-
-        Updates the UI to reflect episode numbers for deletion, re-creates
-        episode range selection widgets, and controls the state of the delete button.
-        """
-        self.update_ui()
-        
-        if not self.epnums:
-            self.delete_btn.state(['disabled'])
-        else:
-            self.delete_btn.state(['!disabled'])
-        
-        self.simdel_ep_start.destroy()
-        self.simdel_ep_end.destroy()
-        self.simdel_label2.destroy()
-        self.simdel_label3.destroy()
-        self.start_btn.destroy()
-        del self.epstart_option_var
-        del self.epend_option_var
-        
-        self.simdel_label2, self.simdel_label3, self.start_btn, self.simdel_ep_start, self.simdel_ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.DATA_DELETION,lambda x: None,self.check_last_id,self.epnums)
-        self.start_btn.destroy()
-    
     def check_last_id(self,*args):
         """
         Validates the episode range for data deletion.
@@ -1026,37 +799,7 @@ class FileManager(tk.Frame):
             self.delete_btn.state(['disabled'])
         else:
             self.delete_btn.state(['!disabled'])
-    
-    def something_changed(self,*args):
-        """
-        Callback for changes in input fields for 'Let's Play' creation.
 
-        Enables or disables the 'create' button based on whether all required
-        fields are filled and the 'Let's Play' name is unique.
-        """
-        for char in self.game_name_var.get(): # See issue #236
-            if char not in 'abcdefghijklmnopqrstuvwxyz_':
-                self.btn_lp_create.state(['disabled'])
-                return 
-        
-        if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.read_letsplay_names():
-            self.btn_lp_create.state(['!disabled'])
-            
-        else:
-            self.btn_lp_create.state(['disabled'])
-            
-    def something_changed_delete(self, *args):
-        """
-        Callback for changes in the 'Let's Play' selection for LP deletion.
-
-        Enables or disables the 'delete LP' button based on whether a 'Let's Play'
-        is selected.
-        """
-        if self.lp_option_var.get() != 'None':
-            self.btn_lp_delete.state(['!disabled'])
-        else:
-            self.btn_lp_delete.state(['disabled']) 
-            
     def create_lets_play(self,*args):
         """
         Creates a new 'Let's Play' entry in the database.
@@ -1158,8 +901,8 @@ class FileManager(tk.Frame):
         """
         ok = msgbox.askyesno('Attention','You are trying to delete all files in the selected lets play\nThis step is irreversible!\nContinue?')
         if not ok: return
-        lpid = SQLAccess.read_letsplay_names().index(self.simdel_lp_option_var.get())
-        print(SQLAccess.read_letsplay_names().index(self.simdel_lp_option_var.get()),self.simdel_lp_option_var.get())
+        lpid = SQLAccess.read_letsplay_names().index(self.simple_delete_lpep.v_lp.get())
+        print(SQLAccess.read_letsplay_names().index(self.simple_delete_lpep.v_lp.get()),self.simple_delete_lpep.v_lp.get())
         episodes = SQLAccess.read_episodes(lpid)
 
         for i in range(*self.rng): #! Test first
@@ -1190,7 +933,7 @@ class FileManager(tk.Frame):
             tuple: A tuple containing the start index (0-based) and end index
                    (exclusive, 0-based) for the selected episode range.
         """
-        a,b = int(self.epstart_option_var.get())-1, int(self.epend_option_var.get())
+        a,b = int(self.simple_delete_lpep.v_epstart.get())-1, int(self.simple_delete_lpep.v_epend.get())
         return a,b+(1 if a == b else 0)
 
 class TBO:
@@ -1396,7 +1139,7 @@ class TadEditor(tk.Frame):
         PREVIEW = ttk.LabelFrame(W,text='Preview')
         PREVIEW.pack()
         self.tw = ThumbnailPreview(PREVIEW)
-        _, self.lp_options, self.lp_option_var= get_lets_play(LETSPLAY, self.lp_changed)
+        self.lpep_picker = LPEPPicker(LETSPLAY,None,'lp-nb',ch_callback=self.lp_changed)
         
         self.tbos = []
         self.ui_elements = []
@@ -1468,7 +1211,7 @@ class TadEditor(tk.Frame):
         Enables/disables UI elements, loads existing TAD data for the selected
         'Let's Play' (if available), or sets default values.
         """
-        if self.lp_option_var.get() != 'None':
+        if self.lpep_picker.v_lp.get() != 'None':
             self.save_btn.state(['!disabled'])
             change_states([ui.ui for ui in self.ui_elements],'!disabled')
             lpid = SQLAccess.read_letsplay_by_option_var(self)
@@ -1476,7 +1219,9 @@ class TadEditor(tk.Frame):
             
             #! No JSONDecodError catch
             #! No wrong type catch[case: only if user change the data outside of lprt!]
-            
+            if filepath is None:
+                [ui.var.set(DEFAULT_TAD[entry]) for entry, ui in zip(DEFAULT_TAD,self.ui_elements)]
+                return
             if isfile(filepath):
                 DATA = json_read(filepath)
                 [ui.var.set(DATA[entry]) for entry, ui in zip(DATA,self.ui_elements)]
@@ -1611,20 +1356,13 @@ class CompAndRender(tk.Frame):
         W = tk.Frame(parent)
         
         AUTOMATION_ROOT = ttk.Frame(W)
-        
-        self.normal_options = ttk.Frame(AUTOMATION_ROOT)
+
         
         automation_root_header = ttk.Label(W,text='Audio Compare & Render',font=Font(W,size=16))
 
         self.AUTOMATION_ROOT = AUTOMATION_ROOT
-        
-        self.label, self.lp_options, self.lp_option_var= get_lets_play(self.normal_options, self.lp_changed)
-        
-        self.update_ui()
-        
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.normal_options,self.run,self.check_last_id,self.epnums)
-        
-        self.normal_options.pack()
+        self.lpep_picker = LPEPPicker(AUTOMATION_ROOT,self.run,'lp-ep')
+
         automation_root_header.pack(pady=10)
         AUTOMATION_ROOT.pack()
         self.thread = None
@@ -1634,78 +1372,22 @@ class CompAndRender(tk.Frame):
                        self)
         W.grid(row=0,column=1)
     
-    def update_ui(self):
-        """
-        Updates the UI elements based on the selected 'Let's Play' series.
-
-        This method dynamically calculates the available episode numbers
-        based on the currently selected 'Let's Play' value and updates
-        the internal `epnums` list.
-        """
-        lp = self.lp_option_var.get()
-        if lp != 'None':
-            self.epnums = [i+1 for i in range(SQLAccess.read_episode_ammount(SQLAccess.read_letsplay_by_option_var(self)))]
-        else:
-            self.epnums = []
-    
-    def lp_changed(self,*args):
-        """
-        Callback function executed when the 'Let's Play' selection changes.
-
-        This method updates the UI based on the new 'Let's Play' selection,
-        recalculates available episode numbers, and dynamically rebuilds
-        the episode range selection widgets. It also adjusts the state
-        of the start button.
-        """
-        self.update_ui()
-        
-        if not self.epnums:
-            self.start_btn.state(['disabled'])
-        else:
-            self.start_btn.state(['!disabled'])
-        
-        self.ep_start.destroy()
-        self.ep_end.destroy()
-        self.label2.destroy()
-        self.label3.destroy()
-        self.start_btn.destroy()
-        del self.epstart_option_var
-        del self.epend_option_var
-        
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.normal_options,self.run,self.check_last_id,self.epnums)
-        
-    def check_last_id(self,*args):
-        """
-        Validates the selected episode range.
-
-        This callback is triggered when either the start or end episode
-        selection changes. It disables the start button if the end episode
-        is numerically less than the start episode, ensuring valid range selection.
-        """
-        if int(self.epend_option_var.get()) < int(self.epstart_option_var.get()):
-            self.start_btn.state(['disabled'])
-        else:
-            self.start_btn.state(['!disabled'])
-    
     def run_automation(self,*args):
         if self.thread is None and self.media_player.audio_list:
             #! Deactivate menus see issue #287
             print('Automation Start')
-            change_states([self.menu],'disabled')
-            change_states([self.start_btn,*self.media_player.get_ui()],'disabled')
+            change_states([*self.media_player.get_ui(),*self.lpep_picker.get_ui(),self.menu],'disabled')
             self.thread = Thread(target=self.__ra)
             self.thread.start()
             
-        
     def __ra(self):
         render(self.media_player.audio_list,self,SQLAccess.read_letsplay_by_option_var(self))
         
-        change_states([self.menu],'!disabled')
-        change_states([self.start_btn,*self.media_player.get_ui()],'!disabled')
+        change_states([*self.media_player.get_ui(),*self.lpep_picker.get_ui(),self.menu],'!disabled')
         self.thread = None
         
     def run(self,*args):
-        a, b = int(self.epstart_option_var.get())-1, int(self.epend_option_var.get())
+        a, b = int(self.lpep_picker.v_epstart.get())-1, int(self.lpep_picker.v_epend.get())
         rng = [a,b]
         
         episodes = SQLAccess.read_episodes(SQLAccess.read_letsplay_by_option_var(self)) #!<--
@@ -1737,19 +1419,11 @@ class SetTitle(tk.Frame):
         
         AUTOMATION_ROOT = ttk.Frame(W)
         
-        self.normal_options = ttk.Frame(AUTOMATION_ROOT)
-        
         automation_root_header = ttk.Label(W,text='Title Set',font=Font(W,size=16))
 
         self.AUTOMATION_ROOT = AUTOMATION_ROOT
-        
-        self.label, self.lp_options, self.lp_option_var= get_lets_play(self.normal_options, self.lp_changed)
-        
-        self.update_ui()
-        
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.normal_options,self.run,self.check_last_id,self.epnums)
-        
-        self.normal_options.pack()
+        self.lpep_picker = LPEPPicker(AUTOMATION_ROOT,self.run,'lp-ep')
+
         automation_root_header.pack(pady=10)
         AUTOMATION_ROOT.pack()
         
@@ -1769,63 +1443,10 @@ class SetTitle(tk.Frame):
         gemini_stuff.pack()
         
         W.grid(row=0,column=1)
-    
-    def update_ui(self):
-        """
-        Updates the UI elements based on the selected 'Let's Play' series.
 
-        This method dynamically calculates the available episode numbers
-        based on the currently selected 'Let's Play' value and updates
-        the internal `epnums` list.
-        """
-        lp = self.lp_option_var.get()
-        if lp != 'None':
-            self.epnums = [i+1 for i in range(SQLAccess.read_episode_ammount(SQLAccess.read_letsplay_by_option_var(self)))]
-        else:
-            self.epnums = []
-    
-    def lp_changed(self,*args):
-        """
-        Callback function executed when the 'Let's Play' selection changes.
-
-        This method updates the UI based on the new 'Let's Play' selection,
-        recalculates available episode numbers, and dynamically rebuilds
-        the episode range selection widgets. It also adjusts the state
-        of the start button.
-        """
-        self.update_ui()
-        
-        if not self.epnums:
-            self.start_btn.state(['disabled'])
-        else:
-            self.start_btn.state(['!disabled'])
-        
-        self.ep_start.destroy()
-        self.ep_end.destroy()
-        self.label2.destroy()
-        self.label3.destroy()
-        self.start_btn.destroy()
-        del self.epstart_option_var
-        del self.epend_option_var
-        
-        self.label2, self.label3, self.start_btn, self.ep_start, self.ep_end, self.epstart_option_var, self.epend_option_var = get_episode_range(self.normal_options,self.run,self.check_last_id,self.epnums)
-        
-    def check_last_id(self,*args):
-        """
-        Validates the selected episode range.
-
-        This callback is triggered when either the start or end episode
-        selection changes. It disables the start button if the end episode
-        is numerically less than the start episode, ensuring valid range selection.
-        """
-        if int(self.epend_option_var.get()) < int(self.epstart_option_var.get()):
-            self.start_btn.state(['disabled'])
-        else:
-            self.start_btn.state(['!disabled'])
-            
     def run(self,*args):
         
-        a, b = int(self.epstart_option_var.get())-1, int(self.epend_option_var.get())
+        a, b = int(self.lpep_picker.v_epstart.get())-1, int(self.lpep_picker.v_epend.get())
         
         data = [i + 1 for i in range(a,b+(1 if a == b else 0))]
         self.media_player.reset(data, SQLAccess.read_letsplay_by_option_var(self))
