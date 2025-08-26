@@ -736,7 +736,7 @@ class FileManager(tk.Frame):
     
         LP_CREATE.pack()
         
-        LP_EDIT = ttk.LabelFrame(W,text='Lets Play Create')
+        LP_EDIT = ttk.LabelFrame(W,text='Lets Play Edit')
         
         self.lp_edit_lpep = LPEPPicker(LP_EDIT,self.update_lets_play,'lp',ICO_REFRESH)
 
@@ -799,7 +799,7 @@ class FileManager(tk.Frame):
         lpname = SQLAccess.read_letsplay_names()[lpid]
         cnef(BACKUP_FOLDER)
         ZIP = ZipFile(f'{BACKUP_FOLDER}{lpname}.7z','w',)
-        tad = SQLAccess.update_tad_path(lpid)
+        tad = SQLAccess.read_tad_path(lpid)
         
         if tad is not None:
             if isfile(TAD_FOLDER+tad):
