@@ -1,8 +1,7 @@
 name: Runtest
 
 on:
-    push: 
-        - '**'
+    push: ['**']
     pull_request:
 jobs:
     run-tests:
