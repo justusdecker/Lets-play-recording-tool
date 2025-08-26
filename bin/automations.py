@@ -27,10 +27,13 @@ except:
     quit()
    
 def obs_rec_label_set(OBSO, el,reset:bool = False):
+    """
+    Sets the recording label color
+    """
     if reset:
         el.recording_information_label.configure(foreground='black')
         return
-    epl = SQLAccess.read_episode_length(SQLAccess.read_letsplay_names().index(el.lp_option_var.get()))
+    epl = SQLAccess.read_episode_length(SQLAccess.read_letsplay_names().index(el.lpep_picker.v_lp.get()))
     
     if epl is None:
         el.recording_information_label.configure(foreground='black')
@@ -68,9 +71,9 @@ def obs_connect(el):
             el.btn_connect.configure(text= 'Connection closed!')
             return
         try:
-            id = SQLAccess.read_letsplay_names().index(el.lp_option_var.get())
+            id = SQLAccess.read_letsplay_names().index(el.lpep_picker.v_lp.get())
             if OBSO.time_in_seconds:
-                el.recording_information_label.configure(text= f'Recording - {SQLAccess.read_episode_ammount(id)} Episodes\n{OBSO.timecode}')
+                el.recording_information_label.configure(text= f'Recording - {SQLAccess.read_episode_ammount(id)} Episodes\n{OBSO.timecode.split(".")[0]}')
                 obs_rec_label_set(OBSO,el)
             else:
                 obs_rec_label_set(OBSO,el, True)
@@ -80,6 +83,7 @@ def obs_connect(el):
             obs_rec_label_set(OBSO,el, True)
             el.btn_connect.configure(text= 'Unexpected Error happened')
             print(f'Unexpected Error happened [{E}]')
+        sleep(0.3)
 
 class GenericWorkFlow:
     """
@@ -215,7 +219,8 @@ class GenerateThumbnailWF(OverhauledWorkFlow):
         # After processing all episodes, we re-enabling the application's start button
         # and calling the parent `user_workflow` to display the completion message.
         # It does not matter whether the automation was completed or canceled.
-        app.start_btn.state(['!disabled'])
+        for i in app.lpep_picker.get_ui():
+            i.state(['!disabled'])
 
 class ExtractAudioWF(GenericWorkFlow):
     """
@@ -278,7 +283,8 @@ class ExtractAudioWF(GenericWorkFlow):
         # After processing all episodes, we re-enabling the application's start button
         # and calling the parent `user_workflow` to display the completion message.
         # It does not matter whether the automation was completed or canceled.
-        app.start_btn.state(['!disabled'])
+        for i in app.lpep_picker.get_ui():
+            i.state(['!disabled'])
 
 class FixAudioWF(GenericWorkFlow):
     """
@@ -328,7 +334,8 @@ class FixAudioWF(GenericWorkFlow):
         # After processing all episodes, we re-enabling the application's start button
         # and calling the parent `user_workflow` to display the completion message.
         # It does not matter whether the automation was completed or canceled.
-        app.start_btn.state(['!disabled'])
+        for i in app.lpep_picker.get_ui():
+            i.state(['!disabled'])
 
 class SendToAudacityWF(GenericWorkFlow):
     """
@@ -408,7 +415,8 @@ class SendToAudacityWF(GenericWorkFlow):
                 reoc(not isfile(new),ERROR_007)
                 #remove()
                 SQLAccess.update_episode(self.lpid,rng_list[ep],audio_mic_edit2_path=new)
-            app.start_btn.state(['!disabled'])
+            for i in app.lpep_picker.get_ui():
+                i.state(['!disabled'])
             super().user_workflow()
         except AutomationError as AE:
             msgbox.showerror('Automation Error',str(AE))
@@ -416,7 +424,8 @@ class SendToAudacityWF(GenericWorkFlow):
         # After processing all episodes, we re-enabling the application's start button
         # and calling the parent `user_workflow` to display the completion message.
         # It does not matter whether the automation was completed or canceled.
-        app.start_btn.state(['!disabled'])
+        for i in app.lpep_picker.get_ui():
+            i.state(['!disabled'])
         try:
             break_pipe()
         except Exception as E:
@@ -424,7 +433,7 @@ class SendToAudacityWF(GenericWorkFlow):
 
 def render(result,app, lpid):
     """
-    Currently a workaround. Will be refactored into Compare&Render ASAP
+    Currently a workaround. Will be refactored into Compare&Render ASAP - issie #345
     """
     rendering_queue = []
     try:
@@ -472,6 +481,7 @@ def render(result,app, lpid):
             #app.progress_label.configure(text = f'Audio Combine\n{((ci+1)/len(result))*100:.1f}%\n{ci+1}/{len(result)}')
             ci += 1
             SQLAccess.update_episode(lpid, index, final_video_path=final_path)
+        toast_finished("[2/2] Audio combine")
     except AutomationError as AE:
         msgbox.showerror('Automation Error',str(AE))
 
@@ -483,6 +493,7 @@ class DeployWF(GenericWorkFlow):
     def __init__(self,lpid, epr,app):
         super().__init__(folder=TEMP_FOLDER, finish_message="CAAR",lpid=lpid, epr=epr)
         self.user_workflow(app)
+    
     def user_workflow(self,app):
         """
         Copies Video & Thumbnail to selected destination.
@@ -559,4 +570,5 @@ class DeployWF(GenericWorkFlow):
         # After processing all episodes, we re-enabling the application's start button
         # and calling the parent `user_workflow` to display the completion message.
         # It does not matter whether the automation was completed or canceled.
-        app.start_btn.state(['!disabled'])
+        for i in app.lpep_picker.get_ui():
+            i.state(['!disabled'])

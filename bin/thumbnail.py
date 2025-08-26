@@ -301,6 +301,7 @@ class ThumbnailGenerator:
         #center image position calculation [x,y] [w,h]
         # x - (w / 2) & y - (h / 2)
         return surf
+    
     def __render_background(self, filepath: str, frame: float):
         """
         Renders the background image for the thumbnail, applying positional offsets, random rotation, and random scaling based on self.tad configuration.

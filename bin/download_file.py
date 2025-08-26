@@ -51,10 +51,11 @@ def get_newest_version_number():
         return {'version': '_'.join(VERSION.split('.')[0:2])}
     
 def send_heartbeat():
-    
+    """
+    Sends a heartbeat to the LPRT API
+    """
     try:
         r = post('https://justusdecker.pythonanywhere.com/api/heartbeat')
-        print(r.text)
         r.raise_for_status()
     except (HTTPError, RequestException) as E:
-        print(E)
+        pass

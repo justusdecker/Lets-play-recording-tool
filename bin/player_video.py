@@ -57,13 +57,20 @@ class NewVideoPlayer(NewMediaPlayer):
         self.title_setter = ttk.Entry(self.bar,textvariable=self.title_var)
         self.title_setter.pack(side=LEFT, padx=5)
         
-        self.update_title_button = ttk.Button(self.bar, text="Update", command=self.set_video_title)
-        self.update_title_button.pack(side=LEFT, padx=5)
         
-        self.take_thumbnail_btn = ttk.Button(self.bar,text='Generate Thumbnail',command=self.gen_thumbnail)
+        img = AsciiImage(ICO_REFRESH)
+        self.update_title_button = ttk.Button(self.bar, image=img.image, command=self.set_video_title)
+        self.update_title_button.pack(side=LEFT, padx=5)
+        self.update_title_button.image = img.image
+        
+        
+        img = AsciiImage(ICO_TAKE_THUMBNAIL)
+        self.take_thumbnail_btn = ttk.Button(self.controls,image=img.image,command=self.gen_thumbnail)
         self.take_thumbnail_btn.pack(side=LEFT, padx=5)
+        self.take_thumbnail_btn.image = img.image
         
     def reset(self,data,lpid):
+        """ Resets to prevent errors """
         change_states([self.stop_button,self.play_button, self.pause_button, self.next_button, self.last_button, self.take_thumbnail_btn, self.update_title_button],'disabled')
         self.stop_video()
         self.data: list[int] = data
@@ -119,8 +126,24 @@ class NewVideoPlayer(NewMediaPlayer):
         
         print('finished generating')
         self.blocked = False
+        
+    def pause_video(self):
+        """ Pauses the video """
+        if not self.data: return
+        return super().pause_video()
+    
+    def stop_video(self):
+        """ Stops the video """
+        if not self.data: return
+        return super().stop_video()
     
     def play_video(self):
+        """ 
+        Plays the video
+        
+        Sets the Labeltext to the current video_path
+        """
+        if not self.data: return
         self.open_file(self.video_path)
         self.title_var.set(f'{self.video_title}')
         self.current_media_label.configure(text=f'{self.rel_id+1}_{SQLAccess.read_letsplay_name(self.lpid)}')
