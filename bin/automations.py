@@ -481,6 +481,7 @@ def render(result,app, lpid):
             #app.progress_label.configure(text = f'Audio Combine\n{((ci+1)/len(result))*100:.1f}%\n{ci+1}/{len(result)}')
             ci += 1
             SQLAccess.update_episode(lpid, index, final_video_path=final_path)
+        toast_finished("[2/2] Audio combine")
     except AutomationError as AE:
         msgbox.showerror('Automation Error',str(AE))
 
