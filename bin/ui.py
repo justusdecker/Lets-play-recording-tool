@@ -800,21 +800,23 @@ class FileManager(tk.Frame):
         cnef(BACKUP_FOLDER)
         ZIP = ZipFile(f'{BACKUP_FOLDER}{lpname}.7z','w',)
         tad = SQLAccess.read_tad_path(lpid)
-        
-        if tad is not None:
-            if isfile(TAD_FOLDER+tad):
-                ZIP.write(TAD_FOLDER+tad,tad)
-        for ep in SQLAccess.read_episodes(lpid):#BUG
-                
-            for file in [
-                ep.video_path,
-                ep.final_video_path
-                ]:
-                
-                if file is not None:
-                    if isfile(file):
-                        print(file)
-                        ZIP.write(file,file.replace('\\','/').split('/')[-1])
+        try:
+            if tad is not None:
+                if isfile(TAD_FOLDER+tad):
+                    ZIP.write(TAD_FOLDER+tad,tad)
+            for ep in SQLAccess.read_episodes(lpid):#BUG
+                    
+                for file in [
+                    ep.video_path,
+                    ep.final_video_path
+                    ]:
+                    
+                    if file is not None:
+                        if isfile(file):
+                            print(file)
+                            ZIP.write(file,file.replace('\\','/').split('/')[-1])
+        except Exception as E:
+            msgbox.showerror('ERROR', str(E))
         change_states([self.menu],'!disabled')
 
     def check_last_id(self,*args):
