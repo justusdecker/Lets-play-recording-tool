@@ -62,6 +62,9 @@ class LPEPPicker:
         self.st_create_ui()
         
     def st_create_ui(self):
+        """
+        Creates and configures Tkinter UI elements for starting a task.
+        """
         if self.d_nb: return
         img = AsciiImage(self.btn_image)
         self.btn_run = ttk.Button(self.obj, image=img.image,command=self.run)
@@ -115,6 +118,7 @@ class LPEPPicker:
             self.opm_end.pack(side='left')
 
     def check(self,*_):
+        """ Checks: b < a. So the start ep cant be greater than the end! """
         if self.s_ep and not self.d_ne:
             if int(self.v_epend.get()) < int(self.v_epstart.get()):
                 self.btn_run.state(['disabled'])
@@ -122,6 +126,7 @@ class LPEPPicker:
                 self.btn_run.state(['!disabled'])
     
     def reset(self):
+        """ resets the ui """
         self.destroy_st()
         self.destroy_lp()
         self.lp_create_ui()
@@ -130,10 +135,12 @@ class LPEPPicker:
         self.st_create_ui()
     
     def destroy_st(self):
+        """ destroy the start button """
         if self.d_nb: return
         self.btn_run.destroy()
     
     def destroy_ep(self):
+        """ destory the ep selector """
         if not self.s_ep: return
         self.lbl_start.destroy()
         if not self.d_ne: self.lbl_end.destroy()
@@ -141,17 +148,20 @@ class LPEPPicker:
         self.opm_end.destroy()
         
     def destroy_lp(self):
+        """ destroy the lp selector """
         if not self.s_lp: return
         self.lp_label.destroy()
         self.options.destroy()
         
     def destroy(self):
+        """ destory all elements """
         self.obj.destroy()
         self.destroy_lp()
         self.destroy_ep()
         return super().destroy()
     
     def run(self,*_):
+        """ runs the `self.callback` function """
         if self.s_ep:
             if not self.d_ne:
                 variables = [self.v_lp.get(),self.v_epstart.get(),self.v_epend.get()]
@@ -163,6 +173,7 @@ class LPEPPicker:
         self.callback()
     
     def get_ui(self) -> list[Button]:
+        """ Gets all ui elements that need to be blocked """
         _ret = [self.options]
         if not self.d_nb:
             _ret.append(self.btn_run)
@@ -235,6 +246,7 @@ class Notebook:
         self.notebook.pack(padx=5,pady=5)
             
     def get_root_for(self,name: str):
+        """ Gets the parent element for `name` """
         if not name in self.names: raise NameError
         return self.frames[self.names.index(name)]
                    
@@ -261,7 +273,9 @@ class TkinterApp(tk.Tk):
         AI = AsciiImage(IMG_LOGO)
     
         self.wm_iconphoto(False,AI.image)
+    
     def get_ui_names(self) -> list[str]:
+        """ Gets all ui_names """
         return [
             'Main',
             'Recording',
@@ -277,7 +291,11 @@ class TkinterApp(tk.Tk):
             'Settings',
             'About',
         ]
+    
     def build_ui(self):
+        """
+        For each ui_element this prints you a message & create the desired element
+        """
         ELEMENTS = [
             (Main, 'Main'),
             (Recording, 'Recording'),
