@@ -70,6 +70,7 @@ class NewVideoPlayer(NewMediaPlayer):
         self.take_thumbnail_btn.image = img.image
         
     def reset(self,data,lpid):
+        """ Resets to prevent errors """
         change_states([self.stop_button,self.play_button, self.pause_button, self.next_button, self.last_button, self.take_thumbnail_btn, self.update_title_button],'disabled')
         self.stop_video()
         self.data: list[int] = data
@@ -125,13 +126,23 @@ class NewVideoPlayer(NewMediaPlayer):
         
         print('finished generating')
         self.blocked = False
+        
     def pause_video(self):
+        """ Pauses the video """
         if not self.data: return
         return super().pause_video()
+    
     def stop_video(self):
+        """ Stops the video """
         if not self.data: return
         return super().stop_video()
+    
     def play_video(self):
+        """ 
+        Plays the video
+        
+        Sets the Labeltext to the current video_path
+        """
         if not self.data: return
         self.open_file(self.video_path)
         self.title_var.set(f'{self.video_title}')

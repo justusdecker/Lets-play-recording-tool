@@ -6,8 +6,10 @@ DISCLAIMER = f"""
 {COPYRIGHT}
 Welcome to LPRT
 
-This Tool is currently Work in Progress!
-Some features might not work as expected & can cause data loss! Be careful!
+A Let's Play automation tool that simplifies your workflow 
+for recording, editing, and distribution.
+
+Do you find a bug? Share it with us!
 
 For Documentation, please look up the GitHub-wiki
 """

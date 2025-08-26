@@ -27,6 +27,9 @@ except:
     quit()
    
 def obs_rec_label_set(OBSO, el,reset:bool = False):
+    """
+    Sets the recording label color
+    """
     if reset:
         el.recording_information_label.configure(foreground='black')
         return
@@ -430,7 +433,7 @@ class SendToAudacityWF(GenericWorkFlow):
 
 def render(result,app, lpid):
     """
-    Currently a workaround. Will be refactored into Compare&Render ASAP
+    Currently a workaround. Will be refactored into Compare&Render ASAP - issie #345
     """
     rendering_queue = []
     try:
@@ -489,6 +492,7 @@ class DeployWF(GenericWorkFlow):
     def __init__(self,lpid, epr,app):
         super().__init__(folder=TEMP_FOLDER, finish_message="CAAR",lpid=lpid, epr=epr)
         self.user_workflow(app)
+    
     def user_workflow(self,app):
         """
         Copies Video & Thumbnail to selected destination.

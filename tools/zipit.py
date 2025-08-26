@@ -1,3 +1,7 @@
+"""
+This Modules packs the compiled EXE & some other files into a zipfile
+"""
+
 import zipfile
 from os import chdir
 chdir('..')
