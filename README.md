@@ -32,7 +32,12 @@ This tool includes features like filemanagement to make your life as a lets play
   - OBS Studio
   - Audacity - 3.0.0
   - FFMPEG for Audacity
-  - FFMPEG
+  - FFMPEG - (downloads automatically)
+  - [libpng16-16.dll](https://github.com/pnggroup/libpng) - (unpacks automatically)
+
+> [!NOTE]
+> FFMPEG & libpng16-16.dll downloading / installing automatically.
+
 > [!IMPORTANT]
 > All of the programs are needed to make LPRT fully function!
 ## What do you need? - (For Developers)
@@ -45,12 +50,9 @@ The most essential features are implemented right now. A bug here and there may 
 You can get the current state [here](https://github.com/justusdecker/Lets-play-recording-tool/milestones)
 
 > [!CAUTION]
-> Some bugs can lead to data loss(Only your lets plays!). **BE CAREFUL!**
+> A few bugs / User error can lead to data loss(Only your lets plays!). **BE CAREFUL!**
 > For this case. You can backup your videos etc. anytime by using the FileManager! 
 
-## Planned Stuff for the future
-
-look into [this](https://github.com/justusdecker/Lets-play-recording-tool/issues)
 
 ## Join LPRT-development
 
@@ -59,10 +61,7 @@ If you are interested in LPRT, its programming, artworks, testing or something l
 Information about what you can do and be found in the [wiki](https://github.com/justusdecker/Lets-play-recording-tool/wiki)
 
 You have an idea or suggestions? Make sure to file an issue & wait for replies!
-Maybe there are different ideas, improvements, or hints or maybe your feature is not welcome/need at the moment.
-
-## This Application uses:
-|libpng16-16.dll|From libpng - used for image rendering on screen|Lookup [this](https://github.com/pnggroup/libpng) for more information|
+Maybe there are different ideas, improvements, or hints or maybe your feature is not welcome / needed at the moment.
 
 ## How to compile yourself
 run `compile.bat` from the `./tools` directory.
