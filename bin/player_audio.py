@@ -35,6 +35,7 @@ class NewAudioPlayer(NewMediaPlayer):
         self.desktop_volume_slider.pack(side=LEFT, padx=5)
     
     def reset(self,al):
+        """ Resets the AudioPlayer to prevent errors! """
         self.player.stop()
         self.audio_list = al
         self.current_episode = 0
@@ -44,10 +45,12 @@ class NewAudioPlayer(NewMediaPlayer):
         self.play_video()
     
     def get_ui(self):
+        """ Gets all ui elements that need to be blocked """
         return [self.finished_all_button,self.finished_button, self.last_button,self.next_button,self.play_button,self.pause_button,self.stop_button]
     
     @property
     def current_media(self) -> list:
+        """ Gets the current media. Returns an emtry list if the `self.audio_list` is empty """
         if self.audio_list:
             return self.audio_list[self.current_episode]
         else:
@@ -55,6 +58,9 @@ class NewAudioPlayer(NewMediaPlayer):
     
     @property
     def media(self) -> str:
+        """
+        Generates Audio & return its path
+        """
         if not self.audio_list: return ''
         
         change_states([self.stop_button,self.play_button, self.pause_button, self.next_button, self.last_button,self.finished_all_button, self.finished_button],'disabled')
@@ -99,22 +105,29 @@ class NewAudioPlayer(NewMediaPlayer):
             self.play_video()
             
     def play_video(self):
+        """ Plays the audio & set the label to the current episode """
         self.open_file()
         LOG('Start playing',logtype=LOG_INFO)
         self.current_media_label.configure(text=f'{self.current_media[0]+1}')
         return super().play_video()
     
     def open_file(self):
-        
+        """ Opens the `self.media` file """
         return super().open_file(self.media)
     
     def set_volume_desktop(self, value):
+        """
+        Sets the volume of track 2 - Desktop
+        """
         if self.busy_state: return
         if not self.audio_list: return
         self.desktop_vol = int(value)
         self.current_media[4] = self.desktop_vol / 100 if self.desktop_vol else 0
         
     def apply_vol_to_all(self):
+        """
+        Sets the current volume each element in `self.audio_list`
+        """
         if not self.audio_list: return
         for media in self.audio_list:
             media[4] = self.desktop_vol / 100 if self.desktop_vol else 0

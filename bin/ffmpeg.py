@@ -17,7 +17,7 @@ This is the main function for executing FFmpeg commands.
 
 # FFMPEG Command Definitions
 
-.. FFMPEG_DEFAULT:: 
+.. FFMPEG_DEFAULT_PRODUCTION:: 
     Base command list for FFmpeg operations.
     ***
     `'ffmpeg'`:
@@ -25,7 +25,7 @@ This is the main function for executing FFmpeg commands.
     `'-y'`:
         Overwrites output files without asking for confirmation.
 
-.. FFMPEG_DEFAULT_PRODUCTION::
+.. FFMPEG_DEFAULT::
     Base command for production environments.
     ***
     `'ffmpeg'`:

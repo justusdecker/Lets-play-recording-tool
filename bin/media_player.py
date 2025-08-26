@@ -125,8 +125,7 @@ class NewMediaPlayer(tk.Frame):
             self.set_video_panel()
         else:
             LOG('Cannot open file: $',[videopath],LOG_WARNING)
-            
-            
+                    
     def episode_down(self,*args):
         pass
     

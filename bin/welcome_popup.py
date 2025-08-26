@@ -52,6 +52,7 @@ class Welcome:
             except:
                 pass
     def update_message(self,text: str):
+        """ Sets the new message that will be blitted on screen """
         self.message = self.font.render(text,True,(255,255,255))
     def destroy(self):
         """ removing its existance! """

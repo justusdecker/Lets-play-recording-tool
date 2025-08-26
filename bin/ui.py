@@ -62,6 +62,9 @@ class LPEPPicker:
         self.st_create_ui()
         
     def st_create_ui(self):
+        """
+        Creates and configures Tkinter UI elements for starting a task.
+        """
         if self.d_nb: return
         img = AsciiImage(self.btn_image)
         self.btn_run = ttk.Button(self.obj, image=img.image,command=self.run)
@@ -115,6 +118,7 @@ class LPEPPicker:
             self.opm_end.pack(side='left')
 
     def check(self,*_):
+        """ Checks: b < a. So the start ep cant be greater than the end! """
         if self.s_ep and not self.d_ne:
             if int(self.v_epend.get()) < int(self.v_epstart.get()):
                 self.btn_run.state(['disabled'])
@@ -122,6 +126,7 @@ class LPEPPicker:
                 self.btn_run.state(['!disabled'])
     
     def reset(self):
+        """ resets the ui """
         self.destroy_st()
         self.destroy_lp()
         self.lp_create_ui()
@@ -130,10 +135,12 @@ class LPEPPicker:
         self.st_create_ui()
     
     def destroy_st(self):
+        """ destroy the start button """
         if self.d_nb: return
         self.btn_run.destroy()
     
     def destroy_ep(self):
+        """ destory the ep selector """
         if not self.s_ep: return
         self.lbl_start.destroy()
         if not self.d_ne: self.lbl_end.destroy()
@@ -141,17 +148,20 @@ class LPEPPicker:
         self.opm_end.destroy()
         
     def destroy_lp(self):
+        """ destroy the lp selector """
         if not self.s_lp: return
         self.lp_label.destroy()
         self.options.destroy()
         
     def destroy(self):
+        """ destory all elements """
         self.obj.destroy()
         self.destroy_lp()
         self.destroy_ep()
         return super().destroy()
     
     def run(self,*_):
+        """ runs the `self.callback` function """
         if self.s_ep:
             if not self.d_ne:
                 variables = [self.v_lp.get(),self.v_epstart.get(),self.v_epend.get()]
@@ -163,6 +173,7 @@ class LPEPPicker:
         self.callback()
     
     def get_ui(self) -> list[Button]:
+        """ Gets all ui elements that need to be blocked """
         _ret = [self.options]
         if not self.d_nb:
             _ret.append(self.btn_run)
@@ -235,6 +246,7 @@ class Notebook:
         self.notebook.pack(padx=5,pady=5)
             
     def get_root_for(self,name: str):
+        """ Gets the parent element for `name` """
         if not name in self.names: raise NameError
         return self.frames[self.names.index(name)]
                    
@@ -261,7 +273,9 @@ class TkinterApp(tk.Tk):
         AI = AsciiImage(IMG_LOGO)
     
         self.wm_iconphoto(False,AI.image)
+    
     def get_ui_names(self) -> list[str]:
+        """ Gets all ui_names """
         return [
             'Main',
             'Recording',
@@ -277,7 +291,11 @@ class TkinterApp(tk.Tk):
             'Settings',
             'About',
         ]
+    
     def build_ui(self):
+        """
+        For each ui_element this prints you a message & create the desired element
+        """
         ELEMENTS = [
             (Main, 'Main'),
             (Recording, 'Recording'),
@@ -360,6 +378,7 @@ class Recording(tk.Frame):
     def lp_changed(self,*args):
         self.btn_connect.state(["!disabled"])
     def get_connection(self):
+        """ This launched the thread, to get OBS connection """
         if self.thread:
             self.close_connection = True
         change_states(self.lpep_picker.get_ui(),'disabled')
@@ -368,13 +387,10 @@ class Recording(tk.Frame):
             self.thread = Thread(target=self.__get_connection)
             self.thread.start()
     def __get_connection(self):
-        
+        """ Establish the connection & terminates it - with obs """
         change_states([self.menu],'disabled') # Deactivates all menu buttons for safety reasons
-        
-        ep = SQLAccess.read_episodes(SQLAccess.read_letsplay_names().index(self.lpep_picker.v_lp.get()))
         self.btn_connect.state(["disabled"])
         self.btn_connect.configure(text='Try connection to OBS...')
-        #! Currently Disconnecting only works by closing OBS <- mainly for safety reasons!
         obs_connect(self)
 
         self.btn_connect.state(["!disabled"])
@@ -425,11 +441,13 @@ class ThumbnailGenerate(TKFrameWithLPControls):
         #- Image Canvas to render on <- comes after refactoring player_thumbnail
         
     def run(self):
+        """ opens a thread with `self.__run` """
         if self.thread is None:
             self.thread = Thread(target=self.__run)
             self.thread.start()
         
     def __run(self):
+        """ Generates the Thumbnail """
         change_states([*self.lpep_picker.get_ui(),self.menu], 'disabled')
         
         a, b = int(self.lpep_picker.v_epstart.get()) , int(self.lpep_picker.v_epend.get())
@@ -496,8 +514,7 @@ class AutomationFrame(tk.Frame):
         AUTOMATION_ROOT.pack()
         
         W.pack()
-        
-            
+               
     def run(self,*args):
         """
         Initiates the automation process in a separate thread.
@@ -741,6 +758,7 @@ class FileManager(tk.Frame):
         W.pack()
         
     def update_lets_play(self,*_):
+        """ Updates the episode_length for the selected lets-play only if value is not None """
         if self.lp_edit_lpep.v_lp.get() == 'None': return
         SQLAccess.update_letsplay(SQLAccess.read_letsplay_names().index(self.lp_edit_lpep.v_lp.get()),int(self.lp_edit_episode_length_var.get().split(' ')[0])*60)
     
@@ -762,11 +780,12 @@ class FileManager(tk.Frame):
             
         else:
             self.btn_lp_create.state(['disabled'])
-            
-        
-            
+             
     def load_video_backup(self,*args):
-        pass
+        """
+        See issue #212
+        """
+        
     def create_video_backup(self,*args):
         """
         Creates a ZIP archive of selected 'Let's Play' videos and TAD files.
@@ -823,7 +842,17 @@ class FileManager(tk.Frame):
             msgbox.showinfo('Success', 'Lets Play created\nYou must restart the app!')
             sys.exit()
     
-    def det(self,path: str) -> list[int,int]:
+    def det(self,path: str) -> list[str,int,int]:
+        """ 
+        Goes trough folder/sub_folder(<- if exist) & adding up the size & ammount of files.
+        
+        Returns:
+            str: formatted {SIZE} in {AMMOUNT} files
+            
+            int: SIZE
+            
+            int: AMMOUNT
+        """
         SIZE = 0
         AMMOUNT = 0
         for file in listdir(path):
@@ -839,7 +868,16 @@ class FileManager(tk.Frame):
                 print(E)
             
         return f'{self.gsn(SIZE)} in {AMMOUNT} files',SIZE, AMMOUNT
-    def gsn(self,num):
+    
+    def gsn(self,num: int) -> str:
+        """
+        Converts a number of bytes into a human-readable size string.
+
+        This method takes a numerical value representing bytes and converts it
+        into a more readable format (e.g., KB, MB, GB, TB) by dividing by 1024
+        until the number is less than 1024. The result is formatted to two
+        decimal places and appended with the appropriate unit.
+        """
         typ = ['B','KB','MB','GB','TB']
         if num:
             while 1:
@@ -849,13 +887,13 @@ class FileManager(tk.Frame):
                 else:
                     break
         return f'{num:.2f}{typ[0]}'
+    
     def on_detect(self,*args):
         """
         Collects and displays statistics about files and their sizes
         within various application folders.
 
-        Calculates total files and sizes for LPRT created data, temporary files,
-        raw video files, and thumbnails, then updates a label with this information.
+        Calculates total files and sizes for all LPRT related data, then updates a label with this information.
         """
 
         results = {
@@ -1404,6 +1442,7 @@ class CompAndRender(tk.Frame):
         W.grid(row=0,column=1)
     
     def run_automation(self,*args):
+        """ Run a thread with `self.__ra` """
         if self.thread is None and self.media_player.audio_list:
             #! Deactivate menus see issue #287
             print('Automation Start')
@@ -1412,12 +1451,14 @@ class CompAndRender(tk.Frame):
             self.thread.start()
             
     def __ra(self):
+        """ This will render your video """
         render(self.media_player.audio_list,self,SQLAccess.read_letsplay_by_option_var(self))
         
         change_states([*self.media_player.get_ui(),*self.lpep_picker.get_ui(),self.menu],'!disabled')
         self.thread = None
         
     def run(self,*args):
+        """ This updates the `audio_list` in the AudioPlayer """
         a, b = int(self.lpep_picker.v_epstart.get())-1, int(self.lpep_picker.v_epend.get())
         rng = [a,b]
         
@@ -1482,13 +1523,13 @@ class SetTitle(tk.Frame):
         gemini_stuff.pack()
         
         W.pack()
+    
     def update_text(self, text):
+        """ Cleans up the text & rewrites it with the given `text` variable """
         self.text.delete('1.0',tk.END)
         for i in text.splitlines():
             self.text.insert(tk.END, f'{i}\n')
             
-        
-
     def run(self,*args):
         
         a, b = int(self.lpep_picker.v_epstart.get())-1, int(self.lpep_picker.v_epend.get())
@@ -1504,10 +1545,14 @@ class SetTitle(tk.Frame):
                 return
         
         self.media_player.reset(data, lpid)
+    
     def send_and_receive(self,*args):
+        """ Runs a thread that targets `self.__sar` """
         change_states([self.gemini_entry, self.send_btn],'disabled')
         Thread(target=self.__sar).start()
+    
     def __sar(self):
+        """ This sends data to gemini & updates the tk.Text Widget with the result """
         __lang: str | None = os.getenv("LANG")
         self.update_text(str(send_gemini(f'Please answer me in [{__lang}]. Generate me a youtube title(gaming / lets play) in the language=[\"{__lang}\"] for: {self.v_t.get()}')))
         change_states([self.gemini_entry, self.send_btn],'!disabled')
