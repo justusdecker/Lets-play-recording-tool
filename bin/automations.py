@@ -364,7 +364,9 @@ class SendToAudacityWF(GenericWorkFlow):
         except Exception as E:
             print(E)
             msgbox.showerror('ERROR','Did you open Audacity & enabled the mod-pipe?')
-            app.start_btn.state(['!disabled'])
+            
+            for i in app.lpep_picker.get_ui():
+                i.state(['!disabled'])
             return
         
         try:

@@ -265,10 +265,10 @@ def ffmpeg_run(cmd: list[list], replacer: dict[str,str]={},nr: bool = False):
     shell= True is compatible with limiter compand
     """
     if nr:
-        return run(ffmpeg_build(cmd,replacer), CREATE_NO_WINDOW, capture_output=True, text=True).stdout
+        return run(ffmpeg_build(cmd,replacer), CREATE_NO_WINDOW, capture_output=True, text=True,shell= True).stdout
     else:
         try:
-            run(ffmpeg_build(cmd,replacer), CREATE_NO_WINDOW,)
+            run(ffmpeg_build(cmd,replacer), CREATE_NO_WINDOW,shell= True)
             return True
         except FileNotFoundError:
             return None
