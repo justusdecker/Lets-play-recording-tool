@@ -220,7 +220,7 @@ class ThumbnailGenerator:
             # TODO -> old code: frame if frame >= 0 and frame  <= self.video_src.duration else 0 
             
             _returnImage: Surface = scale(self.image,DEFAULT_THUMBNAIL_SIZE)
-            _returnImage: Surface = flip(_returnImage,True,False)
+            #_returnImage: Surface = flip(_returnImage,True,False)
             
             return _returnImage
         raise FileNotFoundError('Your Image does not exist!')
