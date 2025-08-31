@@ -123,8 +123,6 @@ class NewVideoPlayer(NewMediaPlayer):
             
             showerror('ERROR','Cannot create Thumbnail.\n Dont select the last frame of a video.\nThat does not work work!')
             self.blocked = False
-        
-        print('finished generating')
         self.blocked = False
         
     def pause_video(self):

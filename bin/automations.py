@@ -83,7 +83,7 @@ def obs_connect(el):
         except Exception as E:
             obs_rec_label_set(OBSO,el, True)
             el.btn_connect.configure(text= 'Unexpected Error happened')
-            print(f'Unexpected Error happened [{E}]')
+            LOG(f'Unexpected Error happened [{E}]',logtype=LOG_ERROR)
         sleep(0.3)
 
 class GenericWorkFlow:
@@ -260,7 +260,7 @@ class ExtractAudioWF(GenericWorkFlow):
                 # The user has been warned to use 2 audio / 1 video track in the documentation.
                 reoc(int(ffmpeg_stream_ammount) < 3,'Not enough tracks to execute this automation!')
                 
-                print(f'"{ffmpeg_stream_ammount}"')
+                LOG(f'"Audiostreams: $"',[ffmpeg_stream_ammount],logtype=LOG_INFO)
                 
                 
                 reoc(video_path is None, ERROR_013) # In case the database is corrupted or the video_file was not set!
@@ -364,7 +364,7 @@ class SendToAudacityWF(GenericWorkFlow):
         try:
             create_pipe()
         except Exception as E:
-            print(E)
+            LOG(f"",[str(E)],logtype=LOG_ERROR)
             msgbox.showerror('ERROR','Did you open Audacity & enabled the mod-pipe?')
             
             for i in app.lpep_picker.get_ui():
@@ -412,7 +412,7 @@ class SendToAudacityWF(GenericWorkFlow):
                 reoc(not file.split('_-')[1].split('.')[0].isdecimal(),'Numbering is not correct!')
                 
                 ep = int(file.split('_-')[1].split('.')[0]) - 1
-                print(rng_list[ep])
+                LOG("Convert ep $ to .aac",[rng_list[ep]],LOG_INFO)
                 old = AC_RESULT_FOLDER + file
                 new = FIXED_AUDIO_FOLDER+f'{rng_list[ep]}_track_mic_fixed_ac.aac'
                 rie(new)

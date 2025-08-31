@@ -13,6 +13,7 @@ except:
 from bin.data_access import json_read
 from bin.constants import OBS_SETTINGS_PATH
 from os.path import isfile
+from tools.log import *
 
 from bin.data_access import SQLAccess
 
@@ -52,11 +53,11 @@ class OBSObserver:
         try:
             self.client = obsws.ReqClient(host=self.settings['ip'], port=self.settings['port'], password=self.settings['pw'],timeout=self.settings['timeout'])
         except WindowsError as E:
-            print('WindowsError')
+            LOG('WindowsError',[str(E)],LOG_ERROR)
         except _exceptions.WebSocketTimeoutException as E:
-            print('WebsocketTimeout')
+            LOG('WebsocketTimeout',[str(E)],LOG_ERROR)
         except ValueError:
-            print('Hostname invalid!')
+            LOG('Hostname invalid!',[str(E)],LOG_ERROR)
     @property
     def isconnected(self) -> bool:
         """
