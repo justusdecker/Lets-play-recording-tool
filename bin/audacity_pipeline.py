@@ -16,6 +16,7 @@ Reopen Audacity & Reopen LPRT(When open)
 """
 import win32file
 from io import TextIOWrapper
+from tools.log import *
 class AudacityPipelineError(Exception):
     pass
 
@@ -91,21 +92,21 @@ def send_command(command):
 def get_response():
     """Return the command response."""
     result = ''
-    line = ''
+    line = b''
     while True:
-        result += line
+        result += line.decode()
         try:
-            line = win32file.ReadFile(AFA.TO_FILE,10)
-            line = AFA.FROM_FILE.readline()
-            if line == '\n' and len(result) > 0:
+            _,line = win32file.ReadFile(AFA.FROM_FILE,-1)
+            LOG("ACR $ $",[_,line])
+            if line == b'BatchCommand finished: OK\n\n':
                 break
-        except:
+        except Exception as E:
+            LOG("Audacity Response Error $", [str(E)], LOG_WARNING)
             break
     return result
 
 def do_command(command):
     """Send one command, and return the response."""
-    
     response = None
     try:
         send_command(command)
@@ -113,5 +114,5 @@ def do_command(command):
         print(f"Rcvd: <<< \n{response}")
     except Exception as E:
         print(E)
-    
+    print(response)
     return response

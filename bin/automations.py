@@ -12,6 +12,7 @@ from os import listdir
 from bin.constants import *
 from bin.thumbnail import ThumbnailGenerator
 from tkinter.messagebox import showerror
+from tools.log import *
 
 from bin.player_thumbnail import ThumbnailPreview
 from shutil import copyfile
@@ -345,6 +346,7 @@ class SendToAudacityWF(GenericWorkFlow):
     """
     def __init__(self,lpid, epr,app):
         super().__init__(folder = FIXED_AUDIO_FOLDER, finish_message = 'Audacity Send',lpid=lpid, epr=epr)
+        LOG("LP: $ EPS: $",[lpid, self.rng])
         self.user_workflow(app)
     def user_workflow(self, app):
         """
@@ -383,11 +385,12 @@ class SendToAudacityWF(GenericWorkFlow):
                 
                 for ci, i in enumerate(rng):
                     filepath = episodes[i].audio_mic_edit1_path
+                    LOG("Try importing $ to Audacity", [filepath], LOG_INFO)
                     reoc(filepath is None,ERROR_013)
                     reoc(not isfile(filepath), ERROR_007)
                     reoc(do_command(f'Import2: filename="{filepath}"') is None,'Audacity is not reachable!')
                     app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
-            
+            LOG("Finished Importing", logtype=LOG_INFO)
             toast_finished('Finished Importing')
             #! See issue #303
 
@@ -421,6 +424,7 @@ class SendToAudacityWF(GenericWorkFlow):
                 i.state(['!disabled'])
             super().user_workflow()
         except AutomationError as AE:
+            LOG("AutomationError $ ", [str(AE)],LOG_ERROR)
             msgbox.showerror('Automation Error',str(AE))
             
         # After processing all episodes, we re-enabling the application's start button
