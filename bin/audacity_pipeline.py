@@ -44,7 +44,7 @@ def create_pipe():
     
         Will raise an `AudacityPipelineError` when the pipe can't be accessed.
     """
-    LOG("-- Both pipes exist.  Good.",logtype=LOG_INFO)
+    LOG("Both pipes exist.  Good.",logtype=LOG_INFO)
 
     #AFA.TO_FILE = open(AFA.TO_NAME, 'w')
     
@@ -56,7 +56,7 @@ def create_pipe():
                               win32file.OPEN_EXISTING,
                               win32file.FILE_ATTRIBUTE_NORMAL,
                               0)
-    LOG("-- File to write to has been opened",logtype=LOG_INFO)
+    LOG("File to write to has been opened",logtype=LOG_INFO)
     """
     On the testsystem(Windows 11) the connection to the mod-pipe will be established only:
     When The following code does its thing!
@@ -70,7 +70,7 @@ def create_pipe():
                               win32file.FILE_ATTRIBUTE_NORMAL,
                               0)
 
-    LOG(f"-- Opened {AFA.FROM_NAME}",logtype=LOG_INFO)
+    LOG(f"Opened {AFA.FROM_NAME}",logtype=LOG_INFO)
 
 def break_pipe():
     win32file.CloseHandle(AFA.TO_FILE)
