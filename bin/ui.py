@@ -930,10 +930,13 @@ class FileManager(tk.Frame):
         Prompts for confirmation, then iterates through the specified episode
         range and attempts to delete associated video, audio, and thumbnail files.
         """
+        
+        
+        lpid = SQLAccess.read_letsplay_names().index(self.simple_delete_lpep.v_lp.get())
+        LOG(f"Delete: [$][$ - $]",[SQLAccess.read_letsplay_name(lpid),*self.rng])
         ok = msgbox.askyesno('Attention','You are trying to delete all files in the selected lets play\nThis step is irreversible!\nContinue?')
         if not ok: return
-        lpid = SQLAccess.read_letsplay_names().index(self.simple_delete_lpep.v_lp.get())
-        print(SQLAccess.read_letsplay_names().index(self.simple_delete_lpep.v_lp.get()),self.simple_delete_lpep.v_lp.get())
+        #print(SQLAccess.read_letsplay_names().index(self.simple_delete_lpep.v_lp.get()),self.simple_delete_lpep.v_lp.get())
         episodes = SQLAccess.read_episodes(lpid)
 
         for i in range(*self.rng): #! Test first

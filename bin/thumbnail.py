@@ -14,6 +14,7 @@ from bin.data_access import json_read,rie
 from pygame.image import save as img_save, load as img_load
 from bin.ffmpeg import ffmpeg_run, FFMPEG_GET_FRAME, FFMPEG_GET_LENGTH
 from pygame.font import Font, init, get_default_font
+from tools.log import *
 init()
 
 def get_time_va(filepath: str):
@@ -21,7 +22,7 @@ def get_time_va(filepath: str):
     try:
         return float(time_or_error.replace('\n',''))
     except Exception as E:
-        print(E)
+        LOG("$",[str(E)],LOG_ERROR)
         return None
 
 def get_thumbnail(filepath: str,frame:None) -> Surface:
@@ -29,7 +30,7 @@ def get_thumbnail(filepath: str,frame:None) -> Surface:
         t = rnd() * get_time_va(filepath)
     else:
         t = frame
-    print(t,frame,get_time_va(filepath),filepath)
+    LOG("t: $ frame: $ va: $ fp: $",[t,frame,get_time_va(filepath),filepath], LOG_INFO)
     rie(f'{TEMP_FOLDER}temp.png')
     ffmpeg_run(FFMPEG_GET_FRAME,{'__IN__': filepath, '__TIME__': t})
     reoc(not isfile(f'{TEMP_FOLDER}temp.png'),ERROR_007)
@@ -119,9 +120,10 @@ class ThumbnailGenerator:
     frame (float, optional): The timestamp (in seconds) of the specific frame to extract from the video. If -1, a random frame is chosen. Defaults to -1.
         """
         
-        print((f'[Thumbnail Generate]: {video_path}',94))
+        LOG(f'[Thumbnail Generate]: $',[video_path],LOG_INFO)
         self.tad = json_read(TAD_FOLDER + tad_path)
         if video_path is None:
+            LOG("No Video given. Set default Bg",logtype=LOG_INFO)
             bg = Surface((1280,720))
             bg.fill((34,34,34))
         else:
@@ -134,14 +136,12 @@ class ThumbnailGenerator:
         if self.tad['logo::center']:
             x = (1280//2) - (logo.get_width() // 2) + self.tad['logo::pos::x']
             y = self.tad['logo::pos::y']
-            print(x,y)
             logo = logo, (x,y)
         
         text_r = self.__render_text(text)
         if self.tad['text::center']:
             x = (1280//2) - (text_r.get_width() // 2) + self.tad['text::pos::x']
             y = self.tad['text::pos::y']
-            print(x,y)
             text_r = text_r, (x,y)
 
         img = self.__comp_render(
@@ -220,7 +220,7 @@ class ThumbnailGenerator:
             # TODO -> old code: frame if frame >= 0 and frame  <= self.video_src.duration else 0 
             
             _returnImage: Surface = scale(self.image,DEFAULT_THUMBNAIL_SIZE)
-            _returnImage: Surface = flip(_returnImage,True,False)
+            #_returnImage: Surface = flip(_returnImage,True,False)
             
             return _returnImage
         raise FileNotFoundError('Your Image does not exist!')
@@ -330,7 +330,6 @@ class ThumbnailGenerator:
         final_scale = self.tad['bg::scale'] + (ri(int(r_scale_from * 100), int(r_scale_to * 100)) / 100)
 
         final_scale = max(0.1, min(final_scale, 2.0))
-        print(final_rot, final_scale)
         if final_rot or final_scale != 1:
             img = rotozoom(img, final_rot, final_scale)
         

@@ -16,6 +16,7 @@ Reopen Audacity & Reopen LPRT(When open)
 """
 import win32file
 from io import TextIOWrapper
+from tools.log import *
 class AudacityPipelineError(Exception):
     pass
 
@@ -43,7 +44,7 @@ def create_pipe():
     
         Will raise an `AudacityPipelineError` when the pipe can't be accessed.
     """
-    print("-- Both pipes exist.  Good.")
+    LOG("Both pipes exist.  Good.",logtype=LOG_INFO)
 
     #AFA.TO_FILE = open(AFA.TO_NAME, 'w')
     
@@ -55,7 +56,7 @@ def create_pipe():
                               win32file.OPEN_EXISTING,
                               win32file.FILE_ATTRIBUTE_NORMAL,
                               0)
-    print("-- File to write to has been opened")
+    LOG("File to write to has been opened",logtype=LOG_INFO)
     """
     On the testsystem(Windows 11) the connection to the mod-pipe will be established only:
     When The following code does its thing!
@@ -69,17 +70,18 @@ def create_pipe():
                               win32file.FILE_ATTRIBUTE_NORMAL,
                               0)
 
-    print(f"-- Opened {AFA.FROM_NAME}")
+    LOG(f"Opened {AFA.FROM_NAME}",logtype=LOG_INFO)
 
 def break_pipe():
     win32file.CloseHandle(AFA.TO_FILE)
     win32file.CloseHandle(AFA.FROM_FILE)
     AFA.TO_FILE.close()
     AFA.FROM_FILE.close()
+    LOG("Destroyed pipes & closed AFA's",logtype=LOG_INFO)
 
 def send_command(command):
     """Send a single command."""
-    print("Send: >>> \n"+command)
+    LOG("Send: >>> \n"+command,logtype=LOG_INFO)
     while 1:
         try:
             win32file.WriteFile(AFA.TO_FILE,str(command + '\r\n\0').encode())
@@ -88,30 +90,28 @@ def send_command(command):
         except:
             pass
 
-def get_response():
+def get_response() -> str:
     """Return the command response."""
     result = ''
-    line = ''
+    line = b''
     while True:
-        result += line
+        result += line.decode()
         try:
-            line = win32file.ReadFile(AFA.TO_FILE,10)
-            line = AFA.FROM_FILE.readline()
-            if line == '\n' and len(result) > 0:
+            _,line = win32file.ReadFile(AFA.FROM_FILE,-1)
+            LOG("ACR $ $",[_,line])
+            if line == b'BatchCommand finished: OK\n\n':
                 break
-        except:
+        except Exception as E:
+            LOG("Audacity Response Error $", [str(E)], LOG_WARNING)
             break
     return result
 
-def do_command(command):
+def do_command(command) -> str:
     """Send one command, and return the response."""
-    
     response = None
     try:
         send_command(command)
         response = get_response()
-        print(f"Rcvd: <<< \n{response}")
     except Exception as E:
-        print(E)
-    
+        LOG("Audacity Error $",[str(E)])
     return response

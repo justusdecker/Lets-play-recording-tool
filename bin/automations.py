@@ -12,6 +12,7 @@ from os import listdir
 from bin.constants import *
 from bin.thumbnail import ThumbnailGenerator
 from tkinter.messagebox import showerror
+from tools.log import *
 
 from bin.player_thumbnail import ThumbnailPreview
 from shutil import copyfile
@@ -82,7 +83,7 @@ def obs_connect(el):
         except Exception as E:
             obs_rec_label_set(OBSO,el, True)
             el.btn_connect.configure(text= 'Unexpected Error happened')
-            print(f'Unexpected Error happened [{E}]')
+            LOG(f'Unexpected Error happened [{E}]',logtype=LOG_ERROR)
         sleep(0.3)
 
 class GenericWorkFlow:
@@ -259,7 +260,7 @@ class ExtractAudioWF(GenericWorkFlow):
                 # The user has been warned to use 2 audio / 1 video track in the documentation.
                 reoc(int(ffmpeg_stream_ammount) < 3,'Not enough tracks to execute this automation!')
                 
-                print(f'"{ffmpeg_stream_ammount}"')
+                LOG(f'"Audiostreams: $"',[ffmpeg_stream_ammount],logtype=LOG_INFO)
                 
                 
                 reoc(video_path is None, ERROR_013) # In case the database is corrupted or the video_file was not set!
@@ -345,6 +346,7 @@ class SendToAudacityWF(GenericWorkFlow):
     """
     def __init__(self,lpid, epr,app):
         super().__init__(folder = FIXED_AUDIO_FOLDER, finish_message = 'Audacity Send',lpid=lpid, epr=epr)
+        LOG("LP: $ EPS: $",[lpid, self.rng])
         self.user_workflow(app)
     def user_workflow(self, app):
         """
@@ -362,9 +364,11 @@ class SendToAudacityWF(GenericWorkFlow):
         try:
             create_pipe()
         except Exception as E:
-            print(E)
+            LOG(f"",[str(E)],logtype=LOG_ERROR)
             msgbox.showerror('ERROR','Did you open Audacity & enabled the mod-pipe?')
-            app.start_btn.state(['!disabled'])
+            
+            for i in app.lpep_picker.get_ui():
+                i.state(['!disabled'])
             return
         
         try:
@@ -381,11 +385,12 @@ class SendToAudacityWF(GenericWorkFlow):
                 
                 for ci, i in enumerate(rng):
                     filepath = episodes[i].audio_mic_edit1_path
+                    LOG("Try importing $ to Audacity", [filepath], LOG_INFO)
                     reoc(filepath is None,ERROR_013)
                     reoc(not isfile(filepath), ERROR_007)
                     reoc(do_command(f'Import2: filename="{filepath}"') is None,'Audacity is not reachable!')
                     app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
-            
+            LOG("Finished Importing", logtype=LOG_INFO)
             toast_finished('Finished Importing')
             #! See issue #303
 
@@ -407,7 +412,7 @@ class SendToAudacityWF(GenericWorkFlow):
                 reoc(not file.split('_-')[1].split('.')[0].isdecimal(),'Numbering is not correct!')
                 
                 ep = int(file.split('_-')[1].split('.')[0]) - 1
-                print(rng_list[ep])
+                LOG("Convert ep $ to .aac",[rng_list[ep]],LOG_INFO)
                 old = AC_RESULT_FOLDER + file
                 new = FIXED_AUDIO_FOLDER+f'{rng_list[ep]}_track_mic_fixed_ac.aac'
                 rie(new)
@@ -419,6 +424,7 @@ class SendToAudacityWF(GenericWorkFlow):
                 i.state(['!disabled'])
             super().user_workflow()
         except AutomationError as AE:
+            LOG("AutomationError $ ", [str(AE)],LOG_ERROR)
             msgbox.showerror('Automation Error',str(AE))
             
         # After processing all episodes, we re-enabling the application's start button
