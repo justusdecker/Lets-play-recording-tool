@@ -39,6 +39,7 @@ class LPEPPicker:
             |ne|no end episode selector(one episode selector)|
             |nb|no button|
         """
+        
         self.ch_callback = ch_callback
         self.s_lp = 'lp' in mode
         self.s_ep = 'ep' in mode
@@ -53,10 +54,10 @@ class LPEPPicker:
         self.obj.pack()
         self.values = []
         
-        self.v_epstart = tk.StringVar(self.obj)
-        self.v_epend = tk.StringVar(self.obj)
+        self.v_epstart = tk.IntVar(self.obj,1)
+        self.v_epend = tk.IntVar(self.obj,1)
         self.v_lp = tk.StringVar(self.obj)
-        
+        self.vcmd = self.obj.register(self.val_sp_input)
         self.lp_create_ui()
         self.ep_create_ui()
         self.st_create_ui()
@@ -105,22 +106,66 @@ class LPEPPicker:
         if not self.s_ep: return
         
         self.lbl_start = ttk.Label(self.obj, text ="Episode start")
+
+        #self.opm_start = ttk.OptionMenu(self.obj,self.v_epstart,str(self.values[0] if self.values else 'None'),*self.values,command=self.check)
         
-        self.opm_start = ttk.OptionMenu(self.obj,self.v_epstart,str(self.values[0] if self.values else 'None'),*self.values,command=self.check)
+        #? New solution
+        
+        self.opm_start = ttk.Spinbox(
+            self.obj, 
+            textvariable=self.v_epstart, 
+            from_= 1 if self.values else -1,
+            to=self.values[-1] if self.values else -1,
+            width=4,
+            validate='all',
+            validatecommand= (self.vcmd, '%P','%W'),
+            command=self.check)
+        
+        
+        
         if not self.d_ne: 
             self.lbl_end = ttk.Label(self.obj, text ="Episode end")
-            self.opm_end = ttk.OptionMenu(self.obj,self.v_epend,str(self.values[-1] if self.values else 'None'),*self.values,command=self.check)
+            self.opm_end = ttk.Spinbox(
+                self.obj, 
+                textvariable=self.v_epend, 
+                from_=self.values[0] if self.values else -1,
+                to=self.values[-1] if self.values else -1,
+                width=4,
+                validate='all',
+                validatecommand= (self.vcmd, '%P','%W'),
+                command=self.check)
+        if self.v_lp.get() == 'None':
+            self.opm_start.state(['disabled'])
+            if not self.d_ne:
+                self.opm_end.state(['disabled'])
+        else:
+            self.opm_start.state(['!disabled'])
+            if not self.d_ne:
+                self.opm_end.state(['!disabled'])
         
         self.lbl_start.pack(side='left')
         self.opm_start.pack(side='left')
         if not self.d_ne: 
             self.lbl_end.pack(side='left')
             self.opm_end.pack(side='left')
-
+    
+    def val_sp_input(self,P,W):
+        LOG('$',[P])
+        tvar = self.parent.nametowidget(W).cget('textvariable')
+        if P.isdigit():
+            if int(P) > self.values[-1]:
+                
+                self.parent.setvar(tvar,self.values[-1])
+                return False
+            elif int(P) < 1:
+                self.parent.setvar(tvar,1)
+                return False
+        return True
+        
     def check(self,*_):
         """ Checks: b < a. So the start ep cant be greater than the end! """
         if self.s_ep and not self.d_ne:
-            if int(self.v_epend.get()) < int(self.v_epstart.get()):
+            if self.v_epend.get() < self.v_epstart.get():
                 self.btn_run.state(['disabled'])
             else:
                 self.btn_run.state(['!disabled'])
