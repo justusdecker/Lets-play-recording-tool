@@ -1,1 +1,2 @@
-HASH = "e1c7505"
+with open('./tools/hash.i') as f:
+    HASH = f.read()
