@@ -3,12 +3,13 @@ This Modules packs the compiled EXE & some other files into a zipfile
 """
 
 import zipfile
-from os import chdir
-chdir('..')
+import os
+print(os.getcwd())
+VERSION = None
+with open('./bin/version.py') as f:
+    exec(f.read())
 
-with open('bin\\version.py') as f:
-    VERSION = f.read().split(' = ')[1].replace("\'",'')
-chdir('tools\\')
-with zipfile.ZipFile(f'lprt_{VERSION}.zip','w') as ZIP:
-    ZIP.write('dist\\main.exe','lprt.exe')
-    ZIP.write('libpng16-16.dll','libpng16-16.dll')
+with zipfile.ZipFile(f'./tools/lprt_{VERSION}.zip','w') as ZIP:
+    ZIP.write('./tools/dist/main.exe','lprt.exe')
+    ZIP.write('./README.md','README.md')
+    ZIP.write('./LICENSE','LICENSE')
