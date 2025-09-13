@@ -1,3 +1,4 @@
+from bin.translation import gtran
 from tkinter import ttk
 import tkinter as tk
 from tkinter.font import Font
@@ -50,7 +51,7 @@ class LPEPPicker:
         
         self.parent = parent
         self.callback = callback
-        self.obj = ttk.LabelFrame(self.parent, text ="LP - EP Selector")
+        self.obj = ttk.LabelFrame(self.parent, text = gtran("bin::ui::lpep_selector_header"))
         self.obj.pack()
         self.values = []
         
@@ -105,7 +106,7 @@ class LPEPPicker:
         """
         if not self.s_ep: return
         
-        self.lbl_start = ttk.Label(self.obj, text ="Episode start")
+        self.lbl_start = ttk.Label(self.obj, text = gtran("bin::ui::lpep_selector_start_episode"))
 
         #self.opm_start = ttk.OptionMenu(self.obj,self.v_epstart,str(self.values[0] if self.values else 'None'),*self.values,command=self.check)
         
@@ -124,7 +125,7 @@ class LPEPPicker:
         
         
         if not self.d_ne: 
-            self.lbl_end = ttk.Label(self.obj, text ="Episode end")
+            self.lbl_end = ttk.Label(self.obj, text = gtran("bin::ui::lpep_selector_end_episode"))
             self.opm_end = ttk.Spinbox(
                 self.obj, 
                 textvariable=self.v_epend, 
@@ -322,19 +323,19 @@ class TkinterApp(tk.Tk):
     def get_ui_names(self) -> list[str]:
         """ Gets all ui_names """
         return [
-            'Main',
-            'Recording',
-            'ThumbnailGenerate',
-            'FetchAudio',
-            'FixAudio',
-            'Send2Audacity',
-            'CompAndRender',
-            'SetTitle',
-            'Deploy',
-            'TadEditor',
-            'FileManager',
-            'Settings',
-            'About',
+            gtran("bin::ui::ui_name_main"),
+            gtran("bin::ui::ui_name_recording"),
+            gtran("bin::ui::ui_name_thumbnailgenerate" ),
+            gtran("bin::ui::ui_name_fetchaudio"),
+            gtran("bin::ui::ui_name_fixaudio"),
+            gtran("bin::ui::ui_name_send2audacity"),
+            gtran("bin::ui::ui_name_compandrender"),
+            gtran("bin::ui::ui_name_settitle"),
+            gtran("bin::ui::ui_name_deploy"),
+            gtran("bin::ui::ui_name_tadeditor"),
+            gtran("bin::ui::ui_name_filemanager"),
+            gtran("bin::ui::ui_name_settings"),
+            gtran("bin::ui::ui_name_about"),
         ]
     
     def build_ui(self):

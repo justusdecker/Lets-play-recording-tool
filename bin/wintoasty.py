@@ -1,3 +1,4 @@
+from bin.translation import gtran
 from bin.welcome_popup import WELCOME
 WELCOME.update_message(f'Load: {__name__}')
 
@@ -22,6 +23,6 @@ def toast_finished(msg: str=""):
     
     Documentation: https://pypi.org/project/winotify/
     """
-    TOAST.title = 'Job finished'
+    TOAST.title = gtran("bin::wintoasty::toast_finished_msg")
     TOAST.msg = msg
     TOAST.show()

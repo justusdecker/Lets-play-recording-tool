@@ -15,5 +15,22 @@
     "bin::constants::error_011" : "FFPLAY is not installed.",
     "bin::constants::error_012" : "FFPROBE is not installed.",
     "bin::constants::error_013" : "File not set.",
-    "bin::constants::error_014" : "FFMPEG File creation error!"
+    "bin::constants::error_014" : "FFMPEG File creation error!",
+    "bin::wintoasty::toast_finished_msg" : "Job finished",
+    "bin::ui::lpep_selector_header" : "LP - EP Selector",
+    "bin::ui::lpep_selector_start_episode" : "Episode start",
+    "bin::ui::lpep_selector_end_episode" : "Episode end",
+    "bin::ui::ui_name_main" : "Main",
+    "bin::ui::ui_name_recording" : "Recording",
+    "bin::ui::ui_name_thumbnailgenerate" : "ThumbnailGenerate",
+    "bin::ui::ui_name_fetchaudio" : "FetchAudio",
+    "bin::ui::ui_name_fixaudio" : "FixAudio",
+    "bin::ui::ui_name_send2audacity" : "Send2Audacity",
+    "bin::ui::ui_name_compandrender" : "CompAndRender",
+    "bin::ui::ui_name_settitle" : "SetTitle",
+    "bin::ui::ui_name_deploy" : "Deploy",
+    "bin::ui::ui_name_tadeditor" : "TadEditor",
+    "bin::ui::ui_name_filemanager" : "FileManager",
+    "bin::ui::ui_name_settings" : "Settings",
+    "bin::ui::ui_name_about" : "About"
 }

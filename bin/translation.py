@@ -1,7 +1,7 @@
 from os import listdir
 from json import load
 TRANSLATIONS = {}
-
+LANG = 'en'
 def get_translations() -> dict:
     translations = {}
     for translation in listdir('./bin/data/lang/'):
@@ -10,5 +10,5 @@ def get_translations() -> dict:
             translations[key] = load(f)
     return translations
 TRANSLATIONS = get_translations()
-def gtran(key,lang='en') -> str:
-    return TRANSLATIONS[lang].get(key,TRANSLATIONS['en'][key])
+def gtran(key) -> str:
+    return TRANSLATIONS[LANG].get(key,TRANSLATIONS['en'][key])
