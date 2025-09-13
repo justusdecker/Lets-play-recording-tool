@@ -1,0 +1,5 @@
+{
+    "bin::constants::welcome_message" : "Welcome to LPRT\n\nA Let's Play automation tool that simplifies your workflow \nfor recording, editing, and distribution.\n\nDo you find a bug? Share it with us!\n\nFor Documentation, please look up the GitHub-wiki",
+    "bin::constants::ewf" : "Exit current workflow.",
+    "bin::constants::exp" : "Exiting App!"
+}
