@@ -1,17 +1,11 @@
 from bin.version import VERSION
 from bin.commit_hash import HASH
+from bin.translation import gtran
 COPYRIGHT = f"LPRT {VERSION} - {HASH} | GPL 3.0 - (c) Justus Decker 2024 - 2025"
 
 DISCLAIMER = f"""
 {COPYRIGHT}
-Welcome to LPRT
-
-A Let's Play automation tool that simplifies your workflow 
-for recording, editing, and distribution.
-
-Do you find a bug? Share it with us!
-
-For Documentation, please look up the GitHub-wiki
+{gtran('bin::constants::welcome_message')}
 """
 
 ICO_BACKUP = "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAABJ0AAASdAHeZh94AAAAsklEQVRYCWNgGAWjITAaAqMhMNJDgJEWAfAfCNDMZQQCNCEIlwWb6NvnSegGYFMGFhOWnAc2GYulcD24LAcpYIKrIpMBshgE8GnHJ0+xA/BZTIwc1oghJQqIsQSmBhZdMD6IHvAQGHXAaAgM0xCo5UDOaXjZwzQE8PoZVRJrZYSqhAQectDD2M0/8BpA3ShAtwydj8Up1HUAyAKYpTAai6XIQtR3ALIjkG0aZY+GAI4QAAALzyaLYa5PSAAAAABJRU5ErkJggg=="
@@ -153,22 +147,23 @@ AC_RESULT_FOLDER = f'{ROOT}ac_results\\'
 OBS_SETTINGS_PATH = f'{ROOT}obs_settings.json'
     
 #! ERRORS
-ewf = 'Exit current workflow.'
-exp = 'Exiting App!'
-ERROR_001 = f'[E001] User input is not in range. {ewf}'
-ERROR_002 = f'[E002] file already exists. {ewf}'
-ERROR_003 = f'[E003] This option does not exist. {ewf}'
-ERROR_004 = f'[E004] No connection to OBS! {ewf}'
-ERROR_005 = f'[E005] Keyboard interrupt! {ewf}'
-ERROR_006 = f'[E006] Destination not set. {ewf}'
-ERROR_007 = f'[E007] file does not exist. {ewf}'
-ERROR_008 = f'[E008] ModuleLoadFailure. {exp}'
-ERROR_009 = f"[E009] Something went wrong. No TAD found. {ewf}"
-ERROR_010 = f'[E010] FFMPEG is not installed. {exp}'
-ERROR_011 = f'[E011] FFPLAY is not installed. {exp}'
-ERROR_012 = f'[E012] FFPROBE is not installed. {exp}'
-ERROR_013 = f'[E013] File not set. {ewf}'
-ERROR_014 = f'[E014] FFMPEG File creation error! {ewf}'
+
+ewf = gtran('bin::constants::ewf')
+exp = gtran('bin::constants::exp')
+ERROR_001 = f"[E001] {gtran('bin::constants::error_001')} {ewf}"
+ERROR_002 = f"[E002] {gtran('bin::constants::error_002')} {ewf}"
+ERROR_003 = f"[E003] {gtran('bin::constants::error_003')} {ewf}"
+ERROR_004 = f"[E004] {gtran('bin::constants::error_004')} {ewf}"
+ERROR_005 = f"[E005] {gtran('bin::constants::error_005')} {ewf}"
+ERROR_006 = f"[E006] {gtran('bin::constants::error_006')} {ewf}"
+ERROR_007 = f"[E007] {gtran('bin::constants::error_007')} {ewf}"
+ERROR_008 = f"[E008] {gtran('bin::constants::error_008')} {exp}"
+ERROR_009 = f"[E009] {gtran('bin::constants::error_009')} {ewf}"
+ERROR_010 = f"[E010] {gtran('bin::constants::error_010')} {exp}"
+ERROR_011 = f"[E011] FFPLAY is not installed. {exp}"
+ERROR_012 = f"[E012] FFPROBE is not installed. {exp}"
+ERROR_013 = f"[E013] File not set. {ewf}"
+ERROR_014 = f"[E014] FFMPEG File creation error! {ewf}"
 
 DEPLOY_HTML = """
 <!DOCTYPE html>

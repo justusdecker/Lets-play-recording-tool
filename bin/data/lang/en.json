@@ -1,5 +1,19 @@
 {
     "bin::constants::welcome_message" : "Welcome to LPRT\n\nA Let's Play automation tool that simplifies your workflow \nfor recording, editing, and distribution.\n\nDo you find a bug? Share it with us!\n\nFor Documentation, please look up the GitHub-wiki",
     "bin::constants::ewf" : "Exit current workflow.",
-    "bin::constants::exp" : "Exiting App!"
+    "bin::constants::exp" : "Exiting App!",
+    "bin::constants::error_001" : "User input is not in range.",
+    "bin::constants::error_002" : "file already exists.",
+    "bin::constants::error_003" : "This option does not exist.",
+    "bin::constants::error_004" : "No connection to OBS!",
+    "bin::constants::error_005" : "Keyboard interrupt!",
+    "bin::constants::error_006" : "Destination not set.",
+    "bin::constants::error_007" : "file does not exist.",
+    "bin::constants::error_008" : "ModuleLoadFailure.",
+    "bin::constants::error_009" : "Something went wrong. No TAD found.",
+    "bin::constants::error_010" : "FFMPEG is not installed.",
+    "bin::constants::error_011" : "FFPLAY is not installed.",
+    "bin::constants::error_012" : "FFPROBE is not installed.",
+    "bin::constants::error_013" : "File not set.",
+    "bin::constants::error_014" : "FFMPEG File creation error!"
 }
