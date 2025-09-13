@@ -25,5 +25,5 @@ if __name__ == '__main__':
     APP = TkinterApp()
     check_version()
     APP.mainloop()
-    
+     
     
