@@ -4,7 +4,7 @@ from tkinter.font import Font
 from bin.translation import gtran
 from bin.ui.lpep_picker import LPEPPicker
 from bin.ui.ui_utils import change_states
-from bin.automations import obs_connect
+from bin.auto.recording import obs_connect
 from threading import Thread
 class Recording(tk.Frame):
     def __init__(self, parent): 

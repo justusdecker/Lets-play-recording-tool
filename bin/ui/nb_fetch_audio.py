@@ -1,5 +1,5 @@
 from bin.ui.automation_frame import AutomationFrame
-from bin.automations import ExtractAudioWF
+from bin.auto.wf_fetch_audio import ExtractAudioWF
  
 class FetchAudio(AutomationFrame):
     def __init__(self, parent):
