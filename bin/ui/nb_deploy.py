@@ -1,5 +1,5 @@
 from bin.ui.automation_frame import AutomationFrame
-from bin.automations import DeployWF
+from bin.auto.wf_deploy import DeployWF
 
 class Deploy(AutomationFrame):
     def __init__(self, parent):

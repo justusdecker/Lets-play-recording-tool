@@ -1,7 +1,7 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 from bin.ui.automation_frame import AutomationFrame
-from bin.automations import FixAudioWF, AutomationError
+from bin.auto.wf_fix_audio import FixAudioWF, AutomationError
 from bin.translation import gtran
 class FixAudio(AutomationFrame):
     def __init__(self, parent):

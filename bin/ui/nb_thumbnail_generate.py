@@ -3,7 +3,7 @@ from bin.ui.ui_utils import change_states
 from threading import Thread
 import tkinter as tk
 import tkinter.ttk as ttk
-from bin.automations import GenerateThumbnailWF
+from bin.auto.wf_generate_thumbnail import GenerateThumbnailWF
 from bin.data_access import SQLAccess
 from bin.player_thumbnail import ThumbnailPreview
 from bin.translation import gtran

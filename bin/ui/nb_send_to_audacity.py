@@ -1,5 +1,5 @@
 from bin.ui.automation_frame import AutomationFrame
-from bin.automations import SendToAudacityWF
+from bin.auto.wf_send_to_audacity import SendToAudacityWF
 
 class Send2Audacity(AutomationFrame):
     def __init__(self, parent):

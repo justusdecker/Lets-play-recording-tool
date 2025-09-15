@@ -6,7 +6,7 @@ from threading import Thread
 from bin.ui.lpep_picker import LPEPPicker
 from bin.player_audio import NewAudioPlayer
 from bin.ui.ui_utils import change_states
-from bin.automations import render
+from bin.auto.wf_render import render
 class CompAndRender(tk.Frame):
     """
     Displays information about the application, including its license.
