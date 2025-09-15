@@ -48,19 +48,19 @@ class TkinterApp(tk.Tk):
     def get_ui_names(self) -> list[str]:
         """ Gets all ui_names """
         return [
-            gtran("bin::ui::ui_name_main"),
-            gtran("bin::ui::ui_name_recording"),
-            gtran("bin::ui::ui_name_thumbnailgenerate" ),
-            gtran("bin::ui::ui_name_fetchaudio"),
-            gtran("bin::ui::ui_name_fixaudio"),
-            gtran("bin::ui::ui_name_send2audacity"),
-            gtran("bin::ui::ui_name_compandrender"),
-            gtran("bin::ui::ui_name_settitle"),
-            gtran("bin::ui::ui_name_deploy"),
-            gtran("bin::ui::ui_name_tadeditor"),
-            gtran("bin::ui::ui_name_filemanager"),
-            gtran("bin::ui::ui_name_settings"),
-            gtran("bin::ui::ui_name_about"),
+            'Main',
+            'Recording',
+            'ThumbnailGenerate',
+            'FetchAudio',
+            'FixAudio',
+            'Send2Audacity',
+            'CompAndRender',
+            'SetTitle',
+            'Deploy',
+            'TadEditor',
+            'FileManager',
+            'Settings',
+            'About'
         ]
     
     def build_ui(self):

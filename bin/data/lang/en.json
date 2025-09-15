@@ -87,7 +87,6 @@
     "bin::ui::filemanager::total" : "Total:",
     "bin::ui::filemanager::files" : "files",
     "bin::ui::filemanager::warning" : "You are trying to delete all files in the selected lets play\nThis step is irreversible!\nContinue?",
-    
     "bin::auto::recording::settings_not_exist" : "Settings File does not exist!",
     "bin::auto::recording::no_connection" : "No Connection!",
     "bin::auto::recording::disconnect" : "Disconnect",
