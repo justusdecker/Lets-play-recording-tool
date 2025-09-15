@@ -1,6 +1,6 @@
-from bin.translation import gtran
 from bin.welcome_popup import WELCOME
-WELCOME.update_message(f'Load: {__name__}')
+from bin.translation import gtran
+WELCOME.update_message(f'{gtran("bin::welcome::load")} {__name__}')
 
 try: #Fix for issue: #125
     from winotify import Notification, audio

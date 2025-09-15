@@ -1,5 +1,6 @@
 from bin.welcome_popup import WELCOME
-WELCOME.update_message(f'Load: {__name__}')
+from bin.translation import gtran
+WELCOME.update_message(f'{gtran("bin::welcome::load")} {__name__}')
 
 import tkinter.messagebox as msgbox
 from bin.constants import VERSION, __LICENSE__
@@ -21,7 +22,8 @@ if __name__ == '__main__':
     create_libpng16_16_ine()
     on_start()
     send_heartbeat()
-    WELCOME.update_message('Create App')
+    from bin.translation import gtran
+    WELCOME.update_message(gtran("bin::welcome::create_app"))
     APP = TkinterApp()
     check_version()
     APP.mainloop()

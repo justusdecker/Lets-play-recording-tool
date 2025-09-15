@@ -2,7 +2,7 @@ from bin.data_access import SQLAccess
 from bin.obs import OBSObserver
 from time import sleep
 from tools.log import LOG, LOG_ERROR
-
+from bin.translation import gtran
 def obs_rec_label_set(OBSO, el,reset:bool = False):
     """
     Sets the recording label color
@@ -34,30 +34,30 @@ def obs_connect(el):
     OBSO = OBSObserver()
     if OBSO.failed:
         obs_rec_label_set(OBSO,el, True)
-        el.btn_connect.configure(text= 'Settings File does not exist!')
+        el.btn_connect.configure(text= gtran("bin::auto::recording::settings_not_exist"))
         return
     if not OBSO.isconnected:
         obs_rec_label_set(OBSO,el, True)
-        el.btn_connect.configure(text= 'No Connection!')
+        el.btn_connect.configure(text= gtran("bin::auto::recording::no_connection"))
         return
-    el.btn_connect.configure(text= 'Disconnect')
+    el.btn_connect.configure(text= gtran("bin::auto::recording::disconnect"))
     el.btn_connect.state(["!disabled"])
     while OBSO.isconnected:
         if el.close_connection:
             OBSO.client.disconnect()
-            el.btn_connect.configure(text= 'Connection closed!')
+            el.btn_connect.configure(text= gtran("bin::auto::recording::connection_closed"))
             return
         try:
             id = SQLAccess.read_letsplay_names().index(el.lpep_picker.v_lp.get())
             if OBSO.time_in_seconds:
-                el.recording_information_label.configure(text= f'Recording - {SQLAccess.read_episode_ammount(id)} Episodes\n{OBSO.timecode.split(".")[0]}')
+                el.recording_information_label.configure(text= f'{gtran("bin::auto::recording::recording_text")} - {SQLAccess.read_episode_ammount(id)} {gtran("bin::auto::recording::episodes_text")}\n{OBSO.timecode.split(".")[0]}')
                 obs_rec_label_set(OBSO,el)
             else:
                 obs_rec_label_set(OBSO,el, True)
-                el.recording_information_label.configure(text= f'Waiting - {SQLAccess.read_episode_ammount(id)} Episodes')
+                el.recording_information_label.configure(text= f'{gtran("bin::auto::recording::waiting_text")} - {SQLAccess.read_episode_ammount(id)} {gtran("bin::auto::recording::episodes_text")}')
             OBSO.update(id)
         except Exception as E:
             obs_rec_label_set(OBSO,el, True)
-            el.btn_connect.configure(text= 'Unexpected Error happened')
+            el.btn_connect.configure(text= gtran("bin::auto::recording::unexpected_error"))
             LOG(f'Unexpected Error happened [{E}]',logtype=LOG_ERROR)
         sleep(0.3)

@@ -1,5 +1,6 @@
 from bin.welcome_popup import WELCOME
-WELCOME.update_message(f'Load: {__name__}')
+from bin.translation import gtran
+WELCOME.update_message(f'{gtran("bin::welcome::load")} {__name__}')
 
 import tkinter.ttk as ttk
 import tkinter as tk
@@ -37,7 +38,8 @@ def convert_char(c: str):
     if not c in CHAR_TABLE: return c
     return CHAR_TABLE[c]
 
-WELCOME.update_message('Instanciate VLC')
+
+WELCOME.update_message(gtran("bin::welcome::inst_vlc"))
 
 VLC_INSTANCE = vlc.Instance()
 from bin.media_player import NewMediaPlayer

@@ -73,7 +73,6 @@
     "bin::ui::settings::gemini_key" : "IP: ",
     "bin::ui::settings::gemini_save_btn" : "Set",
     "bin::ui::settings::gemini_show_pw" : "Set",
-
     "bin::ui::filemanager::open_lprt_folder" : "Open lprt folder",
     "bin::ui::filemanager::data_detection_header" : "Data Detection",
     "bin::ui::filemanager::data_deletion_header" : "Data Deletion",
@@ -87,5 +86,17 @@
     "bin::ui::filemanager::something_changed" : "Lets Play created\nYou must restart the app!",
     "bin::ui::filemanager::total" : "Total:",
     "bin::ui::filemanager::files" : "files",
-    "bin::ui::filemanager::warning" : "You are trying to delete all files in the selected lets play\nThis step is irreversible!\nContinue?"
+    "bin::ui::filemanager::warning" : "You are trying to delete all files in the selected lets play\nThis step is irreversible!\nContinue?",
+    
+    "bin::auto::recording::settings_not_exist" : "Settings File does not exist!",
+    "bin::auto::recording::no_connection" : "No Connection!",
+    "bin::auto::recording::disconnect" : "Disconnect",
+    "bin::auto::recording::connection_closed" : "Connection closed!",
+    "bin::auto::recording::unexpected_error" : "Unexpected Error happened",
+    "bin::auto::recording::recording_text" : "Recording",
+    "bin::auto::recording::waiting_text" : "Waiting",
+    "bin::auto::recording::episodes_text" : "Episodes",
+    "bin::welcome::load" : "Load:",
+    "bin::welcome::create_app" : "Create App",
+    "bin::welcome::inst_vlc" : "Instanciate VLC"
 }
