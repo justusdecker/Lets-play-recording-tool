@@ -1,3 +1,4 @@
+#!raise DeprecationWarning
 from bin.translation import gtran
 from tkinter import ttk
 import tkinter as tk
@@ -375,7 +376,7 @@ class Main(tk.Frame):
         W = ttk.Frame(parent)
         
         # Create Headers
-        MAIN = ttk.LabelFrame(W,text='Welcome')
+        MAIN = ttk.LabelFrame(W,text=gtran("bin::ui::main_welcome_header"))
         
         label = ttk.Label(MAIN, text =DISCLAIMER)
 
@@ -395,13 +396,13 @@ class Recording(tk.Frame):
         self.menu = parent.master
         
         # Create Headers
-        RECORDING = ttk.LabelFrame(W,text='Recording')
+        RECORDING = ttk.LabelFrame(W,text=gtran("bin::ui::recording_header"))
         
-        INFORMATION = ttk.LabelFrame(W,text='Information')
+        INFORMATION = ttk.LabelFrame(W,text=gtran("bin::ui::recording_information_header"))
 
         
         # Recording
-        self.btn_connect = ttk.Button(RECORDING, text ="Connect to obs",command=self.get_connection)
+        self.btn_connect = ttk.Button(RECORDING, text =gtran("bin::ui::connect_btn_text_default"),command=self.get_connection)
 
         self.btn_connect.pack(side='bottom')
         
