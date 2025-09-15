@@ -32,5 +32,9 @@
     "bin::ui::ui_name_tadeditor" : "TadEditor",
     "bin::ui::ui_name_filemanager" : "FileManager",
     "bin::ui::ui_name_settings" : "Settings",
-    "bin::ui::ui_name_about" : "About"
+    "bin::ui::ui_name_about" : "About",
+    "bin::ui::main_welcome_header" : "Welcome",
+    "bin::ui::recording_header" : "Recording",
+    "bin::ui::recording_information_header" : "Information",
+    "bin::ui::connect_btn_text_default" : "Connect to obs"
 }

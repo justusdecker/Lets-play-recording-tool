@@ -6,7 +6,7 @@ from bin.constants import VERSION, __LICENSE__
 from bin.data_access import on_start
 from os import system
 from bin.download_file import send_heartbeat, get_newest_version_number
-from bin.ui import TkinterApp
+from bin.ui.tkinter_app import TkinterApp
 from bin.dll_loader import create_libpng16_16_ine
 
 def check_version():

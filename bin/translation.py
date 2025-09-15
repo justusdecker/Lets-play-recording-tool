@@ -3,6 +3,7 @@ from json import load
 TRANSLATIONS = {}
 LANG = 'en'
 def get_translations() -> dict:
+    # The translation will be loaded[In Production] from bin.data.lang.{module}.py
     translations = {}
     for translation in listdir('./bin/data/lang/'):
         key = translation.split('.')[0]

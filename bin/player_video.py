@@ -44,7 +44,7 @@ from bin.media_player import NewMediaPlayer
 class NewVideoPlayer(NewMediaPlayer):
     def __init__(self,parent, data: list[int],lpid,app):
         global change_states
-        from bin.ui import change_states
+        from bin.ui.ui_utils import change_states
         self.tg = ThumbnailGenerator()
         self.data: list[int] = data
         self.current_episode = 0
