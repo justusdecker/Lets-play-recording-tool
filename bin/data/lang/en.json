@@ -74,6 +74,18 @@
     "bin::ui::settings::gemini_save_btn" : "Set",
     "bin::ui::settings::gemini_show_pw" : "Set",
 
-    "bin::ui::filemanager::gemini_show_pw" : "Set",
-
+    "bin::ui::filemanager::open_lprt_folder" : "Open lprt folder",
+    "bin::ui::filemanager::data_detection_header" : "Data Detection",
+    "bin::ui::filemanager::data_deletion_header" : "Data Deletion",
+    "bin::ui::filemanager::lp_create_header" : "Lets Play Create",
+    "bin::ui::filemanager::lp_edit_header" : "Lets Play Edit",
+    "bin::ui::filemanager::lp_backup_header" : "Lets Play Backup",
+    "bin::ui::filemanager::lp_create_label_0" : "Create a new Lets Play",
+    "bin::ui::filemanager::lp_create_label_1" : "Name",
+    "bin::ui::filemanager::lp_create_label_2" : "Gamename",
+    "bin::ui::filemanager::lp_minutes" : "Minutes",
+    "bin::ui::filemanager::something_changed" : "Lets Play created\nYou must restart the app!",
+    "bin::ui::filemanager::total" : "Total:",
+    "bin::ui::filemanager::files" : "files",
+    "bin::ui::filemanager::warning" : "You are trying to delete all files in the selected lets play\nThis step is irreversible!\nContinue?"
 }

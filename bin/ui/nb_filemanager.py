@@ -25,7 +25,7 @@ from bin.constants import (
 from subprocess import Popen
 from bin.ui.lpep_picker import LPEPPicker
 from bin.ui.ui_utils import change_states
-
+from bin.translation import gtran
 
 class FileManager(tk.Frame):
     """
@@ -44,9 +44,9 @@ class FileManager(tk.Frame):
         # Menu
         self.menu = parent.master
         # Data Detection
-        open_folder_btn = ttk.Button(W,text='Open lprt folder',command=lambda *x: Popen(f'explorer {ROOT}'))
+        open_folder_btn = ttk.Button(W,text=gtran("bin::ui::filemanager::open_lprt_folder"),command=lambda *x: Popen(f'explorer {ROOT}'))
         open_folder_btn.pack()
-        DATA_DETECTION = ttk.LabelFrame(W,text='Data Detection')
+        DATA_DETECTION = ttk.LabelFrame(W,text=gtran("bin::ui::filemanager::data_detection_header"))
         img = AsciiImage(ICO_SEARCH)
         self.detect_btn = ttk.Button(DATA_DETECTION, image=img.image,command=self.on_detect)
         self.label = ttk.Label(DATA_DETECTION,text='')
@@ -57,7 +57,7 @@ class FileManager(tk.Frame):
         
         # Data Deletion
         
-        DATA_DELETION = ttk.LabelFrame(W,text='Data Deletion')
+        DATA_DELETION = ttk.LabelFrame(W,text=gtran("bin::ui::filemanager::data_deletion_header"))
         self.DATA_DELETION = DATA_DELETION
         
         self.simple_delete_lpep = LPEPPicker(DATA_DELETION,self.delete_files,'lp-ep',ICO_TRASH)
@@ -66,18 +66,18 @@ class FileManager(tk.Frame):
         
         # Lets Play Create
         
-        LP_CREATE = ttk.LabelFrame(W,text='Lets Play Create')
+        LP_CREATE = ttk.LabelFrame(W,text=gtran("bin::ui::filemanager::lp_create_header"))
         
         self.name_var = tk.StringVar()
         self.game_name_var = tk.StringVar()
         self.episode_length_var = tk.StringVar()
         
-        new_label = ttk.Label(LP_CREATE,text='Create a new Lets Play')
-        name_label = ttk.Label(LP_CREATE,text='Name')
-        game_name_label = ttk.Label(LP_CREATE,text='Gamename')
+        new_label = ttk.Label(LP_CREATE,text=gtran("bin::ui::filemanager::lp_create_label_0"))
+        name_label = ttk.Label(LP_CREATE,text=gtran("bin::ui::filemanager::lp_create_label_1"))
+        game_name_label = ttk.Label(LP_CREATE,text=gtran("bin::ui::filemanager::lp_create_label_2"))
         name = ttk.Entry(LP_CREATE,textvariable=self.name_var)
         game_name = ttk.Entry(LP_CREATE,textvariable=self.game_name_var)
-        episode_length = ttk.OptionMenu(LP_CREATE,self.episode_length_var,'None',*[f'{i} Minutes' for i in range(10,65,5)],command=self.something_changed)
+        episode_length = ttk.OptionMenu(LP_CREATE,self.episode_length_var,'None',*[f'{i} {gtran("bin::ui::filemanager::lp_minutes")}' for i in range(10,65,5)],command=self.something_changed)
         img = AsciiImage(ICO_NEW)
         self.btn_lp_create = ttk.Button(LP_CREATE,image=img.image,command=self.create_lets_play)
         self.btn_lp_create.image = img.image
@@ -93,20 +93,20 @@ class FileManager(tk.Frame):
     
         LP_CREATE.pack()
         
-        LP_EDIT = ttk.LabelFrame(W,text='Lets Play Edit')
+        LP_EDIT = ttk.LabelFrame(W,text=gtran("bin::ui::filemanager::lp_edit_header"))
         
         self.lp_edit_lpep = LPEPPicker(LP_EDIT,self.update_lets_play,'lp',ICO_REFRESH)
 
         self.lp_edit_episode_length_var = tk.StringVar()
 
-        lp_edit_episode_length = ttk.OptionMenu(LP_EDIT,self.lp_edit_episode_length_var,'None',*[f'{i} Minutes' for i in range(10,65,5)])
+        lp_edit_episode_length = ttk.OptionMenu(LP_EDIT,self.lp_edit_episode_length_var,'None',*[f'{i} {gtran("bin::ui::filemanager::lp_minutes")}' for i in range(10,65,5)])
         img = AsciiImage(ICO_REFRESH)
 
         lp_edit_episode_length.pack()
 
         LP_EDIT.pack()
         
-        BACKUP = ttk.LabelFrame(W,text='Lets Play Backup')
+        BACKUP = ttk.LabelFrame(W,text=gtran("bin::ui::filemanager::lp_backup_header"))
         
         self.backup_lpep = LPEPPicker(BACKUP,self.create_video_backup,'lp', ICO_BACKUP)
 
@@ -198,7 +198,7 @@ class FileManager(tk.Frame):
         if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.read_letsplay_names():
             change_states([self.menu],'disabled')
             SQLAccess.create_letsplay(self.name_var.get(), self.game_name_var.get(),int(self.episode_length_var.get().split(' ')[0])*60)
-            msgbox.showinfo('Success', 'Lets Play created\nYou must restart the app!')
+            msgbox.showinfo('Success', gtran("bin::ui::filemanager::something_changed"))
             sys.exit()
     
     def det(self,path: str) -> list[str,int,int]:
@@ -269,14 +269,14 @@ class FileManager(tk.Frame):
             if isfile(ep.video_path):
                 video_size += getsize(ep.video_path)
                 video_files += 1
-        results['video_raw'] = (f'{self.gsn(video_size)} in {video_files} files', video_size,video_files)
+        results['video_raw'] = (f'{self.gsn(video_size)} -> {video_files} {gtran("bin::ui::filemanager::files")}', video_size,video_files)
         ALL = f""        
         tot_f, tot_s = 0, 0
         for key in results:
             ALL += f'{key:<10} {results[key][0]}\n'
             tot_f += results[key][2]
             tot_s += results[key][1]
-        ALL += f'TOTAL: {self.gsn(tot_s)} in {tot_f} files'
+        ALL += f'{gtran("bin::ui::filemanager::total")} {self.gsn(tot_s)} in {tot_f} {gtran("bin::ui::filemanager::files")}'
         
         self.label.configure(text=ALL)
         
@@ -291,7 +291,7 @@ class FileManager(tk.Frame):
         
         lpid = SQLAccess.read_letsplay_names().index(self.simple_delete_lpep.v_lp.get())
         LOG(f"Delete: [$][$ - $]",[SQLAccess.read_letsplay_name(lpid),*self.rng])
-        ok = msgbox.askyesno('Attention','You are trying to delete all files in the selected lets play\nThis step is irreversible!\nContinue?')
+        ok = msgbox.askyesno('Attention',gtran("bin::ui::filemanager::warning"))
         if not ok: return
         #print(SQLAccess.read_letsplay_names().index(self.simple_delete_lpep.v_lp.get()),self.simple_delete_lpep.v_lp.get())
         episodes = SQLAccess.read_episodes(lpid)
