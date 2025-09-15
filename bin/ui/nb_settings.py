@@ -2,6 +2,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from bin.data_access import json_read, file_read, isfile, json_write, file_write
 from bin.constants import ROOT, DEFAULT_OBS_SETTINGS
+from bin.translation import gtran
 
 class Settings(tk.Frame):
     """
@@ -18,30 +19,30 @@ class Settings(tk.Frame):
         self.menu = parent.master
         
         # Create Headers
-        SETTINGS = ttk.LabelFrame(W,text='OBS Settings')
-        API_GEMINI_SETTINGS = ttk.LabelFrame(W,text='Gemini Settings')
+        SETTINGS = ttk.LabelFrame(W,text=gtran("bin::ui::settings::obs_header"))
+        API_GEMINI_SETTINGS = ttk.LabelFrame(W,text=gtran("bin::ui::settings::gemini_header"))
         
         self.IP = tk.StringVar()
         self.PORT = tk.StringVar()
         self.PW = tk.StringVar()
         self.PW_TOGGLE = tk.IntVar()
         
-        obs_ip_label = ttk.Label(SETTINGS,text='IP:')
+        obs_ip_label = ttk.Label(SETTINGS,text=gtran("bin::ui::settings::obs_ip"))
         self.obs_ip = ttk.Entry(SETTINGS,textvariable=self.IP)
         
-        obs_port_label = ttk.Label(SETTINGS,text='Port:')
+        obs_port_label = ttk.Label(SETTINGS,text=gtran("bin::ui::settings::obs_port"))
         self.obs_port = ttk.Entry(SETTINGS,textvariable=self.PORT)
         
-        obs_password_label = ttk.Label(SETTINGS,text='Password:')
+        obs_password_label = ttk.Label(SETTINGS,text=gtran("bin::ui::settings::obs_pw"))
         self.obs_password = ttk.Entry(SETTINGS,show='*',textvariable=self.PW)
         
         self.obs_ip.bind('<KeyPress>',self.something_changed)
         self.obs_port.bind('<KeyPress>',self.something_changed)
         self.obs_password.bind('<KeyPress>',self.something_changed)
         
-        self.set_settings_obs_btn = ttk.Button(SETTINGS,text='Set',command=self.set_obs_settings)
+        self.set_settings_obs_btn = ttk.Button(SETTINGS,text=gtran("bin::ui::settings::obs_save_btn"),command=self.set_obs_settings)
         
-        self.show_pw = ttk.Checkbutton(SETTINGS,variable=self.PW_TOGGLE,text='show',command=self.toggle_pw_view)
+        self.show_pw = ttk.Checkbutton(SETTINGS,variable=self.PW_TOGGLE,text=gtran("bin::ui::settings::obs_show_pw"),command=self.toggle_pw_view)
         
         obs_ip_label.grid(row=0,column=0)
         self.obs_ip.grid(row=0,column=1)
@@ -75,11 +76,11 @@ class Settings(tk.Frame):
         
         languages = ['german', 'english', 'dutch']
         
-        api_key_label = ttk.Label(API_GEMINI_SETTINGS,text='API_KEY:')
+        api_key_label = ttk.Label(API_GEMINI_SETTINGS,text=gtran("bin::ui::settings::gemini_key"))
         self.api_key = ttk.Entry(API_GEMINI_SETTINGS,textvariable=self.APIKEY,show='*')
-        self.show_pw_gapi = ttk.Checkbutton(API_GEMINI_SETTINGS,variable=self.PW_TOGGLE_GAPI,text='show',command=self.toggle_pw_view)
+        self.show_pw_gapi = ttk.Checkbutton(API_GEMINI_SETTINGS,variable=self.PW_TOGGLE_GAPI,text=gtran("bin::ui::settings::gemini_show_pw"),command=self.toggle_pw_view)
         language_options = ttk.OptionMenu(API_GEMINI_SETTINGS,self.language,lang,*languages)
-        self.set_settings_api_key = ttk.Button(API_GEMINI_SETTINGS,text='Set',command=self.set_api_settings)
+        self.set_settings_api_key = ttk.Button(API_GEMINI_SETTINGS,text=gtran("bin::ui::settings::gemini_save_btn"),command=self.set_api_settings)
         self.api_key.bind('<KeyPress>',self.something_changed)
         
         api_key_label.grid(row=0,column=0)
