@@ -1,7 +1,9 @@
 name: Runtest
 
 on:
-    push: ['**']
+    push: 
+      branches:
+          - 'main'
     pull_request:
 jobs:
     run-tests:
