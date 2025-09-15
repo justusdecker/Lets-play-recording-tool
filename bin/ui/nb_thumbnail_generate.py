@@ -6,6 +6,7 @@ import tkinter.ttk as ttk
 from bin.automations import GenerateThumbnailWF
 from bin.data_access import SQLAccess
 from bin.player_thumbnail import ThumbnailPreview
+from bin.translation import gtran
 
 class ThumbnailGenerate(TKFrameWithLPControls):
     def __init__(self, parent):
@@ -13,12 +14,12 @@ class ThumbnailGenerate(TKFrameWithLPControls):
         
         self.check_for_each_option_var = tk.BooleanVar(value=False)
         
-        options = ttk.LabelFrame(self.W,text='Options')
+        options = ttk.LabelFrame(self.W,text=gtran("bin::ui::thumbnail_generate::options_header"))
         
-        self.check_for_each_option = ttk.Checkbutton(options, text='Check each', variable=self.check_for_each_option_var)
+        self.check_for_each_option = ttk.Checkbutton(options, text=gtran("bin::ui::thumbnail_generate::check_each"), variable=self.check_for_each_option_var)
         self.check_for_each_option.pack()
         
-        preview = ttk.LabelFrame(self.W,text='Preview')
+        preview = ttk.LabelFrame(self.W,text=gtran("bin::ui::thumbnail_generate::preview_header"))
         
         self.tp = ThumbnailPreview(preview)
         self.tp.pack()

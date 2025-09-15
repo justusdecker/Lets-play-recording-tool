@@ -15,20 +15,20 @@ class Recording(tk.Frame):
         self.menu = parent.master
         
         # Create Headers
-        RECORDING = ttk.LabelFrame(W,text=gtran("bin::ui::recording_header"))
+        RECORDING = ttk.LabelFrame(W,text=gtran("bin::ui::recording::header"))
         
-        INFORMATION = ttk.LabelFrame(W,text=gtran("bin::ui::recording_information_header"))
+        INFORMATION = ttk.LabelFrame(W,text=gtran("bin::ui::recording::information_header"))
 
         
         # Recording
-        self.btn_connect = ttk.Button(RECORDING, text =gtran("bin::ui::connect_btn_text_default"),command=self.get_connection)
+        self.btn_connect = ttk.Button(RECORDING, text =gtran("bin::ui::recording::connect_btn_text_default"),command=self.get_connection)
 
         self.btn_connect.pack(side='bottom')
         
         self.lpep_picker = LPEPPicker(RECORDING,False,'lp-nb',ch_callback=self.lp_changed)
         
         # Information
-        self.recording_information_label = ttk.Label(INFORMATION, text ="No Connection",font=tk.font.Font(W,size=12))
+        self.recording_information_label = ttk.Label(INFORMATION, text =gtran("bin::ui::recording::connect_btn_text_no_connection"),font=tk.font.Font(W,size=12))
 
         self.recording_information_label.grid(row = 0, column = 1)
         
@@ -56,13 +56,13 @@ class Recording(tk.Frame):
         """ Establish the connection & terminates it - with obs """
         change_states([self.menu],'disabled') # Deactivates all menu buttons for safety reasons
         self.btn_connect.state(["disabled"])
-        self.btn_connect.configure(text='Try connection to OBS...')
+        self.btn_connect.configure(text=gtran("bin::ui::recording::connect_btn_text_try_connecting"))
         obs_connect(self)
 
         self.btn_connect.state(["!disabled"])
         change_states([self.menu],'!disabled') # Reactivating
         if not self.close_connection:
-            self.btn_connect.configure(text='Error occured! Try again')
+            self.btn_connect.configure(text=gtran("bin::ui::recording::connect_btn_text_error_occured"))
         self.thread = None
         change_states(self.lpep_picker.get_ui(),'!disabled')
  

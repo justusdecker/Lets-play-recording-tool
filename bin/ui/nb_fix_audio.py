@@ -2,7 +2,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from bin.ui.automation_frame import AutomationFrame
 from bin.automations import FixAudioWF, AutomationError
-
+from bin.translation import gtran
 class FixAudio(AutomationFrame):
     def __init__(self, parent):
         super().__init__(parent)
@@ -11,14 +11,14 @@ class FixAudio(AutomationFrame):
         audio_filters_frame.pack(pady=10,)
 
         # Highpass Filter
-        hp_frame = ttk.LabelFrame(audio_filters_frame, text="High-Pass Filter")
+        hp_frame = ttk.LabelFrame(audio_filters_frame, text=gtran("bin::ui::high_pass_header"))
         hp_frame.pack(fill='x', padx=5, pady=5)
         
         self.hp_enabled = tk.BooleanVar(value=False)
         self.hp_freq = tk.DoubleVar(value=175.0)
         
-        ttk.Checkbutton(hp_frame, text="Activate", variable=self.hp_enabled).grid(row=0, column=0, sticky='w')
-        ttk.Label(hp_frame, text="Frequency (Hz):").grid(row=0, column=1, sticky='w')
+        ttk.Checkbutton(hp_frame, text=gtran("bin::ui::activate_high_pass"), variable=self.hp_enabled).grid(row=0, column=0, sticky='w')
+        ttk.Label(hp_frame, text=gtran("bin::ui::frequency_high_pass")).grid(row=0, column=1, sticky='w')
         ttk.Spinbox(
             hp_frame,
             from_=20.0,
@@ -29,14 +29,14 @@ class FixAudio(AutomationFrame):
         ).grid(row=0, column=2, sticky='w')
 
         # Lowpass Filter
-        lp_frame = ttk.LabelFrame(audio_filters_frame, text="Low-Pass Filter")
+        lp_frame = ttk.LabelFrame(audio_filters_frame, text=gtran("bin::ui::low_pass_header"))
         lp_frame.pack(fill='x', padx=5, pady=5)
         
         self.lp_enabled = tk.BooleanVar(value=False)
         self.lp_freq = tk.DoubleVar(value=13000.0)
         
-        ttk.Checkbutton(lp_frame, text="Activate", variable=self.lp_enabled).grid(row=0, column=0, sticky='w')
-        ttk.Label(lp_frame, text="Frequency (Hz):").grid(row=0, column=1, sticky='w')
+        ttk.Checkbutton(lp_frame, text=gtran("bin::ui::activate_low_pass"), variable=self.lp_enabled).grid(row=0, column=0, sticky='w')
+        ttk.Label(lp_frame, text=gtran("bin::ui::frequency_low_pass")).grid(row=0, column=1, sticky='w')
         ttk.Spinbox(
             lp_frame,
             from_=500.0,
@@ -47,7 +47,7 @@ class FixAudio(AutomationFrame):
         ).grid(row=0, column=2, sticky='w')
 
         # Loudness Normalization
-        ln_frame = ttk.LabelFrame(audio_filters_frame, text="Loudness Normalization")
+        ln_frame = ttk.LabelFrame(audio_filters_frame, text=gtran("bin::ui::loudness_normalization_header"))
         ln_frame.pack(fill='x', padx=5, pady=5)
         
         self.ln_enabled = tk.BooleanVar(value=True)
@@ -55,9 +55,9 @@ class FixAudio(AutomationFrame):
         self.ln_tp = tk.DoubleVar(value=-1.5)
         self.ln_lra = tk.DoubleVar(value=11.0)
         
-        ttk.Checkbutton(ln_frame, text="Activate", variable=self.ln_enabled).grid(row=0, column=0, sticky='w', columnspan=2)
+        ttk.Checkbutton(ln_frame, text=gtran("bin::ui::activate_loudness_normalization"), variable=self.ln_enabled).grid(row=0, column=0, sticky='w', columnspan=2)
         
-        ttk.Label(ln_frame, text="Integrated (LUFS):").grid(row=1, column=0, sticky='w')
+        ttk.Label(ln_frame, text=gtran("bin::ui::setting_lufs")).grid(row=1, column=0, sticky='w')
         ttk.Spinbox(
             ln_frame,
             from_=-24.0,
@@ -67,7 +67,7 @@ class FixAudio(AutomationFrame):
             width=6
         ).grid(row=1, column=1, sticky='w')
 
-        ttk.Label(ln_frame, text="True Peak (dBTP):").grid(row=2, column=0, sticky='w')
+        ttk.Label(ln_frame, text=gtran("bin::ui::setting_true_peak")).grid(row=2, column=0, sticky='w')
         ttk.Spinbox(
             ln_frame,
             from_=-6.0,
@@ -77,7 +77,7 @@ class FixAudio(AutomationFrame):
             width=6
         ).grid(row=2, column=1, sticky='w')
 
-        ttk.Label(ln_frame, text="Loudness Range (LU):").grid(row=3, column=0, sticky='w')
+        ttk.Label(ln_frame, text=gtran("bin::ui::setting_loudness_range")).grid(row=3, column=0, sticky='w')
         ttk.Spinbox(
             ln_frame,
             from_=1.0,
