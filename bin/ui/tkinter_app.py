@@ -7,6 +7,20 @@ from bin.constants import IMG_LOGO
 from bin.translation import gtran
 from tools.log import LOG
 
+from bin.ui.nb_main import Main
+from bin.ui.nb_fix_audio import FixAudio
+from bin.ui.nb_fetch_audio import FetchAudio
+from bin.ui.nb_deploy import Deploy
+from bin.ui.nb_recording import Recording
+from bin.ui.nb_thumbnail_generate import ThumbnailGenerate
+from bin.ui.nb_send_to_audacity import Send2Audacity
+from bin.ui.nb_tad_editor import TadEditor
+from bin.ui.nb_filemanager import FileManager
+from bin.ui.nb_about import About
+from bin.ui.nb_comp_and_render import CompAndRender
+from bin.ui.nb_settitle import SetTitle
+from bin.ui.nb_settings import Settings
+
 class TkinterApp(tk.Tk):
     """
     The main application window for the multi-page Tkinter application.
