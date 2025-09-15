@@ -13,9 +13,11 @@ from bin.constants import (
     FDS_TBO,
     DEFAULT_TAD,
     TEMP_FOLDER,
-    TAD_FOLDER
+    TAD_FOLDER,
+    ERROR_015,
+    ERROR_016
 )
-#! NOT FINISHED
+from bin.translation import gtran
 
 class TBO:
     """
@@ -202,22 +204,20 @@ class TadEditor(tk.Frame):
         self.menu = parent.master
         
         # Create Headers
-        TAD_EDITOR = ttk.Frame(W)
-        tad_editor_header = ttk.Label(W,text='TAD Editor',font=Font(W,size=16))
         
         OPTIONS = tk.Frame(W)
         OPTIONS.pack()
-        LETSPLAY = ttk.LabelFrame(OPTIONS,text='Lets Play')
+        LETSPLAY = ttk.LabelFrame(OPTIONS,text=gtran("bin::ui:tad_editor::lets_play_header"))
         
-        BACKGROUND = ttk.LabelFrame(OPTIONS,text='Background')
+        BACKGROUND = ttk.LabelFrame(OPTIONS,text=gtran("bin::ui:tad_editor::background_header"))
         
-        LOGO = ttk.LabelFrame(OPTIONS,text='Logo')
+        LOGO = ttk.LabelFrame(OPTIONS,text=gtran("bin::ui:tad_editor::logo_header"))
 
-        TEXT = ttk.LabelFrame(OPTIONS,text='Text')
+        TEXT = ttk.LabelFrame(OPTIONS,text=gtran("bin::ui:tad_editor::text_header"))
         
-        SAVE = ttk.LabelFrame(OPTIONS,text='Save')
+        SAVE = ttk.LabelFrame(OPTIONS,text=gtran("bin::ui:tad_editor::save_header"))
         
-        PREVIEW = ttk.LabelFrame(W,text='Preview')
+        PREVIEW = ttk.LabelFrame(W,text=gtran("bin::ui:tad_editor::preview_header"))
         PREVIEW.pack()
         self.tw = ThumbnailPreview(PREVIEW)
         self.lpep_picker = LPEPPicker(LETSPLAY,None,'lp-nb',ch_callback=self.lp_changed)
@@ -243,7 +243,7 @@ class TadEditor(tk.Frame):
         
         TEXT.grid(row=0,column=3,sticky='N')
         
-        self.save_btn = ttk.Button(SAVE,text='save',command=self.save_tad)
+        self.save_btn = ttk.Button(SAVE,text=gtran("bin::ui:tad_editor::save_btn_text"),command=self.save_tad)
         self.save_btn.grid(row=0,column=5)
         
         SAVE.grid(row=0,column=4,sticky='N')
@@ -261,12 +261,12 @@ class TadEditor(tk.Frame):
         """
         filepath = askopenfilename()
         if not filepath:
-            msgbox.showwarning('WARN','No File selected')
+            msgbox.showwarning('WARN',ERROR_016)
             return
         if filepath.endswith('.png'):
             self.get_strings()[0].set(filepath)
         else:
-            msgbox.showerror('ERROR','Wrong File Format')
+            msgbox.showerror('ERROR',ERROR_015)
         
     def set_font_path(self,*args):
         """
@@ -278,12 +278,12 @@ class TadEditor(tk.Frame):
         """
         filepath = askopenfilename()
         if not filepath:
-            msgbox.showwarning('WARN','No File selected')
+            msgbox.showwarning('WARN',ERROR_016)
             return
         if filepath.endswith('.ttf') or filepath.endswith('.otf'):
             self.get_strings()[1].set(filepath)
         else:
-            msgbox.showerror('ERROR','Wrong File Format')
+            msgbox.showerror('ERROR',ERROR_015)
     
     def lp_changed(self,*args):
         """

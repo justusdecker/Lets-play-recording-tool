@@ -16,6 +16,8 @@
     "bin::constants::error_012" : "FFPROBE is not installed.",
     "bin::constants::error_013" : "File not set.",
     "bin::constants::error_014" : "FFMPEG File creation error!",
+    "bin::constants::error_015": "Wrong File Format",
+    "bin::constants::error_016": "No File selected",
     "bin::wintoasty::toast_finished_msg" : "Job finished",
     "bin::ui::lpep_selector_header" : "LP - EP Selector",
     "bin::ui::lpep_selector_start_episode" : "Episode start",
@@ -53,5 +55,21 @@
     "bin::ui::setting_loudness_range" : "Loudness Range (LU):",
     "bin::ui::high_pass_header" : "High-Pass Filter",
     "bin::ui::low_pass_header" : "Low-Pass Filter",
-    "bin::ui::loudness_normalization_header" : "Loudness Normalization"
+    "bin::ui::loudness_normalization_header" : "Loudness Normalization",
+    "bin::ui:tad_editor::lets_play_header": "Lets Play",
+    "bin::ui:tad_editor::background_header": "Background",
+    "bin::ui:tad_editor::logo_header": "Logo",
+    "bin::ui:tad_editor::text_header": "Text",
+    "bin::ui:tad_editor::save_header": "Save",
+    "bin::ui:tad_editor::preview_header": "Preview",
+    "bin::ui:tad_editor::save_btn_text": "Save",
+
+    "bin::ui::settings::obs_ip" : "IP: ",
+    "bin::ui::settings::obs_port" : "Port: ",
+    "bin::ui::settings::obs_pw" : "Password: ",
+    "bin::ui::settings::obs_show_pw" : "Set",
+    "bin::ui::settings::obs_save_btn" : "Set",
+    "bin::ui::settings::gemini_key" : "IP: ",
+    "bin::ui::settings::gemini_save_btn" : "Set",
+    "bin::ui::settings::gemini_show_pw" : "Set"
 }

@@ -150,20 +150,15 @@ OBS_SETTINGS_PATH = f'{ROOT}obs_settings.json'
 
 ewf = gtran('bin::constants::ewf')
 exp = gtran('bin::constants::exp')
-ERROR_001 = f"[E001] {gtran('bin::constants::error_001')} {ewf}"
-ERROR_002 = f"[E002] {gtran('bin::constants::error_002')} {ewf}"
-ERROR_003 = f"[E003] {gtran('bin::constants::error_003')} {ewf}"
-ERROR_004 = f"[E004] {gtran('bin::constants::error_004')} {ewf}"
-ERROR_005 = f"[E005] {gtran('bin::constants::error_005')} {ewf}"
-ERROR_006 = f"[E006] {gtran('bin::constants::error_006')} {ewf}"
-ERROR_007 = f"[E007] {gtran('bin::constants::error_007')} {ewf}"
-ERROR_008 = f"[E008] {gtran('bin::constants::error_008')} {exp}"
-ERROR_009 = f"[E009] {gtran('bin::constants::error_009')} {ewf}"
-ERROR_010 = f"[E010] {gtran('bin::constants::error_010')} {exp}"
-ERROR_011 = f"[E011] {gtran('bin::constants::error_011')} {exp}"
-ERROR_012 = f"[E012] {gtran('bin::constants::error_012')} {exp}"
-ERROR_013 = f"[E013] {gtran('bin::constants::error_013')} {ewf}"
-ERROR_014 = f"[E014] {gtran('bin::constants::error_014')} {ewf}"
+
+for e in range(1,17):
+    # Iterates through all possible error codes
+    # This is much easier instead of typing the same gtran bs again & again!
+    # CON: Your IDE will hate this trick
+    filled = str(e).zfill(3)
+    print(filled)
+    globals()[f'ERROR_{filled}'] = f"[E{filled}] {gtran(f'bin::constants::error_{filled}')} {ewf}"
+
 
 DEPLOY_HTML = """
 <!DOCTYPE html>
