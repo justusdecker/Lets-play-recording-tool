@@ -207,17 +207,17 @@ class TadEditor(tk.Frame):
         
         OPTIONS = tk.Frame(W)
         OPTIONS.pack()
-        LETSPLAY = ttk.LabelFrame(OPTIONS,text=gtran("bin::ui:tad_editor::lets_play_header"))
+        LETSPLAY = ttk.LabelFrame(OPTIONS,text=gtran("bin::ui::tad_editor::lets_play_header"))
         
-        BACKGROUND = ttk.LabelFrame(OPTIONS,text=gtran("bin::ui:tad_editor::background_header"))
+        BACKGROUND = ttk.LabelFrame(OPTIONS,text=gtran("bin::ui::tad_editor::background_header"))
         
-        LOGO = ttk.LabelFrame(OPTIONS,text=gtran("bin::ui:tad_editor::logo_header"))
+        LOGO = ttk.LabelFrame(OPTIONS,text=gtran("bin::ui::tad_editor::logo_header"))
 
-        TEXT = ttk.LabelFrame(OPTIONS,text=gtran("bin::ui:tad_editor::text_header"))
+        TEXT = ttk.LabelFrame(OPTIONS,text=gtran("bin::ui::tad_editor::text_header"))
         
-        SAVE = ttk.LabelFrame(OPTIONS,text=gtran("bin::ui:tad_editor::save_header"))
+        SAVE = ttk.LabelFrame(OPTIONS,text=gtran("bin::ui::tad_editor::save_header"))
         
-        PREVIEW = ttk.LabelFrame(W,text=gtran("bin::ui:tad_editor::preview_header"))
+        PREVIEW = ttk.LabelFrame(W,text=gtran("bin::ui::tad_editor::preview_header"))
         PREVIEW.pack()
         self.tw = ThumbnailPreview(PREVIEW)
         self.lpep_picker = LPEPPicker(LETSPLAY,None,'lp-nb',ch_callback=self.lp_changed)
@@ -243,7 +243,7 @@ class TadEditor(tk.Frame):
         
         TEXT.grid(row=0,column=3,sticky='N')
         
-        self.save_btn = ttk.Button(SAVE,text=gtran("bin::ui:tad_editor::save_btn_text"),command=self.save_tad)
+        self.save_btn = ttk.Button(SAVE,text=gtran("bin::ui::tad_editor::save_btn_text"),command=self.save_tad)
         self.save_btn.grid(row=0,column=5)
         
         SAVE.grid(row=0,column=4,sticky='N')

@@ -56,13 +56,13 @@
     "bin::ui::high_pass_header" : "High-Pass Filter",
     "bin::ui::low_pass_header" : "Low-Pass Filter",
     "bin::ui::loudness_normalization_header" : "Loudness Normalization",
-    "bin::ui:tad_editor::lets_play_header": "Lets Play",
-    "bin::ui:tad_editor::background_header": "Background",
-    "bin::ui:tad_editor::logo_header": "Logo",
-    "bin::ui:tad_editor::text_header": "Text",
-    "bin::ui:tad_editor::save_header": "Save",
-    "bin::ui:tad_editor::preview_header": "Preview",
-    "bin::ui:tad_editor::save_btn_text": "Save",
+    "bin::ui::tad_editor::lets_play_header": "Lets Play",
+    "bin::ui::tad_editor::background_header": "Background",
+    "bin::ui::tad_editor::logo_header": "Logo",
+    "bin::ui::tad_editor::text_header": "Text",
+    "bin::ui::tad_editor::save_header": "Save",
+    "bin::ui::tad_editor::preview_header": "Preview",
+    "bin::ui::tad_editor::save_btn_text": "Save",
     "bin::ui::settings::obs_header" : "IP: ",
     "bin::ui::settings::gemini_header" : "IP: ",
     "bin::ui::settings::obs_ip" : "IP: ",
@@ -72,5 +72,8 @@
     "bin::ui::settings::obs_save_btn" : "Set",
     "bin::ui::settings::gemini_key" : "IP: ",
     "bin::ui::settings::gemini_save_btn" : "Set",
-    "bin::ui::settings::gemini_show_pw" : "Set"
+    "bin::ui::settings::gemini_show_pw" : "Set",
+
+    "bin::ui::filemanager::gemini_show_pw" : "Set",
+
 }
