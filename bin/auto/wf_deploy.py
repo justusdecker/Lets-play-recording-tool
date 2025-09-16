@@ -3,7 +3,7 @@ from bin.data_access import SQLAccess, reoc, isfile, rie, cnef
 from bin.constants import TEMP_FOLDER, DEPLOY_FOLDER, ERROR_006, ERROR_007, ERROR_013, DEPLOY_CSS, AutomationError
 from shutil import copyfile
 from bin.jinja import deploy_render
-import tkinter.messagebox as msgbox
+from bin.xmsgbox import xqu, xerr
 from subprocess import Popen
 from bin.data_access import SQLAccess, cnef,file_write, try_delete_file
 from tkinter.filedialog import askdirectory
@@ -28,8 +28,8 @@ class DeployWF(GenericWorkFlow):
         After that the corresponding error message will be displayed.
         """
         try:
-            data_deletion = msgbox.askyesno('Question','Do you want to delete temp files?')
-            move_files = msgbox.askyesno('Question','Do you want to move the files to another path?')
+            data_deletion = xqu('Question\nDo you want to delete temp files?')
+            move_files = xqu('Question\nDo you want to move the files to another path?')
             if move_files:
                 DEST = askdirectory().replace('/','\\')
             else:
@@ -87,7 +87,7 @@ class DeployWF(GenericWorkFlow):
             Popen(f'explorer {DEST}')
             super().user_workflow()
         except AutomationError as AE:
-            msgbox.showerror('Automation Error',str(AE))
+            xerr(f'Automation Error \n{AE}')
             
         # After processing all episodes, we re-enabling the application's start button
         # and calling the parent `user_workflow` to display the completion message.

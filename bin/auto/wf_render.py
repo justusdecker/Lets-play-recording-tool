@@ -2,7 +2,7 @@ from bin.data_access import SQLAccess, reoc, isfile, rie, cnef
 from bin.constants import TEMP_FOLDER, VIDEO_FOLDER, ERROR_007, AutomationError
 from bin.ffmpeg import ffmpeg_run, FFMPEG_AUDIO_COMBINE, FFMPEG_VIDEO_RENDER
 from bin.wintoasty import toast_finished
-import tkinter.messagebox as msgbox
+from bin.xmsgbox import xerr
 def render(result,app, lpid):
     """
     Currently a workaround. Will be refactored into Compare&Render ASAP - issie #345
@@ -55,4 +55,4 @@ def render(result,app, lpid):
             SQLAccess.update_episode(lpid, index, final_video_path=final_path)
         toast_finished("[2/2] Audio combine")
     except AutomationError as AE:
-        msgbox.showerror('Automation Error',str(AE))
+        xerr(f'Automation Error\n{AE}')

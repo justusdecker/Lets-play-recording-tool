@@ -3,7 +3,7 @@ from bin.data_access import SQLAccess, reoc, isfile, rie, cnef
 from bin.constants import FIXED_AUDIO_FOLDER, ERROR_007, ERROR_013, AutomationError, AC_RESULT_FOLDER
 from bin.ffmpeg import ffmpeg_run, FFMPEG_CONVERT_AUDIO_TYPE
 from tools.log import LOG, LOG_INFO
-import tkinter.messagebox as msgbox
+from bin.xmsgbox import xerr, xqu
 from bin.audacity_pipeline import do_command, create_pipe, break_pipe
 from bin.data_access import SQLAccess, cnef,rie, try_delete_file
 from tools.log import LOG, LOG_ERROR
@@ -37,7 +37,7 @@ class SendToAudacityWF(GenericWorkFlow):
             create_pipe()
         except Exception as E:
             LOG(f"",[str(E)],logtype=LOG_ERROR)
-            msgbox.showerror('ERROR','Did you open Audacity & enabled the mod-pipe?')
+            xerr('Did you open Audacity & enabled the mod-pipe?')
             
             for i in app.lpep_picker.get_ui():
                 i.state(['!disabled'])
@@ -45,11 +45,11 @@ class SendToAudacityWF(GenericWorkFlow):
         
         try:
             files = listdir(AC_RESULT_FOLDER)
-            if files and msgbox.askyesno('Question','Clear Audacity Export Folder?'):
+            if files and xqu('Clear Audacity Export Folder?'):
                 for file in files:
                     try_delete_file(AC_RESULT_FOLDER+file)
                 
-            ui = msgbox.askyesno('LPRT to AC','Do you want to send data to Audacity?')
+            ui = xqu('Do you want to send data to Audacity?')
             rng = range(*self.rng)
             all_eps = len(rng)
             if ui:
@@ -68,7 +68,7 @@ class SendToAudacityWF(GenericWorkFlow):
 
             
             
-            while not msgbox.askquestion(message='Did you finished exporting the files?'):
+            while not xqu('Did you finished exporting the files?'):
                 pass
             files = listdir(AC_RESULT_FOLDER)
             reoc(all_eps < len(files),'Do you forget to clear the output folder?')
@@ -97,7 +97,7 @@ class SendToAudacityWF(GenericWorkFlow):
             super().user_workflow()
         except AutomationError as AE:
             LOG("AutomationError $ ", [str(AE)],LOG_ERROR)
-            msgbox.showerror('Automation Error',str(AE))
+            xerr(f'Automation Error\n{AE}')
             
         # After processing all episodes, we re-enabling the application's start button
         # and calling the parent `user_workflow` to display the completion message.

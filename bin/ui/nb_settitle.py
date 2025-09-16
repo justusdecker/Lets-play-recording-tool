@@ -1,6 +1,6 @@
 import tkinter as tk
 import tkinter.ttk as ttk
-import tkinter.messagebox as msgbox
+from bin.xmsgbox import xwar
 from bin.ui.lpep_picker import LPEPPicker
 from bin.ui.ui_utils import change_states
 from bin.data_access import SQLAccess, AsciiImage, isfile
@@ -71,10 +71,10 @@ class SetTitle(tk.Frame):
         for i in data:
             vp = SQLAccess.read_final_video_path(lpid,i-1)
             if vp is None: 
-                msgbox.showwarning('Failed loading', f'Database entry is NULL.')
+                xwar('Failed loading\nDatabase entry is NULL.')
                 return
             if not isfile(vp):
-                msgbox.showwarning('Failed loading', f'File:{vp} does not exist.')
+                xwar(f'Failed loading\nFile:{vp} does not exist.')
                 return
         
         self.media_player.reset(data, lpid)

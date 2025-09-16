@@ -1,7 +1,7 @@
 from bin.auto.workflow import OverhauledWorkFlow
 from bin.constants import THUMBNAIL_FOLDER, TAD_FOLDER, ERROR_007, ERROR_009, ERROR_013, AutomationError
 from bin.data_access import SQLAccess, reoc, isfile, rie   
-import tkinter.messagebox as msgbox
+from bin.xmsgbox import xerr, xqu
 from bin.thumbnail import ThumbnailGenerator
 
 class GenerateThumbnailWF(OverhauledWorkFlow):
@@ -28,7 +28,7 @@ class GenerateThumbnailWF(OverhauledWorkFlow):
             reoc(not tad, ERROR_009)
             reoc(not isfile(TAD_FOLDER + tad),ERROR_007 + '\nTAD Path does not exist!')
 
-            check_all = msgbox.askyesno('LPRT Thumbnail Check','Do you want to check every image?')
+            check_all = xqu('Do you want to check every image?')
             episodes = SQLAccess.read_episodes(self.lpid)
             rng = range(*self.rng)
             for ci,i in enumerate(rng): 
@@ -52,7 +52,7 @@ class GenerateThumbnailWF(OverhauledWorkFlow):
                                 )
                     TP.update_image(p,i)
                     if check_all:
-                        ok = msgbox.askyesno('LPRT Result Check','Thumbnail Result Okay?')
+                        ok = xqu('Thumbnail Result Okay?')
                     else:
                         ok = True
                 #!app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
@@ -61,7 +61,7 @@ class GenerateThumbnailWF(OverhauledWorkFlow):
 
             super().user_workflow()
         except AutomationError as AE:
-            msgbox.showerror('Automation Error',str(AE))
+            xerr(f'Automation Error\n{AE}')
         # After processing all episodes, we re-enabling the application's start button
         # and calling the parent `user_workflow` to display the completion message.
         # It does not matter whether the automation was completed or canceled.

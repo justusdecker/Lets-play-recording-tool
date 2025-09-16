@@ -16,3 +16,6 @@ def xerr(msg: str) -> None:
 def xinf(msg: str) -> None:
     """Displays a Tkinter information message box."""
     msgbox.showinfo('Info', msg)
+def xqu(msg: str) -> bool:
+    """Displays a Tkinter question box & returns the result."""
+    return msgbox.askyesno('Question',msg)

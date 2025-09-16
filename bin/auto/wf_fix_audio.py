@@ -3,7 +3,7 @@ from bin.data_access import SQLAccess, reoc, isfile, rie, cnef
 from bin.constants import ERROR_007, ERROR_013, ERROR_014, AutomationError, FIXED_AUDIO_FOLDER
 from bin.ffmpeg import ffmpeg_run, FFMPEG_AUDIO_PF_LN_L
 
-import tkinter.messagebox as msgbox
+from bin.xmsgbox import xerr
 class FixAudioWF(GenericWorkFlow):
     """
     A workflow class designed to apply various audio processing filters to
@@ -48,7 +48,7 @@ class FixAudioWF(GenericWorkFlow):
             
             super().user_workflow()
         except AutomationError as AE:
-            msgbox.showerror('Automation Error',str(AE))
+            xerr('Automation Error\n{AE}')
         # After processing all episodes, we re-enabling the application's start button
         # and calling the parent `user_workflow` to display the completion message.
         # It does not matter whether the automation was completed or canceled.

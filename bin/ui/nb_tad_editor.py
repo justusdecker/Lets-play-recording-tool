@@ -3,7 +3,7 @@ import tkinter.ttk as ttk
 from tkinter.colorchooser import askcolor
 from tkinter.filedialog import askopenfilename
 from tkinter.font import Font
-import tkinter.messagebox as msgbox
+from bin.xmsgbox import xwar, xerr
 from bin.player_thumbnail import ThumbnailPreview
 from bin.ui.lpep_picker import LPEPPicker
 from bin.thumbnail import ThumbnailGenerator
@@ -121,7 +121,7 @@ class TBO:
         """ Internal helper to check string values against a condition. """
         if cond == 'notnull':
             if not self.get_value():
-                msgbox.showwarning('WARN','This input is flagged as notnull!')
+                xwar('WARN\nThis input is flagged as notnull!')
             return not self.get_value()
         
     def get_value(self):
@@ -261,12 +261,12 @@ class TadEditor(tk.Frame):
         """
         filepath = askopenfilename()
         if not filepath:
-            msgbox.showwarning('WARN',ERROR_016)
+            xwar(ERROR_016)
             return
         if filepath.endswith('.png'):
             self.get_strings()[0].set(filepath)
         else:
-            msgbox.showerror('ERROR',ERROR_015)
+            xerr(ERROR_015)
         
     def set_font_path(self,*args):
         """
@@ -278,12 +278,12 @@ class TadEditor(tk.Frame):
         """
         filepath = askopenfilename()
         if not filepath:
-            msgbox.showwarning('WARN',ERROR_016)
+            xwar(ERROR_016)
             return
         if filepath.endswith('.ttf') or filepath.endswith('.otf'):
             self.get_strings()[1].set(filepath)
         else:
-            msgbox.showerror('ERROR',ERROR_015)
+            xerr(ERROR_015)
     
     def lp_changed(self,*args):
         """

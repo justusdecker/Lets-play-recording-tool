@@ -3,7 +3,7 @@ from bin.data_access import SQLAccess, reoc, isfile, rie, cnef
 from bin.constants import AUDIO_FOLDER, ERROR_007, ERROR_013, ERROR_014, AutomationError
 from bin.ffmpeg import FFMPEG_OPTIMIZED_EXTRACT, FFMPEG_GET_STREAM_AMMOUNT, ffmpeg_run
 from tools.log import LOG, LOG_INFO
-import tkinter.messagebox as msgbox
+from bin.xmsgbox import xerr
 
 class ExtractAudioWF(GenericWorkFlow):
     """
@@ -61,7 +61,7 @@ class ExtractAudioWF(GenericWorkFlow):
                 SQLAccess.update_episode(self.lpid,i, audio_mic_path=mic_track_path, audio_desktop_path=desktop_track_path) # Saves the updated episode metadata.
             super().user_workflow()
         except AutomationError as AE:
-            msgbox.showerror('Automation Error',str(AE))
+            xerr(f'Automation Error\n{AE}')
             
         # After processing all episodes, we re-enabling the application's start button
         # and calling the parent `user_workflow` to display the completion message.

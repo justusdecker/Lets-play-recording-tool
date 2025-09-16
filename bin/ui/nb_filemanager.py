@@ -1,4 +1,4 @@
-import tkinter.messagebox as msgbox
+from bin.xmsgbox import xinf, xerr, xqu
 import tkinter as tk
 import tkinter.ttk as ttk
 from tools.log import LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
@@ -173,7 +173,7 @@ class FileManager(tk.Frame):
                             print(file)
                             ZIP.write(file,file.replace('\\','/').split('/')[-1])
         except Exception as E:
-            msgbox.showerror('ERROR', str(E))
+            xerr( str(E))
         change_states([self.menu],'!disabled')
 
     def check_last_id(self,*args):
@@ -198,7 +198,7 @@ class FileManager(tk.Frame):
         if self.game_name_var.get() and self.name_var.get() and self.episode_length_var.get() != 'None' and self.name_var.get() not in SQLAccess.read_letsplay_names():
             change_states([self.menu],'disabled')
             SQLAccess.create_letsplay(self.name_var.get(), self.game_name_var.get(),int(self.episode_length_var.get().split(' ')[0])*60)
-            msgbox.showinfo('Success', gtran("bin::ui::filemanager::something_changed"))
+            xinf(gtran("bin::ui::filemanager::something_changed"))
             sys.exit()
     
     def det(self,path: str) -> list[str,int,int]:
@@ -291,7 +291,7 @@ class FileManager(tk.Frame):
         
         lpid = SQLAccess.read_letsplay_names().index(self.simple_delete_lpep.v_lp.get())
         LOG(f"Delete: [$][$ - $]",[SQLAccess.read_letsplay_name(lpid),*self.rng])
-        ok = msgbox.askyesno('Attention',gtran("bin::ui::filemanager::warning"))
+        ok = xqu(gtran("bin::ui::filemanager::warning"))
         if not ok: return
         #print(SQLAccess.read_letsplay_names().index(self.simple_delete_lpep.v_lp.get()),self.simple_delete_lpep.v_lp.get())
         episodes = SQLAccess.read_episodes(lpid)
