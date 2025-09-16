@@ -11,3 +11,4 @@ tools/dist/*
 *.exe
 /libpng16-16.dll
 tools/*.i
+test.csv

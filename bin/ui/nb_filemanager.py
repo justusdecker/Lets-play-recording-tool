@@ -26,7 +26,7 @@ from subprocess import Popen
 from bin.ui.lpep_picker import LPEPPicker
 from bin.ui.ui_utils import change_states
 from bin.translation import gtran
-
+import csv
 class FileManager(tk.Frame):
     """
     Manages file-related operations within the application, including:
@@ -112,7 +112,24 @@ class FileManager(tk.Frame):
 
         BACKUP.pack()
         
+        
+        # Export
+        
+        EXPORT = ttk.LabelFrame(W,text=gtran("bin::ui::filemanager::export_header"))
+        ttk.Button(EXPORT,image=img.image,command=self.export).pack()
+        EXPORT.pack()
         W.pack()
+    def export(self, *_):
+        data=SQLAccess.get_episodes_as_list()
+        with open('test.csv','w',newline="") as f:
+              
+            w = csv.writer(f,delimiter='|',)
+            w.writerows(data)
+    def import_(self, *_):
+        #! IGNORE [1]
+        #! after closing session & backup, delete lprt.db
+        #! Create a new db
+        ...
         
     def update_lets_play(self,*_):
         """ Updates the episode_length for the selected lets-play only if value is not None """

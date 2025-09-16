@@ -20,6 +20,8 @@ from PIL import ImageTk, Image
 import base64
 from PIL import ImageTk, Image
 from io import BytesIO
+from shutil import copyfile
+import sys
 
 def try_delete_file(filepath: str | None) -> bool:
     if filepath is not None:
@@ -207,6 +209,27 @@ class SQLAccess:
     A Wrapper Class for all Lets Play & Episode Data Handling.
     ---
     """
+    def get_episodes_as_list() -> list:
+        _ret = []
+        for ep in SQLAccess.read_all_episodes():
+            ep: Episodes
+            _ret.append([
+                SQLAccess.read_letsplay_name(SQLAccess.read_letsplay_ids().index(ep.lpid)),
+                ep.id,
+                ep.lpid,
+                ep.thumbnail_path,
+                ep.video_path,
+                ep.audio_mic_path,
+                ep.audio_desktop_path,
+                ep.audio_mic_edit1_path,
+                ep.audio_mic_edit2_path,
+                ep.final_video_path,
+                ep.has_problem,
+                ep.title,
+                ep.upload_at,
+            ])
+        return _ret
+    
     def get_ep_by_id(lpid: int):
         """
         Retrieves the ID of a specific episode from a letsplay.
@@ -264,7 +287,7 @@ class SQLAccess:
             list[LetsPlays]: A list of all letsplay objects.
         """
         return [letsplay for letsplay in session.query(LetsPlays).all()]
-
+    
     def read_all_episodes() -> list[Episodes]:
         """
         Reads all episode entries from the database.
@@ -326,6 +349,27 @@ class SQLAccess:
             data.__setattr__(key, kwargs[key])
         session.commit()
 
+    def clear_and_renew_db(data: list[list]) -> bool:
+        session.close()
+        del engine, Session, session, Base
+        DB_PATH = f'{ROOT}lprt.db'
+        copyfile(DB_PATH, DB_PATH + 'x') # <- create the backup
+        remove(DB_PATH) # <- remove lprt.db
+        
+        
+        Base = declarative_base()
+        engine = create_engine(DB_URL) # Create the engine echo prints the sql querys
+
+        # create the users table
+        Base.metadata.create_all(engine)
+
+        # create a session to manage the connection to the database
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        
+        
+        sys.exit()
+    
     def delete_letsplay(lpid: int):
         """
         Deletes a letsplay and all its associated episodes.

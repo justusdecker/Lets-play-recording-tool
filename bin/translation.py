@@ -69,6 +69,7 @@ EN = {
     "bin::ui::filemanager::lp_create_header" : "Lets Play Create",
     "bin::ui::filemanager::lp_edit_header" : "Lets Play Edit",
     "bin::ui::filemanager::lp_backup_header" : "Lets Play Backup",
+    "bin::ui::filemanager::export_header" : "Export",
     "bin::ui::filemanager::lp_create_label_0" : "Create a new Lets Play",
     "bin::ui::filemanager::lp_create_label_1" : "Name",
     "bin::ui::filemanager::lp_create_label_2" : "Gamename",
