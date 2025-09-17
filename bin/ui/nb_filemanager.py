@@ -2,7 +2,7 @@ from bin.xmsgbox import xinf, xerr, xqu
 import tkinter as tk
 import tkinter.ttk as ttk
 from tools.log import LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-from bin.data_access import SQLAccess, AsciiImage,cnef, try_delete_file
+from bin.data_access import SQLAccess, AsciiImage,cnef, try_delete_file, csv_read, csv_write
 from os.path import getsize, isdir,isfile
 from os import listdir
 import sys
@@ -26,7 +26,6 @@ from subprocess import Popen
 from bin.ui.lpep_picker import LPEPPicker
 from bin.ui.ui_utils import change_states
 from bin.translation import gtran
-import csv
 class FileManager(tk.Frame):
     """
     Manages file-related operations within the application, including:
@@ -116,20 +115,29 @@ class FileManager(tk.Frame):
         # Export
         
         EXPORT = ttk.LabelFrame(W,text=gtran("bin::ui::filemanager::export_header"))
-        ttk.Button(EXPORT,image=img.image,command=self.export).pack()
+        ttk.Button(EXPORT,text=gtran("bin::ui::filemanager::export_header"),command=self.export).pack()
         EXPORT.pack()
+        
+        IMPORT = ttk.LabelFrame(W,text=gtran("bin::ui::filemanager::import_header"))
+        ttk.Button(IMPORT,text=gtran("bin::ui::filemanager::import_header"),command=self.import_).pack()
+        IMPORT.pack()
         W.pack()
     def export(self, *_):
-        data=SQLAccess.get_episodes_as_list()
-        with open('test.csv','w',newline="") as f:
-              
-            w = csv.writer(f,delimiter='|',)
-            w.writerows(data)
+        
+        csv_write('episodes_export.csv', SQLAccess.get_episodes_as_list())
+        csv_write('lets_play_export.csv', SQLAccess.get_lets_plays_at_list())
+
     def import_(self, *_):
-        #! IGNORE [1]
-        #! after closing session & backup, delete lprt.db
-        #! Create a new db
-        ...
+        #! IGNORE [0]
+        [str,int,str,int,str,str]
+        [int,int]
+        #from tkinter.filedialog import askopenfilename
+        #lps = askopenfilename(filetypes=(['CSV Files','*.csv']))
+        data = csv_read('lets_play_export.csv')
+        
+        print(data)
+        
+        #eps = askopenfilename(filetypes=(['CSV Files','*.csv']))
         
     def update_lets_play(self,*_):
         """ Updates the episode_length for the selected lets-play only if value is not None """

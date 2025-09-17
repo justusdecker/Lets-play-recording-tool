@@ -1,6 +1,6 @@
-from bin.welcome_popup import WELCOME
-from bin.translation import gtran
-WELCOME.update_message(f'{gtran("bin::welcome::load")} {__name__}')
+#from bin.welcome_popup import WELCOME
+#from bin.translation import gtran
+#WELCOME.update_message(f'{gtran("bin::welcome::load")} {__name__}')
 
 from tkinter.messagebox import showerror
 try:
@@ -22,6 +22,8 @@ from PIL import ImageTk, Image
 from io import BytesIO
 from shutil import copyfile
 import sys
+import csv
+from typing import Any
 
 def try_delete_file(filepath: str | None) -> bool:
     if filepath is not None:
@@ -70,6 +72,23 @@ def file_append(filepath : str, data : str):
     """
     with open(filepath, 'a') as f:
         f.write(data)
+
+def csv_write(filepath: str, data: list[Any]):
+    """
+    Writes a Python list to a file in CSV format.
+
+    This function overwrites the file if it already exists.
+    """
+    with open(filepath,'w',newline="") as f:
+              
+        w = csv.writer(f,delimiter='|',)
+        w.writerows(data)
+
+def csv_read(filepath: str) -> list[str]:
+    """Reads JSON data from a file and parses it into a Python list."""
+    with open(filepath,'r',newline="") as f: 
+        w = csv.reader(f,delimiter='|',)
+        return [row for row in w]
 
 def json_read(filepath : str) -> dict | list:
     """Reads JSON data from a file and parses it into a Python dictionary or list."""
@@ -229,6 +248,18 @@ class SQLAccess:
                 ep.upload_at,
             ])
         return _ret
+    def get_lets_plays_at_list() -> list:
+        _ret = []
+        for lp in SQLAccess.read_letsplays():
+            lp: LetsPlays
+            _ret.append([lp.description_path,
+            lp.episode_length,
+            lp.game_name,
+            lp.id,
+            lp.name,
+            lp.tad_path])
+        return _ret
+            
     
     def get_ep_by_id(lpid: int):
         """
@@ -350,25 +381,22 @@ class SQLAccess:
         session.commit()
 
     def clear_and_renew_db(data: list[list]) -> bool:
-        session.close()
-        del engine, Session, session, Base
+        session.close() # close the database(global)
+        
         DB_PATH = f'{ROOT}lprt.db'
-        copyfile(DB_PATH, DB_PATH + 'x') # <- create the backup
-        remove(DB_PATH) # <- remove lprt.db
-        
-        
+        copyfile(DB_PATH, DB_PATH + 'x') # <- create the backup. lprt.dbx
+        remove(DB_PATH) # <- remove the original db
+        #Create the db again
         Base = declarative_base()
-        engine = create_engine(DB_URL) # Create the engine echo prints the sql querys
-
-        # create the users table
+        engine = create_engine(DB_URL)
         Base.metadata.create_all(engine)
-
-        # create a session to manage the connection to the database
         Session = sessionmaker(bind=engine)
         session = Session()
+
+        #TODO Create all lets plays
+        #TODO Create all episodes
         
-        
-        sys.exit()
+        sys.exit() # after finishing, close app
     
     def delete_letsplay(lpid: int):
         """
