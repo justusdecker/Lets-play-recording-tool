@@ -7,6 +7,7 @@ try:
     from sqlalchemy import create_engine, Column, Integer, String, Numeric
     from sqlalchemy.ext.declarative import declarative_base
     from sqlalchemy.orm import sessionmaker
+    from sqlalchemy.sql import text
 except:
     from bin.constants import ERROR_008
     showerror('ERROR', ERROR_008 + '\nSQLAlchemy')
@@ -24,6 +25,7 @@ from shutil import copyfile
 import sys
 import csv
 from typing import Any
+DB_PATH = f'{ROOT}lprt_data.db'
 
 def try_delete_file(filepath: str | None) -> bool:
     if filepath is not None:
@@ -213,21 +215,94 @@ class Episodes(Base):
     title = Column(String)
     upload_at = Column(String)
     final_video_path = Column(String)
-    
-engine = create_engine(DB_URL) # Create the engine echo prints the sql querys
-
-# create the users table
-Base.metadata.create_all(engine)
-
-# create a session to manage the connection to the database
-Session = sessionmaker(bind=engine)
-session = Session()
 
 class SQLAccess:
     """
     A Wrapper Class for all Lets Play & Episode Data Handling.
     ---
     """
+    
+    def connect():
+        engine = create_engine(DB_URL)
+        Base.metadata.create_all(engine)
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        return session, engine, Session
+    
+    def close_and_dispose():
+        session.close()
+        engine.dispose()
+
+    def backup_and_remove():
+        copyfile(DB_PATH, DB_PATH + 'x')
+        remove(DB_PATH)
+    
+    def import_lets_plays(session, data: list):
+        for description_path, episode_length, game_name, id, name, tad_path in data:
+            lp = LetsPlays(
+                description_path = description_path,
+                episode_length = episode_length,
+                game_name = game_name,
+                id = id,
+                name = name,
+                tad_path = tad_path
+            )
+            session.add(lp)
+    
+    def import_episodes(session, data: list):
+        for _, id, lpid, thumbnail_path, video_path, audio_mic_path, audio_desktop_path, audio_mic_edit1_path, audio_mic_edit2_path, final_video_path, has_problem, title, upload_at in data:
+            ep = Episodes(
+                id = id,
+                lpid = lpid,
+                thumbnail_path = thumbnail_path,
+                video_path = video_path,
+                audio_mic_path = audio_mic_path,
+                audio_desktop_path = audio_desktop_path,
+                audio_mic_edit1_path = audio_mic_edit1_path,
+                audio_mic_edit2_path = audio_mic_edit2_path,
+                final_video_path = final_video_path,
+                has_problem = has_problem,
+                title = title,
+                upload_at = upload_at
+            )
+            session.add(ep)
+    
+    def manually_recreate_episodes(session):
+        session.execute(text(
+        """
+        CREATE TABLE episodes (
+            id INTEGER NOT NULL,
+            lpid INTEGER,
+            video_path VARCHAR,
+            audio_mic_path VARCHAR,
+            audio_desktop_path VARCHAR,
+            thumbnail_path VARCHAR,
+            has_problem INTEGER,
+            audio_mic_edit1_path VARCHAR,
+            audio_mic_edit2_path VARCHAR,
+            title VARCHAR,
+            upload_at VARCHAR,
+            final_video_path VARCHAR,
+            PRIMARY KEY (id)
+        );
+                    """
+    ))
+        
+    def manually_recreate_lets_play(session):
+        session.execute(text(
+            """
+        CREATE TABLE letsplays (
+            id INTEGER NOT NULL,
+            description_path VARCHAR,
+            episode_length NUMERIC,
+            game_name VARCHAR,
+            name VARCHAR,
+            tad_path VARCHAR,
+            PRIMARY KEY (id)
+        );
+    """
+        ))
+    
     def get_episodes_as_list() -> list:
         _ret = []
         for ep in SQLAccess.read_all_episodes():
@@ -248,6 +323,7 @@ class SQLAccess:
                 ep.upload_at,
             ])
         return _ret
+    
     def get_lets_plays_at_list() -> list:
         _ret = []
         for lp in SQLAccess.read_letsplays():
@@ -585,3 +661,6 @@ class SQLAccess:
             int: The index of the letsplay name.
         """
         return SQLAccess.read_letsplay_names().index(parent.lpep_picker.v_lp.get())
+
+
+session, engine, Session = SQLAccess.connect()
