@@ -3,5 +3,5 @@ from pycode_info import print_language_summary
 from pycode_info import print_flake8_report
 print_language_summary()
 
-from testing.test_import_export import *
-create_lps_from_csv()
+from bin.data_access import SQLAccess
+SQLAccess.create_from_csv()

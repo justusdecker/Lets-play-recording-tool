@@ -25,6 +25,8 @@ from shutil import copyfile
 import sys
 import csv
 from typing import Any
+from bin.xmsgbox import xerr
+from datetime import datetime as dt
 DB_PATH = f'{ROOT}lprt_data.db'
 
 def try_delete_file(filepath: str | None) -> bool:
@@ -222,6 +224,39 @@ class SQLAccess:
     ---
     """
     
+    def create_from_csv():
+        """
+        Initializes and populates the database with data from CSV files.
+
+        This function orchestrates the import of both 'letsplays' and 'episodes'
+        data. It first ensures a clean state by closing any existing database
+        connections, backing up the current database file, and removing it. A new,
+        fresh database and session are then created.
+
+        It reads data from `lets_play_export.csv` and `episodes_export.csv`,
+        iteratively adding the records to the respective tables using the
+        `SQLAccess` wrapper class. The function commits the changes to the database
+        and properly closes the session and disposes of the engine at the end.
+        """
+        
+        if not isfile('lets_play_export.csv') or not isfile('episodes_export.csv'): 
+            xerr('You have no exported files') # TODO - Translation needed
+            return
+        
+        SQLAccess.close_and_dispose()
+        SQLAccess.backup_and_remove()
+        
+        session, engine, _ = SQLAccess.connect()
+
+        data = csv_read('lets_play_export.csv')
+        SQLAccess.import_lets_plays(session,data)
+        
+        data = csv_read('episodes_export.csv')
+        SQLAccess.import_episodes(session, data)
+        
+        session.commit()
+        SQLAccess.close_and_dispose(session, engine)
+    
     def connect():
         engine = create_engine(DB_URL)
         Base.metadata.create_all(engine)
@@ -229,13 +264,23 @@ class SQLAccess:
         session = Session()
         return session, engine, Session
     
-    def close_and_dispose():
-        session.close()
-        engine.dispose()
+    def close_and_dispose(s=None,e=None):
+        if s is None:
+            session.close()
+        else:
+            s.close()
+        if e is None:
+            engine.dispose()
+        else:
+            e.dispose()
 
     def backup_and_remove():
-        copyfile(DB_PATH, DB_PATH + 'x')
+        copyfile(DB_PATH, f"{DB_PATH.split('.')[0]}{dt.now().strftime('%y_%m_%d_%H_%M_%S_')}_backup_{DB_PATH.split('.')[1]}x")
         remove(DB_PATH)
+    
+    def export_lpep():
+        csv_write('episodes_export.csv', SQLAccess.get_episodes_as_list())
+        csv_write('lets_play_export.csv', SQLAccess.get_lets_plays_at_list())
     
     def import_lets_plays(session, data: list):
         for description_path, episode_length, game_name, id, name, tad_path in data:
@@ -266,42 +311,6 @@ class SQLAccess:
                 upload_at = upload_at
             )
             session.add(ep)
-    
-    def manually_recreate_episodes(session):
-        session.execute(text(
-        """
-        CREATE TABLE episodes (
-            id INTEGER NOT NULL,
-            lpid INTEGER,
-            video_path VARCHAR,
-            audio_mic_path VARCHAR,
-            audio_desktop_path VARCHAR,
-            thumbnail_path VARCHAR,
-            has_problem INTEGER,
-            audio_mic_edit1_path VARCHAR,
-            audio_mic_edit2_path VARCHAR,
-            title VARCHAR,
-            upload_at VARCHAR,
-            final_video_path VARCHAR,
-            PRIMARY KEY (id)
-        );
-                    """
-    ))
-        
-    def manually_recreate_lets_play(session):
-        session.execute(text(
-            """
-        CREATE TABLE letsplays (
-            id INTEGER NOT NULL,
-            description_path VARCHAR,
-            episode_length NUMERIC,
-            game_name VARCHAR,
-            name VARCHAR,
-            tad_path VARCHAR,
-            PRIMARY KEY (id)
-        );
-    """
-        ))
     
     def get_episodes_as_list() -> list:
         _ret = []

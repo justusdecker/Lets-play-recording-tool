@@ -123,21 +123,13 @@ class FileManager(tk.Frame):
         IMPORT.pack()
         W.pack()
     def export(self, *_):
-        
-        csv_write('episodes_export.csv', SQLAccess.get_episodes_as_list())
-        csv_write('lets_play_export.csv', SQLAccess.get_lets_plays_at_list())
+        SQLAccess.export_lpep()
 
     def import_(self, *_):
-        #! IGNORE [0]
-        [str,int,str,int,str,str]
-        [int,int]
-        #from tkinter.filedialog import askopenfilename
-        #lps = askopenfilename(filetypes=(['CSV Files','*.csv']))
-        data = csv_read('lets_play_export.csv')
+        SQLAccess.create_from_csv()
+        xinf('Successfully imported files. Closing App.') # TODO - Translation
+        sys.exit()
         
-        print(data)
-        
-        #eps = askopenfilename(filetypes=(['CSV Files','*.csv']))
         
     def update_lets_play(self,*_):
         """ Updates the episode_length for the selected lets-play only if value is not None """
