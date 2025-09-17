@@ -295,9 +295,9 @@ class SQLAccess:
             session.add(lp)
     
     def import_episodes(session, data: list):
-        for _, id, lpid, thumbnail_path, video_path, audio_mic_path, audio_desktop_path, audio_mic_edit1_path, audio_mic_edit2_path, final_video_path, has_problem, title, upload_at in data:
+        for idx, (_, id, lpid, thumbnail_path, video_path, audio_mic_path, audio_desktop_path, audio_mic_edit1_path, audio_mic_edit2_path, final_video_path, has_problem, title, upload_at) in enumerate(data, 0):
             ep = Episodes(
-                id = id,
+                id = idx,
                 lpid = lpid,
                 thumbnail_path = thumbnail_path,
                 video_path = video_path,

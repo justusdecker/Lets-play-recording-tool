@@ -122,6 +122,7 @@ class FileManager(tk.Frame):
         ttk.Button(IMPORT,text=gtran("bin::ui::filemanager::import_header"),command=self.import_).pack()
         IMPORT.pack()
         W.pack()
+        
     def export(self, *_):
         SQLAccess.export_lpep()
 
