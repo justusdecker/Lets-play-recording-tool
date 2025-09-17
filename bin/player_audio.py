@@ -21,7 +21,7 @@ class NewAudioPlayer(NewMediaPlayer):
         self.desktop_vol = 1.
         super().__init__(parent, app, True)
         
-        self.finished_button = Button(self.bar,text='Apply Volume', command=app.run_automation)
+        self.finished_button = Button(self.bar,text='Render', command=app.run_automation)
         self.finished_button.pack(side=LEFT)
         self.finished_all_button = Button(self.bar,text='Set Volume for\nall episodes!', command=self.apply_vol_to_all)
         self.finished_all_button.pack(side=LEFT)
