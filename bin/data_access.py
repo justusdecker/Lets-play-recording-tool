@@ -1,12 +1,13 @@
-from bin.welcome_popup import WELCOME
-from bin.translation import gtran
-WELCOME.update_message(f'{gtran("bin::welcome::load")} {__name__}')
+#from bin.welcome_popup import WELCOME
+#from bin.translation import gtran
+#WELCOME.update_message(f'{gtran("bin::welcome::load")} {__name__}')
 
 from tkinter.messagebox import showerror
 try:
     from sqlalchemy import create_engine, Column, Integer, String, Numeric
     from sqlalchemy.ext.declarative import declarative_base
     from sqlalchemy.orm import sessionmaker
+    from sqlalchemy.sql import text
 except:
     from bin.constants import ERROR_008
     showerror('ERROR', ERROR_008 + '\nSQLAlchemy')
@@ -22,6 +23,11 @@ from PIL import ImageTk, Image
 from io import BytesIO
 from shutil import copyfile
 import sys
+import csv
+from typing import Any
+from bin.xmsgbox import xerr
+from datetime import datetime as dt
+DB_PATH = f'{ROOT}lprt_data.db'
 
 def try_delete_file(filepath: str | None) -> bool:
     if filepath is not None:
@@ -70,6 +76,23 @@ def file_append(filepath : str, data : str):
     """
     with open(filepath, 'a') as f:
         f.write(data)
+
+def csv_write(filepath: str, data: list[Any]):
+    """
+    Writes a Python list to a file in CSV format.
+
+    This function overwrites the file if it already exists.
+    """
+    with open(filepath,'w',newline="") as f:
+              
+        w = csv.writer(f,delimiter='|',)
+        w.writerows(data)
+
+def csv_read(filepath: str) -> list[str]:
+    """Reads JSON data from a file and parses it into a Python list."""
+    with open(filepath,'r',newline="") as f: 
+        w = csv.reader(f,delimiter='|',)
+        return [row for row in w]
 
 def json_read(filepath : str) -> dict | list:
     """Reads JSON data from a file and parses it into a Python dictionary or list."""
@@ -194,21 +217,101 @@ class Episodes(Base):
     title = Column(String)
     upload_at = Column(String)
     final_video_path = Column(String)
-    
-engine = create_engine(DB_URL) # Create the engine echo prints the sql querys
-
-# create the users table
-Base.metadata.create_all(engine)
-
-# create a session to manage the connection to the database
-Session = sessionmaker(bind=engine)
-session = Session()
 
 class SQLAccess:
     """
     A Wrapper Class for all Lets Play & Episode Data Handling.
     ---
     """
+    
+    def create_from_csv():
+        """
+        Initializes and populates the database with data from CSV files.
+
+        This function orchestrates the import of both 'letsplays' and 'episodes'
+        data. It first ensures a clean state by closing any existing database
+        connections, backing up the current database file, and removing it. A new,
+        fresh database and session are then created.
+
+        It reads data from `lets_play_export.csv` and `episodes_export.csv`,
+        iteratively adding the records to the respective tables using the
+        `SQLAccess` wrapper class. The function commits the changes to the database
+        and properly closes the session and disposes of the engine at the end.
+        """
+        
+        if not isfile('lets_play_export.csv') or not isfile('episodes_export.csv'): 
+            xerr('You have no exported files') # TODO - Translation needed
+            return
+        
+        SQLAccess.close_and_dispose()
+        SQLAccess.backup_and_remove()
+        
+        session, engine, _ = SQLAccess.connect()
+
+        data = csv_read('lets_play_export.csv')
+        SQLAccess.import_lets_plays(session,data)
+        
+        data = csv_read('episodes_export.csv')
+        SQLAccess.import_episodes(session, data)
+        
+        session.commit()
+        SQLAccess.close_and_dispose(session, engine)
+    
+    def connect():
+        engine = create_engine(DB_URL)
+        Base.metadata.create_all(engine)
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        return session, engine, Session
+    
+    def close_and_dispose(s=None,e=None):
+        if s is None:
+            session.close()
+        else:
+            s.close()
+        if e is None:
+            engine.dispose()
+        else:
+            e.dispose()
+
+    def backup_and_remove():
+        copyfile(DB_PATH, f"{DB_PATH.split('.')[0]}{dt.now().strftime('%y_%m_%d_%H_%M_%S_')}_backup_{DB_PATH.split('.')[1]}x")
+        remove(DB_PATH)
+    
+    def export_lpep():
+        csv_write('episodes_export.csv', SQLAccess.get_episodes_as_list())
+        csv_write('lets_play_export.csv', SQLAccess.get_lets_plays_at_list())
+    
+    def import_lets_plays(session, data: list):
+        for description_path, episode_length, game_name, id, name, tad_path in data:
+            lp = LetsPlays(
+                description_path = description_path,
+                episode_length = episode_length,
+                game_name = game_name,
+                id = id,
+                name = name,
+                tad_path = tad_path
+            )
+            session.add(lp)
+    
+    def import_episodes(session, data: list):
+        for idx, (_, id, lpid, thumbnail_path, video_path, audio_mic_path, audio_desktop_path, audio_mic_edit1_path, audio_mic_edit2_path, final_video_path, has_problem, title, upload_at) in enumerate(data, 0):
+            ep = Episodes(
+                id = idx,
+                lpid = lpid,
+                thumbnail_path = thumbnail_path,
+                video_path = video_path,
+                audio_mic_path = audio_mic_path,
+                audio_desktop_path = audio_desktop_path,
+                audio_mic_edit1_path = audio_mic_edit1_path,
+                audio_mic_edit2_path = audio_mic_edit2_path,
+                final_video_path = final_video_path,
+                has_problem = has_problem,
+                title = title,
+                upload_at = upload_at
+            )
+            session.add(ep)
+    
     def get_episodes_as_list() -> list:
         _ret = []
         for ep in SQLAccess.read_all_episodes():
@@ -229,6 +332,19 @@ class SQLAccess:
                 ep.upload_at,
             ])
         return _ret
+    
+    def get_lets_plays_at_list() -> list:
+        _ret = []
+        for lp in SQLAccess.read_letsplays():
+            lp: LetsPlays
+            _ret.append([lp.description_path,
+            lp.episode_length,
+            lp.game_name,
+            lp.id,
+            lp.name,
+            lp.tad_path])
+        return _ret
+            
     
     def get_ep_by_id(lpid: int):
         """
@@ -350,25 +466,22 @@ class SQLAccess:
         session.commit()
 
     def clear_and_renew_db(data: list[list]) -> bool:
-        session.close()
-        del engine, Session, session, Base
+        session.close() # close the database(global)
+        
         DB_PATH = f'{ROOT}lprt.db'
-        copyfile(DB_PATH, DB_PATH + 'x') # <- create the backup
-        remove(DB_PATH) # <- remove lprt.db
-        
-        
+        copyfile(DB_PATH, DB_PATH + 'x') # <- create the backup. lprt.dbx
+        remove(DB_PATH) # <- remove the original db
+        #Create the db again
         Base = declarative_base()
-        engine = create_engine(DB_URL) # Create the engine echo prints the sql querys
-
-        # create the users table
+        engine = create_engine(DB_URL)
         Base.metadata.create_all(engine)
-
-        # create a session to manage the connection to the database
         Session = sessionmaker(bind=engine)
         session = Session()
+
+        #TODO Create all lets plays
+        #TODO Create all episodes
         
-        
-        sys.exit()
+        sys.exit() # after finishing, close app
     
     def delete_letsplay(lpid: int):
         """
@@ -557,3 +670,6 @@ class SQLAccess:
             int: The index of the letsplay name.
         """
         return SQLAccess.read_letsplay_names().index(parent.lpep_picker.v_lp.get())
+
+
+session, engine, Session = SQLAccess.connect()
