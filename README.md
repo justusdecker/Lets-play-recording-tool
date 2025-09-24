@@ -67,3 +67,78 @@ Maybe there are different ideas, improvements, or hints or maybe your feature is
 run `compile.bat` from the `./tools` directory.
 
 You must change the paths for images etc. in the spec file yourself.
+
+---
+---
+
+
+# The v2.0 Update
+
+## Deploy improvements
+
+### Faster, easier & less errors
+
+The `letsplay` table in `lprt_data.db` will become another row: `jitle`
+
+The full title will be (default)
+```jinja
+{{ %episode_title% }} | {{ %letsplay_name% }} {{ %letsplay_emoji% }} #{{ %episode_number% }}
+```
+> The result will be e.g.:
+> 
+> `something happened` | `valheim` `😁` #`123`
+> 
+> `something happened | valheim 😁 #123`
+
+This upgrade results in a faster, less error-prone, and easier way to retrieve video titles.
+
+For more info #382
+
+***
+
+### The view.html becomes an upgrade
+
+A function will be added that copies the desired text with a single click.
+
+***
+
+### Upload_at
+
+A workflow will be added that sets the upload_at value for all selected episodes.
+This value will be shown in view.html.
+Faster & less error-prone
+
+For more info #380 #381
+
+## remove existing files if wanted
+
+This option is for clearing the output folder before the automation.
+
+## Translation
+
+Translation will be added with `v1.1`
+> [!NOTE]
+> For now only German & English are supported!
+
+## Help everywhere
+
+Help windows will be added for each automation.
+
+## Removing the popups
+
+All unnecessary setting pop-ups will be removed and replaced by the main window settings.
+
+## Audacity Integration will be removed!
+
+To further streamline this step, Audacity will be removed from the workflow and replaced by SOX.
+
+It is handier, causes fewer problems, and, most importantly, is automatable. Another key aspect is the user experience; downloading Audacity and A-FFMPEG is ~~pina~~ 🤬
+
+This will be the last feature of the v2.0 update.
+
+For more info #383
+
+
+
+
+

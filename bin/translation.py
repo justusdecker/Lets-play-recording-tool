@@ -89,7 +89,9 @@ EN = {
     "bin::auto::recording::episodes_text" : "Episodes",
     "bin::welcome::load" : "Load:",
     "bin::welcome::create_app" : "Create App",
-    "bin::welcome::inst_vlc" : "Instanciate VLC"
+    "bin::welcome::inst_vlc" : "Instanciate VLC",
+    "bin::ui::settings::language_header": "Language",
+    "bin::ui::settings::lprt_lang_save_btn": "Save"
 }
 
 
@@ -181,7 +183,9 @@ DE = {
     "bin::auto::recording::episodes_text" : "Episoden",
     "bin::welcome::load" : "Lade:",
     "bin::welcome::create_app" : "Erstelle App",
-    "bin::welcome::inst_vlc" : "VLC instanziieren"
+    "bin::welcome::inst_vlc" : "VLC instanziieren",
+    "bin::ui::settings::language_header": "Sprache",
+    "bin::ui::settings::lprt_lang_save_btn": "Speichern"
 }
 
 

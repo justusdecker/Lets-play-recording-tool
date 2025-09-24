@@ -21,6 +21,7 @@ class Settings(tk.Frame):
         # Create Headers
         SETTINGS = ttk.LabelFrame(W,text=gtran("bin::ui::settings::obs_header"))
         API_GEMINI_SETTINGS = ttk.LabelFrame(W,text=gtran("bin::ui::settings::gemini_header"))
+        LANGUAGE = ttk.LabelFrame(W,text=gtran("bin::ui::settings::language_header"))
         
         self.IP = tk.StringVar()
         self.PORT = tk.StringVar()
@@ -89,13 +90,30 @@ class Settings(tk.Frame):
         language_options.grid(row=1,column=0)
         self.set_settings_api_key.grid(row=1,column=1)
         
+        self.lprt_lang = tk.StringVar()
+        
+        if isfile('lprt_settings.json'):
+            settings = json_read('lprt_settings.json')
+            if not isinstance(settings, dict):
+                raise Exception
+        else:
+            settings = {'lang':'EN'}
+        
+        
+        
+        lprt_language_options = ttk.OptionMenu(API_GEMINI_SETTINGS,self.language,settings.get('lang','EN'),*['EN', 'DE'])
+        set_lprt_lang = ttk.Button(API_GEMINI_SETTINGS,text=gtran("bin::ui::settings::lprt_lang_save_btn"),command=self.set_lang)
+        
         # Packing
         SETTINGS.pack()
         API_GEMINI_SETTINGS.pack()
+        LANGUAGE.pack()
+
 
         W.pack()
         self.something_changed()
-        
+    def set_lang(self,*args): #TODO Missing Functionality
+        raise NotImplementedError
     def toggle_pw_view(self,*args):
         """ Toggles the visibility of the password in the OBS password entry field. """
         if self.PW_TOGGLE.get():
