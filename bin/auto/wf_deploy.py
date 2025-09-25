@@ -7,6 +7,7 @@ from bin.xmsgbox import xqu, xerr
 from subprocess import Popen
 from bin.data_access import SQLAccess, cnef,file_write, try_delete_file
 from tkinter.filedialog import askdirectory
+from os import listdir,remove
 class DeployWF(GenericWorkFlow):
     """
     Copies user generated data to user set destination...
@@ -28,6 +29,7 @@ class DeployWF(GenericWorkFlow):
         After that the corresponding error message will be displayed.
         """
         try:
+            
             data_deletion = xqu('Question\nDo you want to delete temp files?')
             move_files = xqu('Question\nDo you want to move the files to another path?')
             if move_files:
@@ -38,7 +40,16 @@ class DeployWF(GenericWorkFlow):
             reoc(not DEST,ERROR_006)
             ALL = []
             episodes = SQLAccess.read_episodes(self.lpid)
-
+            already_there = listdir(DEST)
+            if already_there:
+                if xqu('Question\nDo you want to remove all existing files?'): 
+                
+                    for file in already_there:
+                        try:
+                            remove(f'{DEST}{file}')
+                        except:
+                            pass
+                
             for i in range(*self.rng):
                 
                 
