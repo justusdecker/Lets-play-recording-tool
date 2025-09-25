@@ -92,6 +92,8 @@ The full title will be (default)
 
 This upgrade results in a faster, less error-prone, and easier way to retrieve video titles.
 
+[HTML Emoji Codes 🍋🍑🍄](https://www.w3schools.com/html/html_emojis.asp)
+
 For more info #382
 
 ***

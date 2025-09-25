@@ -167,6 +167,8 @@ class LetsPlays(Base):
     game_name = Column(String)
     episode_length = Column(Integer)
     description_path = Column(String)
+    jitle = Column(String)
+    emoji = Column(String)
 
 class Episodes(Base):
     """
@@ -283,14 +285,16 @@ class SQLAccess:
         csv_write('lets_play_export.csv', SQLAccess.get_lets_plays_at_list())
     
     def import_lets_plays(session, data: list):
-        for description_path, episode_length, game_name, id, name, tad_path in data:
+        for description_path, episode_length, game_name, id, name, tad_path, jitle, emoji in data:
             lp = LetsPlays(
                 description_path = description_path,
                 episode_length = episode_length,
                 game_name = game_name,
                 id = id,
                 name = name,
-                tad_path = tad_path
+                tad_path = tad_path,
+                jitle = jitle,
+                emoji = emoji
             )
             session.add(lp)
     

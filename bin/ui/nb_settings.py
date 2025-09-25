@@ -3,6 +3,7 @@ import tkinter.ttk as ttk
 from bin.data_access import json_read, file_read, isfile, json_write, file_write
 from bin.constants import ROOT, DEFAULT_OBS_SETTINGS
 from bin.translation import gtran
+from bin.settings import SETTINGS as Settings_
 
 class Settings(tk.Frame):
     """
@@ -92,17 +93,15 @@ class Settings(tk.Frame):
         
         self.lprt_lang = tk.StringVar()
         
-        if isfile('lprt_settings.json'):
-            settings = json_read('lprt_settings.json')
-            if not isinstance(settings, dict):
-                raise Exception
-        else:
-            settings = {'lang':'EN'}
+
         
         
         
-        lprt_language_options = ttk.OptionMenu(API_GEMINI_SETTINGS,self.language,settings.get('lang','EN'),*['EN', 'DE'])
-        set_lprt_lang = ttk.Button(API_GEMINI_SETTINGS,text=gtran("bin::ui::settings::lprt_lang_save_btn"),command=self.set_lang)
+        self.lprt_language_options = ttk.OptionMenu(LANGUAGE,self.lprt_lang,Settings_.settings.get('lang','EN'),*['EN', 'DE'])
+        set_lprt_lang = ttk.Button(LANGUAGE,text=gtran("bin::ui::settings::lprt_lang_save_btn"),command=self.set_lang)
+        
+        self.lprt_language_options.pack()
+        set_lprt_lang.pack()
         
         # Packing
         SETTINGS.pack()
@@ -112,8 +111,10 @@ class Settings(tk.Frame):
 
         W.pack()
         self.something_changed()
-    def set_lang(self,*args): #TODO Missing Functionality
-        raise NotImplementedError
+    def set_lang(self,*args):
+        Settings_.update('lang',self.lprt_lang.get())
+        json_write(f'{ROOT}lprt_settings.json' ,Settings_.settings)
+
     def toggle_pw_view(self,*args):
         """ Toggles the visibility of the password in the OBS password entry field. """
         if self.PW_TOGGLE.get():

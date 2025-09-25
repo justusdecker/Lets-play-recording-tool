@@ -1,5 +1,4 @@
-from os import listdir
-from json import load
+from bin.settings import SETTINGS
 
 EN = {
     "bin::constants::welcome_message" : "Welcome to LPRT\n\nA Let's Play automation tool that simplifies your workflow \nfor recording, editing, and distribution.\n\nDo you find a bug? Share it with us!\n\nFor Documentation, please look up the GitHub-wiki",
@@ -189,8 +188,7 @@ DE = {
 }
 
 
-TRANSLATIONS = {}
-LANG = 'DE'
+LANG = SETTINGS.settings.get('lang','EN')
 
 def gtran(key) -> str:
     return globals()[LANG].get(key,EN[key])
