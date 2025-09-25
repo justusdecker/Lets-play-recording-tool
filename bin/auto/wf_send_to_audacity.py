@@ -4,7 +4,7 @@ from bin.constants import FIXED_AUDIO_FOLDER, ERROR_007, ERROR_013, AutomationEr
 from bin.api.ffmpeg import ffmpeg_run, FFMPEG_CONVERT_AUDIO_TYPE
 from tools.log import LOG, LOG_INFO
 from bin.xmsgbox import xerr, xqu
-from bin.audacity_pipeline import do_command, create_pipe, break_pipe
+from bin.api.audacity_pipeline import do_command, create_pipe, break_pipe
 from bin.data_access import SQLAccess, cnef,rie, try_delete_file
 from tools.log import LOG, LOG_ERROR
 from os import listdir
