@@ -9,7 +9,7 @@ from tkinter import Toplevel, StringVar, BOTH, LEFT, HORIZONTAL, X
 from bin.data_access import SQLAccess,AsciiImage, rie
 from bin.thumbnail import ThumbnailGenerator
 from bin.constants import *
-from bin.ffmpeg import *
+from bin.api.ffmpeg import *
 from bin.other import convert_from_entities, convert_to_entities
 from os.path import isfile
 from tools.log import LOG

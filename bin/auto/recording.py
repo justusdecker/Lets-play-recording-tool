@@ -1,5 +1,5 @@
 from bin.data_access import SQLAccess
-from bin.obs import OBSObserver
+from bin.api.obs import OBSObserver
 from time import sleep
 from tools.log import LOG, LOG_ERROR
 from bin.translation import gtran

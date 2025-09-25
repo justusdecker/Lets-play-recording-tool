@@ -1,7 +1,7 @@
 from bin.auto.workflow import GenericWorkFlow
 from bin.data_access import SQLAccess, reoc, isfile, rie, cnef
 from bin.constants import ERROR_007, ERROR_013, ERROR_014, AutomationError, FIXED_AUDIO_FOLDER
-from bin.ffmpeg import ffmpeg_run, FFMPEG_AUDIO_PF_LN_L
+from bin.api.ffmpeg import ffmpeg_run, FFMPEG_AUDIO_PF_LN_L
 
 from bin.xmsgbox import xerr
 class FixAudioWF(GenericWorkFlow):

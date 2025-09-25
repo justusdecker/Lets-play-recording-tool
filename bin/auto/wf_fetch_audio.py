@@ -1,7 +1,7 @@
 from bin.auto.workflow import GenericWorkFlow
 from bin.data_access import SQLAccess, reoc, isfile, rie, cnef
 from bin.constants import AUDIO_FOLDER, ERROR_007, ERROR_013, ERROR_014, AutomationError
-from bin.ffmpeg import FFMPEG_OPTIMIZED_EXTRACT, FFMPEG_GET_STREAM_AMMOUNT, ffmpeg_run
+from bin.api.ffmpeg import FFMPEG_OPTIMIZED_EXTRACT, FFMPEG_GET_STREAM_AMMOUNT, ffmpeg_run
 from tools.log import LOG, LOG_INFO
 from bin.xmsgbox import xerr
 

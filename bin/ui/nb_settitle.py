@@ -6,7 +6,7 @@ from bin.ui.ui_utils import change_states
 from bin.data_access import SQLAccess, AsciiImage, isfile
 from threading import Thread
 from bin.player_video import NewVideoPlayer
-from bin.gemini_api import send_gemini, os
+from bin.api.gemini_api import send_gemini, os
 from bin.constants import ICO_UPNDOWN
 
 class SetTitle(tk.Frame):

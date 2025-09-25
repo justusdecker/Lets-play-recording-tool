@@ -1,7 +1,7 @@
 from bin.auto.workflow import GenericWorkFlow
 from bin.data_access import SQLAccess, reoc, isfile, rie, cnef
 from bin.constants import FIXED_AUDIO_FOLDER, ERROR_007, ERROR_013, AutomationError, AC_RESULT_FOLDER
-from bin.ffmpeg import ffmpeg_run, FFMPEG_CONVERT_AUDIO_TYPE
+from bin.api.ffmpeg import ffmpeg_run, FFMPEG_CONVERT_AUDIO_TYPE
 from tools.log import LOG, LOG_INFO
 from bin.xmsgbox import xerr, xqu
 from bin.audacity_pipeline import do_command, create_pipe, break_pipe

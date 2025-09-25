@@ -4,7 +4,7 @@ WELCOME.update_message(f'{gtran("bin::welcome::load")} {__name__}')
 
 from tkinter import LEFT, Scale, HORIZONTAL
 from tkinter.ttk import Button
-from bin.ffmpeg import ffmpeg_run, FFMPEG_AUDIO_COMBINE_TRUNCATED
+from bin.api.ffmpeg import ffmpeg_run, FFMPEG_AUDIO_COMBINE_TRUNCATED
 from bin.constants import TEMP_FOLDER
 from tools.log import *
 

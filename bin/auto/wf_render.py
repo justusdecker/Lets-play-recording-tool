@@ -1,6 +1,6 @@
 from bin.data_access import SQLAccess, reoc, isfile, rie, cnef
 from bin.constants import TEMP_FOLDER, VIDEO_FOLDER, ERROR_007, AutomationError
-from bin.ffmpeg import ffmpeg_run, FFMPEG_AUDIO_COMBINE, FFMPEG_VIDEO_RENDER
+from bin.api.ffmpeg import ffmpeg_run, FFMPEG_AUDIO_COMBINE, FFMPEG_VIDEO_RENDER
 from bin.wintoasty import toast_finished
 from bin.xmsgbox import xerr
 def render(result,app, lpid):
