@@ -30,10 +30,9 @@ jobs:
             pip install winotify==1.1.0
             pip install python-vlc==3.0.21203
             pip install Jinja2==3.1.4
-            pip install SQLAlchemy==2.0.25
+            pip install SQLAlchemy==2.0.41
             pip install requests
             pip install python-dotenv
-            pip install pycode-info>=0.1.16
 
         - name: Build Application (via spec file)
           run: pyinstaller --distpath ./tools/dist --workpath ./tools/build ./tools/main.spec
