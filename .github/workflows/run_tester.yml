@@ -37,6 +37,4 @@ jobs:
                 pip install pycode-info>=0.1.16
             
             - name: Test Main
-              run: |
-                cd $GITHUB_WORKSPACE
-                python ./testing/test_main.py
+              run: python ./testing/test_main.py
