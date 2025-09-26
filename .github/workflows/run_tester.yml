@@ -6,35 +6,55 @@ on:
           - 'main'
     pull_request:
 jobs:
-    run-tests:
-        strategy:
-            fail-fast: true
-            matrix:
-                os: [windows-latest]
-                python-version: 
-                    - "3.13"
 
-        name: Test
-        runs-on: ${{ matrix.os }}
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v3
-            - name: Set up Python
-              uses: actions/setup-python@v4
-              with:
-                python-version: ${{ matrix.python-version }}
-            - name: Install dependencies
-              run: |
-                pip install obsws-python==1.7.2
-                pip install pygame-ce==2.5.3
-                pip install Pillow==10.2.0
-                pip install winotify==1.1.0
-                pip install python-vlc==3.0.21203
-                pip install Jinja2==3.1.4
-                pip install SQLAlchemy==2.0.25
-                pip install requests
-                pip install python-dotenv
-                pip install pycode-info>=0.1.16
-            
-            - name: Test Main
-              run: python ./testing/test_main.py
+    build-and-release:
+      runs-on: windows-latest
+      env: 
+        PYTHON_VERSION: 3.13
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v3
+          with:
+            fetch-depth: 0
+
+        - name: Set up Python ${{ env.PYTHON_VERSION }}
+          uses: actions/setup-python@v4
+          with:
+            python-version: ${{ env.PYTHON_VERSION }}
+        - name: Install PyInstaller and Dependencies
+          run: |
+            pip install pyinstaller
+            pip install obsws-python==1.7.2
+            pip install pygame-ce==2.5.3
+            pip install Pillow==10.2.0
+            pip install winotify==1.1.0
+            pip install python-vlc==3.0.21203
+            pip install Jinja2==3.1.4
+            pip install SQLAlchemy==2.0.25
+            pip install requests
+            pip install python-dotenv
+            pip install pycode-info>=0.1.16
+
+        - name: Build Application (via spec file)
+          run: pyinstaller --distpath ./tools/dist --workpath ./tools/build ./tools/main.spec
+          working-directory: ${{ github.workspace }}
+        
+        - name: Get Version
+          run: |
+            APP_VERSION=$(python -c "import ver; print(ver.version)")
+            echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
+        
+        - name: Generate Changelog Notes
+          id: changelog
+          uses: amiris/auto-changelog@v1
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+        
+        - name: Create Release
+          run: |
+              gh release create v${{ env.APP_VERSION }} \
+              --title v${{ env.APP_VERSION }} \
+              --notes "${{ steps.changelog.outputs.changelog }}" \
+              --draft=false \
+              --prerelease=false \
+              ./tools/dist/main.exe

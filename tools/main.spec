@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['C:\\Users\\Justus\\Lets-play-recording-tool\\main.py'],
+    ['main.py'],
     pathex=[],
     binaries=[],
     datas=[],
@@ -35,5 +35,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['C:\\Users\\Justus\\Lets-play-recording-tool\\bin\\data\\img\\logo.ico'],
+    icon=['bin\\data\\img\\logo.ico'],
 )
