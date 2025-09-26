@@ -39,4 +39,4 @@ jobs:
             - name: Test Main
               run: |
                 cd $GITHUB_WORKSPACE
-                python test/test_main.py
+                python ./testing/test_main.py
