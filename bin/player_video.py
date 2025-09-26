@@ -14,6 +14,7 @@ from bin.other import convert_from_entities, convert_to_entities
 from os.path import isfile
 from tools.log import LOG
 
+
 try:
     import vlc
 except:
@@ -55,11 +56,15 @@ class NewVideoPlayer(NewMediaPlayer):
         self.blocked = False
         self.title_var = StringVar()
         
+        
+        
         super().__init__(parent, app, audio_only=False)
         
         ttk.Label(self.bar,text='Title: ').pack(side=LEFT, padx=5)
         self.title_setter = ttk.Entry(self.bar,textvariable=self.title_var)
         self.title_setter.pack(side=LEFT, padx=5)
+        
+        
         
         
         img = AsciiImage(ICO_REFRESH)

@@ -4,6 +4,7 @@ from bin.ui.lpep_picker import LPEPPicker
 from threading import Thread
 from bin.data_access import SQLAccess
 from bin.ui.ui_utils import change_states
+from bin.ui.progress_bar_manager import ProgressBarManager
 
 class AutomationFrame(tk.Frame):
     """
@@ -56,6 +57,8 @@ class AutomationFrame(tk.Frame):
         self.AUTOMATION_ROOT = AUTOMATION_ROOT
         
         self.lpep_picker = LPEPPicker(AUTOMATION_ROOT,self.run,'lp-ep')
+        
+        self.pbm = ProgressBarManager(AUTOMATION_ROOT)
 
         AUTOMATION_ROOT.pack()
         
@@ -70,6 +73,7 @@ class AutomationFrame(tk.Frame):
         and starts it, preventing the UI from freezing.
         """
         if self.thread is None:
+            
             self.thread = Thread(target=self.__run)
             self.thread.start()
             

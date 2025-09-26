@@ -8,6 +8,8 @@ from subprocess import Popen
 from bin.data_access import SQLAccess, cnef,file_write, try_delete_file
 from tkinter.filedialog import askdirectory
 from os import listdir,remove
+from bin.ui.progress_bar_manager import ProgressBarManager
+
 class DeployWF(GenericWorkFlow):
     """
     Copies user generated data to user set destination...
@@ -49,9 +51,14 @@ class DeployWF(GenericWorkFlow):
                             remove(f'{DEST}{file}')
                         except:
                             pass
-                
-            for i in range(*self.rng):
-                
+            rng = range(*self.rng)
+            
+            pbm = app.pbm
+            pbm : ProgressBarManager
+            pbm.clean(len(rng)*2)
+            
+            for idx, i in enumerate(rng):
+                pbm.increment()
                 
                 old_thumbnail_path = episodes[i].thumbnail_path
                 reoc(old_thumbnail_path is None,ERROR_013)
@@ -99,7 +106,9 @@ class DeployWF(GenericWorkFlow):
             super().user_workflow()
         except AutomationError as AE:
             xerr(f'Automation Error \n{AE}')
-            
+        
+        pbm.reset_task()
+          
         # After processing all episodes, we re-enabling the application's start button
         # and calling the parent `user_workflow` to display the completion message.
         # It does not matter whether the automation was completed or canceled.

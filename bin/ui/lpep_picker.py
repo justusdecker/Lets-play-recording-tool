@@ -123,7 +123,7 @@ class LPEPPicker:
                 to=self.values[-1] if self.values else -1,
                 width=4,
                 validate='all',
-                validatecommand= (self.vcmd, '%P','%W'),
+                validatecommand= (self.vcmd, '%P'),
                 command=self.check)
         if self.v_lp.get() == 'None':
             self.opm_start.state(['disabled'])

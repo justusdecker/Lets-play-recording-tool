@@ -8,6 +8,7 @@ from threading import Thread
 from bin.player_video import NewVideoPlayer
 from bin.api.gemini_api import send_gemini, os
 from bin.constants import ICO_UPNDOWN
+from bin.ui.progress_bar_manager import ProgressBarManager
 
 class SetTitle(tk.Frame):
     """
@@ -26,7 +27,7 @@ class SetTitle(tk.Frame):
 
         self.AUTOMATION_ROOT = AUTOMATION_ROOT
         self.lpep_picker = LPEPPicker(AUTOMATION_ROOT,self.run,'lp-ep')
-
+        self.pbm = ProgressBarManager(AUTOMATION_ROOT)
         AUTOMATION_ROOT.pack()
         
         self.media_player = NewVideoPlayer(W, [],0,self)

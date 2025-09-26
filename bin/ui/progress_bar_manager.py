@@ -13,7 +13,6 @@ class ProgressBarManager:
     """
     def __init__(self, parent: tk.Widget, maximum: int = 100, length: int = 200):
         self.parent = parent
-        self.maximum = float(maximum)
         self.value_var = tk.DoubleVar(parent, value=0.0)
         self.progress_bar = ttk.Progressbar(
             parent,
@@ -21,14 +20,19 @@ class ProgressBarManager:
             mode='determinate',
             length=length,
             variable=self.value_var,
-            maximum=self.maximum
+            maximum=maximum
         )
         self.progress_bar.pack_forget() # Hidden by default
 
+        self.clean(maximum)
+        
+    def clean(self,maximum: int = 100):
         self.current_step = 0
         self.total_steps = maximum
         self.after_id = None
         self.running = False
+        self.maximum = float(maximum)
+        self.progress_bar.configure(maximum=maximum)
 
     def start_task(self, step_ms: int = 50, callback_function: Callable | None = None):
         """ Starts the none-blocking Progresssimulation """
@@ -83,8 +87,11 @@ class ProgressBarManager:
         self.value_var.set(value)
 
         if value > 0 and not self.progress_bar.winfo_ismapped():
-            self.progress_bar.pack(side='left', padx=5)
-
+            self.progress_bar.pack(padx=5)
+    
+    def set_max(self,val: float):
+        self.maximum = val
+    
     def increment(self, step: float = 1.0):
         """
         Increments the progress bar by a specific step. Prevents overflow.
@@ -92,6 +99,7 @@ class ProgressBarManager:
         current_value = self.value_var.get()
         new_value = current_value + step
         self.set_progress(new_value)
+        print(new_value, self.maximum)
 
     def inc_max(self):
         """

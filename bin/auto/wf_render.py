@@ -3,6 +3,9 @@ from bin.constants import TEMP_FOLDER, VIDEO_FOLDER, ERROR_007, AutomationError
 from bin.api.ffmpeg import ffmpeg_run, FFMPEG_AUDIO_COMBINE, FFMPEG_VIDEO_RENDER
 from bin.wintoasty import toast_finished
 from bin.xmsgbox import xerr
+
+from bin.ui.progress_bar_manager import ProgressBarManager
+
 def render(result,app, lpid):
     """
     Currently a workaround. Will be refactored into Compare&Render ASAP - issie #345
@@ -10,7 +13,13 @@ def render(result,app, lpid):
     rendering_queue = []
     try:
         ci = 0
+        
+        pbm = app.pbm
+        pbm : ProgressBarManager
+        pbm.clean(len(result)*2)
+        
         for i, mic, desk, vid, vol in result:
+            pbm.increment()
             tmp_audio_path = f'{TEMP_FOLDER}temp_{i+1}_audio_final.mp3'
             
             rie(tmp_audio_path)
@@ -39,6 +48,7 @@ def render(result,app, lpid):
         cnef(VIDEO_FOLDER)
         ci = 0
         for video, audio, index in rendering_queue:
+            pbm.increment()
             final_path = f'{VIDEO_FOLDER}{index+1}{path_ending}'
             rie(final_path)
             ffmpeg_run(
@@ -56,3 +66,5 @@ def render(result,app, lpid):
         toast_finished("[2/2] Audio combine")
     except AutomationError as AE:
         xerr(f'Automation Error\n{AE}')
+    
+    pbm.reset_task()

@@ -4,7 +4,7 @@ from bin.constants import AUDIO_FOLDER, ERROR_007, ERROR_013, ERROR_014, Automat
 from bin.api.ffmpeg import FFMPEG_OPTIMIZED_EXTRACT, FFMPEG_GET_STREAM_AMMOUNT, ffmpeg_run
 from tools.log import LOG, LOG_INFO
 from bin.xmsgbox import xerr
-
+from bin.ui.progress_bar_manager import ProgressBarManager
 class ExtractAudioWF(GenericWorkFlow):
     """
     A workflow class designed to extract audio tracks from video files for a
@@ -22,11 +22,17 @@ class ExtractAudioWF(GenericWorkFlow):
         After that the corresponding error message will be displayed.
         """
         try:
+            
             cnef(AUDIO_FOLDER)
             episodes = SQLAccess.read_episodes(self.lpid)
             rng = range(*self.rng)
+            
+            pbm = app.pbm
+            pbm : ProgressBarManager
+            pbm.clean(len(rng))
+            
             for ci,i in enumerate(rng):
-                
+                pbm.increment()
                 video_path = episodes[i].video_path
                 
                 prefix = f'{AUDIO_FOLDER}{i+1}_{self.lp_name}_'
@@ -59,10 +65,13 @@ class ExtractAudioWF(GenericWorkFlow):
                 app.progress_label.configure(text = f'{((ci+1)/len(rng))*100:.1f}%\n{ci+1}/{len(rng)}')
                 
                 SQLAccess.update_episode(self.lpid,i, audio_mic_path=mic_track_path, audio_desktop_path=desktop_track_path) # Saves the updated episode metadata.
+                
             super().user_workflow()
         except AutomationError as AE:
             xerr(f'Automation Error\n{AE}')
             
+        pbm.reset_task()
+        
         # After processing all episodes, we re-enabling the application's start button
         # and calling the parent `user_workflow` to display the completion message.
         # It does not matter whether the automation was completed or canceled.
