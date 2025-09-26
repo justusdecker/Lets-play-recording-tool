@@ -44,6 +44,9 @@ class LPEPPicker:
         
         self.v_epstart = tk.IntVar(self.obj,1)
         self.v_epend = tk.IntVar(self.obj,1)
+        self.v_epstart.trace_add('write', self.check)
+        self.v_epend.trace_add('write', self.check) 
+        
         self.v_lp = tk.StringVar(self.obj)
         self.vcmd = self.obj.register(self.val_sp_input)
         self.lp_create_ui()
@@ -106,7 +109,7 @@ class LPEPPicker:
             to=self.values[-1] if self.values else -1,
             width=4,
             validate='all',
-            validatecommand= (self.vcmd, '%P','%W'),
+            validatecommand= (self.vcmd, '%P'),
             command=self.check)
         
         
@@ -137,26 +140,38 @@ class LPEPPicker:
             self.lbl_end.pack(side='left')
             self.opm_end.pack(side='left')
     
-    def val_sp_input(self,P,W):
-        LOG('$',[P])
-        tvar = self.parent.nametowidget(W).cget('textvariable')
-        if P.isdigit():
-            if int(P) > self.values[-1]:
-                
-                self.parent.setvar(tvar,self.values[-1])
-                return False
-            elif int(P) < 1:
-                self.parent.setvar(tvar,1)
-                return False
-        return True
+    def val_sp_input(self,P):
+        """
+        Checks whether the input is a digit or empty.
+        The boundary correction takes place in self.check() via the trace/command.
+        """
+        if P.isdigit() or P == "":
+            LOG('Spinbox input "$" is okay',[P])
+            return True
+        
+        LOG('Spinbox input "$" is not okay (non-digit)',[P])
+        return False
         
     def check(self,*_):
         """ Checks: b < a. So the start ep cant be greater than the end! """
+        
+        if self.s_ep:
+            self._correct_episode_bounds(self.v_epstart)
+            if not self.d_ne:
+                self._correct_episode_bounds(self.v_epend)
+        
+        
         if self.s_ep and not self.d_ne:
-            if self.v_epend.get() < self.v_epstart.get():
-                self.btn_run.state(['disabled'])
-            else:
+            start = LPEPPicker.oro(self.v_epstart)
+            end = LPEPPicker.oro(self.v_epend)
+            
+            self.btn_run.state(['disabled' if end < start else '!disabled'])
+
+        elif self.s_ep and self.d_ne:
+            if not self.d_nb and self.values:
                 self.btn_run.state(['!disabled'])
+            elif not self.d_nb:
+                self.btn_run.state(['disabled'])
     
     def reset(self):
         """ resets the ui """
@@ -192,6 +207,28 @@ class LPEPPicker:
         self.destroy_lp()
         self.destroy_ep()
         return super().destroy()
+    
+    @staticmethod
+    def oro(var: tk.IntVar):
+        """
+        'Okay or one' - Attempts to retrieve the value from a tk.IntVar. 
+        Returns the value 1 in case of a tk.TclError (e.g., an empty field).
+        """
+        try: return var.get()
+        except tk.TclError: return 1
+    
+    def _correct_episode_bounds(self, episode_var: tk.IntVar):
+        """
+        Corrects the value of an episode variable (start or end) 
+        so that it lies between 1 and the maximum available episode number.
+        """
+        max_val = self.values[-1] if self.values else 1
+        current_val = LPEPPicker.oro(episode_var)
+            
+        if current_val > max_val:
+            episode_var.set(max_val) # Set to max
+        elif current_val < 1:
+            episode_var.set(1)       # Set to min
     
     def run(self,*_):
         """ runs the `self.callback` function """
@@ -238,10 +275,10 @@ class LPEPPicker:
         """
         self.update_ui()
         if not self.d_nb:
-            if not self.values:
-                self.btn_run.state(['disabled'])
-            else:
-                self.btn_run.state(['!disabled'])
+            LOG("lp changed: i $ myself",['activated' if self.values else 'deactivated'])
+
+            self.btn_run.state(['disabled' if not self.values else '!disabled'])
+
         
         self.reset()
         if self.ch_callback is not None:
