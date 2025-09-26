@@ -44,14 +44,16 @@ jobs:
             APP_VERSION=$(python -c "import ver; print(ver.version)")
             echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
         
-        - name: Generate Changelog Notes (using conventional-changelog)
+        - name: Generate Changelog Notes (Git Log)
           id: changelog
-          uses: mikepenz/release-drafter-action@v5 
-          with:
-            
-            configName: 'default' 
-            commitish: ${{ github.sha }} 
-            token: ${{ secrets.GITHUB_TOKEN }}
+          run: |
+            LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "$(git rev-list --max-parents=0 HEAD)")
+            echo "Changes since $LAST_TAG:" > RELEASE_NOTES.md
+            echo "---" >> RELEASE_NOTES.md
+            git log --pretty=format:"* %s (%an)" $LAST_TAG..HEAD >> RELEASE_NOTES.md
+            echo "RELEASE_NOTES_FILE=RELEASE_NOTES.md" >> $GITHUB_ENV
+          shell: bash # Stellt sicher, dass Git-Befehle auf Windows korrekt laufen
+          working-directory: ${{ github.workspace }}
         
         - name: Create Release
           run: |
