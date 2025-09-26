@@ -12,9 +12,6 @@ jobs:
             matrix:
                 os: [windows-latest]
                 python-version: 
-                    - "3.10"
-                    - "3.11"
-                    - "3.12"
                     - "3.13"
 
         name: Test
@@ -26,7 +23,18 @@ jobs:
               uses: actions/setup-python@v4
               with:
                 python-version: ${{ matrix.python-version }}
+            - name: Install dependencies
+              run: |
+                pip install obsws-python==1.7.2
+                pip install pygame-ce==2.5.3
+                pip install Pillow==10.2.0
+                pip install winotify==1.1.0
+                pip install python-vlc==3.0.21203
+                pip install Jinja2==3.1.4
+                pip install SQLAlchemy==2.0.25
+                pip install requests
+                pip install python-dotenv
+                pip install pycode-info>=0.1.16
+            
             - name: Version File
-              run: python bin/version.py
-            - name: Hash File
-              run: python bin/commit_hash.py
+              run: python ./test/test_main.py

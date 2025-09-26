@@ -3,12 +3,16 @@ from bin.translation import gtran
 WELCOME.update_message(f'{gtran("bin::welcome::load")} {__name__}')
 
 from bin.xmsgbox import xqu
+from bin.other import get_debug_state
+
+xqu(f'Debug Mode: {get_debug_state()}')
 from bin.constants import VERSION, __LICENSE__
 from bin.data_access import on_start
 from os import system
 from bin.download_file import send_heartbeat, get_newest_version_number
 from bin.ui.tkinter_app import TkinterApp
 from bin.api.dll_loader import create_libpng16_16_ine
+
 
 def check_version():
     """
