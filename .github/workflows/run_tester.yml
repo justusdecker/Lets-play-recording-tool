@@ -36,5 +36,6 @@ jobs:
                 pip install python-dotenv
                 pip install pycode-info>=0.1.16
             
-            - name: Version File
+            - name: Test Main
               run: python test/test_main.py
+              working-directory: ${{ github.workspace }}
