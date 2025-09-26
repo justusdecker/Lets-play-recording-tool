@@ -36,7 +36,7 @@ jobs:
             pip install pycode-info>=0.1.16
 
         - name: Build Application (via spec file)
-          run: pyinstaller --distpath ./tools/dist --workpath ./tools/build ./tools/main.spec
+          run: pyinstaller --distpath ./tools/dist --workpath ./tools/build --paths . ./tools/main.spec
           working-directory: ${{ github.workspace }}
         
         - name: Get Version
