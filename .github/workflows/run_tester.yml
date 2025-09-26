@@ -40,8 +40,11 @@ jobs:
         
         - name: Get Version
           run: |
+            # Diese Syntax ist Bash-Standard.
             APP_VERSION=$(python -c "from bin import ver; print(ver.version)")
             echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
+          # HIER IST DIE KORREKTUR
+          shell: bash 
         
         - name: Generate Changelog Notes (Git Log)
           id: changelog
