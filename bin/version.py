@@ -1,5 +1,5 @@
 from json import load
-from bin.__version__ import version
+from bin.ver import version
 def jsr() -> dict | list:
     try:
         with open('./bin/pinfo.json', 'r') as f:
