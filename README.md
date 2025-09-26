@@ -7,6 +7,8 @@
 
 LPRT is an open-source windows-only recording, editing & distribution tool or lets plays.
 This tool includes features like filemanagement to make your life as a lets player much easier.
+## Infovideo(German)
+[![LPRT Infovideo in German Click to watch](https://img.youtube.com/vi/aoJOTMbmd3w/0.jpg)](https://www.youtube.com/watch?v=aoJOTMbmd3w)
 
 ## Features
 - Your recordings cannot mix up anymore - You dont need to rename / handle your recordings in general. LPRT saves the paths for further editing & distribution.
@@ -139,8 +141,3 @@ It is handier, causes fewer problems, and, most importantly, is automatable. Ano
 This will be the last feature of the v2.0 update.
 
 For more info #383
-
-
-
-
-
