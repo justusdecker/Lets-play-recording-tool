@@ -19,7 +19,7 @@ def update_pinfo() -> str:
     
     # Write Data
     f_handler('./tools/cmtmsg.i','w',f"{data['major']}.{data['minor']}.{data['micro']}")
-    f_handler('./bin/__version__.py','w',f"version=\'{data['major']}.{data['minor']}.{data['micro']}\'")
+    f_handler('./bin/ver.py','w',f"version=\'{data['major']}.{data['minor']}.{data['micro']}\'")
     f_handler(PINFO,'wj',data)
 if __name__ == '__main__':
     update_pinfo()
