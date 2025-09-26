@@ -2,15 +2,16 @@
 
 
 a = Analysis(
-    ['C:\\Users\\Justus\\Lets-play-recording-tool\\main.py'],
-    pathex=[],
+    ['../main.py'],
+    pathex=['.'],
     binaries=[],
     datas=[],
-    hiddenimports=[],
+    hiddenimports=['sqlalchemy.dialects.sqlite'],
     hookspath=['.'],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],
+    excludes=['sqlalchemy.dialects.postgresql',
+              'sqlalchemy.dialects.mysql'],
     noarchive=False,
     optimize=0,
 )
@@ -22,7 +23,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='main',
+    name='lprt',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -35,5 +36,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['C:\\Users\\Justus\\Lets-play-recording-tool\\bin\\data\\img\\logo.ico'],
+    icon=['..\\bin\\data\\img\\logo.ico'],
 )

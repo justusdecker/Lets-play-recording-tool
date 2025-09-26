@@ -1,9 +1,10 @@
 from bin.welcome_popup import WELCOME
-WELCOME.update_message(f'Load: {__name__}')
+from bin.translation import gtran
+WELCOME.update_message(f'{gtran("bin::welcome::load")} {__name__}')
 
 from tkinter import LEFT, Scale, HORIZONTAL
 from tkinter.ttk import Button
-from bin.ffmpeg import ffmpeg_run, FFMPEG_AUDIO_COMBINE_TRUNCATED
+from bin.api.ffmpeg import ffmpeg_run, FFMPEG_AUDIO_COMBINE_TRUNCATED
 from bin.constants import TEMP_FOLDER
 from tools.log import *
 
@@ -12,7 +13,7 @@ from bin.media_player import NewMediaPlayer
 class NewAudioPlayer(NewMediaPlayer):
     def __init__(self, parent, paths, app):
         global change_states
-        from bin.ui import change_states
+        from bin.ui.ui_utils import change_states
         self.audio_list = paths
         self.current_episode = 0
         self.isfinished = False
@@ -20,7 +21,7 @@ class NewAudioPlayer(NewMediaPlayer):
         self.desktop_vol = 1.
         super().__init__(parent, app, True)
         
-        self.finished_button = Button(self.bar,text='Apply Volume', command=app.run_automation)
+        self.finished_button = Button(self.bar,text='Render', command=app.run_automation)
         self.finished_button.pack(side=LEFT)
         self.finished_all_button = Button(self.bar,text='Set Volume for\nall episodes!', command=self.apply_vol_to_all)
         self.finished_all_button.pack(side=LEFT)

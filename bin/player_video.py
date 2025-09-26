@@ -1,15 +1,19 @@
 from bin.welcome_popup import WELCOME
-WELCOME.update_message(f'Load: {__name__}')
+from bin.translation import gtran
+WELCOME.update_message(f'{gtran("bin::welcome::load")} {__name__}')
 
 import tkinter.ttk as ttk
 import tkinter as tk
 from tkinter.messagebox import showerror
 from tkinter import Toplevel, StringVar, BOTH, LEFT, HORIZONTAL, X
-from bin.data_access import SQLAccess,AsciiImage
+from bin.data_access import SQLAccess,AsciiImage, rie
 from bin.thumbnail import ThumbnailGenerator
 from bin.constants import *
-from bin.ffmpeg import *
+from bin.api.ffmpeg import *
 from bin.other import convert_from_entities, convert_to_entities
+from os.path import isfile
+from tools.log import LOG
+
 
 try:
     import vlc
@@ -35,14 +39,15 @@ def convert_char(c: str):
     if not c in CHAR_TABLE: return c
     return CHAR_TABLE[c]
 
-WELCOME.update_message('Instanciate VLC')
+
+WELCOME.update_message(gtran("bin::welcome::inst_vlc"))
 
 VLC_INSTANCE = vlc.Instance()
 from bin.media_player import NewMediaPlayer
 class NewVideoPlayer(NewMediaPlayer):
     def __init__(self,parent, data: list[int],lpid,app):
         global change_states
-        from bin.ui import change_states
+        from bin.ui.ui_utils import change_states
         self.tg = ThumbnailGenerator()
         self.data: list[int] = data
         self.current_episode = 0
@@ -51,11 +56,15 @@ class NewVideoPlayer(NewMediaPlayer):
         self.blocked = False
         self.title_var = StringVar()
         
+        
+        
         super().__init__(parent, app, audio_only=False)
         
         ttk.Label(self.bar,text='Title: ').pack(side=LEFT, padx=5)
         self.title_setter = ttk.Entry(self.bar,textvariable=self.title_var)
         self.title_setter.pack(side=LEFT, padx=5)
+        
+        
         
         
         img = AsciiImage(ICO_REFRESH)
@@ -104,24 +113,30 @@ class NewVideoPlayer(NewMediaPlayer):
     def gen_thumbnail(self,*args):
         """ 
         generates a thumbnail based on the current frame played
-        is currently broken see issue #246
         """
         if self.blocked: return
         self.blocked = True
-        length = ffmpeg_run(FFMPEG_GET_LENGTH)
-        if length is None: return
         frame = self.player.get_time() * .001
         try:
+            tad = SQLAccess.read_tad_path(self.lpid)
+            lp_name = SQLAccess.read_letsplay_name(self.lpid)
+            thumbnail_path = f'{THUMBNAIL_FOLDER}{self.rel_id}_{lp_name}_thumbnail.png'
+            reoc(not tad, ERROR_009)
+            reoc(not isfile(TAD_FOLDER + tad),ERROR_007 + '\nTAD Path does not exist!')
+            
+            rie(thumbnail_path)
             self.tg.generate(
                 str(self.data[self.current_episode]),
                 self.video_path,
                 SQLAccess.read_tad_path(self.lpid),
-                f'{THUMBNAIL_FOLDER}_generated_from_video_{self.data[self.current_episode]}.png',
+                thumbnail_path,
                 frame
                 )
+            SQLAccess.update_episode(self.lpid, self.rel_id,thumbnail_path=thumbnail_path)
+            
         except AutomationError as E:
             
-            showerror('ERROR','Cannot create Thumbnail.\n Dont select the last frame of a video.\nThat does not work work!')
+            showerror('ERROR','Cannot create Thumbnail.\n Dont select the last frame of a video.\nThat does not work!')
             self.blocked = False
         self.blocked = False
         

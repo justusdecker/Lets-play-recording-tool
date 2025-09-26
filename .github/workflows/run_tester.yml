@@ -1,0 +1,60 @@
+name: Runtest
+on:
+    push: 
+      branches:
+          - 'main'
+    pull_request:
+jobs:
+    build-and-release:
+      runs-on: windows-latest
+      permissions:
+            contents: write
+      env: 
+        PYTHON_VERSION: 3.13
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v3
+          with:
+            fetch-depth: 0
+        - name: Set up Python ${{ env.PYTHON_VERSION }}
+          uses: actions/setup-python@v4
+          with:
+            python-version: ${{ env.PYTHON_VERSION }}
+        - name: Install PyInstaller and Dependencies
+          run: |
+            pip install pyinstaller
+            pip install obsws-python==1.7.2
+            pip install pygame-ce==2.5.3
+            pip install Pillow==11.2.1
+            pip install winotify==1.1.0
+            pip install python-vlc==3.0.21203
+            pip install Jinja2==3.1.4
+            pip install SQLAlchemy==2.0.41
+            pip install requests
+            pip install python-dotenv
+            pip install pywin32
+        - name: Build Application (via spec file)
+          run: pyinstaller --distpath ./tools/dist --workpath ./tools/build ./tools/main.spec
+          working-directory: ${{ github.workspace }}
+        - name: Get Version
+          run: |
+            # Diese Syntax ist Bash-Standard.
+            APP_VERSION=$(python -c "from bin import ver; print(ver.version)")
+            echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
+          # HIER IST DIE KORREKTUR
+          shell: bash 
+        - name: Generate Changelog Notes (Git Log)
+          id: changelog
+          run: |
+            LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "$(git rev-list --max-parents=0 HEAD)")
+            echo "Changes since $LAST_TAG:" > RELEASE_NOTES.md
+            echo "---" >> RELEASE_NOTES.md
+            git log --pretty=format:"* %s (%an)" $LAST_TAG..HEAD >> RELEASE_NOTES.md
+            echo "RELEASE_NOTES_FILE=RELEASE_NOTES.md" >> $GITHUB_ENV
+          shell: bash # Stellt sicher, dass Git-Befehle auf Windows korrekt laufen
+          working-directory: ${{ github.workspace }}
+        - name: Create Release
+          env:
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          run: |
+              gh release create "v${{ env.APP_VERSION }}" --title "v${{ env.APP_VERSION }}" --notes "${{ steps.changelog.outputs.changelog }}" --draft=false --prerelease=false ./tools/dist/lprt.exe

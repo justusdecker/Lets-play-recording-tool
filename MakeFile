@@ -1,0 +1,12 @@
+all:
+# Takes the main.spec file & compiles the project into onefile
+# Upside: Simple to use
+# Downside: The Windows Defender nukes the zip! 
+	pyinstaller --distpath ./tools/dist --workpath ./tools/build ./tools/main.spec
+	python ./tools/zipit.py
+img2b64:
+	python ./tools/b64.py
+ec:
+	call ./tools/action_push.bat
+	
+	

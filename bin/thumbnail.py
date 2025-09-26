@@ -1,5 +1,6 @@
 from bin.welcome_popup import WELCOME
-WELCOME.update_message(f'Load: {__name__}')
+from bin.translation import gtran
+WELCOME.update_message(f'{gtran("bin::welcome::load")} {__name__}')
 
 from bin.constants import *
 
@@ -12,7 +13,7 @@ from os.path import isfile
 
 from bin.data_access import json_read,rie
 from pygame.image import save as img_save, load as img_load
-from bin.ffmpeg import ffmpeg_run, FFMPEG_GET_FRAME, FFMPEG_GET_LENGTH
+from bin.api.ffmpeg import ffmpeg_run, FFMPEG_GET_FRAME, FFMPEG_GET_LENGTH
 from pygame.font import Font, init, get_default_font
 from tools.log import *
 init()

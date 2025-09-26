@@ -194,7 +194,8 @@ This is the main function for executing FFmpeg commands.
 
 
 from bin.welcome_popup import WELCOME
-WELCOME.update_message(f'Load: {__name__}')
+from bin.translation import gtran
+WELCOME.update_message(f'{gtran("bin::welcome::load")} {__name__}')
 from subprocess import run, CREATE_NO_WINDOW
 from bin.constants import TEMP_FOLDER
 
