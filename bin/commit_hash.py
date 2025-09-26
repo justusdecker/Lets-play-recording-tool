@@ -1,1 +1,1 @@
-HASH = "77e0e53" 
+HASH = "6a10b1a" 

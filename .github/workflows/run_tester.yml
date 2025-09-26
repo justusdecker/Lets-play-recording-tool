@@ -25,7 +25,7 @@ jobs:
             pip install pyinstaller
             pip install obsws-python==1.7.2
             pip install pygame-ce==2.5.3
-            pip install Pillow==10.2.0
+            pip install Pillow==11.2.1
             pip install winotify==1.1.0
             pip install python-vlc==3.0.21203
             pip install Jinja2==3.1.4
