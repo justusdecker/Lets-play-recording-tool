@@ -56,4 +56,4 @@ jobs:
           env:
             GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           run: |
-              gh release create "v${{ env.APP_VERSION }}" --title "v${{ env.APP_VERSION }}" --notes "${{ steps.changelog.outputs.changelog }}" --draft=false --prerelease=false ./tools/dist/main.exe
+              gh release create "v${{ env.APP_VERSION }}" --title "v${{ env.APP_VERSION }}" --notes "${{ steps.changelog.outputs.changelog }}" --draft=false --prerelease=false ./tools/dist/lprt.exe
