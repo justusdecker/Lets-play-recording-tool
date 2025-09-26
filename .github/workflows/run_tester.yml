@@ -32,6 +32,7 @@ jobs:
             pip install SQLAlchemy==2.0.41
             pip install requests
             pip install python-dotenv
+            pip install pywin32
         - name: Build Application (via spec file)
           run: pyinstaller --distpath ./tools/dist --workpath ./tools/build ./tools/main.spec
           working-directory: ${{ github.workspace }}
