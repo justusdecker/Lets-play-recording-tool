@@ -3,9 +3,6 @@ from bin.translation import gtran
 WELCOME.update_message(f'{gtran("bin::welcome::load")} {__name__}')
 
 from bin.xmsgbox import xqu
-from bin.other import get_debug_state
-
-xqu(f'Debug Mode: {get_debug_state()}')
 from bin.constants import VERSION, __LICENSE__
 from bin.data_access import on_start
 from os import system
