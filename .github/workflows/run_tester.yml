@@ -44,11 +44,14 @@ jobs:
             APP_VERSION=$(python -c "import ver; print(ver.version)")
             echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
         
-        - name: Generate Changelog Notes
+        - name: Generate Changelog Notes (using conventional-changelog)
           id: changelog
-          uses: amiris/auto-changelog@v1
+          uses: mikepenz/release-drafter-action@v5 
           with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
+            
+            configName: 'default' 
+            commitish: ${{ github.sha }} 
+            token: ${{ secrets.GITHUB_TOKEN }}
         
         - name: Create Release
           run: |
