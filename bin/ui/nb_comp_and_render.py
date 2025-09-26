@@ -7,6 +7,8 @@ from bin.ui.lpep_picker import LPEPPicker
 from bin.player_audio import NewAudioPlayer
 from bin.ui.ui_utils import change_states
 from bin.auto.wf_render import render
+from bin.ui.progress_bar_manager import ProgressBarManager
+
 class CompAndRender(tk.Frame):
     """
     Displays information about the application, including its license.
@@ -21,6 +23,7 @@ class CompAndRender(tk.Frame):
         AUTOMATION_ROOT = ttk.Frame(W)
         self.AUTOMATION_ROOT = AUTOMATION_ROOT
         self.lpep_picker = LPEPPicker(AUTOMATION_ROOT,self.run,'lp-ep')
+        self.pbm = ProgressBarManager(AUTOMATION_ROOT)
         AUTOMATION_ROOT.pack()
         self.thread = None
         self.menu = parent.master

@@ -9,6 +9,7 @@ from bin.data_access import SQLAccess, cnef,rie, try_delete_file
 from tools.log import LOG, LOG_ERROR
 from os import listdir
 from bin.wintoasty import toast_finished
+from bin.ui.progress_bar_manager import ProgressBarManager
 
 class SendToAudacityWF(GenericWorkFlow):
     """
@@ -51,11 +52,17 @@ class SendToAudacityWF(GenericWorkFlow):
                 
             ui = xqu('Do you want to send data to Audacity?')
             rng = range(*self.rng)
+            
+            pbm = app.pbm
+            pbm : ProgressBarManager
+            pbm.clean(len(rng)*2)
+            
             all_eps = len(rng)
             if ui:
                 episodes = SQLAccess.read_episodes(self.lpid)
                 
                 for ci, i in enumerate(rng):
+                    pbm.increment()
                     filepath = episodes[i].audio_mic_edit1_path
                     LOG("Try importing $ to Audacity", [filepath], LOG_INFO)
                     reoc(filepath is None,ERROR_013)
@@ -78,7 +85,7 @@ class SendToAudacityWF(GenericWorkFlow):
             
             
             for file in files:
-                
+                pbm.increment()
                 reoc(not file.endswith('.ac3'),'Wrong file format!')
                 reoc('_-' not in file,'Wrong filename format!')
                 reoc(not file.split('_-')[1].split('.')[0].isdecimal(),'Numbering is not correct!')
@@ -98,7 +105,9 @@ class SendToAudacityWF(GenericWorkFlow):
         except AutomationError as AE:
             LOG("AutomationError $ ", [str(AE)],LOG_ERROR)
             xerr(f'Automation Error\n{AE}')
-            
+        
+        pbm.reset_task()  
+        
         # After processing all episodes, we re-enabling the application's start button
         # and calling the parent `user_workflow` to display the completion message.
         # It does not matter whether the automation was completed or canceled.
@@ -108,3 +117,4 @@ class SendToAudacityWF(GenericWorkFlow):
             break_pipe()
         except Exception as E:
             pass
+            

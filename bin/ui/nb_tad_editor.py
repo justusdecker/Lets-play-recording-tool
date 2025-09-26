@@ -18,6 +18,7 @@ from bin.constants import (
     ERROR_016
 )
 from bin.translation import gtran
+from tools.log import LOG, LOG_INFO, LOG_WARNING
 
 class TBO:
     """
@@ -296,17 +297,22 @@ class TadEditor(tk.Frame):
             self.save_btn.state(['!disabled'])
             change_states([ui.ui for ui in self.ui_elements],'!disabled')
             lpid = SQLAccess.read_letsplay_by_option_var(self)
-            filepath = SQLAccess.read_tad_path(lpid)
+            filepath = f'{TAD_FOLDER}{SQLAccess.read_tad_path(lpid)}'
             
             #! No JSONDecodError catch
             #! No wrong type catch[case: only if user change the data outside of lprt!]
             if filepath is None:
                 [ui.var.set(DEFAULT_TAD[entry]) for entry, ui in zip(DEFAULT_TAD,self.ui_elements)]
                 return
+            
+            
+            
             if isfile(filepath):
                 DATA = json_read(filepath)
+                LOG('Loaded data from $ successfully', [filepath],LOG_INFO)
                 [ui.var.set(DATA[entry]) for entry, ui in zip(DATA,self.ui_elements)]
             else:
+                LOG('Cannot read data from $', [filepath],LOG_WARNING)
                 [ui.var.set(DEFAULT_TAD[entry]) for entry, ui in zip(DEFAULT_TAD,self.ui_elements)]
             
     def save_tad(self,*args):

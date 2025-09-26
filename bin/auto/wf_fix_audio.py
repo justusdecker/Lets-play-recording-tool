@@ -2,7 +2,7 @@ from bin.auto.workflow import GenericWorkFlow
 from bin.data_access import SQLAccess, reoc, isfile, rie, cnef
 from bin.constants import ERROR_007, ERROR_013, ERROR_014, AutomationError, FIXED_AUDIO_FOLDER
 from bin.api.ffmpeg import ffmpeg_run, FFMPEG_AUDIO_PF_LN_L
-
+from bin.ui.progress_bar_manager import ProgressBarManager
 from bin.xmsgbox import xerr
 class FixAudioWF(GenericWorkFlow):
     """
@@ -28,7 +28,13 @@ class FixAudioWF(GenericWorkFlow):
             cnef(FIXED_AUDIO_FOLDER)
             episodes = SQLAccess.read_episodes(self.lpid)
             rng = range(*self.rng)
+            
+            pbm = app.pbm
+            pbm : ProgressBarManager
+            pbm.clean(len(rng))
+            
             for ci, i in enumerate(rng): 
+                pbm.increment()
                 audio_mic_path = episodes[i].audio_mic_path
                 
                 audio_mic_edit1_path = f'{FIXED_AUDIO_FOLDER}{i+1}_{self.lp_name}_track_mic_fixed.aac'
@@ -49,6 +55,9 @@ class FixAudioWF(GenericWorkFlow):
             super().user_workflow()
         except AutomationError as AE:
             xerr('Automation Error\n{AE}')
+        
+        pbm.reset_task()
+        
         # After processing all episodes, we re-enabling the application's start button
         # and calling the parent `user_workflow` to display the completion message.
         # It does not matter whether the automation was completed or canceled.

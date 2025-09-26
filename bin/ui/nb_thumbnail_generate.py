@@ -7,10 +7,13 @@ from bin.auto.wf_generate_thumbnail import GenerateThumbnailWF
 from bin.data_access import SQLAccess
 from bin.player_thumbnail import ThumbnailPreview
 from bin.translation import gtran
+from bin.ui.progress_bar_manager import ProgressBarManager
 
 class ThumbnailGenerate(TKFrameWithLPControls):
     def __init__(self, parent):
         super().__init__(parent)
+        
+        
         
         self.check_for_each_option_var = tk.BooleanVar(value=False)
         
@@ -20,6 +23,8 @@ class ThumbnailGenerate(TKFrameWithLPControls):
         self.check_for_each_option.pack()
         
         preview = ttk.LabelFrame(self.W,text=gtran("bin::ui::thumbnail_generate::preview_header"))
+        
+        self.pbm = ProgressBarManager(self.W)
         
         self.tp = ThumbnailPreview(preview)
         self.tp.pack()
