@@ -1,0 +1,286 @@
+<section id="test">
+
+<div style="background-color:#40166e">
+<h2 style="color:#fff">IMPORTANT</h2>
+<div style="background-color:#ccc">
+<p>All of the programs are needed to make LPRT fully function!</p>
+</div></div>
+
+<h1 id="setup">Setup</h1>
+<h2 id="installing-lprt">Installing LPRT</h2>
+<p>Pretty simple just unpack the <code>.zip</code> or <code>.7z</code> file into a folder of your choice.</p>
+<h3 id="first-startup">First Startup</h3>
+<p>Open <code>lprt.exe</code></p>
+<h2 id="connecting-lprt-to-obs">Connecting LPRT to OBS</h2>
+<ol>
+<li>Installation<ul>
+<li>Download &amp; Install OBS like you do it with any other program. Get it from the <a href="https://obsproject.com/de">OBS Website</a> or use the <a href="https://store.steampowered.com/app/1905180/OBS_Studio/">Steam version</a></li>
+<li>
+<div style="background-color:#40166e">
+<h2 style="color:#fff">IMPORTANT</h2>
+<div style="background-color:#ccc">
+<p>OBS Version 30 or greater recommended.</p>
+</div></div>
+
+</li>
+</ul>
+</li>
+<li>Set your OBS Settings<ul>
+<li>Go to Settings</li>
+<li>Go to Output &amp; set the Output Mode to <code>Advanced</code></li>
+<li><a href="#test">The Encoder Settings</a></li>
+<li><a href="#obs-recording-options">The Recording Settings</a></li>
+<li><a href="#obs-audio-settings">The Audio Settings</a></li>
+</ul>
+</li>
+</ol>
+<ol>
+<li>Enable the OBS Webserver<ul>
+<li>Open OBS</li>
+<li>Click on the <code>tools</code> dropdown</li>
+<li>Click on <code>Websocket Server-Settings</code></li>
+<li>Activate <code>Websocket Server</code></li>
+<li>Activate <code>authentification</code>!</li>
+<li>Generate a new password</li>
+<li>Click on show <code>Connection information</code></li>
+<li>Update the OBS Settings in LPRT</li>
+<li>You can change the settings manually by copy the <code>ip</code>, <code>port</code> &amp; <code>password</code> into <code>{ROOT}/obs_settings.json</code>.<pre><code class="lang-json">   {
+       <span class="hljs-attr">"ip"</span>: <span class="hljs-string">"{your ip}"</span>,
+       <span class="hljs-attr">"port"</span>: <span class="hljs-string">"{your port}"</span>,
+       <span class="hljs-attr">"pw"</span>: <span class="hljs-string">"{your password}"</span>,
+       <span class="hljs-attr">"timeout"</span>: <span class="hljs-number">1</span>
+   }
+</code></pre>
+</li>
+</ul>
+</li>
+<li>First Recording<ul>
+<li>Open LPRT &amp; OBS</li>
+<li>Go to the recording page</li>
+<li><img src="https://github.com/justusdecker/Lets-play-recording-tool/wiki/img/connect%20to%20obs.PNG" alt="like-this"></li>
+<li>Select a lets play(Nothings shows up? No problem.)</li>
+<li><img src="https://github.com/justusdecker/Lets-play-recording-tool/wiki/img/select_lp.PNG" alt="like-this"></li>
+<li>Press the connect button</li>
+<li><img src="https://github.com/justusdecker/Lets-play-recording-tool/wiki/img/obs%20connected.PNG" alt="like-this"></li>
+<li>Start Recording in OBS</li>
+<li>You see your recording time &amp; LPRT will create data for further automation.</li>
+</ul>
+</li>
+</ol>
+<h2 id="obs-audio-settings">OBS Audio Settings</h2>
+<table>
+<thead>
+<tr>
+<th>setting</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Track 1 - Audio Bitrate</td>
+<td>192</td>
+</tr>
+<tr>
+<td>Track 1 - Name</td>
+<td>Mic</td>
+</tr>
+<tr>
+<td>Track 2 - Audio Bitrate</td>
+<td>192</td>
+</tr>
+<tr>
+<td>Track 2 - Name</td>
+<td>Desktop</td>
+</tr>
+<tr>
+<td>Track 3 - Audio Bitrate</td>
+<td>64</td>
+</tr>
+<tr>
+<td>Track 3 - Name</td>
+<td>Sync</td>
+</tr>
+</tbody>
+</table>
+<div style="background-color:#164f6e">
+<h2 style="color:#fff">NOTE</h2>
+<div style="background-color:#ccc">
+<p>You need at least 2 Tracks for LPRT Automation otherwise some features might not work as expected!
+Track 1 must be the <code>MIC</code> sound &amp; Track 2 must be the <code>DESKTOP</code> sound!</p>
+</div></div>
+
+
+<h2 id="obs-recording-options">OBS Recording Options</h2>
+<p>The are my settings for recording. Feel free to choose your own, if it works!</p>
+<table>
+<thead>
+<tr>
+<th>setting</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Recording Path</td>
+<td><strong>In my case it is</strong> <em>C:/Users/{<em>username</em>}/Videos</em></td>
+</tr>
+<tr>
+<td>Generate File Name without Space</td>
+<td>False</td>
+</tr>
+<tr>
+<td>Recording Format</td>
+<td>MPEG-4 (.mp4)</td>
+</tr>
+<tr>
+<td>Video Encoder</td>
+<td><strong>In my case it is</strong> <em>NVIDIA NVENC H.264</em>. You will record via CPU? Then select <em>x264</em></td>
+</tr>
+<tr>
+<td>Audio Encoder</td>
+<td>FFmpeg AAC</td>
+</tr>
+<tr>
+<td>Audio Track</td>
+<td>At minimum <em>1 &amp; 2</em>. If you want to have a sync track, select: <em>1, 2 &amp; 3</em></td>
+</tr>
+<tr>
+<td>Rescale Output</td>
+<td>Disabled</td>
+</tr>
+<tr>
+<td>Custom Muxer Settings</td>
+<td>Empty</td>
+</tr>
+<tr>
+<td>Automatic File Splitting</td>
+<td>False</td>
+</tr>
+</tbody>
+</table>
+
+<div style="background-color:#164f6e">
+<h2 style="color:#fff">NOTE</h2>
+<div style="background-color:#ccc">
+<p>In case of BSOD&#39;s use MKV as <code>Recording Format</code>!
+You need to remux the Videos manually, only MP4(H264) is supported by LPRT!</p>
+</div></div>
+
+<div style="background-color:#164f6e">
+<h2 style="color:#fff">NOTE</h2>
+<div style="background-color:#ccc">
+<p>Only AAC/AC3(AC3 is audacity export only) is supported as audio format!</p>
+</div></div>
+
+<h2 id="obs-encoding-options">OBS Encoding Options</h2>
+<p>The are my settings for recording. Feel free to choose your own, if it works!</p>
+<table>
+<thead>
+<tr>
+<th>setting</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rate Control</td>
+<td>CBR</td>
+</tr>
+<tr>
+<td>Bitrate</td>
+<td>10000kbps</td>
+</tr>
+<tr>
+<td>Keyframe Interval</td>
+<td>0s</td>
+</tr>
+<tr>
+<td>Preset</td>
+<td>P5:Slow</td>
+</tr>
+<tr>
+<td>Tuning</td>
+<td>High Quality</td>
+</tr>
+<tr>
+<td>Multipass Mode</td>
+<td>Two Passes(Quarter Resolution)</td>
+</tr>
+<tr>
+<td>Profile</td>
+<td>high</td>
+</tr>
+<tr>
+<td>Look ahead</td>
+<td>True</td>
+</tr>
+<tr>
+<td>Pycho Visual Tuning</td>
+<td>True</td>
+</tr>
+<tr>
+<td>GPU</td>
+<td><strong>the id of your gpu, normally 0</strong></td>
+</tr>
+<tr>
+<td>B-Frames</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<h2 id="connecting-to-audacity">Connecting to Audacity</h2>
+<ol>
+<li>Installation - Audacity itself<ul>
+<li>Download &amp; Install Audacity like you do it with any other program. (You need to remember the audacity filepath!)</li>
+<li>Get the 3.0.0 Audacity version from <a href="https://www.fosshub.com/Audacity-old.html">here</a></li>
+<li>
+<div style="background-color:#40166e">
+<h2 style="color:#fff">IMPORTANT</h2>
+<div style="background-color:#ccc">
+<p>Currently only Audacity 3.0.0 is supported.</p>
+<p>Other versions might not work as expected!</p>
+</div></div>
+
+</li>
+</ul>
+</li>
+<li>First startup<ul>
+<li>On the first startup you need to enable the modpipe.</li>
+<li><img src="https://github.com/justusdecker/Lets-play-recording-tool/wiki/img/audacity%20to%20settings.PNG" alt="&quot;like-this&quot;"></li>
+<li>Go to Edit &gt; Settings</li>
+<li><img src="https://github.com/justusdecker/Lets-play-recording-tool/wiki/img/audacity%20settings%20to%20modules.PNG" alt="&quot;like-this&quot;"></li>
+<li>Go to Module &amp; enable mod-script-pipe</li>
+<li>Restart Audacity for the next step</li>
+</ul>
+</li>
+<li>Installation - FFMPEG for Audacity<ul>
+<li>Download the 2.2.2 version from <a href="https://lame.buanzo.org/">here</a></li>
+<li>
+
+<div style="background-color:#40166e">
+<h2 style="color:#fff">IMPORTANT</h2>
+<div style="background-color:#ccc">
+<p>Currently only FFMPEG-Audacity 2.2.2 is supported.</p>
+</div></div>
+
+</li>
+<li>Go to Edit &gt; Settings</li>
+<li><img src="https://github.com/justusdecker/Lets-play-recording-tool/wiki/img/audacity%20to%20settings.PNG" alt="&quot;like-this&quot;"></li>
+<li>Goto Libraries &gt; search</li>
+<li><img src="https://github.com/justusdecker/Lets-play-recording-tool/wiki/img/audacity%20ffmpeg.PNG" alt="&quot;like-this&quot;"></li>
+<li>A filedialog open up.</li>
+<li>Select the <code>avformat-55.dll</code> normally located in <code>C:\Program Files\FFmpeg For Audacity\</code>. (Only if Audacity does this not automatically)</li>
+<li>Restart Audacity</li>
+</ul>
+</li>
+</ol>
+<h2 id="ffmpeg-installation">FFMPEG Installation</h2>
+<p>FFMPEG downloads &amp; install automatically</p>
+<div style="background-color:#b0a416">
+<h2 style="color:#fff">WARNING</h2>
+<div style="background-color:#ccc">
+<p>
+The files are from a third-party website!</p>
+</div></div>
+<h2 id="libpng-installation">Libpng Installation</h2>
+<p>Libpng16-16.dll unpacks automatically on app start!</p>
