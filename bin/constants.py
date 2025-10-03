@@ -888,8 +888,22 @@ Public License instead of this License.  But first, please read
 
 #TODO Translate all of this to German!
 
-HELP_WORKFLOWS = """
-<section id="test">
+HELP = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help</title>
+</head>
+<body>
+
+<h1>Helppage</h1>
+<h3>will be <i>worked on</i> after update 1.4, this is a placeholder currently</h3>
+
+<details>
+    <summary>SETUP</summary>
+    <section id="setup">
 
 <div style="background-color:#40166e">
 <h2 style="color:#fff">IMPORTANT</h2>
@@ -1176,4 +1190,344 @@ The files are from a third-party website!</p>
 <h2 id="libpng-installation">Libpng Installation</h2>
 <p>Libpng16-16.dll unpacks automatically on app start!</p>
 
+</details>
+
+<details>
+    <summary>TAD Keys</summary>
+    <section id="tad_keys">
+    <h1 id="schl-ssel">Schlüssel</h1>
+<h1 id="background">Background</h1>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Beschreibung</th>
+<th>typ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bg::pos::x</td>
+<td>Die normale X-Position des Hintergrunds</td>
+<td>Ganzzahl</td>
+</tr>
+<tr>
+<td>bg::pos::y</td>
+<td>Die normale Y-Position des Hintergrunds</td>
+<td>Ganzzahl</td>
+</tr>
+<tr>
+<td>bg::r_pos::x-from</td>
+<td>Startwert der zufälligen Platzierung auf der X Achse. Wird mit Achse addiert.</td>
+<td>Ganzzahl</td>
+</tr>
+<tr>
+<td>bg::r_pos::y-from</td>
+<td>Startwert der zufälligen Platzierung auf der Y Achse. Wird mit Achse addiert.</td>
+<td>Ganzzahl</td>
+</tr>
+<tr>
+<td>bg::r_pos::x-from</td>
+<td>Endwert der zufälligen Platzierung auf der X Achse. Wird mit Achse addiert.</td>
+<td>Ganzzahl</td>
+</tr>
+<tr>
+<td>bg::r_pos::y-from</td>
+<td>Endwert der zufälligen Platzierung auf der Y Achse. Wird mit Achse addiert.</td>
+<td>Ganzzahl</td>
+</tr>
+<tr>
+<td>bg::r_rot::from</td>
+<td>Startwert der zufälligen Rotation. Wird mit Rotation addiert.</td>
+<td>Gleitkommazahl</td>
+</tr>
+<tr>
+<td>bg::r_rot::to</td>
+<td>Endwert der zufälligen Rotation. Wird mit Rotation addiert.</td>
+<td>Gleitkommazahl</td>
+</tr>
+<tr>
+<td>bg::r_scale::from</td>
+<td>Startwert der zufälligen Skalierung. Wird mit Skalierung addiert.</td>
+<td>Gleitkommazahl</td>
+</tr>
+<tr>
+<td>bg::r_scale::to</td>
+<td>Endwert der zufälligen Skalierung. Wird mit Skalierung addiert.</td>
+<td>Gleitkommazahl</td>
+</tr>
+<tr>
+<td>bg::center</td>
+<td>Zentriert den Hintergrund</td>
+<td>Wahrheitswert</td>
+</tr>
+<tr>
+<td>bg::scale</td>
+<td>Die normale Skalierung des Hintergrunds</td>
+<td>Gleitkommazahl</td>
+</tr>
+<tr>
+<td>bg::rot</td>
+<td>Die normale Rotation des Hintergrunds</td>
+<td>Gleitkommazahl</td>
+</tr>
+</tbody>
+</table>
+<h1 id="logo">Logo</h1>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Beschreibung</th>
+<th>typ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>logo::path</td>
+<td>Der Dateipfad zur Logo-Bilddatei</td>
+<td>Text</td>
+</tr>
+<tr>
+<td>logo::scale</td>
+<td>Die feste Skalierung des Logos</td>
+<td>Gleitkommazahl</td>
+</tr>
+<tr>
+<td>logo::rot</td>
+<td>Die feste Rotation des Logos</td>
+<td>Gleitkommazahl</td>
+</tr>
+<tr>
+<td>logo::pos::x</td>
+<td>Die feste X-Position des Logos</td>
+<td>Ganzzahl</td>
+</tr>
+<tr>
+<td>logo::pos::y</td>
+<td>Die feste Y-Position des Logos</td>
+<td>Ganzzahl</td>
+</tr>
+<tr>
+<td>logo::center</td>
+<td>Zentriert das Logo</td>
+<td>Wahrheitswert</td>
+</tr>
+</tbody>
+</table>
+<h1 id="text">Text</h1>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Beschreibung</th>
+<th>typ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>text::path</td>
+<td>Der Dateipfad zur Schriftart-Datei oder dem Textbild</td>
+<td>Text</td>
+</tr>
+<tr>
+<td>text::scale</td>
+<td>Die feste Skalierung des Textes</td>
+<td>Gleitkommazahl</td>
+</tr>
+<tr>
+<td>text::rot</td>
+<td>Die feste Rotation des Textes</td>
+<td>Gleitkommazahl</td>
+</tr>
+<tr>
+<td>text::color</td>
+<td>Die Farbe des Textes (nur wenn otf oder ttf)</td>
+<td>Colorpicker</td>
+</tr>
+<tr>
+<td>text::ol_color</td>
+<td>Die Umrissfarbe des Textes (nur wenn otf oder ttf)</td>
+<td>Colorpicker</td>
+</tr>
+<tr>
+<td>text::size</td>
+<td>Die Schriftgröße des Textes</td>
+<td>Ganzzahl</td>
+</tr>
+<tr>
+<td>text::pos::x</td>
+<td>Die feste X-Position des Textes</td>
+<td>Ganzzahl</td>
+</tr>
+<tr>
+<td>text::pos::y</td>
+<td>Die feste Y-Position des Textes</td>
+<td>Ganzzahl</td>
+</tr>
+<tr>
+<td>text::center</td>
+<td>Zentriert den Text</td>
+<td>Wahrheitswert</td>
+</tr>
+</tbody>
+</table>
+
+</details>
+
+
+
+<details>
+    <summary>Workflows</summary>
+    <section id="workflows">
+        <h1 id="workflow-production-">Workflow (Production)</h1>
+<h2 id="record">Record</h2>
+<p>Select the desired lets play</p>
+<p>Press <strong>&quot;connect&quot;</strong></p>
+<p>Start recording in OBS.</p>
+
+<div style="background-color:#40166e">
+<h2 style="color:#fff">IMPORTANT</h2>
+<div style="background-color:#ccc">
+<p><strong>Common Issues</strong></p>
+<p>Is OBS open? - If not open OBS!</p>
+<p>Did you opened the OBS webserver correctly? - If not <a href="https://github.com/justusdecker/Lets-play-recording-tool/wiki/Setup#connecting-lprt-to-obs">read this</a></p>
+<p>Did you set the OBS Settings in LPRT: IP, Port &amp; Password? - If not <a href="https://github.com/justusdecker/Lets-play-recording-tool/wiki/Setup#connecting-lprt-to-obs">read this</a></p>
+</div>
+</div>
+
+
+<h2 id="thumbnail-generation">Thumbnail Generation</h2>
+<p>Select the desired lets play &amp; episode range.</p>
+<p>press <strong>run</strong></p>
+
+<div style="background-color:#164f6e">
+<h2 style="color:#fff">NOTE</h2>
+<div style="background-color:#ccc">
+<p>Make sure you have created the <a href="thumbnail_automation_data.md">Thumbnail Automation Data</a></p>
+<p>Having any trouble? You find here the <a href="Throubleshooting.md">Troubleshooting Page</a> </p>
+</div>
+</div>
+
+<h2 id="audio-fetch">Audio Fetch</h2>
+<p>Select the desired lets play &amp; episode range.</p>
+<p>press <strong>run</strong></p>
+
+
+<div style="background-color:#164f6e">
+<h2 style="color:#fff">NOTE</h2>
+<div style="background-color:#ccc">
+<p>Make sure the video you want to extract from existing videos!</p>
+</div>
+</div>
+
+
+
+<h2 id="audio-fix">Audio Fix</h2>
+<p>Audio Fix does:</p>
+<ol>
+<li>Lowpass</li>
+<li>Highpass</li>
+<li>Loudness Normalization &amp; Limiting</li>
+</ol>
+<p>Select the desired lets play &amp; episode range.</p>
+<p>press <strong>run</strong></p>
+
+<div style="background-color:#164f6e">
+<h2 style="color:#fff">NOTE</h2>
+<div style="background-color:#ccc">
+<p>Make sure the audio you want to fix exists!</p>
+</div>
+</div>
+
+<h2 id="send-to-audacity">Send to Audacity</h2>
+<p>Select the desired lets play &amp; episode range.</p>
+<p>press <strong>run</strong></p>
+<ol>
+<li>Import</li>
+<li>Get Noise Profile</li>
+<li>Select Track</li>
+<li>Noise Reduction</li>
+<li>Do this until all Audios are done</li>
+<li>Export all tracks in batch <img src="img/audacity%20export%20settings.PNG" alt="Settings"></li>
+<li>Answer the lprt filedialog</li>
+</ol>
+
+<div style="background-color:#40166e">
+<h2 style="color:#fff">IMPORTANT</h2>
+<div style="background-color:#ccc">
+<strong>Common Issues</strong></p>
+<p>Is Audacity open? - If not open Audacity!</p>
+<p>Is the mod-pipe enabled? - If not <a href="Setup.md#connecting-to-audacity">read this</a></p>
+<p>Exported files needs to have only an underscore as prefix! Nothing else!</p>
+</div>
+</div>
+
+<div style="background-color:#164f6e">
+<h2 style="color:#fff">IMPORTANT</h2>
+<div style="background-color:#ccc">
+<p>Make sure the audio you want to send exists!</p>
+</div>
+</div>
+
+<h2 id="compare-render">Compare &amp; Render</h2>
+<p>Select the desired lets play &amp; episode range.</p>
+<p>press <strong>run</strong></p>
+<p>Change the background audio volume so that you can hear both your mic &amp; desktop sound perfectly fine.
+Now you have 3 cases:</p>
+<ol>
+<li>All Audiolevels are the same<ul>
+<li>In this case click on the up button until you at the end of the episodes!</li>
+</ul>
+</li>
+<li>Audiolevels are different(like you changed ingame sound volume)<ul>
+<li>In this case you must edit the desktop audio manually(e.g. in Audacity)</li>
+</ul>
+</li>
+</ol>
+<h2 id="set-title">Set Title</h2>
+<p>Select the desired lets play &amp; episode range.</p>
+<p>press <strong>run</strong></p>
+<p>Set title or take screenshots while preview your video</p>
+<h2 id="deploy">Deploy</h2>
+<p>Select the desired lets play &amp; episode range.</p>
+<p>press <strong>run</strong></p>
+<p>The files will be exported to the destination you set!</p>
+<p>Upload your videos like normal to youtube!</p>
+<p>Open <code>view.html</code> and drag &amp; drop the thumbnails to yt.</p>
+<p>Copy the title &amp; use this to replace the default.</p>
+</details>
+
+<details>
+    <summary>Troubleshooting</summary>
+    <section id="troubleshooting">
+    <h1 id="troubleshooting">Troubleshooting</h1>
+<h2 id="ipv6-ipv4-confusion">IPV6 &amp; IPV4 confusion</h2>
+<p>Sometimes OBS shows you the IPV6 instead of the IPV4.
+You need to open <code>cmd</code> &amp; type in <code>ipconfig</code>
+Look for the IPV4 Address, copy this into LPRT - OBS Settings.</p>
+<h2 id="ip-changed">IP changed</h2>
+<p>Sometimes your ip changes &amp; LPRT will not recognize these changes.
+You need to manually adjust the ip adress in <code>{ROOT}obs_settings.json</code></p>
+<h2 id="password-wrong">Password wrong</h2>
+<p>Simply adjust your <code>password</code> in <code>{ROOT}obs_settings.json</code></p>
+<div style="background-color:#40166e">
+<h2 style="color:#fff">IMPORTANT</h2>
+<div style="background-color:#ccc">
+<p>
+If you&#39;re issue is not listed here, then please create an issue for this.</p>
+</div></div>
+
+
+<h2 id="audacity-connection-is-sometimes-pure-bs">Audacity connection is sometimes pure bs</h2>
+<p>Trouble while setting up Audacity? Thats a common problem, please create an issue for this.</p>
+<h1 id="known-issues">Known Issues</h1>
+<h2 id="lprt-connecting-while-obs-is-recording">LPRT connecting while OBS is recording</h2>
+<p>This is a rare issue but can still ruin your day, if you are not careful!</p>
+<p>Make sure that OBS is not recording while connecting!</p>
+
+</details>
+
+</body>
+</html>
 """
