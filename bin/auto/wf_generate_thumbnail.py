@@ -28,8 +28,9 @@ class GenerateThumbnailWF(OverhauledWorkFlow):
             
             reoc(not tad, ERROR_009)
             reoc(not isfile(TAD_FOLDER + tad),ERROR_007 + '\nTAD Path does not exist!')
-
-            check_all = xqu('Do you want to check every image?')
+            
+            
+            
             episodes = SQLAccess.read_episodes(self.lpid)
             rng = range(*self.rng)
             
@@ -58,7 +59,7 @@ class GenerateThumbnailWF(OverhauledWorkFlow):
                                 p
                                 )
                     TP.update_image(p,i)
-                    if check_all:
+                    if app.check_for_each_option_var.get():
                         ok = xqu('Thumbnail Result Okay?')
                     else:
                         ok = True
