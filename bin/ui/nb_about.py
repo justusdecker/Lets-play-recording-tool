@@ -1,5 +1,6 @@
 import tkinter as tk
 import tkinter.ttk as ttk
+from tkinter import scrolledtext
 from bin.constants import __LICENSE__
 class About(tk.Frame):
     """
@@ -15,18 +16,21 @@ class About(tk.Frame):
         # Create Headers
         LICENSE = ttk.LabelFrame(W,text='license')
         
-        scrollbar = ttk.Scrollbar(W,orient='vertical')
-        scrollbar.pack(side=tk.RIGHT,fill=tk.Y)
+        license_text = scrolledtext.ScrolledText(
+            LICENSE,
+            wrap= tk.WORD,
+            width = 60,
+            height = 20,
+            font = ('Arial', 10),
+            padx = 5,
+            pady = 5)
         
-        text = tk.Text(LICENSE, width = 80, height = 25, wrap = tk.NONE,
-                 yscrollcommand = scrollbar.set)
+        license_text.pack(expand = True, fill = tk.BOTH)
         
-        for i in __LICENSE__.splitlines():
-            text.insert(tk.END, f'{i}\n')
-            
-        text.pack(side=tk.TOP, fill=tk.X)
-        scrollbar.config(command=text.yview)
         
-        LICENSE.pack()
+        license_text.insert(tk.INSERT, __LICENSE__)
+        license_text.config(state = tk.DISABLED)
         
-        W.pack()
+        LICENSE.pack(expand = True, fill = tk.BOTH)
+        
+        W.pack(expand = True, fill = tk.BOTH)

@@ -10,7 +10,6 @@ from bin.download_file import send_heartbeat, get_newest_version_number
 from bin.ui.tkinter_app import TkinterApp
 from bin.api.dll_loader import create_libpng16_16_ine
 
-
 def check_version():
     """
     Prompts the user a msgbox if the current version is not equal to the api version
@@ -18,7 +17,7 @@ def check_version():
     if get_newest_version_number()['version'] != '_'.join(VERSION.split('.')[0:2]):
         if xqu('New Update avaiable\nDo you want to visit the update website?'):
             system('start https://github.com/justusdecker/Lets-play-recording-tool/releases')
-            
+
 if __name__ == '__main__':
     create_libpng16_16_ine()
     on_start()

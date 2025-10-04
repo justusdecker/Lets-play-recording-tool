@@ -144,6 +144,10 @@ class ThumbnailGenerator:
             x = (1280//2) - (text_r.get_width() // 2) + self.tad['text::pos::x']
             y = self.tad['text::pos::y']
             text_r = text_r, (x,y)
+        else: # Without it you cannot change the text pos
+            x = self.tad['text::pos::x']
+            y = self.tad['text::pos::y']
+            text_r = text_r, (x,y)
 
         img = self.__comp_render(
             [(bg,bg_pos) if self.tad['bg::center'] else bg,
@@ -272,9 +276,10 @@ class ThumbnailGenerator:
         elif self.tad['text::path'].endswith('.png'):
             img = ImageTextRenderer(self.tad['text::path']).draw(text)
             
-            
-        timg = outlining(img,Color(self.tad['text::ol_color']) if self.tad['text::ol_color'] else (1,1,1))
-            
+        if self.tad['text::ol_color'] != 'None':
+            timg = outlining(img,Color(self.tad['text::ol_color']) if self.tad['text::ol_color'] else (1,1,1))
+        else:
+            timg = img
         timg = scale_by(timg,self.tad['text::scale'])
         
         timg = rotate(timg,self.tad['text::rot'])

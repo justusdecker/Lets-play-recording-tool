@@ -20,6 +20,7 @@ from bin.ui.nb_about import About
 from bin.ui.nb_comp_and_render import CompAndRender
 from bin.ui.nb_settitle import SetTitle
 from bin.ui.nb_settings import Settings
+from bin.ui.nb_help import Help
 
 class TkinterApp(tk.Tk):
     """
@@ -60,7 +61,8 @@ class TkinterApp(tk.Tk):
             'TadEditor',
             'FileManager',
             'Settings',
-            'About'
+            'About',
+            'Help'
         ]
     
     def build_ui(self):
@@ -80,7 +82,8 @@ class TkinterApp(tk.Tk):
             (TadEditor,'TadEditor'),
             (FileManager,'FileManager'),
             (Settings,'Settings'),
-            (About, 'About')
+            (About, 'About'),
+            (Help, 'Help')
         ]
         for ui,name in ELEMENTS:
             LOG('Create: $',[name])

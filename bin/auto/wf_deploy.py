@@ -31,10 +31,7 @@ class DeployWF(GenericWorkFlow):
         After that the corresponding error message will be displayed.
         """
         try:
-            
-            data_deletion = xqu('Question\nDo you want to delete temp files?')
-            move_files = xqu('Question\nDo you want to move the files to another path?')
-            if move_files:
+            if app.mfp_enabled:
                 DEST = askdirectory().replace('/','\\')
             else:
                 DEST = f'{DEPLOY_FOLDER}{SQLAccess.read_letsplay_name(self.lpid)}\\'
@@ -44,12 +41,13 @@ class DeployWF(GenericWorkFlow):
             episodes = SQLAccess.read_episodes(self.lpid)
             already_there = listdir(DEST)
             if already_there:
-                if xqu('Question\nDo you want to remove all existing files?'): 
-                
+                if app.cof_enabled.get(): 
+                    print('COF')
                     for file in already_there:
                         try:
-                            remove(f'{DEST}{file}')
-                        except:
+                            remove(f'{DEST}\\{file}')
+                        except Exception as E:
+                            print(E)
                             pass
             rng = range(*self.rng)
             
@@ -86,7 +84,7 @@ class DeployWF(GenericWorkFlow):
                     }
                 
                 #! Delete Temps
-                if data_deletion:
+                if app.dtf_enabled.get():
                     ep = episodes[i]
                     for file in [
                                     ep.thumbnail_path,

@@ -91,9 +91,9 @@ class SendToAudacityWF(GenericWorkFlow):
                 reoc(not file.split('_-')[1].split('.')[0].isdecimal(),'Numbering is not correct!')
                 
                 ep = int(file.split('_-')[1].split('.')[0]) - 1
-                LOG("Convert ep $ to .aac",[rng_list[ep]],LOG_INFO)
+                LOG("Convert ep $ to .aac",[rng_list[ep]+1],LOG_INFO)
                 old = AC_RESULT_FOLDER + file
-                new = FIXED_AUDIO_FOLDER+f'{rng_list[ep]}_track_mic_fixed_ac.aac'
+                new = FIXED_AUDIO_FOLDER+f'{rng_list[ep]+1}_track_mic_fixed_ac.aac'
                 rie(new)
                 ffmpeg_run(FFMPEG_CONVERT_AUDIO_TYPE,{'__IN__': old, '__OUT__': new})
                 reoc(not isfile(new),ERROR_007)
