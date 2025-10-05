@@ -441,6 +441,18 @@ class SQLAccess:
         data[lpid].episode_length = episode_length
         session.commit()
 
+    def update_upload_at(lpid: int, upload_at: int):
+        """
+        Sets the 'upload_at' attribute for a specific letsplay.
+        
+        Args:
+            lpid (int): The index of the letsplay.
+            upload_at (int): The new value for 'upload_at'.
+        """
+        data = SQLAccess.read_letsplays()
+        data[lpid].upload_at = upload_at
+        session.commit()
+    
     def update_tadpath(lpid: int, tad_path: int):
         """
         Sets the 'tad_path' attribute for a specific letsplay.
