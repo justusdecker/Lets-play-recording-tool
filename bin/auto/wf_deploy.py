@@ -80,7 +80,7 @@ class DeployWF(GenericWorkFlow):
                     "id": i,
                     "title": episodes[i].title,
                     "thumbnail_path": new_thumbnail_path,
-                    "upload_at": ''
+                    "upload_at": episodes[i].upload_at
                     }
                 
                 #! Delete Temps

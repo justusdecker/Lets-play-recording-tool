@@ -19,13 +19,13 @@ class UploadAtSet(AutomationFrame):
         
         LF2 = ttk.LabelFrame(self.AUTOMATION_ROOT,text='Time')
         
-        self.hour = tk.StringVar()
+        self.hour = tk.StringVar(value="00")
         
         hcb = ttk.Combobox(LF2,
                      width=5,
                      textvariable=self.hour)
         
-        self.minutes = tk.StringVar()
+        self.minutes = tk.StringVar(value="00")
         
         mcb = ttk.Combobox(LF2,
                      width=5,

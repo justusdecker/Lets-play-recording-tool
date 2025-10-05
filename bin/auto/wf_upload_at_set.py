@@ -41,8 +41,10 @@ class UploadAtSetWF(GenericWorkFlow):
         
         """
         comb = f'{app.date.get_date()} {app.hour.get()}:{app.minutes.get()}'
-        current_date: str = dt.strptime(comb,'%m/%d/%y %H:%M')
-
+        try:
+            current_date: str = dt.strptime(comb,'%m/%d/%y %H:%M')
+        except:
+            raise AutomationError
         
         print(current_date)
         
@@ -55,8 +57,7 @@ class UploadAtSetWF(GenericWorkFlow):
             
             for idx, i in enumerate(rng):
                 current_date += td(days=1)
-                print(idx, i, current_date)
-                #SQLAccess.update_upload_at(i,)
+                SQLAccess.update_episode(self.lpid,i,upload_at = str(current_date))
             
             super().user_workflow()
         except AutomationError as AE:
