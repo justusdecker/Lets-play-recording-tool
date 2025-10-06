@@ -30,6 +30,10 @@ class DeployWF(GenericWorkFlow):
         If the user has done something wrong. A AutomationError will be thrown & catched. 
         After that the corresponding error message will be displayed.
         """
+        
+        LP_REP = {'name': SQLAccess.read_letsplay_name(self.lpid),
+                  'icon': ''}
+        
         try:
             if app.mfp_enabled:
                 DEST = askdirectory().replace('/','\\')
@@ -80,7 +84,7 @@ class DeployWF(GenericWorkFlow):
                     "id": i,
                     "title": episodes[i].title,
                     "thumbnail_path": new_thumbnail_path,
-                    "upload_at": episodes[i].upload_at
+                    "upload_at": episodes[i].upload_at if episodes[i].upload_at else ''
                     }
                 
                 #! Delete Temps
@@ -98,7 +102,7 @@ class DeployWF(GenericWorkFlow):
                 
                     
                 ALL.append(REP)
-            deploy_render(f'{DEST}\\view.html',episodes=ALL,title=self.lp_name,description=description)
+            deploy_render(f'{DEST}\\view.html',episodes=ALL,letsplay=LP_REP,title=self.lp_name,description=description)
             file_write(f'{DEST}\\style.css', DEPLOY_CSS)
             Popen(f'explorer {DEST}')
             super().user_workflow()

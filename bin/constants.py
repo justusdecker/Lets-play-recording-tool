@@ -174,14 +174,24 @@ DEPLOY_HTML = """
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }}</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
+    <script>
+          function copyText(elementId){
+            const input = document.getElementById(elementId)
+            navigator.clipboard.writeText(input.textContent || element.innerText)
+          }
+        </script>
     <h1>{{ title }}</h1>
     <ul>
     {% for episode in episodes %}
     <li>
         <h2>{{ episode.id + 1 }}</h2>
-        <h3>{{ episode.title }}</h3>
+        <h3 id="ep_{{episode.id}}">{{ episode.title }}<button onclick="copyText('ep_{{episode.id}}')"><i class="fa fa-copy"></i></button></h3>
+        
+        
+        <h3>{{ episode.title }} | {{ letsplay.name }} {{ letsplay.icon }} #{{ episode.id + 1 }}</h3>
         <h4>{{ episode.upload_at }}</h4>
         <p align="center">
             <img height="200px" src="{{ episode.thumbnail_path }}" alt="">
@@ -196,6 +206,11 @@ DEPLOY_HTML = """
 """
 DEPLOY_CSS = """
 body {background-color: #242424;}
+
+button {
+  background-color: #484848;
+  color: #ddd
+}
 
 li{
     list-style-type: none;
