@@ -15,11 +15,8 @@ from os.path import isfile
 from tools.log import LOG
 
 
-try:
-    import vlc
-except:
-    showerror('ERROR', ERROR_008 + '\nvlc')
-    quit()
+import vlc
+
 
 CHAR_TABLE = {
         'Ä':'&Auml;',

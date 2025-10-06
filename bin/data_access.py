@@ -3,15 +3,11 @@
 #WELCOME.update_message(f'{gtran("bin::welcome::load")} {__name__}')
 
 from tkinter.messagebox import showerror
-try:
-    from sqlalchemy import create_engine, Column, Integer, String, Numeric
-    from sqlalchemy.ext.declarative import declarative_base
-    from sqlalchemy.orm import sessionmaker
-    from sqlalchemy.sql import text
-except:
-    from bin.constants import ERROR_008
-    showerror('ERROR', ERROR_008 + '\nSQLAlchemy')
-    quit()
+
+from sqlalchemy import create_engine, Column, Integer, String, Numeric
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql import text
 
 import json
 from bin.constants import *
