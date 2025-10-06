@@ -1,4 +1,4 @@
-from bin.auto.workflow import GenericWorkFlow
+from bin.auto.workflow import GenericWorkFlow, enable_ui
 from bin.data_access import SQLAccess, reoc, isfile, rie, cnef
 from bin.constants import ERROR_007, ERROR_013, ERROR_014, AutomationError, FIXED_AUDIO_FOLDER
 from bin.api.ffmpeg import ffmpeg_run, FFMPEG_AUDIO_PF_LN_L
@@ -58,8 +58,4 @@ class FixAudioWF(GenericWorkFlow):
         
         pbm.reset_task()
         
-        # After processing all episodes, we re-enabling the application's start button
-        # and calling the parent `user_workflow` to display the completion message.
-        # It does not matter whether the automation was completed or canceled.
-        for i in app.lpep_picker.get_ui():
-            i.state(['!disabled'])
+        enable_ui(app)

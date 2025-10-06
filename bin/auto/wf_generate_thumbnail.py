@@ -1,4 +1,4 @@
-from bin.auto.workflow import OverhauledWorkFlow
+from bin.auto.workflow import OverhauledWorkFlow, enable_ui
 from bin.constants import THUMBNAIL_FOLDER, TAD_FOLDER, ERROR_007, ERROR_009, ERROR_013, AutomationError
 from bin.data_access import SQLAccess, reoc, isfile, rie   
 from bin.xmsgbox import xerr, xqu
@@ -73,8 +73,4 @@ class GenerateThumbnailWF(OverhauledWorkFlow):
         
         pbm.reset_task()
         
-        # After processing all episodes, we re-enabling the application's start button
-        # and calling the parent `user_workflow` to display the completion message.
-        # It does not matter whether the automation was completed or canceled.
-        for i in app.lpep_picker.get_ui():
-            i.state(['!disabled'])
+        enable_ui(app)
