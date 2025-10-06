@@ -429,6 +429,14 @@ class SQLAccess:
         """
         return [episodes for episodes in session.query(Episodes).all() if episodes.lpid == SQLAccess.__cvtid(lpid)]
 
+    def update_letsplay_emoji(lpid: int, emoji: str):
+        """
+        Updates the emoji of a specific letsplay.
+        """
+        data = SQLAccess.read_letsplays()
+        data[lpid].emoji = emoji
+        session.commit()
+
     def update_letsplay(lpid: int, episode_length: int):
         """
         Updates the episode length of a specific letsplay.
@@ -546,6 +554,18 @@ class SQLAccess:
         """
         return [entry.tad_path for entry in session.query(LetsPlays).all()][lpid]
 
+    def read_letsplay_emoji(lpid: int):
+        """
+        Retrieves the emoji of a specific letsplay.
+        
+        Args:
+            lpid (int): The index of the letsplay.
+        
+        Returns:
+            str: The emoji of the letsplay.
+        """
+        return [entry.emoji for entry in session.query(LetsPlays).all()][lpid]
+    
     def read_letsplay_name(lpid: int):
         """
         Retrieves the name of a specific letsplay.

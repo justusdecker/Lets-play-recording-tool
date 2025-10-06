@@ -1,6 +1,7 @@
 from os.path import isfile
 from json import load
 
+DEFAULT_SETTINGS = {'lang':'EN'}
 
 class Settings:
     from os import getlogin
@@ -17,9 +18,9 @@ class Settings:
                 self.settings = load(f)
             
             if not isinstance(self.settings, dict):
-                raise Exception
+                self.settings = DEFAULT_SETTINGS.copy()
         else:
-            self.settings = {'lang':'EN'}
+            self.settings = DEFAULT_SETTINGS.copy()
     def update(self,key,val):
         self.settings[key] = val
 SETTINGS = Settings()

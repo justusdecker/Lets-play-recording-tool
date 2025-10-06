@@ -32,7 +32,7 @@ class DeployWF(GenericWorkFlow):
         """
         
         LP_REP = {'name': SQLAccess.read_letsplay_name(self.lpid),
-                  'icon': ''}
+                  'icon': SQLAccess.read_letsplay_emoji(self.lpid)}
         
         try:
             if app.mfp_enabled:

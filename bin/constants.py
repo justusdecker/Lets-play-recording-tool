@@ -188,10 +188,7 @@ DEPLOY_HTML = """
     {% for episode in episodes %}
     <li>
         <h2>{{ episode.id + 1 }}</h2>
-        <h3 id="ep_{{episode.id}}">{{ episode.title }}<button onclick="copyText('ep_{{episode.id}}')"><i class="fa fa-copy"></i></button></h3>
-        
-        
-        <h3>{{ episode.title }} | {{ letsplay.name }} {{ letsplay.icon }} #{{ episode.id + 1 }}</h3>
+        <h3 id="ep_{{episode.id}}">{{ episode.title }} | {{ letsplay.name }} {{ letsplay.icon }} #{{ episode.id + 1 }}<button onclick="copyText('ep_{{episode.id}}')"><i class="fa fa-copy"></i></button></h3>
         <h4>{{ episode.upload_at }}</h4>
         <p align="center">
             <img height="200px" src="{{ episode.thumbnail_path }}" alt="">
