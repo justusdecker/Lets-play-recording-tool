@@ -1,0 +1,57 @@
+name: Audio Fix
+description: Apply audio processing filters to microphone tracks within a defined episode range.
+include: |
+    data_access        
+    ffmpeg_api          
+    constants           
+    ui_manager         
+    core_helpers        
+
+workflow:
+
+  steps:
+
+    - name: Create if not exist
+      call: data_access.cnef
+      args:
+          - $FIXED_AUDIO_FOLDER
+
+    - name: Read Episodes
+      call: data_access.SQLA_read_episodes
+      id: episodes
+      args:
+          - $lpid
+      output: episodes
+    
+    - name: wf
+      loop:
+      range: 
+          - $ep_start
+          - $ep_end
+      as: i
+      steps:
+        
+        - name: Get AMP From
+          call: data_access.get_audio_mic_path
+          args: 
+              - $episodes
+              - $i
+          output: audio_mic_path
+        
+        - name: Get AMP To
+          call: data_access.get_audio_mic_path1
+          args: 
+              - $FIXED_AUDIO_FOLDER
+              - $i
+              - $lp_name
+          output: audio_mic_edit_path1
+
+        - name: File exist check
+          call: data_access.file_exists
+          args: 
+              - $audio_mic_path
+
+        - name: Remove existing result
+          call: data_access.rie
+          args: 
+              - $audio_mic_edit_path1

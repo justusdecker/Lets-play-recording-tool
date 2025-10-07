@@ -83,7 +83,7 @@ class SendToAudacityWF(GenericWorkFlow):
             rng_list = list(rng)
             cnef(AC_RESULT_FOLDER)
             
-            
+            lp_name = SQLAccess.read_letsplay_game_name(self.lpid)
             for file in files:
                 pbm.increment()
                 reoc(not file.endswith('.ac3'),'Wrong file format!')
@@ -93,7 +93,7 @@ class SendToAudacityWF(GenericWorkFlow):
                 ep = int(file.split('_-')[1].split('.')[0]) - 1
                 LOG("Convert ep $ to .aac",[rng_list[ep]+1],LOG_INFO)
                 old = AC_RESULT_FOLDER + file
-                new = FIXED_AUDIO_FOLDER+f'{rng_list[ep]+1}_track_mic_fixed_ac.aac'
+                new = FIXED_AUDIO_FOLDER+f'{lp_name}_{rng_list[ep]+1}_track_mic_fixed_ac.aac'
                 rie(new)
                 ffmpeg_run(FFMPEG_CONVERT_AUDIO_TYPE,{'__IN__': old, '__OUT__': new})
                 reoc(not isfile(new),ERROR_007)

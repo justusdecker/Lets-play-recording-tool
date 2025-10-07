@@ -1,4 +1,4 @@
-from bin.auto.workflow import GenericWorkFlow
+from bin.auto.workflow import GenericWorkFlow, enable_ui
 from bin.data_access import SQLAccess
 from bin.constants import TEMP_FOLDER, AutomationError
 
