@@ -39,6 +39,9 @@ class CORE_HELPERS:
     def test():
         pass
 
+class UIBuilder:
+    pass
+
 # Die zentrale Sicherheitskontrolle: Nur diese Module/Klassen sind erlaubt
 WHITELIST_MODULES = {
     'data_access': DataAccess,
@@ -126,7 +129,9 @@ class WorkflowExecutor:
                         
                 if 'loop' in step:
                     rng = [self._resolve_value(arg) for arg in step.get('range', [0,0])]
-                    print(rng)
+                    
+                    #! ADD ENUM FUNCTIONALITY
+                    self.context[step['enum']]
                     
                     for i in range(*rng):
                         self.context[step['as']] = i
