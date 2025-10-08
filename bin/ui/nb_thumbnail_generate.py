@@ -16,11 +16,15 @@ class ThumbnailGenerate(TKFrameWithLPControls):
         
         
         self.check_for_each_option_var = tk.BooleanVar(value=False)
+        self.import_var = tk.BooleanVar(value=False)
         
         options = ttk.LabelFrame(self.W,text=gtran("bin::ui::thumbnail_generate::options_header"))
         
         self.check_for_each_option = ttk.Checkbutton(options, text=gtran("bin::ui::thumbnail_generate::check_each"), variable=self.check_for_each_option_var)
         self.check_for_each_option.pack()
+        
+        self.import_option = ttk.Checkbutton(options, text='Import', variable=self.import_var)
+        self.import_option.pack()
         
         preview = ttk.LabelFrame(self.W,text=gtran("bin::ui::thumbnail_generate::preview_header"))
         

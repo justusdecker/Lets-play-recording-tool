@@ -12,12 +12,6 @@ translation_table:
   - key: bin::ui::frequency_high_pass
     en: 'Frequency'
     de: 'Frequenz'
-  - en:
-      - key: bin::ui::frequency_high_pass
-        value: 'Frequency'
-  - de:
-      - key: bin::ui::frequency_high_pass
-        value: 'Frequenz'
     
 
 ui:
