@@ -1,4 +1,4 @@
-from bin.auto.workflow import GenericWorkFlow
+from bin.auto.workflow import GenericWorkFlow, enable_ui
 from bin.data_access import SQLAccess, reoc, isfile, rie, cnef
 from bin.constants import FIXED_AUDIO_FOLDER, ERROR_007, ERROR_013, AutomationError, AC_RESULT_FOLDER
 from bin.api.ffmpeg import ffmpeg_run, FFMPEG_CONVERT_AUDIO_TYPE
@@ -83,7 +83,7 @@ class SendToAudacityWF(GenericWorkFlow):
             rng_list = list(rng)
             cnef(AC_RESULT_FOLDER)
             
-            
+            lp_name = SQLAccess.read_letsplay_game_name(self.lpid)
             for file in files:
                 pbm.increment()
                 reoc(not file.endswith('.ac3'),'Wrong file format!')
@@ -93,7 +93,7 @@ class SendToAudacityWF(GenericWorkFlow):
                 ep = int(file.split('_-')[1].split('.')[0]) - 1
                 LOG("Convert ep $ to .aac",[rng_list[ep]+1],LOG_INFO)
                 old = AC_RESULT_FOLDER + file
-                new = FIXED_AUDIO_FOLDER+f'{rng_list[ep]+1}_track_mic_fixed_ac.aac'
+                new = FIXED_AUDIO_FOLDER+f'{lp_name}_{rng_list[ep]+1}_track_mic_fixed_ac.aac'
                 rie(new)
                 ffmpeg_run(FFMPEG_CONVERT_AUDIO_TYPE,{'__IN__': old, '__OUT__': new})
                 reoc(not isfile(new),ERROR_007)
@@ -108,11 +108,7 @@ class SendToAudacityWF(GenericWorkFlow):
         
         pbm.reset_task()  
         
-        # After processing all episodes, we re-enabling the application's start button
-        # and calling the parent `user_workflow` to display the completion message.
-        # It does not matter whether the automation was completed or canceled.
-        for i in app.lpep_picker.get_ui():
-            i.state(['!disabled'])
+        enable_ui(app)
         try:
             break_pipe()
         except Exception as E:

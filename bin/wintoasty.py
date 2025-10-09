@@ -2,13 +2,8 @@ from bin.welcome_popup import WELCOME
 from bin.translation import gtran
 WELCOME.update_message(f'{gtran("bin::welcome::load")} {__name__}')
 
-try: #Fix for issue: #125
-    from winotify import Notification, audio
-except:
-    from tkinter.messagebox import showerror
-    from bin.constants import ERROR_008
-    showerror('ERROR', ERROR_008 + '\nwinotify')
-    quit()
+
+from winotify import Notification, audio
 from os import getcwd
 
 TOAST = Notification('LPRT','Welcome','Up & Running',f'{getcwd()}\\bin\\data\\img\\logo.ico')

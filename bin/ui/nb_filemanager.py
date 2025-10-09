@@ -105,6 +105,20 @@ class FileManager(tk.Frame):
 
         LP_EDIT.pack()
         
+        #! SET LP Emoji
+        
+        self.lp_emoji_set_var = tk.StringVar()
+        
+        EMOJI = ttk.LabelFrame(W,text="Set Emoji") #! Translation is missing
+        
+        self.lp_emoji_set_lpep = LPEPPicker(EMOJI,self.update_emoji,'lp',ICO_REFRESH)
+        
+        emoji = ttk.Entry(EMOJI,textvariable=self.lp_emoji_set_var)
+        
+        emoji.pack()
+        
+        EMOJI.pack()
+        
         BACKUP = ttk.LabelFrame(W,text=gtran("bin::ui::filemanager::lp_backup_header"))
         
         self.backup_lpep = LPEPPicker(BACKUP,self.create_video_backup,'lp', ICO_BACKUP)
@@ -123,6 +137,10 @@ class FileManager(tk.Frame):
         IMPORT.pack()
         W.pack()
         
+    def update_emoji(self,*_):
+        if self.lp_emoji_set_lpep.v_lp.get() == 'None': return
+        SQLAccess.update_letsplay_emoji(SQLAccess.read_letsplay_names().index(self.lp_emoji_set_lpep.v_lp.get()),self.lp_emoji_set_var.get())
+    
     def export(self, *_):
         SQLAccess.export_lpep()
 

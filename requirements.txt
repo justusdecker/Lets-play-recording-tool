@@ -8,5 +8,6 @@ sqlalchemy == 2.0.41
 requests
 dotenv
 pywin32
+tkcalendar
 # for testing
 pycode-info >= 0.1.16

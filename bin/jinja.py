@@ -3,12 +3,9 @@ from bin.translation import gtran
 WELCOME.update_message(f'{gtran("bin::welcome::load")} {__name__}')
 
 from tkinter.messagebox import showerror
-try:
-    from jinja2 import Template
-except:
-    from bin.constants import ERROR_008
-    showerror('ERROR', ERROR_008 + '\nPIL')
-    quit()
+
+from jinja2 import Template
+
 from bin.data_access import file_read,file_write
 from bin.constants import DEPLOY_HTML
 def deploy_render(*args,**replacers):

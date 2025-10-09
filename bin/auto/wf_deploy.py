@@ -1,4 +1,4 @@
-from bin.auto.workflow import GenericWorkFlow
+from bin.auto.workflow import GenericWorkFlow, enable_ui
 from bin.data_access import SQLAccess, reoc, isfile, rie, cnef
 from bin.constants import TEMP_FOLDER, DEPLOY_FOLDER, ERROR_006, ERROR_007, ERROR_013, DEPLOY_CSS, AutomationError
 from shutil import copyfile
@@ -30,6 +30,10 @@ class DeployWF(GenericWorkFlow):
         If the user has done something wrong. A AutomationError will be thrown & catched. 
         After that the corresponding error message will be displayed.
         """
+        
+        LP_REP = {'name': SQLAccess.read_letsplay_name(self.lpid),
+                  'icon': SQLAccess.read_letsplay_emoji(self.lpid)}
+        
         try:
             if app.mfp_enabled:
                 DEST = askdirectory().replace('/','\\')
@@ -80,7 +84,7 @@ class DeployWF(GenericWorkFlow):
                     "id": i,
                     "title": episodes[i].title,
                     "thumbnail_path": new_thumbnail_path,
-                    "upload_at": ''
+                    "upload_at": episodes[i].upload_at if episodes[i].upload_at else ''
                     }
                 
                 #! Delete Temps
@@ -98,7 +102,7 @@ class DeployWF(GenericWorkFlow):
                 
                     
                 ALL.append(REP)
-            deploy_render(f'{DEST}\\view.html',episodes=ALL,title=self.lp_name,description=description)
+            deploy_render(f'{DEST}\\view.html',episodes=ALL,letsplay=LP_REP,title=self.lp_name,description=description)
             file_write(f'{DEST}\\style.css', DEPLOY_CSS)
             Popen(f'explorer {DEST}')
             super().user_workflow()
@@ -107,8 +111,4 @@ class DeployWF(GenericWorkFlow):
         
         pbm.reset_task()
           
-        # After processing all episodes, we re-enabling the application's start button
-        # and calling the parent `user_workflow` to display the completion message.
-        # It does not matter whether the automation was completed or canceled.
-        for i in app.lpep_picker.get_ui():
-            i.state(['!disabled'])
+        enable_ui(app)

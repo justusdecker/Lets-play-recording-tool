@@ -6,12 +6,7 @@ from tkinter import Canvas, X
 from tkinter.ttk import Label
 from tkinter.messagebox import showerror
 
-try: #Fix for issue: #127
-    from PIL import ImageTk, Image
-except:
-    from bin.constants import ERROR_008
-    showerror('ERROR', ERROR_008 + '\nPIL')
-    quit()
+from PIL import ImageTk, Image
 
 class ThumbnailPreview(Canvas):
     """

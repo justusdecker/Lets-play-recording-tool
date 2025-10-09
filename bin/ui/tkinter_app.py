@@ -21,6 +21,7 @@ from bin.ui.nb_comp_and_render import CompAndRender
 from bin.ui.nb_settitle import SetTitle
 from bin.ui.nb_settings import Settings
 from bin.ui.nb_help import Help
+from bin.ui.nb_upload_at_set import UploadAtSet
 
 class TkinterApp(tk.Tk):
     """
@@ -34,6 +35,7 @@ class TkinterApp(tk.Tk):
         
         # __init__ function for class Tk
         tk.Tk.__init__(self, *args, **kwargs)
+        
         
         
         self.menu = Notebook(self,self.get_ui_names())
@@ -57,6 +59,7 @@ class TkinterApp(tk.Tk):
             'Send2Audacity',
             'CompAndRender',
             'SetTitle',
+            'UploadAtSet',
             'Deploy',
             'TadEditor',
             'FileManager',
@@ -78,6 +81,7 @@ class TkinterApp(tk.Tk):
             (Send2Audacity,'Send2Audacity'),
             (CompAndRender,'CompAndRender'),
             (SetTitle,'SetTitle'),
+            (UploadAtSet,'UploadAtSet'),
             (Deploy,'Deploy'),
             (TadEditor,'TadEditor'),
             (FileManager,'FileManager'),
