@@ -37,6 +37,7 @@ class TkinterApp(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
         
         
+        
         self.menu = Notebook(self,self.get_ui_names())
         self.title(f'LPRT - {VERSION}:{HASH}')
         self.geometry('1024x768')

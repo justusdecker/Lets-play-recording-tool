@@ -1,5 +1,6 @@
 from bin.workflow_modules import *
 from yaml import safe_load
+from bin.workflow_ui import UI
 from bin.constants import (
     FIXED_AUDIO_FOLDER
 )
@@ -46,7 +47,8 @@ class WorkflowExecutor:
             raise NameError(f"Variable '{var_name}' nicht im Kontext gefunden.")
         
         return arg_value
-
+    def create_ui(self, config: dict):
+        UI()
     def execute_workflow(self,
                          config: dict,
                          initial_depth: int = 0):
@@ -110,37 +112,6 @@ class WorkflowExecutor:
         if not initial_depth:
             print(f"\n=== Workflow ended with exit code: {RETURN_CODE} ===")
         return self.context
-
-class UI:
-    def __init__(self, parent, elements: list):
-        self.menu = parent.master
-        self.thread = None
-        self.automation_callback = None
-        self.progress_label = ttk.Label(self,)
-        self.progress_label.grid(sticky='SE',row = 0, column = 2)
-        
-        
-        for element in elements:
-            name = element['name']
-            id = element['id']
-            master = element.get('master',None)
-            if master == 'root':
-                master = parent
-            else:
-                master = getattr(self,master[1:])
-            
-            if 'pack' in element:
-                put_mode = 'pack'
-                fill = element['pack'].get('fill',None)
-                padx = element['pack'].get('padx',None)
-                pady = element['pack'].get('pady',None)
-                
-            elif 'grid' in element: #! Not used currently
-                put_options = element['grid'] 
-                put_mode = 'grid'
-            
-            print(element['name'])
-            setattr(self, element['id'])
 
 def run_workflow(config_raw: str, initial_vars: dict):
     try:
