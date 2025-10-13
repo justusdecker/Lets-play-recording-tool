@@ -117,11 +117,12 @@ class NewVideoPlayer(NewMediaPlayer):
         try:
             tad = SQLAccess.read_tad_path(self.lpid)
             lp_name = SQLAccess.read_letsplay_name(self.lpid)
-            thumbnail_path = f'{THUMBNAIL_FOLDER}{self.rel_id}_{lp_name}_thumbnail.png'
+            thumbnail_path = f'{THUMBNAIL_FOLDER}{self.rel_id+1}_{lp_name}_thumbnail.png'
             reoc(not tad, ERROR_009)
             reoc(not isfile(TAD_FOLDER + tad),ERROR_007 + '\nTAD Path does not exist!')
             
             rie(thumbnail_path)
+            LOG('$ $',[str(self.data[self.current_episode]), self.rel_id])
             self.tg.generate(
                 str(self.data[self.current_episode]),
                 self.video_path,
