@@ -27,7 +27,7 @@ class NewAudioPlayer(NewMediaPlayer):
         self.finished_all_button.pack(side=LEFT)
         
         self.desktop_volume_slider = Scale(
-            self.controls, from_=0, to=100,
+            self.controls, from_=0, to=200,
             orient=HORIZONTAL, label="Desktop Volume",
             command=self.set_volume_desktop
         )

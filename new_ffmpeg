@@ -1,0 +1,59 @@
+from subprocess import run, CREATE_NO_WINDOW
+from json import loads as js_load
+
+FFMPEG_DEFAULT_DEBUG = ['ffmpeg', '-y']
+
+FFMPEG_PRODUCTION = ['ffmpeg', '-v', 'quiet', '-stats' , '-loglevel', 'error', '-y']
+
+FFMPEG_GET_DESKTOP_REFER = [*FFMPEG_DEFAULT_DEBUG, '-i', '__INPUT__', '-filter:a', 'loudnorm=I=-15.0:TP=-2.0:print_format=json', '-f', 'null', 'NULL']
+
+def ffmpeg_build(cmd: list[str], replacer: dict[str,str]):
+    """
+    This function takes the FFMPEG command and replaces all of the keys that can be found in the command!
+    
+    If you forget to change a key, this will result in an error from FFMPEG. No Exception raises.
+    
+    Is a key not existent it will replace nothing.
+    """
+    for key in replacer:
+        cmd = [arg.replace(key,str(replacer[key])) if key in arg else arg for arg in cmd]
+    return cmd
+
+def ffmpeg_run(cmd: list[list], replacer: dict[str,str]={},nr: bool = False):
+    """
+    This function runs your FFMPEG command. Before this happens this function calls ffmpeg_build to replace some essential variables.
+    
+    Subprocess is used to call FFMPEG
+    
+    The settings are: NO WINDOW <- Don't work with terminal applications!
+    
+    shell= True is compatible with limiter compand
+    
+    if nr is true it returns a concatenated version of both stdout & stderr.
+    """
+    if nr:
+        RUNNER = run(ffmpeg_build(cmd,replacer), CREATE_NO_WINDOW, capture_output=True, text=True,shell= True)
+        return RUNNER.stdout + RUNNER.stderr
+    else:
+        try:
+            run(ffmpeg_build(cmd,replacer), CREATE_NO_WINDOW,shell= True)
+            return True
+        except FileNotFoundError:
+            return None
+        
+def get_desktop_refer(filepath: str):
+    # Build & Run FFMPEG with return
+    result = ffmpeg_run(FFMPEG_GET_DESKTOP_REFER,{'__INPUT__': filepath},nr=True)
+
+    # Find the json result
+    a = result.find('{')
+    b = result.find('}')
+    
+    # Truncate the string to only 'see' the json
+    result = result[a:b+1]
+    
+    config: dict = js_load(result)
+    print(config)
+
+
+get_desktop_refer('audio_fixed.aac')

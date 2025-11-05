@@ -342,7 +342,7 @@ class SQLAccess:
             lp.game_name,
             lp.id,
             lp.name,
-            lp.tad_path])
+            lp.tad_path, lp.jitle, lp.emoji])
         return _ret
             
     
