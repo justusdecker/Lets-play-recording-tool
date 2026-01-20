@@ -1,7 +1,8 @@
 
-from kivy.app import App
+from kivy.app import App, Builder
 from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.screenmanager import Screen
+from kivy.uix.widget import Widget
 
 # Layouts
 
@@ -40,6 +41,4 @@ def b64toki(encoded_data: str, extension: str = 'png'):
     decoded_data =  base64.b64decode(encoded_data.encode('ascii'))
     io_stream = BytesIO(decoded_data)
     texture = CoreImage(io_stream, ext=extension).texture
-    image = Image(texture=texture)
-    del texture, io_stream, decoded_data
-    return image
+    return texture
