@@ -1,6 +1,23 @@
 #:import mod bin.views.modules
 #:import img bin.constants
 
+<LPEPSub>
+    GridLayout:
+        BoxLayout:
+            Label:
+                text: "Lets Play"
+            DropDown:
+            Label:
+                text: "Episode start"
+            DropDown:
+            Label:
+                text: "Episode end"
+            Button:
+                text: "Run"
+        Switch:
+            text: "Check Each"
+        Image:
+
 <MenuSub>
     ScrollView:
         do_scroll_x: False
@@ -88,8 +105,10 @@
 <ThumbnailGenerateView>
     
     #* Select Lets Play
-    #* Connect to OBS Button
-    #* Connection Information
+    #* Select Episode Range
+    #* Run
+    #* Check Each
+    #* Preview
     GridLayout:
         cols: 2
         size_hint: (1.0, 1.0) 
