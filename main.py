@@ -48,7 +48,7 @@ def b64toki(encoded_data: str, extension: str = 'png'):
 from kivy.properties import ObjectProperty
 
 
-Builder.load_file('./application/main.kv')
+Builder.load_file('./src/api/application/main.kv')
 
 class LPEPSub(BoxLayout):
     ...

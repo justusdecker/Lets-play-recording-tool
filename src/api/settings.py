@@ -1,3 +1,4 @@
+raise NotImplementedError()
 from os.path import isfile
 from json import load
 

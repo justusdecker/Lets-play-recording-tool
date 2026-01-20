@@ -1,5 +1,6 @@
-#:import mod bin.views.modules
-#:import img bin.constants
+#:import mod src.api.b642img
+#:import img src.api.icons
+#:import con src.api.constants
 
 <LPEPSub>
     GridLayout:
@@ -130,7 +131,7 @@
             size_hint: (0.3, 0.3)
             pos_hint: {"center_x": 0.5, "center_y": 0.8}
         Label:
-            text: img.DISCLAIMER
+            text: con.DISCLAIMER
         Button:
             text: 'Los gehts'
             bold: True
