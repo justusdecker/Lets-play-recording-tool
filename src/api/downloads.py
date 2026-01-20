@@ -1,8 +1,9 @@
-from tkinter.messagebox import showerror
-from requests import get, post
+from requests import get
+from io import BytesIO
 from requests.exceptions import HTTPError, RequestException
 import zipfile
-from io import BytesIO
+
+from src.api.msgbox import msgbox, MSGBoxPresets, SoundFlags
 
 def download_file(url: str, filepath: str | None = None, mode: bool = False) -> BytesIO | HTTPError | RequestException | bool:
     """
@@ -16,6 +17,7 @@ def download_file(url: str, filepath: str | None = None, mode: bool = False) -> 
             Returns BytesIO
             filepath can be all. It is never used anyway
     """
+    if filepath is None: raise TypeError()
     try:
         r = get(url)
         r.raise_for_status()
@@ -26,7 +28,7 @@ def download_file(url: str, filepath: str | None = None, mode: bool = False) -> 
             return BytesIO(r.content)
     except (HTTPError, RequestException) as E:
         return E
-          
+    
 def download_ffmpeg():
     """
     Downloads FFMPEG from gyan.dev
@@ -34,28 +36,15 @@ def download_ffmpeg():
     url = 'https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip'
     file = download_file(url)
     if file is not None and file is not BytesIO:
-        showerror('Cannot download file', f'Statuscode: {file.response.status_code}')
+        msgbox(
+            'Cannot download file',
+            f'Statuscode: {file.response.status_code}',
+            MSGBoxPresets.SYSTEM_ALERT,
+            SoundFlags.ERROR
+        )
+        
         return
     zip = zipfile.ZipFile(file)
     for ext in ['ffmpeg.exe','ffprobe.exe','ffplay.exe']:
         with open(ext,'wb') as f:
             f.write(zip.read(f'{zip.infolist()[0].filename}bin/{ext}'))
-from bin.constants import VERSION 
-def get_newest_version_number():
-    """ Gets the newest version number Major.Minor Format """
-    try:
-        r = get('https://justusdecker.pythonanywhere.com/api/version')
-        r.raise_for_status()
-        return r.json()
-    except (HTTPError, RequestException) as E:
-        return {'version': '_'.join(VERSION.split('.')[0:2])}
-    
-def send_heartbeat():
-    """
-    Sends a heartbeat to the LPRT API
-    """
-    try:
-        r = post('https://justusdecker.pythonanywhere.com/api/heartbeat')
-        r.raise_for_status()
-    except (HTTPError, RequestException) as E:
-        pass

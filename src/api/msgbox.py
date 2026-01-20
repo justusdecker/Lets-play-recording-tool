@@ -66,10 +66,10 @@ class MSGBoxPresets:
     SYSTEM_ALERT = Icons.WARNING | Buttons.OK | Modals.SYSTEM | WindowOptions.TOPMOST
     SAFE_INFO = Icons.INFORMATION | Buttons.OK_CANCEL | DefaultButton.BTN2
     
-def show_error(title: str, msg: str, style: int = MSGBoxPresets.SAFE_INFO, snd: int = SoundFlags.OK):
+def msgbox(title: str, msg: str, style: int = MSGBoxPresets.SAFE_INFO, snd: int = SoundFlags.OK):
     MessageBeep(snd)
     return MessageBox(msg, title, style)
 
 
 # - Test -
-show_error('Info - LPRT', 'The cake is a lie...')
+msgbox('Info - LPRT', 'The cake is a lie...')
