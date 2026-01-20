@@ -17,7 +17,7 @@ The first thing we are going to rewrite is the entire ui code.
     * [ ] wintoasty -> win32api
 
 * [ ] `obs-ws` -> Own Solution
-* [ ] `tkinter` -> `kivy`
+* [x] `tkinter` -> `kivy`
 * [ ] `tkcalendar` -> Own Solution
 * [ ] `pygame-ce` -> `pillow`
 * [ ] the entire `media-player`, `audio-player`, `thumbnail-player` & `video-player` code to match the new `kivy` requirements.
@@ -29,7 +29,7 @@ The first thing we are going to rewrite is the entire ui code.
 * [ ] Auto Updates
 * [ ] API Improvements
     * [ ] Auto crash reports
-
+    * [ ] Workshop
 
 ### NEW FEATURES - MAJOR
 
