@@ -18,8 +18,7 @@ main_overwrite.start()
 class LPEPSub(BoxLayout):
     ...
 
-class MenuSub(BoxLayout):
-    ...
+
 
 class WelcomeView(FloatLayout):
     """

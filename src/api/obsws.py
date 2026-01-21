@@ -75,16 +75,3 @@ class OBSWSClient:
             return json.loads(self.ws.recv())
         except Exception as E:
             return {'error': str(E)}
-
-# --- How to work with ---
-if __name__ == "__main__":
-    obs = OBSWSClient(password="")
-    try:
-        obs.connect()
-        
-        
-        response = obs.call("GetOutputStatus",{"outputName": 'adv_file_output'})
-        print(response['d']['responseData']['outputTimecode'])
-    finally:
-        if obs.ws:
-            obs.ws.close()

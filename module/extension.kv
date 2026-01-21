@@ -1,4 +1,4 @@
-
+#:import module module.main
 <MenuSub>
     ScrollView:
         do_scroll_x: False
@@ -73,7 +73,7 @@
 
 
 <OBSView>
-    
+    id: obs
     #* Select Lets Play
     #* Connect to OBS Button
     #* Connection Information
@@ -82,7 +82,16 @@
         size_hint: (1.0, 1.0) 
         MenuSub:
             size_hint: (0.3, 1.0) 
-        LPEPSub: 
+        GridLayout:
+            cols: 1
+            LPEPSub: 
+                
+            Label:
+                id: timer
+                text: 'OBS is not connected yet'
+            Button:
+                on_press: obs.toggle_watching_state()
+                
 
 <ThumbnailGenerateView>
     
