@@ -15,8 +15,7 @@
     audio_desktop_path: Text
     thumbnail_path: Text
     has_problem: Boolean
-    audio_mic_edit1_path: Text
-    audio_mic_edit2_path: Text
+    audio_mic_edit_path: Text
     title: Text
     upload_at: Text
     final_video_path: Text

@@ -1,3 +1,5 @@
+VERSION = '2.0.12'
+
 
 from src.api.kivy_modules import *
 
@@ -8,9 +10,9 @@ from src.api.module_loader import DatabaseLoader
 
 Builder.load_file('./src/api/application/main.kv')
 
-import module.main as main_overwrite
+import module.main as main_overwrite #! Try / Except this later: Building otherwise the build process will fail
 
-Builder.load_file('./module/extension.kv')
+Builder.load_file('./module/extension.kv') #! Try / Except this later: Building otherwise the build process will fail
 main_overwrite.start()
 
 class LPEPSub(BoxLayout):

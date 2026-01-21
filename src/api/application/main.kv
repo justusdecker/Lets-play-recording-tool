@@ -4,6 +4,7 @@
 
 <LPEPSub>
     GridLayout:
+        cols: 1
         BoxLayout:
             Label:
                 text: "Lets Play"
@@ -15,82 +16,11 @@
                 text: "Episode end"
             Button:
                 text: "Run"
-        Switch:
-            text: "Check Each"
-        Image:
 
-<MenuSub>
-    ScrollView:
-        do_scroll_x: False
-        do_scroll_y: True
-        GridLayout:
-            id: menu
-            cols: 1
-            size_hint_y: None
-            height: self.minimum_height
-            Button:
-                text: 'Recording'
-                bold: True
-                size_hint_y: None
-                height: 40
-                on_press: app.screen_manager.current = "OBSView"
-            Button:
-                text: 'ThumbnailGenerate'
-                bold: True
-                size_hint_y: None
-                height: 40
-                on_press: app.screen_manager.current = "ThumbnailGenerateView"
-            Button:
-                text: 'FetchAudio'
-                bold: True
-                size_hint_y: None
-                height: 40
-            Button:
-                text: 'FixAudio'
-                bold: True
-                size_hint_y: None
-                height: 40
-            Button:
-                text: 'Send2Audacity'
-                bold: True
-                size_hint_y: None
-                height: 40
-            Button:
-                text: 'CompAndRender'
-                bold: True
-                size_hint_y: None
-                height: 40
-            Button:
-                text: 'SetTitle'
-                bold: True
-                size_hint_y: None
-                height: 40
-            Button:
-                text: 'Deploy'
-                bold: True
-                size_hint_y: None
-                height: 40
-            Button:
-                text: 'TadEditor'
-                bold: True
-                size_hint_y: None
-                height: 40
-            Button:
-                text: 'FileManager'
-                bold: True
-                size_hint_y: None
-                height: 40
-            Button:
-                text: 'Settings'
-                bold: True
-                size_hint_y: None
-                height: 40
-            Button:
-                text: 'About'
-                bold: True
-                size_hint_y: None
-                height: 40
-
+<Preview>
+    Switch:
+        text: "Check Each"
+    Image:
 
 <WelcomeView>
     #center: {"center_x": 0.5, "center_y": 0.5}
