@@ -91,31 +91,6 @@
                 size_hint_y: None
                 height: 40
 
-<OBSView>
-    
-    #* Select Lets Play
-    #* Connect to OBS Button
-    #* Connection Information
-    GridLayout:
-        cols: 2
-        size_hint: (1.0, 1.0) 
-        MenuSub:
-            size_hint: (0.3, 1.0) 
-        MenuSub: 
-
-<ThumbnailGenerateView>
-    
-    #* Select Lets Play
-    #* Select Episode Range
-    #* Run
-    #* Check Each
-    #* Preview
-    GridLayout:
-        cols: 2
-        size_hint: (1.0, 1.0) 
-        MenuSub:
-            size_hint: (0.3, 1.0) 
-        MenuSub: 
 
 <WelcomeView>
     #center: {"center_x": 0.5, "center_y": 0.5}
@@ -141,10 +116,8 @@
             pos_hint: {"center_x": 0.5, "center_y": 0.3}
             on_press: app.screen_manager.current = 'OBSView'
 
-
 <MainWidget>
-    screen_manager: screen_manager
-    
+    screen_manager: screen_manager 
     ScreenManager:
         id: screen_manager
         Screen:
@@ -159,5 +132,3 @@
             name: "ThumbnailGenerateView"
             OBSView:
                 manager: screen_manager
-
-
