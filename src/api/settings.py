@@ -1,27 +1,26 @@
-raise NotImplementedError()
-from os.path import isfile
-from json import load
+
+from src.api.errors import SingeltonInstanceRuleBreak
+import yaml
+
 
 DEFAULT_SETTINGS = {'lang':'EN'}
 
 class Settings:
-    from os import getlogin
-
-
-    ROOT = f'C:\\Users\\{getlogin()}\\lprt\\'
-    del getlogin
-    PATH = f'{ROOT}lprt_settings.json'
+    _instance = None
     def __init__(self):
-        self.load()
+        raise SingeltonInstanceRuleBreak("This is a Singleton, invoke get_instance() instead!")
+
+    @classmethod
+    def get_instance(cls):
+        if cls._instance == None:
+            cls._instance = cls.__new__(cls)
+        return cls._instance
+
     def load(self):
-        if isfile(self.PATH):
-            with open(self.PATH) as f:
-                self.settings = load(f)
-            
-            if not isinstance(self.settings, dict):
-                self.settings = DEFAULT_SETTINGS.copy()
-        else:
-            self.settings = DEFAULT_SETTINGS.copy()
-    def update(self,key,val):
-        self.settings[key] = val
-SETTINGS = Settings()
+        with open('settings.cfg') as file:
+            data = file.read()
+        self.data = yaml.safe_load(data)
+    
+    def save(self):
+        with open('settings.cfg', 'w') as file:
+            file.write(yaml.safe_dump(self.data))

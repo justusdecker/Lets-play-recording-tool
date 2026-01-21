@@ -7,6 +7,11 @@ class AutomationError(Exception):
     without throwing too much code in between the automations that makes it nearly unreadable.
  	"""
   
+class SingeltonInstanceRuleBreak(Exception):
+    """
+    Only one instance of this Class is allowed!
+    """  
+
 def reoc(cond: bool,msg: str) -> None:
     """ raise_error_on_condition """
     if cond: raise AutomationError(msg)
