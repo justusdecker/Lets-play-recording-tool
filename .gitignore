@@ -1,15 +1,13 @@
 .vscode/
+# For debugging.
 *.mp3
 *.mp4
 *.pyc
-description.cfg
-tools/img.txt
-tools/build/*
-tools/dist/*
 *.zip
-.env
 *.exe
-/libpng16-16.dll
-tools/*.i
-/*.csv
+*.csv
+
+settings.cfg
+.env
+libpng16-16.dll
 trash/*
