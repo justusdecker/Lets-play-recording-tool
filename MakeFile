@@ -8,5 +8,7 @@ img2b64:
 	python ./tools/b64.py
 ec:
 	call ./tools/action_push.bat
-	
-	
+debug:
+	python ./main.py --debug
+tool_create_db:
+	python ./src/tools/database_loader.py
