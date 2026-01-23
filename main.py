@@ -6,7 +6,7 @@ from src.api.kivy_modules import *
 from kivy.properties import ObjectProperty
 from src.api.module_loader import DatabaseLoader
 
-
+from typing import Callable
 
 Builder.load_file('./src/api/application/main.kv')
 
@@ -16,7 +16,7 @@ Builder.load_file('./module/extension.kv') #! Try / Except this later: Building 
 main_overwrite.start()
 
 class LPEPSub(BoxLayout):
-    ...
+    run_callback: Callable | None = ObjectProperty(None)
 
 
 
@@ -27,8 +27,9 @@ class WelcomeView(FloatLayout):
     def start_app(self, *_):
         print('This worked')
         app.screen_manager.current = 'testView'
-        
-
+    
+class DropDownSelector(BoxLayout):
+    update_entrys_callback: Callable | None = ObjectProperty(None)
 
 class MainWidget(FloatLayout):
     manager = ObjectProperty(None)
