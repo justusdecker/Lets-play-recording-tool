@@ -11,3 +11,7 @@ settings.cfg
 .env
 libpng16-16.dll
 trash/*
+
+# For Development of Modules
+
+module/db.py
