@@ -1,4 +1,19 @@
 #:import module module.main
+<DropDownSelector>:
+    id: episode_start
+    # Diese Buttons werden automatisch unter dem Label aus main.kv eingefügt
+    Button:
+        text: "Extension Button A"
+        size_hint_y: None
+        height: 44
+        on_press: print("A gedrückt")
+
+    Button:
+        text: "Extension Button B"
+        size_hint_y: None
+        height: 44
+        on_press: module.overwrite(episode_start)
+
 <MenuSub>
     ScrollView:
         do_scroll_x: False
@@ -85,12 +100,14 @@
         GridLayout:
             cols: 1
             LPEPSub: 
-                
+                run_callback: obs.toggle_watching_state
             Label:
                 id: timer
                 text: 'OBS is not connected yet'
-            Button:
-                on_press: obs.toggle_watching_state()
+                size_hint_y: None
+                height: 40
+            DropDownSelector:
+
                 
 
 <ThumbnailGenerateView>
