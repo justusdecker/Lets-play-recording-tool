@@ -1,21 +1,41 @@
 #:import mod src.api.b642img
 #:import img src.api.icons
 #:import con src.api.constants
+<DropDownSelector>:
+    orientation: 'vertical'
+    spacing: 5
 
 <LPEPSub>
     GridLayout:
         cols: 1
         BoxLayout:
+            size_hint_y: None
             Label:
                 text: "Lets Play"
-            DropDown:
+                size_hint_y: None
+                height: 40
+            Button:
+                text: "EP START"
+                size_hint_y: None
+                height: 40
             Label:
                 text: "Episode start"
-            DropDown:
+                size_hint_y: None
+                height: 40
+            Button:
+                text: "EP END"
+                size_hint_y: None
+                height: 40
             Label:
                 text: "Episode end"
+                size_hint_y: None
+                height: 40
             Button:
+                id: btn
                 text: "Run"
+                size_hint_y: None
+                height: 40
+                on_press: root.run_callback()
 
 <Preview>
     Switch:
