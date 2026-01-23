@@ -69,7 +69,3 @@ class MSGBoxPresets:
 def msgbox(title: str, msg: str, style: int = MSGBoxPresets.SAFE_INFO, snd: int = SoundFlags.OK):
     MessageBeep(snd)
     return MessageBox(msg, title, style)
-
-
-# - Test -
-msgbox('Info - LPRT', 'The cake is a lie...')
