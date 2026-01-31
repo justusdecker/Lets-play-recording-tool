@@ -1,0 +1,19 @@
+{
+  "name": "lprtscript",
+  "displayName": "LPRTScript Syntax Highlighter",
+  "version": "0.0.1",
+  "engines": { "vscode": "^1.50.0" },
+  "categories": ["Programming Languages", "Snippets"],
+  "contributes": {
+    "languages": [{
+      "id": "lprtscript",
+      "aliases": ["lprtscript"],
+      "extensions": [".lprtscript"]
+    }],
+    "grammars": [{
+      "language": "lprtscript",
+      "scopeName": "source.lprtscript",
+      "path": "./syntaxes/schema.tmLanguage.json"
+    }]
+  }
+}
