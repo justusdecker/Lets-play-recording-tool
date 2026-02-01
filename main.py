@@ -1,5 +1,5 @@
 
-from src.api.tkinter_app import TkinterApp
+from src.api import TkinterApp
 
 
 if __name__ == '__main__':
