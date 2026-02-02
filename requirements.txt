@@ -2,7 +2,4 @@ PIL == 11.2.1
 jinja2 == 3.1.6
 sqlalchemy == 2.0.41
 requests
-dotenv
 pywin32
-# for testing
-pycode-info >= 0.1.16
