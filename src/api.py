@@ -10,7 +10,7 @@ import csv, json
 import hashlib, websocket
 from requests.exceptions import HTTPError, RequestException
 from jinja2 import Template as JTemplate
-from typing import Literal, Any
+from typing import Callable, Literal, Any
 import tkinter as tk
 import tkinter.ttk as ttk
 import win32gui, win32con, win32api, win32ui, uuid
@@ -760,10 +760,23 @@ Public License instead of this License.  But first, please read
 TK_PACK = 'Pack'
 TK_GRID = 'Grid'
 
-def AddView(view: ttk.Widget, name: str):
-    TkinterApp.pages.append((view, name))
+type GenericMenu = dict[str, str | list[dict[str, str | Callable[[], None]]]]
 
-def AddMenu(): ...
+def AddView(view: ttk.Widget):
+    TkinterApp.pages.append((view, view.NAME))
+
+def AddMenu(data: GenericMenu): 
+    """
+    Add your custom Menus by calling this function with:
+    {
+        'name': 'Pages',
+        'entrys': [
+            {'label': 'Recording', 'command': lambda: print('Recording')},
+            {'label': 'FetchAudio', 'command': lambda: print('FetchAudio')}
+        ]
+    }
+    """
+    TkinterApp.sub_menus.append(data)
 
 def B64ToImage(var: str) -> ImageTk.PhotoImage:
     #! Optimize RAM Usage by using Image Maps - Global var
@@ -788,10 +801,10 @@ def DownloadAndUnzipFfmpeg():
     
     result = DownloadFile(url,'ffmpeg.zip')
     if result is not True:
-        msgbox('Cannot download file',
+        MessageBox('Cannot download file',
             f'Statuscode: {result}',
             MSGBoxPresets.SYSTEM_ALERT,
-            SoundFlags.ERROR
+            MsgBoxFlags.SoundFlags.ERROR
             )
         return
     
@@ -959,7 +972,7 @@ def TkinterWidgetBuilder(obj: ttk.Widget,
                          obj_options: dict[str, Any],
                          package_method: Literal['Grid'] | Literal['Pack'], 
                          package_options: dict[str, str | int] | None = None
-                         ):
+                         ) -> ttk.Widget:
     if package_options is None: package_options = {}
     _new_instance = obj(**obj_options)
     if package_method == TK_PACK:
@@ -987,8 +1000,9 @@ class View(ttk.Frame):
     """
     def __init__(self, parent):
         ttk.Frame.__init__(self, parent)
-        self.mF = ttk.Frame(parent)
+        self.mF = ttk.Frame(self)
         self.menu = parent.master
+        self.mF.pack()
         
 class GenericWorkFlow:
     def __init__(self, 
@@ -1049,7 +1063,7 @@ class __ToastMessager:
     
     def show(self, title: str, message: str, icon: int | None = None):
         if icon is None:
-            icon = ToastMessager.INFO
+            icon = __ToastMessager.INFO
         hwnd = win32gui.CreateWindow(
             self.class_name, 
             "ToastWindow", 
@@ -1201,6 +1215,19 @@ class OBSWSClient:
                 print("Auth Success!")
         except Exception as E:
             return str(E)
+    
+    def GetOutputStatus(self):
+        
+        result = self.call("GetOutputStatus",{"outputName": 'adv_file_output'})
+        if 'error' in result: 
+            print(result)
+            return None
+        return result['d']['responseData']
+    
+    def GetRecordingTime(self):
+        result = self.GetOutputStatus()
+        if result is None: return None
+        return result['outputTimecode']
         
     def call(self, request_type, request_data=None):
         """
@@ -1332,6 +1359,7 @@ class TkinterApp(tk.Tk):
     each page and allows seamless navigation between them.
     """
     pages: list[tuple[ttk.Widget, str]] = []
+    sub_menus: list[GenericMenu] = []
     
     def __init__(self, *args, **kwargs): 
         
@@ -1344,18 +1372,46 @@ class TkinterApp(tk.Tk):
         self.MENU = tk.Menu(self)
         self.config(menu = self.MENU)
         
-        self.MSUB_lprt = tk.Menu(self.MENU, tearoff=0)
-        self.MENU.add_cascade(label="LPRT", menu = self.MSUB_lprt)
-        self.MSUB_lprt.add_command(label="Quit", command = lambda: print("Quit"))
-        self.MSUB_lprt.add_command(label="Settings", command = lambda: print("Settings"))
+        self.sub_menus.insert(0, {
+            'name': 'LPRT',
+            'entrys': [
+                {'label': 'QUIT', 'command': lambda: print('QUIT')},
+                {'label': 'Settings', 'command': lambda: print('Settings')}
+            ]
+        })
         
+        container = tk.Frame()
         
-        self.MSUB_pages = tk.Menu(self.MENU, tearoff=0)
-        self.MENU.add_cascade(label="Pages", menu = self.MSUB_pages)
+        self.__frames = {}
         
-        #! Create these button on start automatically by using a list from module
-        self.MSUB_pages.add_command(label="Recording", command = lambda: print("Recording"))
-        self.MSUB_pages.add_command(label="FetchAudio", command = lambda: print("FetchAudio"))
+        self.ordered_frames = []
+        
+        for view, name in self.pages:
+            frame = view(container)
+            self.ordered_frames.append(view)
+            self.__frames[view] = frame
+            frame.grid(row=0, column=0, sticky='nsew')
+            
+        self.sub_menus.insert(0, {
+            'name': 'Pages',
+            'entrys': [
+                {'label': n.NAME, 'command': lambda n=n: self.show_frame(n)} for n in self.ordered_frames
+            ]
+        })
+        container.pack()
+        container.pack(side = "top", fill = "both", expand = True) 
+ 
+        container.grid_rowconfigure(0, weight = 1)
+        container.grid_columnconfigure(0, weight = 1)
+        
+        self.show_frame(self.ordered_frames[0])
+        
+        for sub_menu in self.sub_menus:
+            name = sub_menu['name']
+            _menu = tk.Menu(self.MENU, tearoff=0)
+            self.MENU.add_cascade(label = name, menu = _menu)
+            for entry in sub_menu['entrys']:
+                _menu.add_command(**entry)
         
         #* Pages: User Automations
         #* Database related: Export, import etc.
@@ -1363,21 +1419,14 @@ class TkinterApp(tk.Tk):
         #* Settings related
         #* About: Help, License etc.
         
-        container = tk.Frame()
-        
-        self.__frames = {}
-        
-        
-        
-        for view, name in self.pages:
-            frame = view(container, self)
-            
-            self.__frames[view] = frame
-            frame.grid(row=0, column=0, sticky='nsew')
         
     
         self.wm_iconphoto(False,B64ToImage(IMG_LOGO))
     
-    def read_custom_ui(self):
-        ...
-        
+    def show_frame(self, cont: str):
+        print(cont)
+        frame = self.__frames[cont]
+        frame.tkraise()
+
+class LPEP(ttk.Frame):
+    ...
