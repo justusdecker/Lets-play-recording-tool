@@ -3,6 +3,8 @@
 
 # LPRT
 
+[![wakatime](https://wakatime.com/badge/user/e971c7f6-586b-4713-b710-561bca159241/project/7e61f36a-218d-416b-8bb1-640812cf9b2f.svg)](https://wakatime.com/badge/user/e971c7f6-586b-4713-b710-561bca159241/project/7e61f36a-218d-416b-8bb1-640812cf9b2f)
+
 ## What is LPRT?
 
 LPRT is an open-source windows-only recording, editing & distribution tool or lets plays.
