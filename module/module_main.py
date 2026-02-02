@@ -7,9 +7,11 @@ LabelFrame:
         
 """
 
-from src.api import DisableWidgets, View, TkinterWidgetBuilder, ttk, tk, TK_GRID, TK_PACK
-            
-        
+from src.api import DisableWidgets, View, TkinterWidgetBuilder, ttk, tk, TK_GRID, TK_PACK, LPEP, TimeEntry
+def sql_data_temp():
+    return [str(i) for i in range(15)]
+def automation(epr, lp):
+    print(lp, epr)
 class Recording(View):
     NAME = 'Recording'
     def __init__(self, parent):
@@ -71,6 +73,8 @@ class FetchAudio(View):
             {'side':tk.BOTTOM}
         )
         
+        LPEP(self, sql_data_temp, sql_data_temp, automation).pack()
+        TimeEntry(self).pack()
         
 
     def get_connection(self): ...
