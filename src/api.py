@@ -1,5 +1,6 @@
 
 import base64
+from datetime import datetime
 from io import BytesIO
 from PIL import ImageTk, Image
 import requests
@@ -10,7 +11,7 @@ import csv, json
 import hashlib, websocket
 from requests.exceptions import HTTPError, RequestException
 from jinja2 import Template as JTemplate
-from typing import Callable, Literal, Any
+from typing import Callable, Literal, Any, Type
 import tkinter as tk
 import tkinter.ttk as ttk
 import win32gui, win32con, win32api, win32ui, uuid
@@ -969,12 +970,12 @@ def EnableWidgets(*objs: ttk.Widget):
         obj.state(["!disabled"])
         
 def TkinterWidgetBuilder(obj: ttk.Widget, 
-                         obj_options: dict[str, Any],
+                         obj_kwargs: dict[str, Any],
                          package_method: Literal['Grid'] | Literal['Pack'], 
-                         package_options: dict[str, str | int] | None = None
+                         package_options: dict[str, str | int] | None = None,
                          ) -> ttk.Widget:
     if package_options is None: package_options = {}
-    _new_instance = obj(**obj_options)
+    _new_instance = obj(**obj_kwargs)
     if package_method == TK_PACK:
         _new_instance.pack(**package_options)
     elif package_method == TK_GRID:
@@ -1360,6 +1361,7 @@ class TkinterApp(tk.Tk):
     """
     pages: list[tuple[ttk.Widget, str]] = []
     sub_menus: list[GenericMenu] = []
+    on_page_change_hooks: set[Callable] = set()
     
     def __init__(self, *args, **kwargs): 
         
@@ -1424,9 +1426,222 @@ class TkinterApp(tk.Tk):
         self.wm_iconphoto(False,B64ToImage(IMG_LOGO))
     
     def show_frame(self, cont: str):
-        print(cont)
+        for hook in TkinterApp.on_page_change_hooks:
+            Log('UpdateHookExecution: $',str(hook))
+            hook()
         frame = self.__frames[cont]
         frame.tkraise()
 
+class LPSelector(ttk.Frame):
+    def __init__(self, parent, sql_hook: Callable):
+        super().__init__(parent)
+        self.sql_hook = sql_hook
+        self.selected = tk.StringVar(self,'None')
+        self.reset()
+        TkinterApp.on_page_change_hooks.add(self.reset)
+        
+    def reset(self):
+        if hasattr(self, 'self.selector'):
+            self.selector.destroy()
+            del self.selector
+            
+        if hasattr(self, 'self.label'):
+            self.label.destroy()
+            del self.label
+            
+        data = self.sql_hook()
+        
+        self.label = TkinterWidgetBuilder(
+            ttk.Label,
+            {'master': self, 'text': 'Lets Play'},
+            TK_GRID,
+            {'row': 0, 'column': 0}
+        )
+        
+        self.selector = ttk.OptionMenu(
+                self,
+                self.selected,
+                'None',
+                        *data
+        )
+
+        self.selector.grid(row=0,column=1)
+
+        self.selected.set('None')
+        
+    def get(self):
+        v = self.selected.get()
+        if not v or v == 'None':
+            return None
+        return v
+
+class EPSelector(ttk.Frame):
+    def __init__(self, parent, sql_hook: Callable, name: str):
+        super().__init__(parent)
+        self.name = name
+        self.sql_hook = sql_hook
+        self.selected = tk.StringVar(self, '0')
+        self.reset()
+        TkinterApp.on_page_change_hooks.add(self.reset)
+    
+    def reset(self):
+        
+        if hasattr(self, 'self.selector'):
+            self.selector.destroy()
+            del self.selector
+            
+        if hasattr(self, 'self.label'):
+            self.label.destroy()
+            del self.label
+        
+        length = len(self.sql_hook())
+        
+        self.label = TkinterWidgetBuilder(
+            ttk.Label,
+            {'master': self, 'text': self.name},
+            TK_GRID,
+            {'row': 0, 'column': 0}
+        )
+        
+        self.selector = TkinterWidgetBuilder(
+            ttk.Spinbox,
+            {'master': self,'textvariable': self.selected, 'from_': 1 if length else 0, 'to': length, 'width': 5},
+            TK_GRID,
+            {'row': 0, 'column': 1}
+        )
+        
+        self.selected.set(str(length))
+    
+    def get(self):
+        v = self.selected.get()
+        if not v or not v.isdecimal():
+            return None
+        return int(v)
+    
 class LPEP(ttk.Frame):
-    ...
+    def __init__(self, 
+                 parent,
+                 letsplay_hook: Callable,
+                 episodes_hook: Callable,
+                 run_callback: Callable):
+        super().__init__(parent)
+        self.run_callback = run_callback
+        self.main_label = TkinterWidgetBuilder(
+            ttk.LabelFrame,
+            {'master': self, 'text': 'LPEP Selector'},
+            TK_PACK
+        )
+        
+        self.letsplay = TkinterWidgetBuilder(
+            LPSelector,
+            {'parent': self.main_label, 'sql_hook': letsplay_hook},
+            TK_GRID,
+            {'row': 0, 'column': 0}
+        )
+        
+        self.start_episode = TkinterWidgetBuilder(
+            EPSelector,
+            {'parent': self.main_label, 'sql_hook': episodes_hook, 'name': 'start'},
+            TK_GRID,
+            {'row': 0, 'column': 1}
+        )
+        
+        self.end_episode = TkinterWidgetBuilder(
+            EPSelector,
+            {'parent': self.main_label, 'sql_hook': episodes_hook, 'name': 'end'},
+            TK_GRID,
+            {'row': 0, 'column': 2}
+        )
+        
+        self.run_button = TkinterWidgetBuilder(
+            ttk.Button,
+            {'master': self.main_label, 'command': self.execute_given_command},
+            TK_GRID,
+            {'row': 0, 'column': 3}
+        )
+    
+    def execute_given_command(self, *_):
+        lp = self.letsplay.get()
+        ep1 = self.start_episode.get()
+        ep2 = self.end_episode.get()
+        if lp is None or ep1 is None or ep2 is None:
+            MessageBox('Error', 'One or more inputs are empty', MSGBoxPresets.SYSTEM_ALERT, MsgBoxFlags.SoundFlags.ERROR)
+            return
+        if ep1 < 1 or ep2 < 1:
+            MessageBox('Error', 'inputs are zero or less... why?', MSGBoxPresets.SYSTEM_ALERT, MsgBoxFlags.SoundFlags.ERROR)
+            return
+        if ep1 > ep2:
+            MessageBox('Error', 'End must be greater than start', MSGBoxPresets.SYSTEM_ALERT, MsgBoxFlags.SoundFlags.ERROR)
+            return
+        
+        self.run_callback((ep1, ep2), lp)
+        
+class DateEntry(ttk.Frame): 
+    def __init__(self, parent):
+        self.last_month = ...
+        self.next_month = ...
+        self.this_year_and_month = ...
+        self.current = ...
+        self.buttons = ...
+        
+    def reset(self):
+        datetime.now()
+        
+class TimeEntry(ttk.Frame): 
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.hours = tk.StringVar(self, "0")
+        self.minutes = tk.StringVar(self, "0")
+        
+        
+        self.main_label = TkinterWidgetBuilder(
+            ttk.LabelFrame,
+            {'master': self, 'text': 'Time Input(hh/mm): '},
+            TK_PACK
+        )
+        
+        self.hours_input = TkinterWidgetBuilder(
+            ttk.Spinbox,
+            {'master': self.main_label,'textvariable': self.hours, 'from_': 0, 'to': 23, 'width': 5},
+            TK_GRID,
+            {'row': 0, 'column': 0}
+        )
+        
+        self.delimiter = TkinterWidgetBuilder(
+            ttk.Label,
+            {'master': self.main_label, 'text': ': '},
+            TK_GRID,
+            {'row': 0, 'column': 1}
+        )
+        
+        self.minutes_input = TkinterWidgetBuilder(
+            ttk.Spinbox,
+            {'master': self.main_label,'textvariable': self.minutes, 'from_': 0, 'to': 23, 'width': 5},
+            TK_GRID,
+            {'row': 0, 'column': 2}
+        )
+        
+    def get(self, _as: Type = int):
+        v_h, v_m = self.hours.get(), self.minutes.get()
+        
+        if not v_h.isdecimal() or not v_m.isdecimal():
+            return None
+        
+        hours, minutes = int(v_h), int(v_m)
+        
+        if hours > 23 or hours < 0:
+            return None
+        
+        if minutes > 59 or minutes < 0:
+            return None
+    
+        if _as == int:
+            return (hours, minutes)
+        elif _as == str:
+            hours = hours if hours > 9 else f'0{hours}'
+            minutes = minutes if minutes > 9 else f'0{minutes}'
+            return f"{hours}:{minutes}"
+        else:
+            raise NotImplementedError
+    
+class MediaPlayer(ttk.Frame): ...
