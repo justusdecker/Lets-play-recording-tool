@@ -3,7 +3,7 @@ import base64
 import calendar
 from datetime import datetime
 from io import BytesIO
-from PIL import ImageTk, Image
+from PIL import ImageTk, Image, ImageFont, ImageDraw
 import requests
 import os.path as path_os, os
 import subprocess as subp
@@ -1939,3 +1939,75 @@ class SQLAccess: ...
 
 def ConvertGermanUmlautsToHtmlEntitys(): ...
 def ConvertHTMLEntitysToGermanUmlauts(): ...
+
+
+def OutlineImage(bg: Image.Image, 
+                 fg: Image.Image, 
+                 width: int = 1, 
+                 offset: tuple[int, int] = (0,0), 
+                 fill_color: tuple[int, int, int] = (0, 0, 0)
+                 ) -> Image.Image:
+    """
+    Will resize the bg image by {width}
+    """
+    bg_resized = bg.resize((bg.width + width, bg.height + width))
+    
+    _, _, _, alpha = bg_resized.split()
+    
+    # Create the threshold
+    fill = Image.new("RGB", bg_resized.size, fill_color)
+    result = Image.merge(
+        "RGBA", 
+        (fill.split()[0], 
+                fill.split()[1], 
+                fill.split()[2], 
+                alpha)
+        )
+    
+    # Background Offset
+    canvas_w = max(bg_resized.width + abs(offset[0]), fg.width + width)
+    canvas_h = max(bg_resized.height + abs(offset[1]), fg.height + width)
+    canvas = Image.new("RGBA", (canvas_w, canvas_h), (0, 0, 0, 0))
+    bg_x = (canvas_w - bg_resized.width) // 2 + offset[0]
+    bg_y = (canvas_h - bg_resized.height) // 2 + offset[1]
+    canvas.paste(result, (bg_x, bg_y), result)
+    
+    canvas.paste(fg, ((width // 2) + offset[0], (width // 2) + offset[1]), fg)
+    return canvas
+
+def RenderNumbers(text: str, font: str, size: float): 
+    """ C:\\Windows\\Fonts\\{package}\\{ttf | otf} """
+    if not text.isdecimal(): raise NotImplementedError
+    font: ImageFont.FreeTypeFont = ImageFont.truetype(font, size)
+    length = font.getlength(text)
+    img = Image.new("RGBA",
+              (int(length), size),
+    (0,0,0,0))
+    
+    draw = ImageDraw.Draw(img)
+    draw.text((0,0), text, font=font, fill=(255,255,255,255))
+    return img
+
+def RenderImageNumbers(text: str, font: dict[str, Image.Image]):
+    if not text.isdecimal(): raise NotImplementedError
+    char_size = font['0'].width
+    length = len(text)
+    
+    img = Image.new("RGBA",
+              (int(length * char_size), font['0'].height),
+    (0,0,0,0))
+    
+    for i, char in enumerate(text):
+        img.paste(font[char], (i * char_size, 0))
+    return img
+
+def GetTextNumbersFromImage(img: Image.Image) -> dict[str, Image.Image]:
+    char_width = img.width // 10
+    char_map = {}
+    
+    for i in range(10):
+        _temp = Image.new("RGBA", (char_width, img.height), (0,0,0, 0))
+        _temp.paste(img, (-i * char_width,0))
+        char_map[str(i)] = _temp
+    return char_map
+        
