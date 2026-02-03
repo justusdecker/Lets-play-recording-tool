@@ -1,5 +1,6 @@
 
 import base64
+import calendar
 from datetime import datetime
 from io import BytesIO
 from PIL import ImageTk, Image
@@ -1578,14 +1579,101 @@ class LPEP(ttk.Frame):
         
 class DateEntry(ttk.Frame): 
     def __init__(self, parent):
-        self.last_month = ...
-        self.next_month = ...
-        self.this_year_and_month = ...
-        self.current = ...
-        self.buttons = ...
+        super().__init__(parent)
+        self.main_label = TkinterWidgetBuilder(
+            ttk.LabelFrame,
+            {'master': self, 'text': 'DateEntry'},
+            TK_PACK
+        )
         
+        self.month_changer = TkinterWidgetBuilder(
+            ttk.Frame,
+            {'master': self.main_label},
+            TK_PACK
+        )
+        
+        self.last_month = TkinterWidgetBuilder(
+            ttk.Button,
+            {'master': self.month_changer, 'command': self.change_to_last_month, 'width': 4, 'text': '<<'},
+            TK_GRID,
+            {'row': 0, 'column': 0}
+        )
+        
+        self.this_year_and_month = TkinterWidgetBuilder(
+            ttk.Label,
+            {'master': self.month_changer, 'text': 'Current', 'width': 20},
+            TK_GRID,
+            {'row': 0, 'column': 1}
+        )
+        self.this_year_and_month.config(anchor='center')
+        
+        self.next_month = TkinterWidgetBuilder(
+            ttk.Button,
+            {'master': self.month_changer, 'command': self.change_to_next_month, 'width': 4, 'text': '>>'},
+            TK_GRID,
+            {'row': 0, 'column': 2}
+        )
+        
+        self.calendar = TkinterWidgetBuilder(
+            ttk.Frame,
+            {'master': self.main_label},
+            TK_PACK
+        )
+        
+        self.current = datetime.now()
+        
+        
+        self.buttons: list[ttk.Button] = []
+        self.reset()
+    @staticmethod
+    def add_months(current_date: datetime, months_to_add: int):
+        new_date = datetime(current_date.year + (current_date.month + months_to_add - 1) // 12,
+                            (current_date.month + months_to_add - 1) % 12 + 1,
+                            current_date.day, current_date.hour, current_date.minute, current_date.second)
+        return new_date
+        
+    def change_to_next_month(self, *_):
+        self.current = DateEntry.add_months(self.current, 1)
+        self.reset()
+        
+    def change_to_last_month(self, *_):
+        self.current = DateEntry.add_months(self.current, -1)
+        self.reset()
+
+    def set_date(self, d):
+        print(d)
+    
     def reset(self):
-        datetime.now()
+        
+        for btn in self.buttons:
+            btn.destroy()
+        self.buttons.clear()
+        
+
+        year, month = self.current.year, self.current.month
+
+        self.this_year_and_month.config(text = f'{calendar.month_name[month]} - {year}')
+        entrys = calendar.monthcalendar(year, month)
+        
+        for i, wd in enumerate(['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']):
+            label = TkinterWidgetBuilder(
+                ttk.Label,
+                {'master': self.calendar, 'text': wd},
+                TK_GRID,
+                {'row': 0, 'column': i}
+            )
+            self.buttons.append(label)
+        
+        for w, week in enumerate(entrys):
+            for d, day in enumerate(week):
+                if day == 0: continue
+                btn = TkinterWidgetBuilder(
+                    ttk.Button,
+                    {'master': self.calendar, 'command': lambda day=day: self.set_date(day), 'width': 2, 'text': str(day)},
+                    TK_GRID,
+                    {'row': w+1, 'column': d}
+                )
+                self.buttons.append(btn)
         
 class TimeEntry(ttk.Frame): 
     def __init__(self, parent):
