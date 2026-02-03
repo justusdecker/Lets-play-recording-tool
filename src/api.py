@@ -1902,6 +1902,9 @@ class MediaPlayer(ttk.Frame):
 
         self.after(500, self.__update_progress)
     
+    def __end_fullscreen(self):
+        self.attributes
+    
     def open_file(self, videopath: str): 
         """
         Sets media to `video_path` in the VLC media player instance. Finally, it calls the method to embed
@@ -1917,3 +1920,22 @@ class MediaPlayer(ttk.Frame):
         else:
             Log('Cannot open file: $',[videopath],LOG_WARNING)
     
+class ImageWithSubtitleShow(tk.Canvas):
+    def __init__(self,parent):
+        super().__init__(parent)
+        self.image_label = ttk.Label(parent)
+        self.image_label.pack(pady=20)
+        
+        self.label = ttk.Label(parent)
+        self.label.pack()
+        
+    def update_image(self, path: str, sub_title: str = ''):
+        self.label.config(text = sub_title)
+        self.image = Image.open(path).resize((512,288))
+        self.image = ImageTk.PhotoImage(self.image)
+        self.image_label.configure(image=self.image,border=2,relief="raised")
+        
+class SQLAccess: ...
+
+def ConvertGermanUmlautsToHtmlEntitys(): ...
+def ConvertHTMLEntitysToGermanUmlauts(): ...
