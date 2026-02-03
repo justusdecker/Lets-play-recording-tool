@@ -18,6 +18,7 @@ import tkinter.ttk as ttk
 import win32gui, win32con, win32api, win32ui, uuid
 import win32file
 from io import TextIOWrapper
+import vlc
 from src.icons import (
 	ICO_ATTENTION,
 	ICO_BACKUP,
@@ -1732,4 +1733,187 @@ class TimeEntry(ttk.Frame):
         else:
             raise NotImplementedError
     
-class MediaPlayer(ttk.Frame): ...
+class MediaPlayer(ttk.Frame): 
+    _is_playing: bool = False
+    _is_loaded: bool = False
+    _current_playing_instance = None
+    _vlc_instance = vlc.Instance()
+    
+    def __init__(self, parent):
+        super().__init__(parent)
+        
+        self.slider_dragging = False
+        self.vol = 50
+        
+        self.__current_file = ''
+        self.__player = MediaPlayer._vlc_instance.media_player_new()
+        
+        # b64 images
+        _play = B64ToImage(ICO_PLAY)
+        _stop = B64ToImage(ICO_STOP)
+        _pause = B64ToImage(ICO_PAUSE)
+        _forward = B64ToImage(ICO_FORWARD)
+        _backward = B64ToImage(ICO_BACKWARD)
+        
+        self.video_view = TkinterWidgetBuilder(
+            tk.Canvas,
+            {'master': self, 'bg': 'black'},
+            TK_PACK,
+            {'fill': tk.BOTH, 'expand': True, 'padx': 2, 'pady': (2,0)}
+        )
+        
+        self.controls = TkinterWidgetBuilder(
+            ttk.Frame,
+            {'master': self},
+            TK_PACK
+        )
+        
+        self.play_btn = TkinterWidgetBuilder(
+            ttk.Button,
+            {'master': self.controls, 'command': self.__play_video, 'image': _play},
+            TK_PACK,
+            {'side': tk.LEFT, 'padx': 2}
+        )
+        
+        self.fb_btn = TkinterWidgetBuilder(
+            ttk.Button,
+            {'master': self.controls, 'command': self.last_media, 'image': _backward},
+            TK_PACK,
+            {'side': tk.LEFT, 'padx': 2}
+        )
+        
+        self.ff_btn = TkinterWidgetBuilder(
+            ttk.Button,
+            {'master': self.controls, 'command': self.next_media, 'image': _forward},
+            TK_PACK,
+            {'side': tk.LEFT, 'padx': 2}
+        )
+        
+        self.stop_btn = TkinterWidgetBuilder(
+            ttk.Button,
+            {'master': self.controls, 'command': self.__stop_video, 'image': _stop},
+            TK_PACK,
+            {'side': tk.LEFT, 'padx': 2}
+        )
+        
+        self.pause_btn = TkinterWidgetBuilder(
+            ttk.Button,
+            {'master': self.controls, 'command': self.__pause_video, 'image': _pause},
+            TK_PACK,
+            {'side': tk.LEFT, 'padx': 2}
+        )
+        
+        self.volume_slider = TkinterWidgetBuilder(
+            tk.Scale,
+            {'master': self.controls, 'from_': 0, 'to': 100, 'orient': tk.HORIZONTAL, 'label': 'Volume', 'command': self.__set_volume},
+            TK_PACK,
+            {'side': tk.LEFT, 'padx': 2}
+        )
+        self.volume_slider.set(50)
+        
+        self.progress_value = tk.DoubleVar()
+        self.progression_slider = TkinterWidgetBuilder(
+            tk.Scale,
+            {'master': self.controls, 'from_': 0, 'to': 100, 'showvalue': False, 'length': 600, 'orient': tk.HORIZONTAL, 'variable': self.progress_value},
+            TK_PACK,
+            {'side': tk.LEFT, 'padx': 2}
+        )
+        self.progression_slider.bind('<ButtonPress-1>', self.__on_slider_press)
+        self.progression_slider.bind('<ButtonRelease-1>', self.__on_slider_release)
+        self.current_media_label = ...
+        
+        # Keep Images!
+        
+        self.play_btn.image = _play
+        self.stop_btn.image = _stop
+        self.pause_btn.image = _pause
+        self.ff_btn.image = _forward
+        self.fb_btn.image = _backward
+        
+        self.__update_progress()
+    
+    def next_media(self): ...
+    def last_media(self): ...
+    
+    def __set_video_panel(self): 
+        """
+        Wmbeds the VLC player's video output into the Tkinter video panel.
+        It retrieves the window ID of the video panel and then assigns it to the VLC media player
+        using platform-specific method: set_hwnd.
+        """
+        self.__player.set_hwnd(self.video_view.winfo_id())
+        self.video_view.update_idletasks()
+        
+    def __play_video(self): 
+        if not MediaPlayer._is_playing:
+            Log('Play - MediaPlayer',logtype=LOG_INFO)
+            self.__player.play()
+            MediaPlayer._is_playing = True
+            MediaPlayer._current_playing_instance = self
+            
+    def __pause_video(self): 
+        Log('Pause - MediaPlayer',logtype=LOG_INFO)
+        if MediaPlayer._current_playing_instance is not self: return
+        MediaPlayer._current_playing_instance = None
+        self.__player.pause()
+        MediaPlayer._is_playing = False
+        
+    def __stop_video(self): 
+        if MediaPlayer._current_playing_instance is not self: return
+        MediaPlayer._current_playing_instance = None
+        Log('Stop - MediaPlayer',logtype=LOG_INFO)
+        self.__player.stop()
+        MediaPlayer._is_playing = False
+        
+    def __set_volume(self, value): 
+        self.vol = int(value)
+        self.__player.audio_set_volume(self.vol)
+        
+    def __on_slider_press(self, event): 
+        self.slider_dragging = True
+        
+    def __on_slider_release(self, event): 
+        self.slider_dragging = False
+        self.__seek_video()
+        
+    def __seek_video(self): 
+        """
+        Seeks the video to a new position based on the slider's value.
+        The slider's value represents the time in milliseconds.
+        """
+        slider_value = self.progression_slider.get()
+        self.__player.set_time(int(slider_value))
+        
+    def __update_progress(self): 
+        """
+        Updates the progress slider to reflect the current playback time.
+        If the slider is not being manually adjusted by the user,
+        this function retrieves the current playback time and the video's total length,
+        updates the slider's range if necessary, and sets the slider to the current time.
+        This function is called repeatedly every 500 milliseconds.
+        """
+        if not self.slider_dragging:
+
+            current_time = self.__player.get_time()  # Current time in milliseconds.
+            duration = self.__player.get_length()      # Total duration in milliseconds.
+            if duration > 0:
+                self.progression_slider.config(to=duration)
+                self.progression_slider.set(current_time)
+
+        self.after(500, self.__update_progress)
+    
+    def open_file(self, videopath: str): 
+        """
+        Sets media to `video_path` in the VLC media player instance. Finally, it calls the method to embed
+        the VLC video output into the Tkinter video panel.
+        """
+        #! BUG after running out of time it stops, but can't be revived by using: play or pause. The user must press stop
+        if videopath:
+            Log('Open file: $',[videopath],LOG_INFO)
+            self.__stop_video()
+            media = MediaPlayer._vlc_instance.media_new(videopath)
+            self.__player.set_media(media)
+            self.__set_video_panel()
+        else:
+            Log('Cannot open file: $',[videopath],LOG_WARNING)
+    
