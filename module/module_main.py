@@ -7,7 +7,7 @@ LabelFrame:
         
 """
 
-from src.api import DisableWidgets, View, TkinterWidgetBuilder, ttk, tk, TK_GRID, TK_PACK, LPEP, TimeEntry
+from src.api import DisableWidgets, View, TkinterWidgetBuilder, ttk, tk, TK_GRID, TK_PACK, LPEP, TimeEntry, DateEntry, MediaPlayer
 def sql_data_temp():
     return [str(i) for i in range(15)]
 def automation(epr, lp):
@@ -75,7 +75,10 @@ class FetchAudio(View):
         
         LPEP(self, sql_data_temp, sql_data_temp, automation).pack()
         TimeEntry(self).pack()
-        
+        DateEntry(self).pack()
+        t = MediaPlayer(self)
+        t.pack()
+        t.open_file('E:\\Medien\\Filme\\Asterix  bei den  Briten ganzer Film.mp4')
 
     def get_connection(self): ...
     def __get_connection(self): ...
