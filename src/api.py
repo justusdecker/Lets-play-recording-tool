@@ -19,6 +19,9 @@ import win32gui, win32con, win32api, win32ui, uuid
 import win32file
 from io import TextIOWrapper
 import vlc
+import yaml
+import random
+from src.dlls import LIBPNG16_16DLL
 from src.icons import (
 	ICO_ATTENTION,
 	ICO_BACKUP,
@@ -762,6 +765,11 @@ Public License instead of this License.  But first, please read
 
 TK_PACK = 'Pack'
 TK_GRID = 'Grid'
+FFMPEG_DEFAULT = ['ffmpeg', '-v', 'quiet', '-stats' , '-loglevel', 'error', '-y']
+
+FFMPEG_GET_FRAME = [*FFMPEG_DEFAULT, '-ss', '{{time}}' , '-accurate_seek', '-i', '{{input_filepath}}', '-frames:v', '1', '{{output_filepath}}']
+
+FFMPEG_GET_LENGTH = ['ffprobe', '-v', 'error', '-select_streams', 'v:0','-show_entries', 'stream=duration', '-of', 'default=noprint_wrappers=1:nokey=1', '{{input_filepath}}']
 
 type GenericMenu = dict[str, str | list[dict[str, str | Callable[[], None]]]]
 
@@ -821,10 +829,19 @@ def RenderTemplate(text: str, **replacers):
 
 def FfmpegBuildCommand(cmd: list[str], replacer: dict[str,str]):
     cmd_length = len(cmd)
-    for key in replacer:
-        for i in range(cmd_length):
-            RenderTemplate(cmd[i], **{key: replacer[key]})
-    return cmd
+    new_cmd = []
+    print(replacer)
+    for i in range(cmd_length):
+        old = cmd[i]
+        new_cmd.append(old)
+        for key in replacer:
+            print(key)
+            new = RenderTemplate(old, **{key: replacer[key]})
+            if new != old and (new and old):
+                print(f'[{old}] [{new}] -> {key}')
+                new_cmd[-1] = new
+                break
+    return new_cmd
        
 def FfmpegRunCommand(cmd: list[str], replacer: dict[str,str]={},get_output: bool = False):
     if get_output:
@@ -1935,12 +1952,6 @@ class ImageWithSubtitleShow(tk.Canvas):
         self.image = ImageTk.PhotoImage(self.image)
         self.image_label.configure(image=self.image,border=2,relief="raised")
         
-class SQLAccess: ...
-
-def ConvertGermanUmlautsToHtmlEntitys(): ...
-def ConvertHTMLEntitysToGermanUmlauts(): ...
-
-
 def OutlineImage(bg: Image.Image, 
                  fg: Image.Image, 
                  width: int = 1, 
@@ -2010,4 +2021,163 @@ def GetTextNumbersFromImage(img: Image.Image) -> dict[str, Image.Image]:
         _temp.paste(img, (-i * char_width,0))
         char_map[str(i)] = _temp
     return char_map
+       
+class TGObject:
+    def __init__(self, args: dict[str, Any]):
+        self.args = args
+        self.name = self.args['layer'].pop('name')
+        _source = args['layer'].pop('source')
+        self.source_type = _source['type']
+        self.source_arg = _source['arg']
+        self.get_position()
+        self.get_rotation()
+        self.get_scale()
+        self.get_outline()
+
+    def get_position(self): 
+        if 'position' not in self.args['layer']: 
+            self.position = (0.5, 0.5)
+            return
+        position = self.args['layer'].pop('position')
+        x = position['x']
+        y = position['y']
         
+        rx = random.randint(
+            int(x.get('from', 0) * 100), 
+            int(x.get('to', 0) * 100)
+            ) / 100
+        
+        ry = random.randint(
+            int(y.get('from', 0) * 100), 
+            int(y.get('to', 0) * 100)
+            ) / 100
+        
+        self.position = x['default'] + rx, y['default'] + ry
+        
+    def get_scale(self): 
+        if 'scale' not in self.args['layer']: 
+            self.scale = 1.
+            return
+        scale = self.args['layer'].pop('scale')
+        s = scale['default']
+        
+        rs = random.randint(
+            int(scale.get('from', 0) * 100), 
+            int(scale.get('to', 0) * 100)
+            ) / 100
+        
+        self.scale = s + rs
+    
+    def get_rotation(self): 
+        if 'rotation' not in self.args['layer']: 
+            self.rotation = 0
+            return
+        rotation = self.args['layer'].pop('rotation')
+        r = rotation['default']
+        
+        rr = random.randint(
+            int(rotation.get('from', 0) * 100), 
+            int(rotation.get('to', 0) * 100)
+            ) / 100
+        
+        self.rotation = r + rr
+    
+    def get_outline(self):
+        if 'outline' not in self.args['layer']: 
+            self.outline = None
+            return
+        outline = self.args['layer'].pop('outline')
+        self.outline = ((outline.get('x', 0), outline.get('y', 0)), outline.get('col', (0,0,0)))
+    def get(self) -> Image.ImageFile:
+        ...
+
+def RaiseExceptionOnCondition(cond: bool,msg: str, exc: Exception = AutomationError) -> None:
+    """ raise_error_on_condition """
+    if cond: raise exc(msg)
+
+def GetVideoLength(filepath: str) -> float | None:
+    time_or_error = FfmpegRunCommand(FFMPEG_GET_LENGTH,{'input_filepath': filepath},True)
+    try:
+        return float(time_or_error.replace('\n',''))
+    except Exception as E:
+        Log("$",[str(E)],LOG_ERROR)
+        return None
+    
+def GetImageFromVideo(filepath: str, frame: int):
+    if frame == -1: 
+        _time = random.random() * GetVideoLength(filepath)
+    else: 
+        _time = frame
+    Log("t: $ frame: $ fp: $",[_time,frame,filepath], LOG_INFO)
+    RemoveIfExist(f'./temp.png')
+    FfmpegRunCommand(FFMPEG_GET_FRAME,{'input_filepath': filepath, 'time': _time, 'output_filepath': './temp.png'})
+    RaiseExceptionOnCondition(not path_os.isfile('./temp.png'), 'Something went wrong. File should exist.')
+    return Image.open('./temp.png')
+
+def CreateLibPngFile():
+    if not path_os.isfile('libpng16-16.dll'):
+        with open('libpng16-16.dll','wb') as fo:
+            fo.write(LIBPNG16_16DLL)
+
+class TGVideo(TGObject): 
+    def __init__(self, args):
+        super().__init__(args)
+    
+    def get(self):
+        img = GetImageFromVideo(self.source_arg, -1)
+        
+        return img.load()
+        
+class TGImage(TGObject): 
+    def __init__(self, args):
+        super().__init__(args)
+    
+    def get(self):
+        ...
+        
+class TGImageText(TGObject): 
+    def __init__(self, args):
+        super().__init__(args)
+    
+    def get(self):
+        ...
+        
+class ThumbnailGenerator: 
+    def __init__(self, yml_ctx: str):
+        self.yaml_context = yaml.safe_load(yml_ctx)
+        self.layers: list[TGObject] = []
+        self.__decomplicate_context()
+    def __decomplicate_context(self):
+        for layer in self.yaml_context:
+            option = layer['layer']['source']
+            _type, arg = option['type'], option['arg']
+            layer: dict[str, Any]
+            match _type:
+                case 'video':
+                    new_tg = TGVideo(layer)
+                case 'image':
+                    new_tg = TGImage(layer)
+                case 'image_text':
+                    new_tg = TGImageText(layer)
+                case _:
+                    raise NotImplementedError
+            
+            self.layers.append(new_tg)
+            print(new_tg.name,new_tg.position,new_tg.scale,new_tg.rotation,new_tg.outline)
+    
+    def generate(self):
+        w, h = (1280, 720)
+        mainframe = Image.new("RGBA", (w, h))
+        for layer in self.layers:
+            _temp = layer.get()
+            render_position = (layer.position[0] * w, layer.position[1] * h)
+            _temp: Image.Image
+            _temp.rotate(layer.rotation)
+            _temp.resize((_temp.width * layer.scale, _temp.height * layer.scale))
+            if layer.outline:
+                OutlineImage(_temp, _temp, layer.outline[1], layer.outline[0], layer.outline[2])
+        
+class SQLAccess: ...
+
+def ConvertGermanUmlautsToHtmlEntitys(): ...
+def ConvertHTMLEntitysToGermanUmlauts(): ...
