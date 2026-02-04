@@ -9,6 +9,9 @@ import os.path as path_os, os
 import subprocess as subp
 import zipfile
 import csv, json
+import sqlalchemy
+from sqlalchemy.ext.declarative import declarative_base as sql_declarative_base
+from sqlalchemy.orm import sessionmaker as sql_sessionmaker
 import hashlib, websocket
 from requests.exceptions import HTTPError, RequestException
 from jinja2 import Template as JTemplate
@@ -1966,7 +1969,7 @@ def OutlineImage(bg: Image.Image,
     _, _, _, alpha = bg_resized.split()
     
     # Create the threshold
-    fill = Image.new("RGB", bg_resized.size, fill_color)
+    fill = Image.new("RGB", bg_resized.size, tuple(fill_color))
     result = Image.merge(
         "RGBA", 
         (fill.split()[0], 
@@ -2087,8 +2090,9 @@ class TGObject:
             self.outline = None
             return
         outline = self.args['layer'].pop('outline')
-        self.outline = ((outline.get('x', 0), outline.get('y', 0)), outline.get('col', (0,0,0)))
-    def get(self) -> Image.ImageFile:
+        self.outline = ((outline.get('x', 0), outline.get('y', 0)), outline.get('col', (0,0,0)), outline.get('width', 1))
+    
+    def get(self) -> Image.Image:
         ...
 
 def RaiseExceptionOnCondition(cond: bool,msg: str, exc: Exception = AutomationError) -> None:
@@ -2122,31 +2126,34 @@ def CreateLibPngFile():
 class TGVideo(TGObject): 
     def __init__(self, args):
         super().__init__(args)
+        self.video_path = ''
     
     def get(self):
-        img = GetImageFromVideo(self.source_arg, -1)
-        
-        return img.load()
+        img = GetImageFromVideo(self.video_path, -1)
+        return img if img is not None else Image.new("RGB", (600,600),(255,0,0))
         
 class TGImage(TGObject): 
     def __init__(self, args):
         super().__init__(args)
     
     def get(self):
-        ...
+        return Image.open(self.source_arg)
         
 class TGImageText(TGObject): 
     def __init__(self, args):
         super().__init__(args)
+        self.number = '123'
     
     def get(self):
-        ...
+        img = Image.open(self.source_arg)
+        return RenderImageNumbers(self.number, GetTextNumbersFromImage(img))
         
 class ThumbnailGenerator: 
     def __init__(self, yml_ctx: str):
         self.yaml_context = yaml.safe_load(yml_ctx)
         self.layers: list[TGObject] = []
         self.__decomplicate_context()
+        
     def __decomplicate_context(self):
         for layer in self.yaml_context:
             option = layer['layer']['source']
@@ -2165,19 +2172,46 @@ class ThumbnailGenerator:
             self.layers.append(new_tg)
             print(new_tg.name,new_tg.position,new_tg.scale,new_tg.rotation,new_tg.outline)
     
-    def generate(self):
+    def generate(self, video_path: str, episode_number: int | str, output_path: str):
         w, h = (1280, 720)
         mainframe = Image.new("RGBA", (w, h))
         for layer in self.layers:
+            if isinstance(layer, TGVideo):
+                layer.video_path = video_path
+            elif isinstance(layer, TGImageText):
+                layer.number = str(episode_number)
             _temp = layer.get()
-            render_position = (layer.position[0] * w, layer.position[1] * h)
+            
             _temp: Image.Image
-            _temp.rotate(layer.rotation)
-            _temp.resize((_temp.width * layer.scale, _temp.height * layer.scale))
+            _temp = _temp.rotate(layer.rotation)
+            _temp = _temp.resize((int(_temp.width * layer.scale), int(_temp.height * layer.scale)))
+            
             if layer.outline:
-                OutlineImage(_temp, _temp, layer.outline[1], layer.outline[0], layer.outline[2])
+                _temp = OutlineImage(_temp, _temp, layer.outline[2], layer.outline[0], layer.outline[1])
+            render_position = (int(layer.position[0] * w) - (_temp.width // 2), int(layer.position[1] * h) - (_temp.height // 2))
+            mainframe.paste(_temp, render_position, _temp if _temp.mode == 'RGBA' else None)
+        mainframe.save(output_path)
         
-class SQLAccess: ...
+class SQLAccess: 
+    Base = sql_declarative_base()
+    database_url = 'sqlite:///lprt_data.db'
+    _session = None
+    _engine = None
+    @staticmethod
+    def create_session():
+        SQLAccess._engine = sqlalchemy.create_engine(SQLAccess.database_url)
+        SQLAccess.Base.metadata.create_all(SQLAccess._engine)
+        SQLAccess._session = sql_sessionmaker(bind=SQLAccess._engine)()
+        
+    @staticmethod
+    def _check_sql_alive(): 
+        if SQLAccess._session is None or SQLAccess._engine is None:
+            raise Exception("SQL is not initialized!")
+    
+    @staticmethod
+    def read(table, **filter): 
+        SQLAccess._check_sql_alive()
+        SQLAccess._session.query(table).filter_by(**filter).all()
 
 def ConvertGermanUmlautsToHtmlEntitys(): ...
 def ConvertHTMLEntitysToGermanUmlauts(): ...
