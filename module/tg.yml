@@ -6,18 +6,18 @@
     position: 
         x: 
             default: 0.5
-            from: -0.15
-            to: 0.15
+            from: -0.05
+            to: 0.05
         y: 
             default: 0.5
     scale:
-        default: 1
+        default: 0.1
         from: 1.0
-        to: 1.5
+        to: 1.0
     rotation:
         default: 0
-        from: -5
-        to: 5
+        from: -0
+        to: 0
 
 - layer:
     name: logo
@@ -30,7 +30,7 @@
         y: 
             default: 0.2
     scale:
-        default: 1
+        default: 0.5
     rotation:
         default: 0
 
@@ -50,7 +50,7 @@
         default: 0
     outline:
         col: [0,0,0]
-        width: 1
+        width: 10
         x: 0
         y: 0
     
