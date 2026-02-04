@@ -1,0 +1,56 @@
+- layer:
+    name: background
+    source: 
+        type: video
+        arg: random
+    position: 
+        x: 
+            default: 0.5
+            from: -0.15
+            to: 0.15
+        y: 
+            default: 0.5
+    scale:
+        default: 1
+        from: 1.0
+        to: 1.5
+    rotation:
+        default: 0
+        from: -5
+        to: 5
+
+- layer:
+    name: logo
+    source:
+        type: image
+        arg: C:/Users/Justus/lprt/logos/Valheim-logo.png
+    position: 
+        x: 
+            default: 0.5
+        y: 
+            default: 0.2
+    scale:
+        default: 1
+    rotation:
+        default: 0
+
+- layer:
+    name: image_text
+    source:
+        type: image_text
+        arg: C:/Users/Justus/lprt/fonts/valheim_font.png
+    position: 
+        x: 
+            default: 0.5
+        y: 
+            default: 0.5
+    scale:
+        default: 1
+    rotation:
+        default: 0
+    outline:
+        col: [0,0,0]
+        width: 1
+        x: 0
+        y: 0
+    
